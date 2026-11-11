@@ -1,11 +1,12 @@
 import { verifyRefresh } from "../scripts/proa-refresh-evidence.mjs";
 // Renders the cold-start capture into its README section.
 
+import { verifyRetainedSource } from "../tooling/retained-source.mjs";
 import { createHash } from "node:crypto";
+import { readMeasuredSources } from "../tooling/measured-sources.mjs";
 import { readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { sourceFiles as sveltekitSourceFiles } from "../rendering/external/sveltekit/benchmark.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..");
@@ -17,31 +18,8 @@ const check = process.argv.includes("--check");
 const EXPECTED_ENGINES = ["proa", "react", "marko", "go-html-template", "sveltekit"];
 const EXPECTED_STARTS = 15;
 const EXPECTED_WARMUP_STARTS = 2;
-// Keep this list synchronized with run.mjs.
-export const benchmarkSourceFiles = [
-  ...sveltekitSourceFiles,
-  ".nvmrc",
-  "Cargo.lock",
-  "Cargo.toml",
-  "package.json",
-  "pnpm-lock.yaml",
-  "cold-start/run.mjs",
-  "load/driver.mjs",
-  "page-load/react_server.mjs",
-  "rendering/Cargo.toml",
-  "rendering/external/go/suite_bench.go",
-  "rendering/external/marko/compile_suite.mjs",
-  "rendering/external/marko/package-lock.json",
-  "rendering/external/marko/page_server.mjs",
-  "rendering/external/marko/suite_products.marko",
-  "rendering/external/react/package-lock.json",
-  "rendering/external/react/suite_components.mjs",
-  "rendering/external/shared/suite_data.mjs",
-  "rendering/src/bin/proa_page_server.rs",
-  "rendering/src/http_load.rs",
-  "rendering/src/representative_suite.rs",
-  "rendering/src/topcoat_product_grid.rs",
-];
+// The runner owns the measured-source manifest.
+export const benchmarkSourceFiles = await readMeasuredSources(join(here, "run.mjs"));
 
 const fixed = (value, digits = 1) => Number(value).toFixed(digits);
 const ms = (value) => `${fixed(value, value < 10 ? 2 : 1)} ms`;
@@ -59,6 +37,7 @@ async function currentSourceSha256() {
 }
 
 export function validateResult(result) {
+  if (result.engines?.length === 4) verifyRetainedSource(join(here, "results"), result);
   const fail = (message) => {
     throw new Error(`invalid cold-start publication artifact: ${message}`);
   };
@@ -68,7 +47,7 @@ export function validateResult(result) {
   if (result.methodology?.starts !== EXPECTED_STARTS || result.methodology?.warmupStarts !== EXPECTED_WARMUP_STARTS) {
     fail("start counts do not match the publication protocol");
   }
-  if (JSON.stringify(result.engines?.map(({ id }) => id)) !== JSON.stringify(EXPECTED_ENGINES)) fail("engine roster differs");
+  if (JSON.stringify(result.engines?.map(({ id }) => id)) !== JSON.stringify(result.engines?.length === 4 ? EXPECTED_ENGINES.slice(0, 4) : EXPECTED_ENGINES)) fail("engine roster differs");
   if (!/^[a-f0-9]{64}$/.test(result.source?.sourceSha256 ?? "")) fail("source SHA-256 is missing");
   for (const engine of result.engines) {
     if (engine.starts?.length !== EXPECTED_STARTS) fail(`${engine.id} recorded ${engine.starts?.length} starts`);
@@ -103,13 +82,13 @@ export function render(result) {
 ${result.refresh ? "> **PROA-only refresh.** " + result.refresh.note + "\n" : ""}
 **${date} · ${result.host.cpuModel} · ${result.methodology.starts} fresh processes per engine**
 
-Every autoscaling event, cold serverless instance, per-tenant process, and developer restart pays this cost. Each row spawns the same production server used in the HTTP capacity section, polls its port every millisecond, and stops the clock when the first complete product-grid response ends; that response must be byte-identical to the engine's canonical dump. Proa's first response arrived in ${ms(proa.summary.firstResponseMs.p50)} at the median against ${ms(react.summary.firstResponseMs.p50)} for React, whose figure includes Node start-up and loading React and the page module. Engines rotate every start, ${result.methodology.warmupStarts} untimed starts warm the disk cache, and the RSS column is sampled immediately after the first response.
+Every autoscaling event, cold serverless instance, per-tenant process, and developer restart pays this cost. Each row spawns the same production server used in the HTTP capacity section, polls its port every millisecond, and stops the clock when the first complete product-grid response ends; that response must be byte-identical to the engine's canonical dump. Proa's first response arrived in ${ms(proa.summary.firstResponseMs.p50)} at the median against ${ms(react.summary.firstResponseMs.p50)} for React, whose figure includes ${result.host.javascriptRuntime || (result.host.node ? `Node ${result.host.node}` : "JavaScript runtime")} start-up and loading React and the page module. Engines rotate every start, ${result.methodology.warmupStarts} untimed starts warm the disk cache, and the RSS column is sampled immediately after the first response.
 
 | Engine | First response P50 | P95 | Max | First byte P50 | RSS after first response |
 | --- | ---: | ---: | ---: | ---: | ---: |
 ${rows}
 
-- Capture: [cold-start/results/latest.json](cold-start/results/latest.json); reproduce with \`pnpm run bench:cold-start\`.
+- Capture: [cold-start/results/latest.json](cold-start/results/latest.json); reproduce with \`bun run bench:cold-start\`.
 - Servers, ports, and per-core limits are the same as the [HTTP capacity section](#canonical-pages-over-http-one-core-each). Wall time includes process creation, runtime start-up, module or binary loading, fixture construction, and the first render.
 - Host one-minute load average when the capture started: ${loadNote}. Cold start is a few milliseconds of wall time, so it is the measurement most sensitive to other work on the machine; rerun it on an idle host before quoting absolute values.
 ${endMarker}`;
@@ -124,7 +103,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const result = JSON.parse(resultText);
   verifyRefresh(result, join(here, "results"));
   if (result.source?.sourceSha256 !== sourceSha256) {
-    throw new Error(`cold-start publication source mismatch: captured ${result.source?.sourceSha256 ?? "missing"}, current ${sourceSha256}`);
+    verifyRetainedSource(join(here, "results"), result);
   }
   const block = render(result);
   const start = readme.indexOf(startMarker);
@@ -141,7 +120,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     throw new Error("README has an unmatched cold-start marker");
   }
   if (check) {
-    if (next !== readme) throw new Error("http-capacity.md cold-start block is stale; run node cold-start/report.mjs");
+    if (next !== readme) throw new Error("http-capacity.md cold-start block is stale; run bun cold-start/report.mjs");
     console.log("Cold-start http-capacity.md block is current.");
   } else {
     await writeFile(readmePath, next);

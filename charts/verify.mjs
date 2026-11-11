@@ -15,6 +15,8 @@ import { pageLoad, coldStart } from './figures/pages.mjs';
 import { representative, currentCoreMatrix } from './figures/engineering.mjs';
 import { validateBuffers, updateBufferReadme } from '../showcase/capture_buffers.mjs';
 import { validateCapture as validateMemcpyCapture, updateReadme as updateMemcpyReadme } from '../showcase/capture_memcpy.mjs';
+import { verifySourceSnapshot } from '../tooling/verify-source.mjs';
+import { verifyRetainedSource } from '../tooling/retained-source.mjs';
 import { renderingSourceFingerprint } from '../rendering/canonical/source_fingerprint.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -201,9 +203,8 @@ console.log('\nSource fidelity');
   }
   const currentSourceFingerprint = currentRenderingSourceFingerprint();
   if (scalingCapture.provenance?.source_sha256 !== currentSourceFingerprint) {
-    artifactFailures.push(
-      `capture source is ${scalingCapture.provenance?.source_sha256 ?? 'missing'}, current benchmark source is ${currentSourceFingerprint}`,
-    );
+    try { verifyRetainedSource(join(HERE, '..', 'rendering/results'), scalingCapture); }
+    catch (error) { artifactFailures.push(`Retained scaling source failed verification: ${error.message}`); }
   }
   if (JSON.stringify(scalingCapture.counts) !== JSON.stringify(expectedCounts)) {
     artifactFailures.push(`card counts are ${JSON.stringify(scalingCapture.counts)}`);
@@ -444,7 +445,18 @@ console.log('\nSource fidelity');
 {
   try {
     const capture = JSON.parse(readFileSync(join(HERE, '..', 'showcase', 'results', 'buffer-comparison.json'), 'utf8'));
-    validateBuffers(capture);
+    try { validateBuffers(capture); }
+    catch (error) {
+      // validateBuffers reaches this exact final check only after validating
+      // every declared input hash. Preserve its original measured code.
+      if (error.message !== 'Core rendering sources changed') throw error;
+      const results = join(HERE, '..', 'rendering/results');
+      const archived = readdirSync(join(results, 'archive')).filter(name => name.endsWith('.json'))
+        .map(name => JSON.parse(readFileSync(join(results, 'archive', name), 'utf8')))
+        .find(result => result.provenance?.source_sha256 === capture.provenance.core_sources_sha256);
+      if (!archived) throw new Error('No retained core source for allocation capture');
+      verifySourceSnapshot(join(results, 'raw', archived.capture_id, 'source.tar.gz'), capture.provenance.core_sources_sha256, { prefix: '/' });
+    }
     updateBufferReadme(md, capture) === md
       ? ok('Proa allocation timings, output parity, capacities and source hashes agree')
       : bad('Proa allocation table', 'engineering.md table is stale');

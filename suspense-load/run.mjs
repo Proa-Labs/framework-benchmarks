@@ -1,7 +1,9 @@
-#!/usr/bin/env node
+import { validateResult } from "./report.mjs";
+import { readMeasuredSources } from "../tooling/measured-sources.mjs";
+import { atomicWrite, captureId, retainCapture } from "../tooling/captures.mjs";
 
 import { execFile as execFileCallback } from "node:child_process";
-import { mkdir, rename, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import http from "node:http";
 import os from "node:os";
 import { dirname, isAbsolute, join } from "node:path";
@@ -33,6 +35,8 @@ import {
 } from "./scenario.mjs";
 import { validateBody } from "./validate.mjs";
 
+if (process.versions.bun !== "1.4.2") throw new Error("Use pinned Bun 1.4.2");
+
 const execFile = promisify(execFileCallback);
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..");
@@ -45,32 +49,8 @@ const PROA_WORKER_THREADS = 1;
 // the artifact should show that rather than assert it.
 const PROA_CONFIRMATION_WORKER_THREADS = Math.min(4, os.cpus().length);
 
-// Keep this list synchronized with report.mjs. The report gate must reject a
-// retained capture after any measured implementation changes.
-export const benchmarkSourceFiles = [
-  ".nvmrc",
-  "Cargo.lock",
-  "Cargo.toml",
-  "package.json",
-  "pnpm-lock.yaml",
-  "load/driver.mjs",
-  "load/worker.mjs",
-  "rendering/Cargo.toml",
-  "rendering/external/marko/compile_suspense.mjs",
-  "rendering/external/marko/package-lock.json",
-  "rendering/external/marko/package.json",
-  "rendering/external/marko/suspense_app.marko",
-  "rendering/external/marko/suspense_server.mjs",
-  "rendering/external/react/suite_components.mjs",
-  "rendering/external/shared/suite_data.mjs",
-  "rendering/src/bin/proa_suspense_server.rs",
-  "rendering/src/topcoat_product_grid.rs",
-  "suspense-load/react_server.mjs",
-  "suspense-load/run.mjs",
-  "suspense-load/scenario.mjs",
-  "suspense-load/stats.mjs",
-  "suspense-load/validate.mjs",
-];
+// Runner and report consume the same data-only measured-source manifest.
+export const benchmarkSourceFiles = await readMeasuredSources(import.meta.url);
 
 function option(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -223,7 +203,7 @@ function validateHealth(engine, health, expectedProaThreads = PROA_WORKER_THREAD
 async function warmupAndValidate(engine, port, agent) {
   const first = await fetchBody(port, "/", agent);
   if (first.statusCode !== 200) throw new Error(`${engine} parity request returned ${first.statusCode}`);
-  const contract = validateBody(first.body.toString("utf8"), config.boundaries, config.cardsPerPanel);
+  const contract = validateBody(first.body.toString("utf8"), config.boundaries, config.cardsPerPanel, { requireFallbacks: true });
   const warmups = await Promise.all(
     Array.from({ length: config.warmupRequests }, () => fetchBody(port, "/", agent)),
   );
@@ -255,20 +235,23 @@ async function main() {
     schemaVersion: 3,
     status: "incomplete",
     captureKind: config.outputPath === defaultOutput ? "publication" : "engineering",
+    captureId: captureId("suspense-load"),
     capturedAt: new Date().toISOString(),
     scenario: scenarioContract(config.boundaries, config.cardsPerPanel),
     methodology: {
       protocol: "HTTP/1.1 loopback with keep-alive and compression disabled",
-      javascriptMode: "production: NODE_ENV=production is set by the driver and confirmed by each Node server's health endpoint; React also reports which react-dom server build it loaded",
+      javascriptMode: "production: NODE_ENV=production is set by the driver and confirmed by each JavaScript server's health endpoint; React also reports which react-dom server build it loaded",
       concurrencyModel: `one server process per engine; Proa runs ${PROA_WORKER_THREADS} Tokio worker thread and ${PROA_WORKER_THREADS} local-stream worker so every engine is measured per core`,
+      reactRenderPath: "Bun production renderToReadableStream; shell piped immediately through Readable.fromWeb; no allReady wait",
       proaRenderPath: "RouteResponse::ssr_stream_send: the compiler-proved Send stream that Axum polls directly",
       loadModel: "open-loop fixed-rate arrivals",
-      loadGenerator: `${config.workers} forked Node worker processes share the arrival schedule and validate every response`,
+      loadGenerator: `${config.workers} forked Bun worker processes share the arrival schedule and validate every response`,
       latency: "both client-dispatch and scheduled-arrival latency; scheduled latency includes generator lag and server queueing",
       throughput: "successful full streamed responses completed inside a fixed steady-state observation window after pre-roll",
       cpu: "server process CPU-time delta from process counters",
       memory: "server RSS sampled with ps every 100 ms; peak is the largest sample",
-      validation: "every measured response must contain the shell, every fallback and resolved-panel marker, and every product card",
+      validation: "every measured response must contain the shell, every resolved panel, and every product card; loading placeholders are optional and checked when present; the unloaded streaming preflight requires every placeholder",
+      responseValidator: "resolved-content-v2",
       asyncValues: "typed in-memory delayed values; no serialization or external I/O",
       warmupRequestsPerEngineRateProcess: config.warmupRequests,
       preRollSecondsPerRate: config.preRollSeconds,
@@ -411,7 +394,10 @@ async function main() {
   result.status = "pass";
   result.completedAt = new Date().toISOString();
   await writeFile(partialOutputPath, `${JSON.stringify(result, null, 2)}\n`);
-  await rename(partialOutputPath, config.outputPath);
+  if (result.captureKind === "publication") validateResult(result);
+  retainCapture(root, join(here, "results", result.captureKind === "publication" ? "." : "local"), result, benchmarkSourceFiles);
+  atomicWrite(config.outputPath, `${JSON.stringify(result, null, 2)}\n`);
+  await rm(partialOutputPath, { force: true });
   console.log(`\nResult written to ${config.outputPath}`);
 }
 

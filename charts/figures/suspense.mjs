@@ -45,14 +45,14 @@ function panel({ x, y, w, h, title, sub, rows, value, format, ideal = false }) {
 }
 
 export function suspenseLoad(tables, meta) {
-  // Use the fresh paired Proa/SvelteKit capture and retained Marko/React rows.
-  const table = pick(tables, ['Engine', 'Request rate (rps)', 'Steady completion rps', 'Shell P50', 'Complete P50'], {
+  const table = pick(tables, ['Engine', 'Request rate (rps)', 'Window completions/s', 'Shell P50', 'Complete P50'], {
     heading: 'Suspense streaming over HTTP',
   });
   const rows = table.objs.filter(row => row.Engine !== 'Proa').map((row) => ({
     engine: row.Engine,
     rate: num(row['Request rate (rps)']),
-    throughput: num(row['Steady completion rps']),
+    throughput: num(row['Window completions/s']),
+    shellP50Ms: toUs(row['Shell P50']) / 1000,
     p50Ms: toUs(row['Complete P50']) / 1000,
     p95Ms: toUs(row['Complete P95']) / 1000,
     p99Ms: toUs(row['Complete P99']) / 1000,

@@ -1,0 +1,14 @@
+.cache/
+node_modules/
+adapters/*/node_modules/
+adapters/*/cards.json
+adapters/next/.next/
+adapters/next/next-env.d.ts
+adapters/astro/.astro/
+adapters/astro/dist/
+adapters/exact/dist/
+adapters/exact/app.contract.d.ts
+adapters/exact/.exact/
+results/*.partial
+results/smoke.json
+results/smoke.md

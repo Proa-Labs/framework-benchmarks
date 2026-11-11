@@ -566,9 +566,8 @@ export function assertReadmeCurrent(
   if (proaRows.length !== 1) {
     throw new Error("the headline table must contain exactly one Proa row");
   }
-  const scoreboardHeaders = readme.match(
-    /^\| Renderer \| Component page \| 1,000-row table \| Product grid \|$/gm,
-  ) ?? [];
+  const expectedHeader = `| Renderer | ${workloadManifest.workloads.map(w => w.label).join(" | ")} |`;
+  const scoreboardHeaders = readme.split("\n").filter(line => line === expectedHeader);
   if (scoreboardHeaders.length !== 1) {
     throw new Error(
       "README must contain exactly one public rendering scoreboard",

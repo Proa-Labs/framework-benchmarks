@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-import { refreshProa } from "./refresh-proa.mjs";
-import { canonicalDocument, firstDifference } from "./dom.mjs";
 
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -15,16 +13,28 @@ import {
 import { cpus, release as osRelease, tmpdir, totalmem } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-
 import { chromium } from "playwright";
-import { renderingSourceFingerprint } from "./source_fingerprint.mjs";
+import { acquireRunLock } from "../../load/driver.mjs";
+import {
+  adapterInvocation,
+  readAdapters,
+  selectIds,
+} from "../../tooling/adapters.mjs";
+import {
+  atomicWrite,
+  captureId as newCaptureId,
+  retainCapture,
+} from "../../tooling/captures.mjs";
+import { canonicalDocument, firstDifference } from "./dom.mjs";
+import { refreshProa } from "./refresh-proa.mjs";
+import { validateCanonicalResult } from "./report.mjs";
+import {
+  renderingSourceFiles,
+  renderingSourceFingerprint,
+} from "./source_fingerprint.mjs";
 
-const expectedNodeVersion = "v24.20.0";
-if (process.version !== expectedNodeVersion) {
-  throw new Error(
-    `The canonical suite requires Node ${expectedNodeVersion}; running ${process.version}. Use ./rendering/run-all so the pinned runtime is selected.`,
-  );
-}
+if (process.versions.bun !== "1.4.2")
+  throw new Error("Use pinned Bun 1.4.2 via ./rendering/run-all");
 
 const canonicalDirectory = dirname(fileURLToPath(import.meta.url));
 const renderingDirectory = dirname(canonicalDirectory);
@@ -37,9 +47,29 @@ const roster = JSON.parse(
 const workloadManifest = JSON.parse(
   readFileSync(join(canonicalDirectory, "workloads.json"), "utf8"),
 );
+const adapters = readAdapters(workspaceDirectory);
 const refresh = process.argv.includes("--refresh-proa");
-const rendererIds = refresh ? ["proa"] : roster.renderers.map(({ id }) => id);
-const workloads = workloadManifest.workloads;
+const rendererIds = refresh
+  ? ["proa"]
+  : selectIds(
+      argument("--renderers"),
+      roster.renderers.map(({ id }) => id),
+      Object.keys(adapters),
+      "renderer",
+    );
+const workloads = selectIds(
+  argument("--workloads"),
+  workloadManifest.workloads.map(({ id }) => id),
+  workloadManifest.workloads.map(({ id }) => id),
+  "workload",
+).map((id) => workloadManifest.workloads.find((w) => w.id === id));
+const selectedRenderers = rendererIds.map((id) => adapters[id]);
+const referenceId = rendererIds.includes("proa") ? "proa" : "react";
+const requiredIds = [...new Set([referenceId, ...rendererIds])];
+const selectedSetups = new Set(requiredIds.map((id) => adapters[id].setup));
+const completeRoster =
+  rendererIds.join(",") === roster.renderers.map((r) => r.id).join(",") &&
+  workloads.length === workloadManifest.workloads.length;
 const smoke = process.argv.includes("--smoke");
 const skipSetup = process.argv.includes("--no-setup");
 const parityOnly = process.argv.includes("--parity-only");
@@ -51,6 +81,56 @@ function argument(name, fallback = undefined) {
   return index === -1 ? fallback : process.argv[index + 1];
 }
 
+const knownFlags = new Set([
+  "--refresh-proa",
+  "--smoke",
+  "--no-setup",
+  "--parity-only",
+  "--setup-only",
+  "--product-scaling",
+]);
+const valueFlags = new Set([
+  "--repeats",
+  "--renderers",
+  "--workloads",
+  "--out",
+]);
+for (let i = 2; i < process.argv.length; i++) {
+  const key = process.argv[i];
+  if (valueFlags.has(key)) {
+    if (!process.argv[i + 1] || process.argv[i + 1].startsWith("--"))
+      throw new Error(`${key} requires a value`);
+    i++;
+  } else if (!knownFlags.has(key)) throw new Error(`Unknown argument: ${key}`);
+}
+const outputOption = argument("--out");
+const explicitOutput = outputOption
+  ? resolve(workspaceDirectory, outputOption)
+  : null;
+const engineering =
+  !completeRoster || (!smoke && argument("--repeats", "5") !== "5");
+if (engineering && !smoke && !explicitOutput && !parityOnly && !setupOnly)
+  throw new Error(
+    "Selected/custom runs require --smoke or an explicit --out path",
+  );
+if (
+  explicitOutput &&
+  [
+    "rendering/results/latest.json",
+    "rendering/results/product-scaling.json",
+    "page-load/results/latest.json",
+    "suspense-load/results/latest.json",
+    "cold-start/results/latest.json",
+    "framework-ssr/results/latest.json",
+  ].some((path) => resolve(workspaceDirectory, path) === explicitOutput)
+)
+  throw new Error(
+    "--out must not target a published capture; omit --out for a full publication run",
+  );
+const storageDirectory =
+  smoke || engineering || explicitOutput
+    ? join(resultDirectory, "local")
+    : resultDirectory;
 const repeats = Number(argument("--repeats", smoke ? 1 : 5));
 if (!Number.isInteger(repeats) || repeats < 1) {
   throw new Error("--repeats must be a positive integer");
@@ -92,7 +172,7 @@ function resolveRuby() {
   const versionCheck =
     "major, minor = RUBY_VERSION.split('.').first(2).map(&:to_i); exit(major > 3 || (major == 3 && minor >= 2) ? 0 : 1)";
   const ruby = candidates.find((candidate) =>
-    commandExists(candidate, ["-e", versionCheck])
+    commandExists(candidate, ["-e", versionCheck]),
   );
   if (!ruby) throw new Error("Ruby 3.2+ is required for Rails");
   const rubyPath = ruby.includes("/") ? ruby : run("which", [ruby]).trim();
@@ -113,14 +193,16 @@ function resolveJavaEnvironment() {
   const javaHome = homes.find((home) => existsSync(join(home, "bin", "java")));
   if (!javaHome) throw new Error("Java 17+ is required for jte and Rocker");
   return {
-    ...process.env,
     JAVA_HOME: javaHome,
     PATH: `${join(javaHome, "bin")}:${process.env.PATH}`,
   };
 }
 
-const ruby = refresh ? null : resolveRuby();
-const javaEnvironment = refresh ? null : resolveJavaEnvironment();
+const ruby = selectedSetups.has("rails") ? resolveRuby() : null;
+const javaEnvironment =
+  selectedSetups.has("jte") || selectedSetups.has("rocker")
+    ? resolveJavaEnvironment()
+    : null;
 const railsDirectory = join(externalDirectory, "rails");
 const rustBinary = join(
   workspaceDirectory,
@@ -155,230 +237,106 @@ function railsOptions() {
   };
 }
 
-function npmBinary() {
-  const candidate = join(dirname(process.execPath), "npm");
-  return existsSync(candidate) ? candidate : "npm";
-}
-
-function ensureNodePackage(directory, sentinel) {
-  const installedPath = join(
-    directory,
-    "node_modules",
-    sentinel,
-    "package.json",
-  );
-  const lockPath = join(directory, "package-lock.json");
-  const expected = JSON.parse(readFileSync(lockPath, "utf8"))
-    .packages?.[`node_modules/${sentinel}`]?.version;
-  const installed = existsSync(installedPath)
-    ? JSON.parse(readFileSync(installedPath, "utf8")).version
-    : null;
-  if (expected && installed === expected) return;
-  console.log(`Installing pinned dependencies in ${directory}`);
-  run(npmBinary(), ["ci", "--silent"], { cwd: directory, stdio: "inherit" });
-}
-
 function buildAll() {
-  console.log("Building all canonical adapters");
-  ensureNodePackage(join(externalDirectory, "react"), "react");
-  ensureNodePackage(join(externalDirectory, "marko"), "marko");
-  ensureNodePackage(join(externalDirectory, "handlebars"), "handlebars");
-  ensureNodePackage(join(externalDirectory, "vue"), "vue");
-  ensureNodePackage(join(externalDirectory, "svelte"), "svelte");
-
-  try {
-    run(ruby.bundle, ["check"], { ...railsOptions(), stdio: "ignore" });
-  } catch {
+  console.log(`Building selected adapters: ${requiredIds.join(", ")}`);
+  for (const id of requiredIds) {
+    const adapter = adapters[id];
+    if (adapter.setup === "bun")
+      run(process.execPath, ["install", "--frozen-lockfile"], {
+        cwd: resolve(workspaceDirectory, adapter.cwd),
+        stdio: "inherit",
+      });
+    if (adapter.build)
+      run(
+        adapter.build[0] === "{bun}" ? process.execPath : adapter.build[0],
+        adapter.build.slice(1),
+        { cwd: resolve(workspaceDirectory, adapter.cwd), stdio: "inherit" },
+      );
+  }
+  if (selectedSetups.has("rust"))
     run(
-      ruby.bundle,
-      ["config", "set", "--local", "path", ".gems"],
-      railsOptions(),
+      "cargo",
+      [
+        "build",
+        "--locked",
+        "--release",
+        "-p",
+        "proa_bench",
+        "--features",
+        "topcoat",
+        "--bin",
+        "representative_suite_bench",
+      ],
+      { stdio: "inherit" },
     );
-    run(ruby.bundle, ["install", "--quiet"], {
-      ...railsOptions(),
+  if (selectedSetups.has("rails")) {
+    try {
+      run(ruby.bundle, ["check"], { ...railsOptions(), stdio: "ignore" });
+    } catch {
+      run(ruby.bundle, ["install"], { ...railsOptions(), stdio: "inherit" });
+    }
+  }
+  if (selectedSetups.has("go")) {
+    mkdirSync(dirname(goBinary), { recursive: true });
+    run("go", ["build", "-trimpath", "-o", goBinary, "suite_bench.go"], {
+      cwd: join(externalDirectory, "go"),
       stdio: "inherit",
     });
   }
-
-  run("cargo", [
-    "build",
-    "--locked",
-    "--release",
-    "-p",
-    "proa_bench",
-    "--features",
-    "topcoat",
-    "--bin",
-    "representative_suite_bench",
-  ], { cwd: workspaceDirectory, stdio: "inherit" });
-  mkdirSync(dirname(goBinary), { recursive: true });
-  run("go", ["build", "-trimpath", "-o", goBinary, "suite_bench.go"], {
-    cwd: join(externalDirectory, "go"),
-    stdio: "inherit",
-  });
-
-  const jinjaDirectory = join(externalDirectory, "jinja");
-  const python = join(jinjaDirectory, ".venv", "bin", "python3");
-  if (!existsSync(python)) {
-    run("python3", ["-m", "venv", ".venv"], {
-      cwd: jinjaDirectory,
-      stdio: "inherit",
-    });
+  if (selectedSetups.has("jinja2")) {
+    const cwd = join(externalDirectory, "jinja");
+    if (!existsSync(join(cwd, ".venv/bin/python3")))
+      run("python3", ["-m", "venv", ".venv"], { cwd, stdio: "inherit" });
+    run(
+      join(cwd, ".venv/bin/pip"),
+      ["install", "-q", "-r", "requirements.txt"],
+      { cwd, stdio: "inherit" },
+    );
   }
-  run(join(jinjaDirectory, ".venv", "bin", "pip"), [
-    "install",
-    "-q",
-    "-r",
-    "requirements.txt",
-  ], { cwd: jinjaDirectory, stdio: "inherit" });
-
-  if (!commandExists("gradle", ["--version"], { env: javaEnvironment })) {
-    throw new Error("Gradle is required to build jte and Rocker");
-  }
-  run("gradle", [
-    "--no-daemon",
-    "--quiet",
-    "installDist",
-    "copyJteBinaryStaticContent",
-  ], {
-    cwd: join(externalDirectory, "jte"),
-    env: javaEnvironment,
-    stdio: "inherit",
-  });
-  run("gradle", ["--no-daemon", "--quiet", "installDist"], {
-    cwd: join(externalDirectory, "rocker"),
-    env: javaEnvironment,
-    stdio: "inherit",
-  });
-  if (!commandExists("php", ["--version"])) {
-    throw new Error("PHP is required for the canonical PHP adapter");
-  }
+  for (const id of ["jte", "rocker"])
+    if (selectedSetups.has(id)) {
+      run(
+        "gradle",
+        [
+          "--no-daemon",
+          "--quiet",
+          "installDist",
+          ...(id === "jte" ? ["copyJteBinaryStaticContent"] : []),
+        ],
+        {
+          cwd: join(externalDirectory, id),
+          env: { ...process.env, ...javaEnvironment },
+          stdio: "inherit",
+        },
+      );
+    }
+  if (selectedSetups.has("php") && !commandExists("php", ["--version"]))
+    throw new Error("PHP is required for this adapter");
 }
 
 function invocation(rendererId, workloadId, extraArguments) {
-  if (
-    ["proa", "askama", "sailfish", "leptos", "dioxus", "topcoat"].includes(
-      rendererId,
-    )
-  ) {
-    return {
-      command: rustBinary,
-      args: [
-        "--framework",
-        rendererId,
-        "--workload",
-        workloadId,
-        ...extraArguments,
-      ],
-      options: { cwd: workspaceDirectory },
-    };
-  }
-  if (rendererId === "react") {
-    return {
-      command: process.execPath,
-      args: ["suite_bench.mjs", "--workload", workloadId, ...extraArguments],
-      options: {
-        cwd: join(externalDirectory, "react"),
-        env: { ...process.env, NODE_ENV: "production" },
+  const adapter = adapters[rendererId];
+  const selected = adapterInvocation(adapter, workspaceDirectory, {
+    bun: process.execPath,
+    bundle: ruby?.bundle,
+  });
+  return {
+    ...selected,
+    args: [...selected.args, "--workload", workloadId, ...extraArguments],
+    options: {
+      cwd: selected.cwd,
+      env: {
+        ...process.env,
+        ...(adapter.setup === "jte" || adapter.setup === "rocker"
+          ? javaEnvironment
+          : {}),
+        NODE_ENV: "production",
+        ...(adapter.setup === "rails"
+          ? { PATH: `${ruby.rubyDirectory}:${process.env.PATH}` }
+          : {}),
       },
-    };
-  }
-  if (rendererId === "marko") {
-    return {
-      command: process.execPath,
-      args: ["suite_bench.mjs", "--workload", workloadId, ...extraArguments],
-      options: { cwd: join(externalDirectory, "marko") },
-    };
-  }
-  if (rendererId === "vue" || rendererId === "svelte") {
-    return {
-      command: process.execPath,
-      args: ["suite_bench.mjs", "--workload", workloadId, ...extraArguments],
-      options: {
-        cwd: join(externalDirectory, rendererId),
-        env: { ...process.env, NODE_ENV: "production" },
-      },
-    };
-  }
-  if (rendererId === "handlebars") {
-    return {
-      command: process.execPath,
-      args: ["suite_bench.mjs", "--workload", workloadId, ...extraArguments],
-      options: { cwd: join(externalDirectory, "handlebars") },
-    };
-  }
-  if (rendererId === "rails") {
-    return {
-      command: ruby.bundle,
-      args: [
-        "exec",
-        "ruby",
-        "suite_bench.rb",
-        "--workload",
-        workloadId,
-        ...extraArguments,
-      ],
-      options: railsOptions(),
-    };
-  }
-  if (rendererId === "go-html-template") {
-    return {
-      command: goBinary,
-      args: ["--workload", workloadId, ...extraArguments],
-      options: { cwd: join(externalDirectory, "go") },
-    };
-  }
-  if (rendererId === "jinja2") {
-    return {
-      command: join(externalDirectory, "jinja", ".venv", "bin", "python3"),
-      args: ["suite_bench.py", "--workload", workloadId, ...extraArguments],
-      options: { cwd: join(externalDirectory, "jinja") },
-    };
-  }
-  if (rendererId === "php") {
-    return {
-      command: "php",
-      args: ["suite_bench.php", "--workload", workloadId, ...extraArguments],
-      options: { cwd: join(externalDirectory, "php") },
-    };
-  }
-  if (rendererId === "jte") {
-    return {
-      command: jteBinary,
-      args: ["--workload", workloadId, ...extraArguments],
-      options: {
-        cwd: join(externalDirectory, "jte"),
-        env: {
-          ...javaEnvironment,
-          ...(process.env.PROA_BENCH_PRODUCT_COUNT
-            ? {
-              PROA_BENCH_PRODUCT_COUNT:
-                process.env.PROA_BENCH_PRODUCT_COUNT,
-            }
-            : {}),
-        },
-      },
-    };
-  }
-  if (rendererId === "rocker") {
-    return {
-      command: rockerBinary,
-      args: ["--workload", workloadId, ...extraArguments],
-      options: {
-        cwd: join(externalDirectory, "rocker"),
-        env: {
-          ...javaEnvironment,
-          ...(process.env.PROA_BENCH_PRODUCT_COUNT
-            ? {
-              PROA_BENCH_PRODUCT_COUNT:
-                process.env.PROA_BENCH_PRODUCT_COUNT,
-            }
-            : {}),
-        },
-      },
-    };
-  }
-  throw new Error(`unknown canonical renderer ${rendererId}`);
+    },
+  };
 }
 
 function runCell(rendererId, workloadId, extraArguments) {
@@ -390,7 +348,7 @@ function sha256(value) {
   return createHash("sha256").update(value).digest("hex");
 }
 
-
+const parityBytes = {};
 async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
   console.log(
     `Parity gate: ${rendererIds.length} renderers × ${activeWorkloads.length} workloads`,
@@ -398,12 +356,12 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
   const browser = await chromium.launch({ headless: true });
   const browserVersion = browser.version();
   const page = await browser.newPage();
-  const parity = Object.fromEntries(rendererIds.map((id) => [id, {}]));
+  const parity = Object.fromEntries(requiredIds.map((id) => [id, {}]));
   try {
     for (const workload of activeWorkloads) {
       let expectedHtml;
       let expectedCanonical;
-      for (const rendererId of rendererIds) {
+      for (const rendererId of requiredIds) {
         const dumpPath = join(
           temporaryDirectory,
           `${workload.id}-${rendererId}.html`,
@@ -411,16 +369,18 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
         runCell(rendererId, workload.id, ["--dump", dumpPath, "--dump-only"]);
         const html = readFileSync(dumpPath, "utf8");
         const canonical = JSON.stringify(await canonicalDocument(page, html));
-        if (rendererId === "proa") {
+        if (rendererId === referenceId) {
           expectedHtml = html;
           expectedCanonical = canonical;
-          const adversarial = html.replace(
-            "SSR Framework Benchmark",
-            "SSR Framework Benchmark changed",
-          ).replace("Customer Accounts", "Customer Accounts changed").replace(
-            "All products",
-            "All products changed",
-          );
+          const control =
+            workload.negative_control ??
+            workloadManifest.workloads.find((w) => w.id === workload.id)
+              ?.negative_control;
+          if (!control?.from || !control?.to || !html.includes(control.from))
+            throw new Error(
+              `${workload.id} needs a negative_control fixture mutation`,
+            );
+          const adversarial = html.replace(control.from, control.to);
           const changed = JSON.stringify(
             await canonicalDocument(page, adversarial),
           );
@@ -435,21 +395,23 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
             `${rendererId}/${workload.id} failed semantic DOM parity at canonical byte ${difference.index}\nexpected: ${difference.expected}\nactual:   ${difference.actual}`,
           );
         }
+        parityBytes[rendererId] ??= {};
+        parityBytes[rendererId][workload.id] = Buffer.byteLength(html);
         parity[rendererId][workload.id] = {
           status: "pass",
           mode: "semantic DOM",
           canonical_sha256: sha256(canonical),
           output_bytes: Buffer.byteLength(html),
-          payload_delta_bytes: Buffer.byteLength(html) -
-            Buffer.byteLength(expectedHtml),
+          payload_delta_bytes:
+            Buffer.byteLength(html) - Buffer.byteLength(expectedHtml),
           byte_equal_to_proa: html === expectedHtml,
         };
         process.stdout.write(".");
       }
       console.log(
-        ` ${workload.id} ${
-          parity.proa[workload.id].canonical_sha256.slice(0, 16)
-        }`,
+        ` ${workload.id} ${parity[referenceId][
+          workload.id
+        ].canonical_sha256.slice(0, 16)}`,
       );
     }
   } finally {
@@ -483,8 +445,9 @@ function benchmark(temporaryDirectory, activeWorkloads = workloads) {
       const workload = activeWorkloads[workloadIndex];
       const iterations = smoke ? 3 : workload.iterations;
       const warmup = smoke ? 1 : workload.warmup;
-      const rotated = rendererIds.map((_, index) =>
-        rendererIds[(index + repeat + workloadIndex) % rendererIds.length]
+      const rotated = rendererIds.map(
+        (_, index) =>
+          rendererIds[(index + repeat + workloadIndex) % rendererIds.length],
       );
       for (const rendererId of rotated) {
         const resultPath = join(
@@ -515,6 +478,31 @@ function benchmark(temporaryDirectory, activeWorkloads = workloads) {
             `${rendererId}/${workload.id} does not declare fresh independently owned output: ${cell.allocation_policy}`,
           );
         }
+        for (const metric of [
+          "min_us",
+          "mean_us",
+          "p50_us",
+          "p95_us",
+          "p99_us",
+          "max_us",
+        ]) {
+          if (!Number.isFinite(cell[metric]) || cell[metric] < 0)
+            throw new Error(`${rendererId}/${workload.id}: invalid ${metric}`);
+        }
+        if (
+          !(
+            cell.min_us <= cell.p50_us &&
+            cell.p50_us <= cell.p95_us &&
+            cell.p95_us <= cell.p99_us &&
+            cell.p99_us <= cell.max_us
+          ) ||
+          cell.iterations !== iterations ||
+          cell.warmup !== warmup ||
+          cell.output_bytes !== parityBytes[rendererId]?.[workload.id]
+        )
+          throw new Error(
+            `${rendererId}/${workload.id}: timing/output contract mismatch`,
+          );
         processResults.push({ ...cell, repeat });
         console.log(output.split("\n")[0]);
       }
@@ -524,8 +512,9 @@ function benchmark(temporaryDirectory, activeWorkloads = workloads) {
   const measurements = Object.fromEntries(rendererIds.map((id) => [id, {}]));
   for (const rendererId of rendererIds) {
     for (const workload of activeWorkloads) {
-      const cells = processResults.filter((cell) =>
-        cell.framework_id === rendererId && cell.workload === workload.id
+      const cells = processResults.filter(
+        (cell) =>
+          cell.framework_id === rendererId && cell.workload === workload.id,
       );
       if (cells.length !== repeats) {
         throw new Error(
@@ -591,17 +580,16 @@ async function captureProductScaling(temporaryDirectory) {
       processResults.push(...benchmarkResult.processResults);
     }
   } finally {
-    if (previousCount === undefined) delete process.env.PROA_BENCH_PRODUCT_COUNT;
+    if (previousCount === undefined)
+      delete process.env.PROA_BENCH_PRODUCT_COUNT;
     else process.env.PROA_BENCH_PRODUCT_COUNT = previousCount;
   }
 
   const benchmarkVersion = "product-scaling-v1";
-  const captureId = `${benchmarkVersion}-${capturedAt.slice(0, 10)}-${
-    fingerprint.slice(0, 12)
-  }`;
+  const captureId = newCaptureId(benchmarkVersion, capturedAt);
   const environment = metadata(capturedAt, fingerprint, browserVersion);
   if (!smoke) {
-    const rawDirectory = join(resultDirectory, "raw", captureId);
+    const rawDirectory = join(storageDirectory, "raw", captureId);
     mkdirSync(rawDirectory, { recursive: true });
     writeFileSync(
       join(rawDirectory, "process-summaries.json"),
@@ -618,7 +606,7 @@ async function captureProductScaling(temporaryDirectory) {
     completed_at: new Date().toISOString(),
     host: environment.host,
     counts,
-    renderers: roster.renderers.map(({ id, label, language }) => ({
+    renderers: selectedRenderers.map(({ id, label, language }) => ({
       id,
       label,
       language,
@@ -637,12 +625,24 @@ async function captureProductScaling(temporaryDirectory) {
       ? {}
       : { raw_artifact: `raw/${captureId}/process-summaries.json` }),
   };
-  const outputName = smoke ? "product-scaling-smoke.json" : "product-scaling.json";
-  writeFileSync(
-    join(resultDirectory, outputName),
+  const outputName =
+    smoke || engineering
+      ? "product-scaling-smoke.json"
+      : "product-scaling.json";
+  retainCapture(
+    workspaceDirectory,
+    storageDirectory,
+    result,
+    renderingSourceFiles(workspaceDirectory),
+    { prefix: "/" },
+  );
+  atomicWrite(
+    explicitOutput ?? join(resultDirectory, outputName),
     `${JSON.stringify(result, null, 2)}\n`,
   );
-  console.log(`Product-scaling capture passed and wrote rendering/results/${outputName}.`);
+  console.log(
+    `Product-scaling capture passed and wrote rendering/results/${outputName}.`,
+  );
 }
 
 function sourceFingerprint() {
@@ -689,29 +689,79 @@ function proaVersion() {
   return `${dependency.version}${commit ? ` @ ${commit}` : ""}${branchNote}`;
 }
 
+function adapterVersions(base) {
+  for (const adapter of selectedRenderers)
+    if (!base[adapter.label]) {
+      if (adapter.versionPackage)
+        base[adapter.label] = packageVersion(
+          resolve(workspaceDirectory, adapter.cwd),
+          adapter.versionPackage,
+        );
+      else if (adapter.versionCommand) {
+        const selected = adapterInvocation(
+          {
+            ...adapter,
+            command: adapter.versionCommand[0],
+            args: adapter.versionCommand.slice(1),
+          },
+          workspaceDirectory,
+          { bun: process.execPath, bundle: ruby?.bundle },
+        );
+        base[adapter.label] = firstLine(selected.command, selected.args, {
+          cwd: selected.cwd,
+        });
+      }
+      if (!base[adapter.label]) {
+        if (!smoke && !engineering && !explicitOutput)
+          throw new Error(
+            `${adapter.id}: set versionPackage or versionCommand before publication`,
+          );
+        base[adapter.label] = "local adapter; see captured source";
+      }
+    }
+  return Object.fromEntries(
+    Object.entries(base).filter(([label]) =>
+      [
+        "Playwright",
+        "Chromium",
+        ...selectedRenderers.map((r) => r.label),
+      ].includes(label),
+    ),
+  );
+}
+
 function metadata(capturedAt, fingerprint, browserVersion) {
   const firstCpu = cpus()[0];
-  const node = process.version;
-  const rust = firstLine("rustc", ["--version"]);
-  const rubyVersion = firstLine(ruby.ruby, ["-v"]);
-  const railsVersion = firstLine(
-    ruby.bundle,
-    ["exec", "rails", "--version"],
-    railsOptions(),
-  );
-  const java = firstLine(join(javaEnvironment.JAVA_HOME, "bin", "java"), [
-    "--version",
-  ], { env: javaEnvironment });
-  const go = firstLine("go", ["version"]);
-  const python = firstLine(
-    join(externalDirectory, "jinja", ".venv", "bin", "python3"),
-    ["--version"],
-  );
-  const php = firstLine("php", ["--version"]);
-  const jinja = firstLine(
-    join(externalDirectory, "jinja", ".venv", "bin", "python3"),
-    ["-c", "import jinja2; print(jinja2.__version__)"],
-  );
+  const node = process.versions.bun
+    ? `Bun ${process.versions.bun}`
+    : `Node ${process.version}`;
+  const rust = selectedSetups.has("rust")
+    ? firstLine("rustc", ["--version"])
+    : null;
+  const rubyVersion = ruby ? firstLine(ruby.ruby, ["-v"]) : null;
+  const railsVersion = ruby
+    ? firstLine(ruby.bundle, ["exec", "rails", "--version"], railsOptions())
+    : null;
+  const java = javaEnvironment
+    ? firstLine(join(javaEnvironment.JAVA_HOME, "bin", "java"), ["--version"], {
+        env: { ...process.env, ...javaEnvironment },
+      })
+    : null;
+  const go = selectedSetups.has("go") ? firstLine("go", ["version"]) : null;
+  const python = selectedSetups.has("jinja2")
+    ? firstLine(join(externalDirectory, "jinja", ".venv", "bin", "python3"), [
+        "--version",
+      ])
+    : null;
+  const php = selectedSetups.has("php")
+    ? firstLine("php", ["--version"])
+    : null;
+  const jinja = selectedSetups.has("jinja2")
+    ? firstLine(join(externalDirectory, "jinja", ".venv", "bin", "python3"), [
+        "-c",
+        "import jinja2; print(jinja2.__version__)",
+      ])
+    : null;
   const jte = dependencyVersion(
     join(externalDirectory, "jte", "build.gradle"),
     /gg\.jte:jte:([^']+)'/,
@@ -724,34 +774,37 @@ function metadata(capturedAt, fingerprint, browserVersion) {
     captured_at: capturedAt,
     host: {
       cpu_model: firstCpu?.model ?? "unknown CPU",
+      cloud: process.env.BENCH_HOST_LABEL || null,
+      server_cpu_affinity: process.env.BENCH_SERVER_CPU || null,
       logical_cpus: cpus().length,
       memory_bytes: totalmem(),
       architecture: process.arch,
-      os_name: process.platform === "darwin"
-        ? "macOS (Darwin)"
-        : process.platform,
+      os_name:
+        process.platform === "darwin" ? "macOS (Darwin)" : process.platform,
       os_release: osRelease(),
     },
-    versions: {
+    versions: adapterVersions({
       Proa: `${proaVersion()} / ${rust}`,
-      Marko: `${
-        packageVersion(join(externalDirectory, "marko"), "marko")
-      } / Node ${node}`,
-      React: `${
-        packageVersion(join(externalDirectory, "react"), "react")
-      } / Node ${node}`,
-      Vue: `${
-        packageVersion(join(externalDirectory, "vue"), "vue")
-      } / Node ${node}`,
-      Svelte: `${
-        packageVersion(join(externalDirectory, "svelte"), "svelte")
-      } / Node ${node}`,
+      Marko: `${packageVersion(
+        join(externalDirectory, "marko"),
+        "marko",
+      )} / ${node}`,
+      React: `${packageVersion(
+        join(externalDirectory, "react"),
+        "react",
+      )} / ${node}`,
+      Vue: `${packageVersion(join(externalDirectory, "vue"), "vue")} / ${node}`,
+      Svelte: `${packageVersion(
+        join(externalDirectory, "svelte"),
+        "svelte",
+      )} / ${node}`,
       Rails: `${railsVersion} / ${rubyVersion}`,
       jte: `${jte} / ${java}`,
       Rocker: `${rocker} / ${java}`,
-      Handlebars: `${
-        packageVersion(join(externalDirectory, "handlebars"), "handlebars")
-      } / Node ${node}`,
+      Handlebars: `${packageVersion(
+        join(externalDirectory, "handlebars"),
+        "handlebars",
+      )} / ${node}`,
       "Go html/template": go,
       Jinja2: `${jinja} / ${python}`,
       PHP: php,
@@ -764,55 +817,80 @@ function metadata(capturedAt, fingerprint, browserVersion) {
       Topcoat: `${cargoPackage("topcoat").version} / ${rust}`,
       Playwright: packageVersion(workspaceDirectory, "playwright"),
       Chromium: browserVersion,
-    },
+    }),
     provenance: {
       harness_commit: run("git", ["rev-parse", "HEAD"], {
         cwd: workspaceDirectory,
       }).trim(),
-      dirty: run("git", ["status", "--porcelain"], { cwd: workspaceDirectory })
-        .trim().length > 0,
+      dirty:
+        run("git", ["status", "--porcelain"], {
+          cwd: workspaceDirectory,
+        }).trim().length > 0,
       source_sha256: fingerprint,
     },
   };
 }
 
-if (refresh) {
-  if (smoke || parityOnly || setupOnly || repeats !== 5) throw new Error("PROA refresh requires the full five-process protocol");
-  if (!skipSetup) run("cargo", ["build", "--locked", "--release", "-p", "proa_bench", "--features", "topcoat", "--bin", "representative_suite_bench"], {stdio:"inherit"});
-  const temporaryDirectory = mkdtempSync(join(tmpdir(), "proa-refresh-"));
-  try {
-    await refreshProa({root: workspaceDirectory, workloads, benchmark, parityGate, fingerprint: sourceFingerprint(), temporaryDirectory, scaling: productScaling});
-    run(process.execPath, [join(renderingDirectory, "generate-report.mjs")], {stdio:"inherit"});
-  } finally { rmSync(temporaryDirectory, {recursive:true, force:true}); }
-  process.exit(0);
-}
-
-if (!skipSetup) buildAll();
-if (setupOnly) {
-  console.log("All canonical adapters are built and ready.");
-  process.exit(0);
-}
-for (const path of [rustBinary, goBinary, jteBinary, rockerBinary]) {
-  if (!existsSync(path)) {
-    throw new Error(`canonical adapter build output is missing: ${path}`);
-  }
-}
-
-mkdirSync(resultDirectory, { recursive: true });
-const temporaryDirectory = mkdtempSync(join(tmpdir(), "proa-canonical-"));
+const releaseRunLock = await acquireRunLock(workspaceDirectory, "canonical");
+let temporaryDirectory;
 try {
-  if (productScaling) {
-    await captureProductScaling(temporaryDirectory);
+  if (refresh) {
+    if (
+      smoke ||
+      parityOnly ||
+      setupOnly ||
+      explicitOutput ||
+      repeats !== 5 ||
+      argument("--renderers") ||
+      argument("--workloads")
+    )
+      throw new Error(
+        "PROA refresh requires the full five-process protocol without custom selections/output",
+      );
+    if (!skipSetup) buildAll();
+    temporaryDirectory = mkdtempSync(join(tmpdir(), "proa-refresh-"));
+    await refreshProa({
+      root: workspaceDirectory,
+      workloads,
+      benchmark,
+      parityGate,
+      fingerprint: sourceFingerprint(),
+      temporaryDirectory,
+      scaling: productScaling,
+    });
   } else {
-    const capturedAt = new Date().toISOString();
-    const fingerprint = sourceFingerprint();
-    const parityRun = await parityGate(temporaryDirectory);
-    const parity = parityRun.parity;
-    if (parityOnly) {
-      writeFileSync(
-        join(resultDirectory, "canonical-parity.json"),
-        `${
-          JSON.stringify(
+    if (!skipSetup) buildAll();
+    if (setupOnly) {
+      console.log("All canonical adapters are built and ready.");
+      await releaseRunLock();
+      process.exit(0);
+    }
+    for (const path of [
+      ["rust", rustBinary],
+      ["go", goBinary],
+      ["jte", jteBinary],
+      ["rocker", rockerBinary],
+    ]
+      .filter(([setup]) => selectedSetups.has(setup))
+      .map(([, path]) => path)) {
+      if (!existsSync(path)) {
+        throw new Error(`canonical adapter build output is missing: ${path}`);
+      }
+    }
+
+    mkdirSync(resultDirectory, { recursive: true });
+    temporaryDirectory = mkdtempSync(join(tmpdir(), "proa-canonical-"));
+    if (productScaling) {
+      await captureProductScaling(temporaryDirectory);
+    } else {
+      const capturedAt = new Date().toISOString();
+      const fingerprint = sourceFingerprint();
+      const parityRun = await parityGate(temporaryDirectory);
+      const parity = parityRun.parity;
+      if (parityOnly) {
+        writeFileSync(
+          join(resultDirectory, "canonical-parity.json"),
+          `${JSON.stringify(
             {
               schema_version: 1,
               captured_at: capturedAt,
@@ -821,106 +899,125 @@ try {
             },
             null,
             2,
-          )
-        }\n`,
-      );
-      console.log(
-        "All canonical parity cells passed; timing was not requested.",
-      );
-    }
-    if (!parityOnly) {
-      const benchmarkResult = benchmark(temporaryDirectory);
-      const captureId = `canonical-ssr-v1-${capturedAt.slice(0, 10)}-${
-        fingerprint.slice(0, 12)
-      }`;
-      for (const renderer of roster.renderers) {
-        for (const workload of workloads) {
-          benchmarkResult.measurements[renderer.id][workload.id].capture_id =
-            captureId;
-        }
+          )}\n`,
+        );
+        console.log(
+          "All canonical parity cells passed; timing was not requested.",
+        );
       }
-      const environment = metadata(
-        capturedAt,
-        fingerprint,
-        parityRun.browserVersion,
-      );
-      const result = {
-        schema_version: 2,
-        benchmark_version: "canonical-ssr-v1",
-        capture_id: captureId,
-        capture_kind: smoke ? "smoke" : "canonical",
-        status: "pass",
-        captured_at: capturedAt,
-        completed_at: new Date().toISOString(),
-        host: environment.host,
-        workloads,
-        renderers: roster.renderers.map(({ id, label, language }) => ({
-          id,
-          label,
-          language,
-          status: "included",
-        })),
-        parity,
-        measurements: benchmarkResult.measurements,
-        versions: environment.versions,
-        provenance: environment.provenance,
-        commands: [
-          "npm ci (React, Marko, and Handlebars adapter directories)",
-          "bundle check || bundle install (Rails adapter directory)",
-          "cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench",
-          "go build -trimpath -o rendering/external/go/build/canonical_suite rendering/external/go/suite_bench.go",
-          "python3 -m venv rendering/external/jinja/.venv && pip install -r rendering/external/jinja/requirements.txt",
-          "gradle --no-daemon --quiet installDist copyJteBinaryStaticContent (jte adapter directory)",
-          "gradle --no-daemon --quiet installDist (Rocker adapter directory)",
-          "./rendering/run-all",
-        ],
-        limitations: [
-          "Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.",
-          "Semantic DOM parity permits documented serializer metadata and whitespace differences; payload deltas remain visible.",
-          "This capture describes one machine and these three workloads; it is not a universal application ranking.",
-        ],
-        raw_artifacts: smoke
-          ? [{ label: "Smoke result", path: "canonical-smoke.json" }]
-          : [
+      if (!parityOnly) {
+        const benchmarkResult = benchmark(temporaryDirectory);
+        const captureId = newCaptureId("canonical-ssr-v1", capturedAt);
+        for (const renderer of selectedRenderers) {
+          for (const workload of workloads) {
+            benchmarkResult.measurements[renderer.id][workload.id].capture_id =
+              captureId;
+          }
+        }
+        const environment = metadata(
+          capturedAt,
+          fingerprint,
+          parityRun.browserVersion,
+        );
+        const result = {
+          schema_version: 2,
+          benchmark_version: "canonical-ssr-v1",
+          capture_id: captureId,
+          capture_kind: smoke
+            ? "smoke"
+            : engineering
+              ? "engineering"
+              : "canonical",
+          status: "pass",
+          captured_at: capturedAt,
+          completed_at: new Date().toISOString(),
+          host: environment.host,
+          workloads,
+          renderers: selectedRenderers.map(({ id, label, language }) => ({
+            id,
+            label,
+            language,
+            status: "included",
+          })),
+          parity,
+          measurements: benchmarkResult.measurements,
+          versions: environment.versions,
+          provenance: environment.provenance,
+          commands: [
+            "bun install --frozen-lockfile (JavaScript adapter directories)",
+            "bundle check || bundle install (Rails adapter directory)",
+            "cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench",
+            "go build -trimpath -o rendering/external/go/build/canonical_suite rendering/external/go/suite_bench.go",
+            "python3 -m venv rendering/external/jinja/.venv && pip install -r rendering/external/jinja/requirements.txt",
+            "gradle --no-daemon --quiet installDist copyJteBinaryStaticContent (jte adapter directory)",
+            "gradle --no-daemon --quiet installDist (Rocker adapter directory)",
+            ["bun", "rendering/canonical/run.mjs", ...process.argv.slice(2)]
+              .map((value) => JSON.stringify(value))
+              .join(" "),
+          ],
+          limitations: [
+            "Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.",
+            "Semantic DOM parity permits documented serializer metadata and whitespace differences; payload deltas remain visible.",
+            "This capture describes one machine and these three workloads; it is not a universal application ranking.",
+          ],
+          raw_artifacts: [
             {
               label: "Per-process summaries",
               path: `raw/${captureId}/process-summaries.json`,
             },
             { label: "Result-table migration map", path: "../MIGRATION.md" },
           ],
-      };
-      if (smoke) {
-        writeFileSync(
-          join(resultDirectory, "canonical-smoke.json"),
-          `${JSON.stringify(result, null, 2)}\n`,
-        );
-        console.log(
-          "Smoke capture passed; public latest files were not modified.",
-        );
-      } else {
-        const rawDirectory = join(resultDirectory, "raw", captureId);
+        };
+        const rawDirectory = join(storageDirectory, "raw", captureId);
         mkdirSync(rawDirectory, { recursive: true });
         writeFileSync(
           join(rawDirectory, "process-summaries.json"),
           `${JSON.stringify(benchmarkResult.processResults, null, 2)}\n`,
+          { flag: "wx" },
         );
-        mkdirSync(join(resultDirectory, "archive"), { recursive: true });
-        writeFileSync(
-          join(resultDirectory, "latest.json"),
-          `${JSON.stringify(result, null, 2)}\n`,
-        );
-        writeFileSync(
-          join(resultDirectory, "archive", `${captureId}.json`),
-          `${JSON.stringify(result, null, 2)}\n`,
-        );
-        run(process.execPath, [join(renderingDirectory, "generate-report.mjs")], {
-          cwd: workspaceDirectory,
-          stdio: "inherit",
-        });
-        console.log(`Canonical capture ${captureId} is complete.`);
+        if (smoke || engineering || explicitOutput) {
+          retainCapture(
+            workspaceDirectory,
+            storageDirectory,
+            result,
+            renderingSourceFiles(workspaceDirectory),
+            { prefix: "/" },
+          );
+          atomicWrite(
+            explicitOutput ?? join(resultDirectory, "canonical-smoke.json"),
+            `${JSON.stringify(result, null, 2)}\n`,
+          );
+          console.log(
+            `Local capture ${captureId} passed; public latest files were not modified.`,
+          );
+        } else {
+          validateCanonicalResult(result, roster, workloadManifest);
+          retainCapture(
+            workspaceDirectory,
+            storageDirectory,
+            result,
+            renderingSourceFiles(workspaceDirectory),
+            { prefix: "/" },
+          );
+          atomicWrite(
+            join(resultDirectory, "latest.json"),
+            `${JSON.stringify(result, null, 2)}\n`,
+          );
+          run(
+            process.execPath,
+            [join(renderingDirectory, "generate-report.mjs")],
+            {
+              cwd: workspaceDirectory,
+              stdio: "inherit",
+            },
+          );
+          console.log(`Canonical capture ${captureId} is complete.`);
+        }
       }
     }
   }
 } finally {
-  rmSync(temporaryDirectory, { recursive: true, force: true });
+  if (temporaryDirectory)
+    rmSync(temporaryDirectory, { recursive: true, force: true });
+  await releaseRunLock();
 }

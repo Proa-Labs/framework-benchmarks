@@ -1,0 +1,728 @@
+{
+  "featureGroups": [
+    {
+      "id": "rendering",
+      "label": "Rendering",
+      "description": "Compare where HTML is produced, when it is sent, and how much client runtime is needed."
+    },
+    {
+      "id": "routing",
+      "label": "Routing & layouts",
+      "description": "Compare URL matching, nested composition, navigation, and advanced route behavior."
+    },
+    {
+      "id": "data",
+      "label": "Data & caching",
+      "description": "Check cache lifetime, request deduplication, invalidation, and whether the mechanism needs a CDN."
+    },
+    {
+      "id": "server",
+      "label": "Server & APIs",
+      "description": "Compare generated function calls, ordinary HTTP endpoints, form handling, and request middleware."
+    },
+    {
+      "id": "database",
+      "label": "Database",
+      "description": "Compare data models and query builders, schema migrations, and transactions. Database drivers and external services are identified separately."
+    },
+    {
+      "id": "backend",
+      "label": "Backend services",
+      "description": "Compare durable jobs, email, uploads and real-time delivery. In-process callbacks are not durable job queues."
+    },
+    {
+      "id": "styling",
+      "label": "Styling",
+      "description": "Distinguish built-in compilation from compatible external libraries and app-owned CSS."
+    },
+    {
+      "id": "assets",
+      "label": "Images, fonts & scripts",
+      "description": "Check whether assets are transformed automatically, optimized at build time, or prepared manually."
+    },
+    {
+      "id": "metadata",
+      "label": "Metadata & SEO",
+      "description": "Compare structured metadata, inheritance, child overrides, title composition, and generated assets. Select a Metadata API cell for its design assessment."
+    },
+    {
+      "id": "content",
+      "label": "Content",
+      "description": "Compare Markdown integration, typed content collections, and editorial preview workflows."
+    },
+    {
+      "id": "i18n",
+      "label": "Internationalization",
+      "description": "Compare message catalogs, locale-specific URLs, and locale-sensitive formatting separately."
+    },
+    {
+      "id": "security",
+      "label": "Security & auth",
+      "description": "Check what the framework enforces, what an auth package adds, and what the application must implement."
+    },
+    {
+      "id": "accessibility",
+      "label": "Accessibility",
+      "description": "Compare navigation focus and announcements separately from tools that check authored markup. No entry certifies that an application is accessible."
+    },
+    {
+      "id": "tooling",
+      "label": "Developer tooling",
+      "description": "Compare type checking, dev feedback, project commands, and production bundle inspection."
+    },
+    {
+      "id": "testing",
+      "label": "Testing & observability",
+      "description": "Distinguish framework hooks from external test runners and monitoring services."
+    },
+    {
+      "id": "deployment",
+      "label": "Deployment",
+      "description": "Check feature availability on the actual target. Static export and edge runtimes often have restrictions."
+    }
+  ],
+  "features": [
+    {
+      "id": "ssr",
+      "group": "rendering",
+      "label": "SSR",
+      "definition": "Generate page HTML on the server from application data."
+    },
+    {
+      "id": "streaming",
+      "group": "rendering",
+      "label": "HTML streaming",
+      "definition": "Send HTML incrementally in the original response. Data streaming and separately fetched fragments are identified in notes."
+    },
+    {
+      "id": "suspense",
+      "group": "rendering",
+      "label": "Suspense / async UI",
+      "definition": "A declarative boundary with pending UI while asynchronous content resolves. It need not be named Suspense."
+    },
+    {
+      "id": "client",
+      "group": "rendering",
+      "label": "Client activation",
+      "definition": "Make server HTML interactive through hydration, resumability, adoption, or islands. Notes name the mechanism."
+    },
+    {
+      "id": "ssg",
+      "group": "rendering",
+      "label": "Static generation",
+      "definition": "A workflow that exports deployable HTML before requests arrive. Returning a string alone does not qualify."
+    },
+    {
+      "id": "csr",
+      "group": "rendering",
+      "label": "Client rendering",
+      "definition": "Create and update application UI in the browser without requiring initial server HTML."
+    },
+    {
+      "id": "serverOnly",
+      "group": "rendering",
+      "label": "Server-only components",
+      "definition": "Keep component implementation and dependencies off the client. Notes distinguish RSC, islands, and server templates."
+    },
+    {
+      "id": "partialRendering",
+      "group": "rendering",
+      "label": "Static + dynamic UI",
+      "definition": "Combine a prebuilt shell with request-time content. Notes distinguish original-response streaming from separate island requests."
+    },
+    {
+      "id": "routing",
+      "group": "routing",
+      "label": "URL routing",
+      "definition": "Map application URLs to pages or handlers. A navigation stack alone is distinguished from HTTP routing."
+    },
+    {
+      "id": "layouts",
+      "group": "routing",
+      "label": "Nested layouts",
+      "definition": "Compose shared layout UI around nested pages; notes explain whether layout selection is automatic or explicit."
+    },
+    {
+      "id": "dynamicRoutes",
+      "group": "routing",
+      "label": "Route parameters",
+      "definition": "Match variable URL segments, with a documented API for retrieving route parameters."
+    },
+    {
+      "id": "parallelRoutes",
+      "group": "routing",
+      "label": "Parallel routes",
+      "definition": "Display independently navigable routed regions in one layout. Rendering two ordinary components does not qualify."
+    },
+    {
+      "id": "interceptedRoutes",
+      "group": "routing",
+      "label": "Route interception",
+      "definition": "Render a destination inside the current UI context, such as a routed modal, while preserving direct-link behavior."
+    },
+    {
+      "id": "prefetch",
+      "group": "routing",
+      "label": "Link prefetching",
+      "definition": "Fetch a likely destination before navigation; notes identify triggers and what is actually fetched."
+    },
+    {
+      "id": "softNavigation",
+      "group": "routing",
+      "label": "SPA-like navigation",
+      "definition": "Navigate between same-site pages without reloading the whole document, updating the URL/history and page content. Includes client routers and Turbo-style HTML swaps. Prefetching or hydration alone does not qualify."
+    },
+    {
+      "id": "viewTransitions",
+      "group": "routing",
+      "label": "Page transitions",
+      "definition": "Coordinate visual animations across page navigation through a documented router or View Transitions integration. Navigating without a reload is separate; ordinary component animations alone do not qualify. Browser support and reduced-motion behavior are noted where relevant."
+    },
+    {
+      "id": "redirects",
+      "group": "routing",
+      "label": "Redirects & rewrites",
+      "definition": "Documented URL redirection or internal rewriting APIs; notes distinguish which is supported."
+    },
+    {
+      "id": "serverData",
+      "group": "data",
+      "label": "Server data loading",
+      "definition": "Load asynchronous data for server-rendered UI with a documented application pattern."
+    },
+    {
+      "id": "clientData",
+      "group": "data",
+      "label": "Client queries",
+      "definition": "A query API for browser fetch lifecycle, cache state, or server-to-client data handoff; fetch() alone is not a query cache."
+    },
+    {
+      "id": "requestDedupe",
+      "group": "data",
+      "label": "Request deduplication",
+      "definition": "Reuse equivalent reads within one render/request, distinct from caching between requests."
+    },
+    {
+      "id": "persistentCache",
+      "group": "data",
+      "label": "Cross-request cache",
+      "definition": "Retain data or rendered output across requests. Notes identify storage, lifetime, and deployment dependencies."
+    },
+    {
+      "id": "invalidation",
+      "group": "data",
+      "label": "Cache invalidation",
+      "definition": "Explicitly expire or refresh cached data by key, tag, path, or dependencies."
+    },
+    {
+      "id": "isr",
+      "group": "data",
+      "label": "Page revalidation",
+      "definition": "Refresh previously generated or cached pages after deployment. Notes distinguish origin regeneration from CDN cache headers."
+    },
+    {
+      "id": "apiRoutes",
+      "group": "server",
+      "label": "HTTP endpoints",
+      "definition": "Define application endpoints for JSON, webhooks, or other HTTP responses."
+    },
+    {
+      "id": "actions",
+      "group": "server",
+      "label": "Server functions",
+      "definition": "Call server-only application functions from browser code through a framework transport; hand-written HTTP endpoints are identified separately."
+    },
+    {
+      "id": "forms",
+      "group": "server",
+      "label": "Forms & validation",
+      "definition": "A documented form submission and validation workflow. Notes distinguish transport, input validation, and error feedback."
+    },
+    {
+      "id": "middleware",
+      "group": "server",
+      "label": "Request middleware",
+      "definition": "Run application logic around page/API request handling, including request context or response modification."
+    },
+    {
+      "id": "cookies",
+      "group": "server",
+      "label": "Cookies & sessions",
+      "definition": "Read/write request cookies or use a session API; cookie access alone is not session management."
+    },
+    {
+      "id": "cssModules",
+      "group": "styling",
+      "label": "CSS Modules",
+      "definition": "Build-time local CSS class names imported as a module."
+    },
+    {
+      "id": "scopedCss",
+      "group": "styling",
+      "label": "Scoped styles",
+      "definition": "Component-local styles whose selectors are scoped by a compiler or framework."
+    },
+    {
+      "id": "tailwind",
+      "group": "styling",
+      "label": "Tailwind integration",
+      "definition": "A documented setup for the external Tailwind CSS compiler; Tailwind is not counted as framework-owned."
+    },
+    {
+      "id": "cssInJs",
+      "group": "styling",
+      "label": "CSS-in-JS",
+      "definition": "A documented CSS-in-JS integration, including server rendering constraints and any required registry."
+    },
+    {
+      "id": "images",
+      "group": "assets",
+      "label": "Image optimization",
+      "definition": "Automatic resizing, format conversion, or responsive variant generation. Hand-authored srcset is called out separately."
+    },
+    {
+      "id": "fonts",
+      "group": "assets",
+      "label": "Font optimization",
+      "definition": "Self-hosting, preload, subsetting, or fallback-metric tooling; notes identify the actual optimizations."
+    },
+    {
+      "id": "scripts",
+      "group": "assets",
+      "label": "Script loading",
+      "definition": "Control when third-party scripts load, including deferred or interaction-driven strategies."
+    },
+    {
+      "id": "staticAssets",
+      "group": "assets",
+      "label": "Static asset serving",
+      "definition": "A supported way to publish files with the deployed application, with paths and caching described."
+    },
+    {
+      "id": "metadata",
+      "group": "metadata",
+      "label": "Metadata API",
+      "definition": "A structured API for titles, descriptions, canonical URLs, and social metadata. Authoring raw head tags is identified separately."
+    },
+    {
+      "id": "dynamicMetadata",
+      "group": "metadata",
+      "label": "Data-driven metadata",
+      "definition": "Compute metadata from request parameters or asynchronous data without duplicating the page data pipeline."
+    },
+    {
+      "id": "metadataInheritance",
+      "group": "metadata",
+      "label": "Layout inheritance",
+      "definition": "Inherit metadata defaults through nested layouts. Notes explain field merge or replacement semantics."
+    },
+    {
+      "id": "metadataOverrides",
+      "group": "metadata",
+      "label": "Child overrides",
+      "definition": "A child page/layout can replace or clear inherited metadata. Nested object replacement and inherited arrays must be explained."
+    },
+    {
+      "id": "titleTemplates",
+      "group": "metadata",
+      "label": "Title composition",
+      "definition": "Apply ancestor title templates while allowing explicit absolute titles or template reset."
+    },
+    {
+      "id": "socialImages",
+      "group": "metadata",
+      "label": "Generated OG images",
+      "definition": "Generate social preview image bytes through a documented integration; setting an og:image URL alone does not qualify."
+    },
+    {
+      "id": "sitemaps",
+      "group": "metadata",
+      "label": "Sitemaps",
+      "definition": "Generate XML sitemaps, including any documented splitting, index, or localization support."
+    },
+    {
+      "id": "robots",
+      "group": "metadata",
+      "label": "robots.txt",
+      "definition": "A documented file convention or structured generator for crawler directives."
+    },
+    {
+      "id": "markdown",
+      "group": "content",
+      "label": "Markdown / MDX",
+      "definition": "Render authored Markdown content with a supported build/runtime integration; notes distinguish MDX and Markdown output APIs."
+    },
+    {
+      "id": "collections",
+      "group": "content",
+      "label": "Content collections",
+      "definition": "Load, validate, and query sets of structured content; a database driver alone is not a content collection API."
+    },
+    {
+      "id": "draftMode",
+      "group": "content",
+      "label": "Editorial previews",
+      "definition": "Bypass published/cached content for an authenticated editorial preview workflow."
+    },
+    {
+      "id": "translations",
+      "group": "i18n",
+      "label": "Translations",
+      "definition": "Locale-specific message lookup, with documented fallback or interpolation."
+    },
+    {
+      "id": "localeRouting",
+      "group": "i18n",
+      "label": "Locale routing",
+      "definition": "Locale-specific URLs, detection, or redirects; translation dictionaries alone do not qualify."
+    },
+    {
+      "id": "localeFormatting",
+      "group": "i18n",
+      "label": "Locale formatting",
+      "definition": "Locale-sensitive date, number, or plural formatting. Fixed-format helpers are identified separately."
+    },
+    {
+      "id": "auth",
+      "group": "security",
+      "label": "Authentication",
+      "definition": "Documented identity/authentication integration; route guards and cookies alone are not a complete login system."
+    },
+    {
+      "id": "csp",
+      "group": "security",
+      "label": "Content Security Policy",
+      "definition": "Configure Content Security Policy directives and enforcement. Notes distinguish HTTP headers, meta policies and hash-based policies; nonce coordination is compared separately."
+    },
+    {
+      "id": "cspNonce",
+      "group": "security",
+      "label": "Nonce-based CSP",
+      "definition": "Coordinate a per-response unpredictable nonce between the Content-Security-Policy and framework-generated scripts/styles, without requiring unsafe-inline. Notes distinguish automatic generation from a supplied nonce and identify streaming, caching and prerendering restrictions. Setting an arbitrary header or allowing a nonce attribute alone does not qualify."
+    },
+    {
+      "id": "csrf",
+      "group": "security",
+      "label": "CSRF defenses",
+      "definition": "Documented protection for unsafe browser requests. Notes specify origin checks, tokens, scope, and gaps."
+    },
+    {
+      "id": "environment",
+      "group": "security",
+      "label": "Environment & secrets",
+      "definition": "A documented server/client configuration boundary; application secrets must not be exposed to client bundles."
+    },
+    {
+      "id": "types",
+      "group": "tooling",
+      "label": "Type checking",
+      "definition": "Compile-time types for application code or templates. Notes identify toolchain and scope."
+    },
+    {
+      "id": "hmr",
+      "group": "tooling",
+      "label": "Dev updates",
+      "definition": "A documented live-reload or hot-update workflow. State-preserving HMR is distinguished from full-page reload."
+    },
+    {
+      "id": "cli",
+      "group": "tooling",
+      "label": "Project CLI",
+      "definition": "Commands for scaffolding, developing, or building an application."
+    },
+    {
+      "id": "bundleAnalysis",
+      "group": "tooling",
+      "label": "Bundle analysis",
+      "definition": "Inspect production browser/server dependency output and its size, distinct from performance benchmarking."
+    },
+    {
+      "id": "unitTests",
+      "group": "testing",
+      "label": "Unit / component tests",
+      "definition": "A documented unit/component test workflow; notes identify external runners and unsupported component modes."
+    },
+    {
+      "id": "e2eTests",
+      "group": "testing",
+      "label": "Browser tests",
+      "definition": "A documented browser automation integration or workflow; the test runner is identified separately."
+    },
+    {
+      "id": "observability",
+      "group": "testing",
+      "label": "Instrumentation",
+      "definition": "Hooks or integrations for traces, metrics, or production logging; dashboards/exporters may be separate."
+    },
+    {
+      "id": "errorHandling",
+      "group": "testing",
+      "label": "Error boundaries",
+      "definition": "Render a defined fallback/recovery UI for failed page or component work. HTTP status responses alone are distinguished."
+    },
+    {
+      "id": "serverHosting",
+      "group": "deployment",
+      "label": "Self-hosting",
+      "definition": "Run the production application on infrastructure you operate, with a documented server runtime or adapter."
+    },
+    {
+      "id": "staticHosting",
+      "group": "deployment",
+      "label": "Static hosting",
+      "definition": "Export files deployable without an application server; notes describe features lost in this mode."
+    },
+    {
+      "id": "containers",
+      "group": "deployment",
+      "label": "Containers",
+      "definition": "A documented container deployment workflow or image output."
+    },
+    {
+      "id": "edgeHosting",
+      "group": "deployment",
+      "label": "Edge runtimes",
+      "definition": "A documented edge/worker deployment adapter or runtime, with limitations identified."
+    },
+    {
+      "id": "orm",
+      "group": "database",
+      "label": "ORM / query builder",
+      "definition": "A documented model or query API above raw SQL or a database driver."
+    },
+    {
+      "id": "migrations",
+      "group": "database",
+      "label": "Schema migrations",
+      "definition": "Versioned database schema changes with an execution and history mechanism."
+    },
+    {
+      "id": "transactions",
+      "group": "database",
+      "label": "Transactions",
+      "definition": "A documented API for atomic database operations, including commit and rollback."
+    },
+    {
+      "id": "jobs",
+      "group": "backend",
+      "label": "Background jobs",
+      "definition": "A persistent queue with workers and job lifecycle handling. In-process tasks are qualified separately."
+    },
+    {
+      "id": "mail",
+      "group": "backend",
+      "label": "Email",
+      "definition": "An integrated mail delivery API; templates, transports and queue support are distinguished in notes."
+    },
+    {
+      "id": "uploads",
+      "group": "backend",
+      "label": "File uploads & storage",
+      "definition": "Parse uploaded files and manage storage. Request parsing alone is qualified separately."
+    },
+    {
+      "id": "realtime",
+      "group": "backend",
+      "label": "Real-time delivery",
+      "definition": "A documented WebSocket, channel, broadcasting or server-sent event API. Notes distinguish transport from a complete pub/sub service."
+    },
+    {
+      "id": "xssEscaping",
+      "group": "security",
+      "label": "Output escaping",
+      "definition": "An owned HTML output-encoding policy for dynamic values. State default/opt-in behavior, protected contexts, URL handling and raw-output bypasses. Escaping text does not establish safe JavaScript/CSS interpolation or HTML sanitization."
+    },
+    {
+      "id": "htmlSanitization",
+      "group": "security",
+      "label": "HTML sanitization",
+      "definition": "A maintained allowlist-based API/integration for accepting untrusted rich HTML while removing dangerous markup. Escaping to text, trusting a raw-HTML wrapper or validating a string is not sanitization."
+    },
+    {
+      "id": "authorization",
+      "group": "security",
+      "label": "Authorization policies",
+      "definition": "A documented permission/policy API for deciding whether a principal may perform an operation on a resource. Authentication, hiding a button or a generic middleware hook alone does not qualify."
+    },
+    {
+      "id": "rateLimiting",
+      "group": "security",
+      "label": "Rate limiting",
+      "definition": "A documented limiter for requests/actions with keys, time windows and rejection behavior. State storage, single-process versus distributed enforcement, and any separately installed package. Arbitrary middleware capability alone does not qualify."
+    },
+    {
+      "id": "progressiveEnhancement",
+      "group": "server",
+      "label": "Progressive forms",
+      "definition": "Documented form submission that reaches the server and produces useful results before JavaScript loads or when it is disabled, with optional client enhancement. SSR HTML alone and browser-only submit handlers do not qualify."
+    },
+    {
+      "id": "optimisticUi",
+      "group": "data",
+      "label": "Optimistic updates",
+      "definition": "A documented mutation workflow that displays an unconfirmed result immediately and reconciles it with success/failure. Pending flags alone do not qualify. State automatic versus application-owned rollback and concurrency limitations."
+    },
+    {
+      "id": "requestCancellation",
+      "group": "data",
+      "label": "Stale request handling",
+      "definition": "A documented data/router mechanism that suppresses stale results or cancels superseded requests. Identify which behavior is guaranteed; aborting browser work does not undo a server mutation or guarantee backend cancellation."
+    },
+    {
+      "id": "typedLinks",
+      "group": "routing",
+      "label": "Typed links & parameters",
+      "definition": "A route-aware API that checks destination names/paths and required route parameters before navigation. Generic language types, a string URL or runtime route matching alone do not qualify."
+    },
+    {
+      "id": "searchParams",
+      "group": "routing",
+      "label": "Validated URL state",
+      "definition": "A router-owned or documented schema integration that parses and validates query/search parameters into typed application state, including malformed-input behavior. Raw URLSearchParams access alone does not qualify."
+    },
+    {
+      "id": "stateRestoration",
+      "group": "routing",
+      "label": "Navigation state retention",
+      "definition": "A documented mechanism for retaining/restoring local UI or form state across navigation/back-forward. Identify persistent layouts, retained pages, DOM snapshots or serialization, and what resets. Browser caching alone is not a framework API."
+    },
+    {
+      "id": "scrollRestoration",
+      "group": "routing",
+      "label": "Scroll restoration",
+      "definition": "A router/navigation integration that restores scroll positions during history traversal. Identify window versus nested scrollports, opt-in configuration and reset controls. An imperative scrollTo helper alone does not qualify."
+    },
+    {
+      "id": "navigationBlocking",
+      "group": "routing",
+      "label": "Unsaved-change guards",
+      "definition": "An integrated navigation interception API that can pause/cancel an attempted route change and let the app resolve an unsaved-change prompt. Distinguish SPA navigation from browser beforeunload and its limitations."
+    },
+    {
+      "id": "navigationAccessibility",
+      "group": "accessibility",
+      "label": "Accessible navigation",
+      "definition": "A documented soft-navigation integration for focus management or announcing route changes to assistive technology. Name which behavior is automatic and which remains application-owned. ARIA attributes alone do not qualify; native full-document navigation is distinguished."
+    },
+    {
+      "id": "a11yChecks",
+      "group": "accessibility",
+      "label": "Accessibility checks",
+      "definition": "A documented compiler/linter/test integration that detects inaccessible authored UI. State static-analysis limits; no check establishes WCAG conformance, and emitting ARIA attributes alone does not qualify."
+    },
+    {
+      "id": "lazyActivation",
+      "group": "rendering",
+      "label": "Deferred activation",
+      "definition": "Activate an interactive SSR component/island through a documented visibility, idle, interaction or media trigger. Distinguish delaying activation from delaying the JavaScript download and describe any event replay. Lazy imports alone are not a hydration scheduler."
+    },
+    {
+      "id": "codeSplitting",
+      "group": "rendering",
+      "label": "Route / island splitting",
+      "definition": "An integrated build divides browser code by routes or independently activated islands so unused UI is not required in the initial bundle. Identify the splitting boundary and shared runtime; generic dynamic import syntax alone does not qualify."
+    },
+    {
+      "id": "offline",
+      "group": "deployment",
+      "label": "Offline integration",
+      "definition": "A documented service-worker/offline integration with build assets or cache lifecycle support. Applications must still define offline data/failure behavior; serving static files or a manifest alone is insufficient."
+    },
+    {
+      "id": "scheduling",
+      "group": "backend",
+      "label": "Scheduled tasks",
+      "definition": "A documented recurring-task scheduler, distinct from merely dispatching or delaying one job. Describe the external runner, overlapping tasks and multi-server coordination rather than implying exactly-once execution."
+    },
+    {
+      "id": "notifications",
+      "group": "backend",
+      "label": "Multi-channel notifications",
+      "definition": "An application notification API that selects and formats multiple delivery channels. Email alone or low-level WebSocket messages do not qualify; provider credentials, queues and external channels are named separately."
+    },
+    {
+      "id": "searchIndex",
+      "group": "backend",
+      "label": "Search indexing",
+      "definition": "A documented application/model search integration with indexing and synchronization lifecycle, distinct from issuing a SQL LIKE query. Name engines/services and any application-owned synchronization."
+    },
+    {
+      "id": "fieldEncryption",
+      "group": "database",
+      "label": "Encrypted model fields",
+      "definition": "A model/storage integration that transparently encrypts/decrypts configured attributes, with documented key management. A generic encryption function, password hashing or database disk encryption alone does not qualify."
+    },
+    {
+      "id": "httpTests",
+      "group": "testing",
+      "label": "HTTP integration tests",
+      "definition": "A documented test harness for application handlers/routes with request construction and response assertions, including session/auth context where available. Unit renderer tests and browser automation are separate; state whether a network server is required."
+    }
+  ],
+  "supportStates": {
+    "native": {
+      "label": "Built-in",
+      "symbol": "✓",
+      "description": "Provided by the project itself."
+    },
+    "official": {
+      "label": "Official package",
+      "symbol": "+",
+      "description": "Provided by a named first-party companion or adapter."
+    },
+    "community": {
+      "label": "Third-party",
+      "symbol": "+",
+      "description": "Provided by a named external integration."
+    },
+    "partial": {
+      "label": "Qualified",
+      "symbol": "◐",
+      "description": "A specific restriction, experimental API or application-owned recipe. Each cell names the qualification; this is not full support."
+    },
+    "planned": {
+      "label": "Planned",
+      "symbol": "○",
+      "description": "Explicitly listed on the reviewed roadmap."
+    },
+    "unknown": {
+      "label": "Not reviewed",
+      "symbol": "?",
+      "description": "No support claim has been verified here. This does not mean unsupported."
+    },
+    "undocumented": {
+      "label": "Not documented",
+      "symbol": "·",
+      "description": "Reviewed the linked API or guide without establishing this behavior. This is not proof that an application cannot implement it."
+    },
+    "scope": {
+      "label": "Outside scope",
+      "symbol": "—",
+      "description": "Outside the reviewed core API; the host application or another framework can provide it."
+    }
+  },
+  "expandedFeatureIds": [
+    "xssEscaping",
+    "htmlSanitization",
+    "authorization",
+    "rateLimiting",
+    "progressiveEnhancement",
+    "optimisticUi",
+    "requestCancellation",
+    "typedLinks",
+    "searchParams",
+    "stateRestoration",
+    "scrollRestoration",
+    "navigationBlocking",
+    "navigationAccessibility",
+    "a11yChecks",
+    "lazyActivation",
+    "codeSplitting",
+    "offline",
+    "scheduling",
+    "notifications",
+    "searchIndex",
+    "fieldEncryption",
+    "httpTests"
+  ]
+}
