@@ -4,7 +4,7 @@ Nine figures covering the benchmark report: the [front page](../README.md) and i
 
 Each one is **generated from the evidence pages' own tables** — no measurement is
 retyped here. Re-run the capture, let it regenerate its page, then run the build and
-the figures follow.
+the figures follow. Figure 03 uses the current canonical rendering table and the latest matched copy controls, including their capture dates; it never reads the archived core matrix. `pnpm refresh` updates it through the same build pipeline as the other figures.
 
 ```sh
 node charts/build.mjs     # regenerate every figure from the evidence pages
@@ -34,7 +34,7 @@ node charts/verify.mjs    # check them against the source, and against each othe
 
 | | Figure | Source |
 | ---: | --- | --- |
-| 03 | [Render time vs memcpy, including full-size Proa allocation](svg/03-representative-matrix.svg) | [Dated core matrix](../engineering.md#representative-core-matrix-seven-renderers-plus-a-memcpy-floor) and [Proa output-buffer allocation](../engineering.md#proa-output-buffer-allocation) |
+| 03 | [Render time vs memcpy, including full-size Proa allocation](svg/03-representative-matrix.svg) | [Current canonical measurements](../scoreboard.md#detailed-measurements) and [matched memcpy controls](../engineering.md#proa-output-buffer-allocation) |
 | 04 | [Criterion micro-benchmarks](svg/04-criterion-microbenchmarks.svg) | [Representative core matrix](../engineering.md#representative-core-matrix-seven-renderers-plus-a-memcpy-floor) |
 | 05 | [Full-response product-card scaling across seventeen renderers](svg/05-product-card-scaling.svg) | [Product-grid scaling capture](../engineering.md#product-grid-scaling-capture) |
 

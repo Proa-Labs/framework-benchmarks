@@ -133,7 +133,7 @@ and [reproduction instructions](showcase/README.md#output-buffer-comparison).
 
 [![Renderer latency and default versus full-size Proa allocation as multiples of memcpy across three core workloads and eleven showcase pages](charts/svg/03-representative-matrix.svg)](charts/svg/03-representative-matrix.svg)
 
-*Memcpy multiples and Proa's full-size allocation comparison. Sources: the [dated core matrix](#representative-core-matrix-seven-renderers-plus-a-memcpy-floor) and the [matched Proa allocation measurements](#proa-output-buffer-allocation) · [Full size](charts/svg/03-representative-matrix.svg) · [how the figures are built](charts/)*
+*Memcpy multiples and Proa's full-size allocation comparison. The core panel automatically reads the [current canonical measurements](scoreboard.md#detailed-measurements) and the [matched memcpy controls](#proa-output-buffer-allocation). PROA returns fresh owned RenderBuffer pages; peer dates and copy dates are shown in the figure. Render and copy are separate captures, and each floor copies the Proa payload, which can differ in size from peers. The lower panel retains the explicitly labeled String-output controls. Sources: the current canonical table and matched Proa allocation measurements · [Full size](charts/svg/03-representative-matrix.svg) · [how the figures are built](charts/)*
 
 [![Criterion micro-benchmark point estimates and intervals for batch, burst and page fixtures](charts/svg/04-criterion-microbenchmarks.svg)](charts/svg/04-criterion-microbenchmarks.svg)
 

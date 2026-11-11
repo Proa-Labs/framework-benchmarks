@@ -12,7 +12,7 @@ import { textWidth, T } from './lib/theme.mjs';
 import { measureReactHydrationPayload } from '../showcase/measure_react_hydration_payload.mjs';
 import { suspenseLoad } from './figures/suspense.mjs';
 import { pageLoad, coldStart } from './figures/pages.mjs';
-import { representative } from './figures/engineering.mjs';
+import { representative, currentCoreMatrix } from './figures/engineering.mjs';
 import { validateBuffers, updateBufferReadme } from '../showcase/capture_buffers.mjs';
 import { validateCapture as validateMemcpyCapture, updateReadme as updateMemcpyReadme } from '../showcase/capture_memcpy.mjs';
 import { renderingSourceFingerprint } from '../rendering/canonical/source_fingerprint.mjs';
@@ -395,11 +395,49 @@ console.log('\nSource fidelity');
   } catch (error) {
     bad('showcase memcpy capture', error.message);
   }
-  const expected = representative(tables);
+  const expected = representative(tables, readMeta(md));
   const actual = readFileSync(join(SVG, '03-representative-matrix.svg'), 'utf8');
   actual === expected
     ? ok('all renderer-to-memcpy ratios and the expanded figure reproduce from their tables')
     : bad('memcpy figure fidelity', 'committed SVG is stale');
+}
+
+// The core panel must follow the current canonical capture and latest matched
+// copy controls, even when the historical matrix remains in the same document.
+{
+  try {
+    const canonical = JSON.parse(readFileSync(join(HERE, '..', 'rendering/results/latest.json'), 'utf8'));
+    const buffers = JSON.parse(readFileSync(join(HERE, '..', 'showcase/results/buffer-comparison.json'), 'utf8'));
+    const matrix = currentCoreMatrix(tables);
+    const workloads = { Cards: 'cards', '96-product grid': 'products', '1,000-row table': 'table' };
+    for (const [label, id] of Object.entries(workloads)) {
+      const rows = matrix[label];
+      if (rows.length !== canonical.renderers.length + 1) throw new Error(`${id}: canonical roster is incomplete`);
+      const copy = buffers.pages.find((page) => page.page === `core-${id}`);
+      if (Math.abs(rows[0].p50 - copy.memcpy.p50_us) > .000501) throw new Error(`${id}: stale copy floor`);
+      for (const renderer of canonical.renderers) {
+        const row = rows.find((r) => r.name === renderer.label);
+        const source = canonical.measurements[renderer.id][id];
+        // Detailed tables round µs to .001, or ms to .001 (half a µs).
+        if (!row || row.bytes !== source.output_bytes || Math.abs(row.p50 - source.p50_us) > .500001 ||
+          Math.abs(row.lo - source.process_p50_min_us) > .500001 || Math.abs(row.hi - source.process_p50_max_us) > .500001)
+          throw new Error(`${renderer.id}/${id}: chart input differs from current canonical capture`);
+      }
+    }
+    const meta = readMeta(md);
+    const baseline = representative(tables, meta);
+    const withoutArchive = tables.filter((t) => t.headers[1] !== 'Renderer/control');
+    if (representative(withoutArchive, meta) !== baseline) throw new Error('Core panel still depends on archived measurements');
+    for (const signature of ['Renderer', 'Buffer comparison workload']) {
+      const changed = structuredClone(tables);
+      const table = changed.find((t) => t.headers[0] === signature && (signature !== 'Renderer' || t.headers[1] === 'Workload'));
+      const index = signature === 'Renderer' ? 2 : 4;
+      const value = (signature === 'Renderer' ? toUs(table.rows[0][index]) : num(table.rows[0][index])) * 2;
+      table.rows[0][index] = signature === 'Renderer' ? `${value} µs` : `${value} [${value}–${value}]`;
+      if (representative(changed, meta) === baseline) throw new Error(`${signature}: new measurements do not change the chart`);
+    }
+    ok('core memcpy panel follows current canonical and copy captures automatically; archived rows cannot affect it');
+  } catch (error) { bad('current core memcpy sources', error.message); }
 }
 
 // 7e · matched standard and full-size renders retain output parity and capacity evidence.
@@ -542,7 +580,7 @@ console.log('\nOutput integrity');
 {
   const meta = readMeta(md);
   const stale = [];
-  for (const f of ['01-canonical-scoreboard.svg', '02-canonical-tail-dispersion.svg']) {
+  for (const f of ['01-canonical-scoreboard.svg', '02-canonical-tail-dispersion.svg', '03-representative-matrix.svg']) {
     if (!readFileSync(join(SVG, f), 'utf8').includes(meta.date)) stale.push(`${f} does not carry the canonical capture date ${meta.date}`);
   }
   if (!readFileSync(join(SVG, '05-product-card-scaling.svg'), 'utf8').includes(`${meta.scalingDate} UTC`)) {
