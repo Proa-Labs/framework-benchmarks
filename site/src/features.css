@@ -993,12 +993,12 @@
   opacity: 0;
 }
 
-#frameworks-explorer .fw-coverage-head > [role="columnheader"] {
+#frameworks-explorer .fw-coverage-head > th {
   display: flex;
   align-items: center;
   min-height: 30px;
 }
-#frameworks-explorer .fw-coverage-head > [role="columnheader"]:last-child {
+#frameworks-explorer .fw-coverage-head > th:last-child {
   justify-content: flex-end;
 }
 #frameworks-explorer .fw-coverage-head [data-coverage-sort] {
@@ -1059,4 +1059,19 @@
 }
 #frameworks-explorer .fw-coverage-bar button:only-child {
   border-radius: 3px;
+}
+
+#frameworks-explorer .fw-coverage-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+#frameworks-explorer .fw-coverage-table thead,
+#frameworks-explorer .fw-coverage-table tbody {
+  display: block;
+}
+#frameworks-explorer .fw-coverage-table th,
+#frameworks-explorer .fw-coverage-table td {
+  padding: 0;
+  font-weight: inherit;
+  text-align: inherit;
 }

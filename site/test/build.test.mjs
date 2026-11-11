@@ -24,20 +24,22 @@ test("build preserves source bytes, emits provenance and serves a self-contained
     );
   }
   const index = await readFile(join(outputDirectory, "index.html"), "utf8");
-  const versionedAssets = [];
-  for (const asset of ["app.js", "styles.css"]) {
-    const version = createHash("sha256")
-      .update(await readFile(join(outputDirectory, asset)))
-      .digest("hex")
-      .slice(0, 12);
-    const url = `${asset}?v=${version}`;
-    assert.ok(index.includes(`"${url}"`), `${asset} URL tracks its content`);
-    versionedAssets.push(`/${url}`);
-  }
-  const embedded = JSON.parse(
-    index.match(/id="frameworks-explorer-data">([\s\S]*?)<\/script>/)[1],
+  const viteManifest = JSON.parse(
+    await readFile(join(outputDirectory, ".vite/manifest.json"), "utf8"),
   );
-  assert.deepEqual(embedded, data);
+  const entry = viteManifest["index.html"];
+  assert.equal(entry.isEntry, true);
+  assert.match(entry.file, /^assets\/index-[\w-]+\.js$/);
+  const versionedAssets = Object.values(viteManifest)
+    .flatMap((asset) => [asset.file, ...(asset.css || [])])
+    .filter(Boolean)
+    .map((asset) => `/${asset}`);
+  assert.ok(index.includes(`src="/${entry.file}"`));
+  for (const css of entry.css) assert.ok(index.includes(`href="/${css}"`));
+  const generatedData = JSON.parse(
+    await readFile(join(outputDirectory, "data/results.json"), "utf8"),
+  );
+  assert.deepEqual(generatedData, data);
   assert.doesNotMatch(
     index,
     /cdn\.jsdelivr|window\.openai|independent research/i,
@@ -85,9 +87,6 @@ test("build preserves source bytes, emits provenance and serves a self-contained
     );
     for (const path of [
       "/",
-      "/app.js",
-      "/theme.js",
-      "/styles.css",
       ...versionedAssets,
       "/favicon.svg",
       "/previews/cards.html",
@@ -97,7 +96,6 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       "/methodology.html",
       "/features.html",
       "/features",
-      "/features.js",
       "/data/features.json",
       "/data/results.json",
       "/data/manifest.json",

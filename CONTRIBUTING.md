@@ -128,7 +128,7 @@ bun run --cwd site test:browser
 
 `check` runs Biome, TypeScript 7's native Go compiler, contract tests, website
 unit tests, validation of every selected publication capture/source snapshot,
-and a static site build. Browser checks use Playwright's Chromium. The normal
+and a React + Vite production build. Browser checks use Playwright's Chromium. The normal
 repository CI additionally builds native adapters and checks generated reports
 and charts. The website workflow exercises the Bun-only contributor smoke run
 without private Proa build credentials. Exact's generated adapter types are
@@ -199,3 +199,5 @@ The website reads each suite’s selected `results/latest.json` through `tooling
 Keep capture JSON, its archive, referenced raw runs and verified source snapshot together in the PR. A Proa-only rendering refresh preserves the original peer measurements and dates; the site discloses the mixed capture and native output boundaries. A new Proa revision does not automatically become a new benchmark result: run the publication protocol and submit its validated evidence.
 
 On the original capture machine, rerun only Proa with `bun run bench run rendering --publish --refresh-proa` (add `--product-scaling` for the engineering grid). This also works after an earlier Proa refresh: the original peer capture remains the baseline. Use `bun run refresh` to regenerate reports and figures, then `bun run check` before submitting the evidence.
+
+Same-repository PRs publish a non-production Cloudflare version after website validation. The workflow updates one preview comment and a GitHub deployment link on each successful push; forks run checks without the deploy secret. React pages and shared components live in `site/src/`; `bun run --cwd site dev` uses Vite Fast Refresh. Generated HTML in `site/dist/` is build output, not authored page source.

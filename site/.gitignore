@@ -6,3 +6,6 @@ test-results/
 .env.*
 .dev.vars
 .dev.vars.*
+
+.generated/
+.ssr/

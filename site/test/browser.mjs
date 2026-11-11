@@ -16,6 +16,16 @@ const browser = await chromium.launch({ headless: true });
 const errors = [];
 const checks = [];
 let page;
+const ready = () => page.locator('[data-app-ready="true"]').waitFor();
+const navigate = async (url) => {
+  await page.goto(url);
+  await ready();
+};
+const reload = async () => {
+  await page.reload();
+  await ready();
+};
+
 await mkdir(join(siteRoot, "test-results"), { recursive: true });
 try {
   const context = await browser.newContext({
@@ -27,7 +37,7 @@ try {
     if (response.status() >= 400)
       errors.push(`${response.status()} ${response.url()}`);
   });
-  await page.goto(`${server.url}/?chart=bars`);
+  await navigate(`${server.url}/?chart=bars`);
   await page.locator(".fw-row").first().waitFor();
   assert.equal(await page.locator(".fw-row").count(), 17);
   const renderingInfo = page.getByRole("button", {
@@ -64,7 +74,7 @@ try {
     await toggle.getAttribute("aria-pressed"),
     String(toggledTheme === "dark"),
   );
-  await page.reload();
+  await reload();
   assert.equal(
     await page.locator("html").getAttribute("data-theme"),
     toggledTheme,
@@ -77,7 +87,7 @@ try {
   await page
     .getByRole("button", { name: "Toggle theme", exact: true })
     .press("Enter");
-  await page.goto(server.url);
+  await navigate(server.url);
   assert.equal(
     await page.locator("html").getAttribute("data-theme"),
     initialTheme,
@@ -150,13 +160,13 @@ try {
         .getAttribute("href"),
       page.url(),
     ).pathname,
-    "/about.html",
+    "/about",
   );
   assert.equal(
     await page.locator('.fw-sections a[href="/features"]').count(),
     1,
   );
-  await page.goto(server.url);
+  await navigate(server.url);
   await page.locator('[data-view="streaming"]').click();
   assert.equal(await page.locator(".fw-stream-panel").count(), 2);
   assert.equal(await page.locator("[data-load-points]").isVisible(), false);
@@ -185,7 +195,7 @@ try {
     "true",
   );
   assert.equal(await page.locator(".fw-row").count(), 17);
-  await page.reload();
+  await reload();
   assert.equal(
     await page.locator('[data-workload="cards"]').getAttribute("aria-pressed"),
     "true",
@@ -197,13 +207,13 @@ try {
   checks.push(
     "experiment tabs restore their own workload, chart and load without leaking state",
   );
-  await page.goto(server.url);
+  await navigate(server.url);
   await page.locator('[data-section="ecosystem"]').click();
   assert.equal(
     await page.locator(".fw-catalog-row").count(),
     20 + featureProjects.length,
   );
-  await page.goto(
+  await navigate(
     `${server.url}/?view=http&chart=table&workload=table&http=rss&selected=react,marko`,
   );
   assert.equal(await page.locator(".fw-data-table tbody tr").count(), 2);
@@ -219,7 +229,7 @@ try {
   );
   for (const width of [360, 390, 768]) {
     await page.setViewportSize({ width, height: 1000 });
-    await page.goto(`${server.url}/?chart=bars`);
+    await navigate(`${server.url}/?chart=bars`);
     await page.locator(".fw-row").first().waitFor();
     const size = await page.evaluate(() => ({
       viewport: innerWidth,
@@ -235,7 +245,7 @@ try {
     });
     checks.push(`responsive/${width}`);
   }
-  await page.goto(server.url);
+  await navigate(server.url);
   assert.equal(
     await page.locator(".fw-comparison tbody tr:not(.fw-uncaptured)").count(),
     17,
@@ -301,7 +311,7 @@ try {
   assert.equal(new Set(filtered.rows.map((r) => r.id)).size, 8);
   assert.ok(filtered.rows.some((r) => r.id === "php"));
   assert.ok(filtered.rows.some((r) => r.id === "go-html-template"));
-  await page.reload();
+  await reload();
   assert.equal(
     await page.locator('[data-type="frameworks"]').isChecked(),
     false,
@@ -328,7 +338,7 @@ try {
     "type filters, URL persistence, explicit unmeasured entries and real fixture preview",
   );
   await page.setViewportSize({ width: 1200, height: 1000 });
-  await page.goto(`${server.url}/?view=streaming&log=true`);
+  await navigate(`${server.url}/?view=streaming&log=true`);
   assert.equal(
     await page.getByRole("group", { name: "Chart scale", exact: true }).count(),
     0,
@@ -360,7 +370,7 @@ try {
     "paired P50/P99 load curves, linear-only scales and complete exports",
   );
   for (const legacyChart of ["balls", "bars", "table"]) {
-    await page.goto(
+    await navigate(
       `${server.url}/?view=streaming&chart=${legacyChart}&rate=3000`,
     );
     assert.equal(await page.locator(".fw-view-switch").isVisible(), false);
@@ -370,7 +380,7 @@ try {
   checks.push(
     "streaming is load-curve-only and legacy chart links recover safely",
   );
-  await page.goto(`${server.url}/?chart=bars`);
+  await navigate(`${server.url}/?chart=bars`);
   const miniature = await page
     .locator(".fw-workload-thumb iframe")
     .first()
@@ -427,10 +437,8 @@ try {
       await page.locator("[data-percentile-popup]").isVisible(),
       true,
     );
-    const expected = await page.evaluate((workload) => {
-      const data = JSON.parse(
-        document.getElementById("frameworks-explorer-data").textContent,
-      );
+    const expected = await page.evaluate(async (workload) => {
+      const data = await (await fetch("/data/results.json")).json();
       return data.rendering.rows[workload].find((r) => r.id === "askama");
     }, workload);
     assert.deepEqual(
@@ -524,11 +532,10 @@ try {
   checks.push(
     "separate full-framework suite with measured rows, metrics and admitted catalog preview",
   );
-  await page.goto(`${server.url}/features`);
-  const featureData = await page
-    .locator("#framework-features-data")
-    .textContent()
-    .then(JSON.parse);
+  await navigate(`${server.url}/features`);
+  const featureData = await page.evaluate(async () =>
+    (await fetch("/data/features.json")).json(),
+  );
   const expectedOrder = sortCoverageRows(
     featureData.rows,
     "all",
@@ -781,7 +788,7 @@ try {
       (row) => row.id,
     ),
   );
-  await page.reload();
+  await reload();
   assert.equal(
     await page
       .locator('[data-coverage-sort="support"]')
@@ -901,14 +908,14 @@ try {
   checks.push(
     "expanded accessibility and security categories expose dated, sourced findings",
   );
-  await page.goto(`${server.url}/features?tools=solid,solidstart`);
+  await navigate(`${server.url}/features?tools=solid,solidstart`);
   assert.equal(await page.locator(".fw-feature-selection").isVisible(), true);
   assert.equal(await page.locator("[data-tool-remove]").count(), 2);
   assert.equal(
     await page.locator("[data-feature-summary-row]:visible").count(),
     2,
   );
-  await page.goto(
+  await navigate(
     `${server.url}/features?group=rendering&display=matrix&tools=exact,nuxt`,
   );
   await page.locator('[data-feature-cell="exact/suspense"]').click();
@@ -928,9 +935,43 @@ try {
   checks.push(
     "feature-only roster, qualified evidence, default support sorting, URL persistence, chips and branded hover",
   );
+  // Internal links retain the document and React state; route effects must
+  // dispose chart listeners before mounting a new performance explorer.
+  await page.evaluate(() => {
+    window.reactNavigationProbe = "retained";
+  });
+  await page.getByRole("link", { name: "About", exact: true }).click();
+  await page
+    .getByRole("heading", { name: "Why frameworks.run exists", exact: true })
+    .waitFor();
+  await ready();
+  assert.equal(await page.title(), "Why frameworks.run exists · Frameworks");
+  await page.getByRole("link", { name: "Features", exact: true }).click();
+  await page.locator("#feature-comparison").waitFor();
+  await ready();
+  assert.equal(await page.title(), "Features · Frameworks");
+  for (let mount = 0; mount < 2; mount++) {
+    await page.getByRole("link", { name: "Performance", exact: true }).click();
+    await page.locator("#experiment-rendering").waitFor();
+    await ready();
+    assert.equal(await page.locator(".fw-comparison tbody tr").count(), 21);
+    await page.locator(".fw-comparison tbody tr").first().hover();
+    await page.locator("[data-percentile-popup]").waitFor({ state: "visible" });
+    await page.getByRole("link", { name: "Features", exact: true }).click();
+    await page.locator("#feature-comparison").waitFor();
+    await ready();
+  }
+  assert.equal(
+    await page.evaluate(() => window.reactNavigationProbe),
+    "retained",
+  );
+  checks.push(
+    "React routes preserve the document, page titles and remounted chart hover behavior",
+  );
   const reduced = await browser.newContext({ reducedMotion: "reduce" });
   const reducedPage = await reduced.newPage();
   await reducedPage.goto(`${server.url}/?chart=balls`);
+  await reducedPage.locator('[data-app-ready="true"]').waitFor();
   assert.equal(await reducedPage.locator("[data-play]").isDisabled(), true);
   await reduced.close();
   assert.deepEqual(errors, []);

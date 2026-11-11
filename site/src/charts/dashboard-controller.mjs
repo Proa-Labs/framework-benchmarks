@@ -1,16 +1,19 @@
 import { bisector, extent } from "d3-array";
 import { scaleLinear } from "d3-scale";
 import { line } from "d3-shape";
-import { ALL_GROUPS, matchesGroups, TOOL_GROUPS } from "./filters.mjs";
+import { ALL_GROUPS, matchesGroups, TOOL_GROUPS } from "../filters.mjs";
 
 const d3 = { extent, bisector, scaleLinear, line };
 
-(() => {
-  const root = document.getElementById("frameworks-explorer"),
-    data = JSON.parse(
-      document.getElementById("frameworks-explorer-data").textContent,
-    ),
-    $ = (s) => root.querySelector(s),
+// D3 owns only this mounted chart workspace; React owns page composition.
+export function mountDashboard(root, data) {
+  const lifecycle = new AbortController();
+  const listen = (target, type, handler, options = {}) =>
+    target.addEventListener(type, handler, {
+      ...options,
+      signal: lifecycle.signal,
+    });
+  const $ = (s) => root.querySelector(s),
     $$ = (s) => Array.from(root.querySelectorAll(s));
   const esc = (v) =>
     String(v).replace(
@@ -35,7 +38,7 @@ const d3 = { extent, bisector, scaleLinear, line };
       (data.ecosystem || data.renderers).find((r) => r.id === id),
     name = (id) => renderer(id)?.label || id;
   const logo = (id) =>
-    `<span class="fw-logo-mark" style="--logo-mask:url('${id === "jte" ? "logos/jte-mark.svg" : renderer(id).logo}')" aria-hidden="true"><img class="fw-logo" data-logo="${id}" src="${renderer(id).logo}" width="18" height="18" alt=""></span>`;
+    `<span class="fw-logo-mark" style="--logo-mask:url('${id === "jte" ? "/logos/jte-mark.svg" : `/${renderer(id).logo}`}')" aria-hidden="true"><img class="fw-logo" data-logo="${id}" src="/${renderer(id).logo}" width="18" height="18" alt=""></span>`;
   const label = (id) =>
     `<span class="fw-renderer">${logo(id)}<span>${esc(name(id))}</span></span>`;
   const defaults = {
@@ -215,7 +218,11 @@ const d3 = { extent, bisector, scaleLinear, line };
     if (state.focus) params.set("focus", state.focus);
     if (state.types.length !== ALL_GROUPS.length)
       params.set("types", state.types.join(","));
-    history.replaceState(null, "", `${location.pathname}?${params.toString()}`);
+    history.replaceState(
+      history.state,
+      "",
+      `${location.pathname}?${params.toString()}`,
+    );
   };
   let playing = false,
     lastWidth = 0,
@@ -380,32 +387,33 @@ const d3 = { extent, bisector, scaleLinear, line };
       row,
     );
   }
-  root.addEventListener("mouseover", (event) => {
+  listen(root, "mouseover", (event) => {
     const row = event.target.closest(percentileTarget);
     if (row && !row.contains(event.relatedTarget)) {
       if (popupAnchor !== row) popupPinned = false;
       showRowPercentiles(row);
     }
   });
-  root.addEventListener("pointerout", (event) => {
+  listen(root, "pointerout", (event) => {
     const row = event.target.closest(percentileTarget);
     if (row && !row.contains(event.relatedTarget)) hidePercentiles();
   });
-  root.addEventListener("focusin", (event) => {
+  listen(root, "focusin", (event) => {
     const row = event.target.closest(percentileTarget);
     if (row) showRowPercentiles(row, null);
   });
-  root.addEventListener("focusout", (event) => {
+  listen(root, "focusout", (event) => {
     if (event.target.closest(percentileTarget)) hidePercentiles();
   });
-  document.addEventListener("keydown", (event) => {
+  listen(document, "keydown", (event) => {
     if (event.key === "Escape") hidePercentiles(true);
   });
-  window.addEventListener("resize", () => {
+  listen(window, "resize", () => {
     if (!percentilePopup.hidden && popupAnchor?.isConnected)
       placePercentiles(null, popupAnchor);
   });
-  window.addEventListener(
+  listen(
+    window,
     "scroll",
     () => {
       if (popupPinned && popupAnchor?.isConnected)
@@ -1066,6 +1074,7 @@ const d3 = { extent, bisector, scaleLinear, line };
     save();
   }
   function render() {
+    document.title = `${state.section === "ecosystem" ? "Ecosystem" : "Web framework benchmarks"} · Frameworks`;
     stop();
     if (state.view === "streaming") state.chart = "lines";
     if (state.view === "framework" && !data.framework) state.view = "rendering";
@@ -1437,28 +1446,28 @@ const d3 = { extent, bisector, scaleLinear, line };
     }, 150);
   };
   for (const element of [infoButton, infoPopup]) {
-    element.addEventListener("pointerenter", () => {
+    listen(element, "pointerenter", () => {
       infoHovered = true;
       showInfo();
     });
-    element.addEventListener("pointerleave", () => {
+    listen(element, "pointerleave", () => {
       infoHovered = false;
       hideInfoSoon();
     });
   }
-  infoButton.addEventListener("focus", () => {
+  listen(infoButton, "focus", () => {
     infoFocused = infoButton.matches(":focus-visible");
     if (infoFocused) showInfo();
   });
-  infoButton.addEventListener("blur", () => {
+  listen(infoButton, "blur", () => {
     infoFocused = false;
     hideInfoSoon();
   });
-  document.addEventListener("keydown", (event) => {
+  listen(document, "keydown", (event) => {
     if (event.key === "Escape" && infoPopup.matches(":popover-open"))
       infoPopup.hidePopover();
   });
-  root.addEventListener("click", (e) => {
+  listen(root, "click", (e) => {
     const el = e.target.closest("button");
     if (!el) return;
     if (el.hasAttribute("data-share")) {
@@ -1557,7 +1566,7 @@ const d3 = { extent, bisector, scaleLinear, line };
           : null;
     if (focusSelector) $(focusSelector)?.focus({ preventScroll: true });
   });
-  root.addEventListener("change", (e) => {
+  listen(root, "change", (e) => {
     const el = e.target;
     if (el.dataset.type)
       state.types = el.checked
@@ -1575,7 +1584,7 @@ const d3 = { extent, bisector, scaleLinear, line };
     render();
     save();
   });
-  root.addEventListener("click", (event) => {
+  listen(root, "click", (event) => {
     const row = event.target.closest(percentileTarget);
     if (row) {
       if (row.isConnected) {
@@ -1584,17 +1593,17 @@ const d3 = { extent, bisector, scaleLinear, line };
       }
     }
   });
-  document.addEventListener("pointerdown", (event) => {
+  listen(document, "pointerdown", (event) => {
     if (!event.target.closest(".fw-row,.fw-comparison,.fw-chart"))
       hidePercentiles(true);
   });
-  document.addEventListener("visibilitychange", () => {
+  listen(document, "visibilitychange", () => {
     if (document.hidden) {
       cancelAnimationFrame(flowFrame);
       playing = false;
     } else if (state.flowPlaying && flowRuntime) startFlow();
   });
-  $(".fw-lab-nav").addEventListener("keydown", (event) => {
+  listen($(".fw-lab-nav"), "keydown", (event) => {
     const tabs = $$("[data-view]").filter((tab) => !tab.hidden);
     const index = tabs.indexOf(event.target);
     if (
@@ -1618,19 +1627,27 @@ const d3 = { extent, bisector, scaleLinear, line };
       behavior: "auto",
     });
   });
-  window.addEventListener("popstate", () => {
+  listen(window, "popstate", () => {
     rememberView();
     restore();
     render();
   });
   render();
-  if (globalThis.ResizeObserver)
-    new ResizeObserver((entries) => {
-      const w = Math.floor(entries[0].contentRect.width);
-      if (w !== lastWidth) {
-        lastWidth = w;
-        if (state.chart === "lines" && state.section === "performance")
-          render();
-      }
-    }).observe(root);
-})();
+  const observer = globalThis.ResizeObserver
+    ? new ResizeObserver((entries) => {
+        const w = Math.floor(entries[0].contentRect.width);
+        if (w !== lastWidth) {
+          lastWidth = w;
+          if (state.chart === "lines" && state.section === "performance")
+            render();
+        }
+      })
+    : null;
+  observer?.observe(root);
+  return () => {
+    lifecycle.abort();
+    stop();
+    clearTimeout(infoHideTimer);
+    observer?.disconnect();
+  };
+}

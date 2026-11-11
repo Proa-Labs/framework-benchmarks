@@ -35,26 +35,3 @@ export function sortCoverageRows(rows, group, key = "tool", direction = "asc") {
       : sign * (count(left) - count(right)) || name;
   });
 }
-
-export function renderCoverageBar(row, group = "all") {
-  const { total, counts } = summarizeCapabilities(row, group);
-  const escapeLabel = (value) =>
-    String(value).replace(
-      /[&<>"']/g,
-      (char) =>
-        ({
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;",
-        })[char],
-    );
-  return Object.entries(counts)
-    .filter(([status, count]) => SUPPORTED_STATES.includes(status) && count > 0)
-    .map(([status, count]) => {
-      const label = `${row.label}: ${count} of ${total} ${supportStates[status].label.toLowerCase()}`;
-      return `<button type="button" data-coverage="${status}" data-coverage-detail="${row.id}/${status}" style="--coverage-width:${(count / total) * 100}%" aria-label="${escapeLabel(label)}. View findings" title="${escapeLabel(label)}">${count / total >= 0.075 ? `<span class="fw-coverage-count">${count}</span>` : ""}</button>`;
-    })
-    .join("");
-}

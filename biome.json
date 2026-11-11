@@ -35,14 +35,6 @@
   },
   "overrides": [
     {
-      "includes": ["site/src/header.html"],
-      "html": {
-        "parser": {
-          "interpolation": true
-        }
-      }
-    },
-    {
       "includes": ["framework-ssr/adapters/next/app/catalog/page.jsx"],
       "linter": {
         "rules": {

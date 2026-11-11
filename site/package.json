@@ -7,7 +7,7 @@
   "scripts": {
     "build": "bun build.mjs",
     "dev": "bun dev.mjs",
-    "test": "bun test test",
+    "test": "bun prepare-data.mjs && bun test test",
     "test:browser": "bun test/browser.mjs",
     "deploy:check": "bun run build && wrangler deploy --dry-run",
     "deploy": "bun run build && wrangler deploy",
@@ -16,11 +16,17 @@
   "dependencies": {
     "d3-array": "3.2.4",
     "d3-scale": "4.0.2",
-    "d3-shape": "3.2.0"
+    "d3-shape": "3.2.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-router": "8.5.1"
   },
   "devDependencies": {
-    "esbuild": "0.25.12",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
     "playwright": "1.61.1",
+    "vite": "8.3.4",
     "wrangler": "4.159.0"
   },
   "engines": {

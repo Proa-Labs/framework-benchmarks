@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { MemoryRouter } from "react-router";
 import { loadInputs, normalize } from "../data.mjs";
 import { expandedFeatures } from "../feature-expansion-schema.mjs";
 import {
@@ -9,7 +12,21 @@ import {
   features,
   supportStates,
 } from "../features-data.mjs";
-import { renderFeatures } from "../features-page.mjs";
+import { CoverageBar, FeaturesPage } from "../src/pages/FeaturesPage.jsx";
+
+const renderCoverageBar = (row, group = "all") =>
+  renderToStaticMarkup(
+    createElement(CoverageBar, { row, group, onSelect() {} }),
+  );
+const renderFeatures = (renderers) =>
+  renderToStaticMarkup(
+    createElement(
+      MemoryRouter,
+      null,
+      createElement(FeaturesPage, { rows: featureRows(renderers) }),
+    ),
+  );
+
 import {
   brandStyle,
   contrastRatio,
@@ -17,7 +34,6 @@ import {
 } from "../src/brand-colors.mjs";
 import { readToolSelection } from "../src/feature-selection.mjs";
 import {
-  renderCoverageBar,
   sortCoverageRows,
   summarizeCapabilities,
 } from "../src/feature-summary.mjs";
