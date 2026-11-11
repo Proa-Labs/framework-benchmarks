@@ -8,7 +8,7 @@ import { PAGES } from "../showcase/capture_memcpy.mjs";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const path = join(root, "rendering/results/proa-pr83-criterion.json");
 const baselineName =
-	"proa-" +
+	"proa-native-pages-" +
 	readFileSync(join(root, "Cargo.lock"), "utf8")
 		.match(/name = "proa_core"[\s\S]*?#([a-f0-9]{40})/)[1]
 		.slice(0, 12);
@@ -77,6 +77,8 @@ if (process.argv.includes("--collect")) {
 			{
 				captured_at: new Date().toISOString(),
 				criterion_baseline: baselineName,
+				proa_output:
+					"fresh_owned_full, proa_fresh and proa_owned_full return fresh owned RenderBuffer; explicit String controls retain conversion",
 				proa_revision: lock.match(
 					/name = "proa_core"[\s\S]*?#([a-f0-9]{40})/,
 				)[1],
@@ -130,8 +132,14 @@ const standardIds = {
 const standard = std.rows.map((cells) => {
 	const r = [...cells];
 	if (standardIds[r[0]]) r[2] = triple(standardIds[r[0]]);
+	if (r[0] === "Proa fresh owned") r[0] = "Proa fresh RenderBuffer";
 	return "| " + r.join(" | ") + " |";
 });
+standard.splice(
+	1,
+	0,
+	`| Proa fresh String control | 25,108 | ${triple("ssr_frameworks/proa/fresh_owned_string")} |`,
+);
 const criterion = criteria.rows.map((cells) => {
 	const r = [...cells];
 	const id = r[0].replace(/`/g, "");
@@ -162,6 +170,15 @@ const criterion = criteria.rows.map((cells) => {
 	}
 	return "| " + r.join(" | ") + " |";
 });
+for (const [id, bytes] of [
+	["escape_heavy/proa_fresh_string", "2,729"],
+	["large_page/proa_fresh_string", "269,751"],
+]) {
+	const before = criterion.findIndex((row) =>
+		row.includes("`" + id.replace("_string", "") + "`"),
+	);
+	criterion.splice(before + 1, 0, `| \`${id}\` | ${bytes} | ${triple(id)} |`);
+}
 const ssr = read(
 	join(
 		root,
@@ -181,7 +198,7 @@ const block = `<!-- proa-engineering:start -->
 ## PROA engineering refresh
 
 **${capture.captured_at.slice(0, 10)} UTC** · Proa \`${capture.proa_revision}\` · Apple M4 Max.
-Only PROA was rerun. Peer Criterion rows below retain their August 30–31 measurements; they are dated engineering context, not simultaneous comparisons. Output ownership, batch sizes, and benchmark sample policies remain as declared in each fixture. Intervals are Criterion's 95% slope intervals (mean intervals for flat sampling). The [retained estimates and samples](rendering/results/proa-pr83-criterion.json) contain all ${capture.rows.length} measured PROA rows and the reproduction command.
+Only PROA was rerun. Peer Criterion rows below retain their August 30–31 measurements; they are dated engineering context, not simultaneous comparisons. Fresh canonical, standard-page, targeted \`proa_fresh\`, and product-grid \`proa_owned_full\` lanes now return an independently owned **RenderBuffer**, including context/page allocation and destruction, with no final String copy. The \`fresh_owned_string\`, \`proa_fresh_string\`, and \`proa_owned_string\` rows retain the former String conversion as explicit controls. Flattening for byte equality happens before timing. The optimizer sees the complete output owner. Other upstream showcase String-returning APIs, integer Vec lanes, and reused controls retain their declared boundaries. This boundary change is distinct from a framework optimization. Batch sizes and sample policies remain as declared in each fixture. Intervals are Criterion's 95% slope intervals (mean intervals for flat sampling). The [retained estimates and samples](rendering/results/proa-pr83-criterion.json) contain all ${capture.rows.length} measured PROA rows and the reproduction command.
 
 | Refreshed standard-page row | Output bytes/render | Raw time, µs/10 renders |
 | --- | ---: | ---: |

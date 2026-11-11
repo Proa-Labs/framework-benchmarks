@@ -10,7 +10,7 @@ fi
 export PATH="$(dirname "$node_bin"):$PATH"
 proa_cli="${1:-proa}"
 logs_directory="rendering/results/raw/proa-pr83-criterion"
-criterion_baseline="$("$node_bin" --input-type=module -e 'import {readFileSync} from "node:fs"; const lock=readFileSync("Cargo.lock","utf8"); console.log("proa-"+lock.match(/name = "proa_core"[\s\S]*?#([a-f0-9]{40})/)[1].slice(0,12));')"
+criterion_baseline="$("$node_bin" --input-type=module -e 'import {readFileSync} from "node:fs"; const lock=readFileSync("Cargo.lock","utf8"); console.log("proa-native-pages-"+lock.match(/name = "proa_core"[\s\S]*?#([a-f0-9]{40})/)[1].slice(0,12));')"
 mkdir -p "$logs_directory"
 cargo bench --locked -p proa_bench --features topcoat --no-run
 for bench in ssr_comparison targeted_comparison airbnb_search_comparison showcase_pages integer_serialization topcoat_comparison; do

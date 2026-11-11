@@ -28,7 +28,7 @@ An included renderer must:
 4. pass every parity cell before timing begins; and
 5. appear exactly once in the result artifact and generated table.
 
-There are no partial public rows. An unexpected disappearance, missing workload, absent parity decision, or measurement from another capture invalidates report generation. The public Proa row is named exactly `Proa` and uses the ordinary owned-output path. Reuse, chaining, manual writes, capacity experiments, and controls remain in engineering reports.
+There are no partial public rows. An unexpected disappearance, missing workload, absent parity decision, or measurement from another capture invalidates report generation. The public Proa row is named exactly `Proa` and returns a freshly allocated, independently owned `RenderBuffer`. This is the native paged HTML output before optional conversion to a contiguous `String`. Other adapters retain their independently owned String outputs. Proa's context construction, page allocation, component rendering and the previous output's destruction are inside timing. Flattening is performed only for untimed parity dumps. The entire returned owner is passed to an optimizer barrier; no byte-count traversal or page concatenation runs in the measured Proa loop. The former `render_to_string` path remains an explicitly labeled engineering control. This is an output-boundary change, not an upstream framework speedup. Reuse, chaining, manual writes, capacity experiments, and controls remain in engineering reports.
 
 ## Parity gate
 

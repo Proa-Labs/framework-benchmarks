@@ -18,6 +18,7 @@ pub mod ebay_srp_real;
 pub mod http_load;
 pub mod integer_serialization;
 pub mod leptos_page;
+pub mod native_output;
 pub mod proa_airbnb_search;
 pub mod proa_page;
 #[cfg(feature = "topcoat")]

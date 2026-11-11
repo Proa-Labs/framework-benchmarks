@@ -91,13 +91,15 @@ export async function refreshProa({
 		else process.env.PROA_BENCH_PRODUCT_COUNT = originalCount;
 	}
 	result.completed_at = new Date().toISOString();
+	result.proa_output =
+		"fresh owned RenderBuffer; no flattening or String conversion";
 	result.refresh = {
 		renderer: "proa",
 		baseline_capture_id: baseline.capture_id,
 		baseline_captured_at: baseline.captured_at,
 		baseline_path: `raw/${id}/baseline.json`,
 		baseline_sha256: createHash("sha256").update(baselineText).digest("hex"),
-		note: `Only Proa was rerun on ${started.slice(0, 10)}; every peer retains its ${baseline.captured_at.slice(0, 10)} measurement and version. These are different capture dates on the same machine.`,
+		note: `Only Proa was rerun on ${started.slice(0, 10)}; every peer retains its ${baseline.captured_at.slice(0, 10)} measurement and version. These are different capture dates on the same machine. Proa returns a fresh owned RenderBuffer; its page-to-String conversion is excluded. Peer outputs and timings are unchanged.`,
 	};
 	result.provenance = {
 		harness_commit: execFileSync("git", ["rev-parse", "HEAD"], {

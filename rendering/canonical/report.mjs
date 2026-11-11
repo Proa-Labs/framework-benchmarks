@@ -601,6 +601,7 @@ export function renderDetailedReport(result, roster, workloadManifest) {
     ...(result.completed_at ? [`- Completed: ${result.completed_at}`] : []),
     `- Host: ${result.host.cpu_model}, ${result.host.logical_cpus} logical CPUs, ${result.host.memory_bytes} bytes RAM`,
     `- OS: ${result.host.os_name} (${result.host.os_release}), ${result.host.architecture}`,
+    ...(result.proa_output ? [`- Proa output: ${result.proa_output}`] : []),
     `- Harness commit: \`${result.provenance.harness_commit}\`${
       result.provenance.dirty ? " (dirty; source digest retained)" : ""
     }`,

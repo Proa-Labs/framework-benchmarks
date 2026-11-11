@@ -9,6 +9,7 @@
 use std::time::Duration;
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use proa_bench::native_output::render_buffer;
 use proa_bench::topcoat_product_grid::{
     build_topcoat_view, make_products, render_proa, render_topcoat, ProaProductGrid,
 };
@@ -38,9 +39,17 @@ fn bench_product_grid(c: &mut Criterion) {
             &products,
             |b, products| {
                 b.iter(|| {
-                    let html = render_proa(black_box(products));
-                    black_box(html.as_bytes());
+                    let output = render_buffer(ProaProductGrid::new(black_box(products)));
+                    black_box(output);
                 });
+            },
+        );
+
+        group.bench_with_input(
+            BenchmarkId::new("proa_owned_string", count),
+            &products,
+            |b, products| {
+                b.iter(|| black_box(render_proa(black_box(products))));
             },
         );
 

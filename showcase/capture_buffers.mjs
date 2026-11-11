@@ -88,7 +88,9 @@ export function bufferTable(capture) {
 | --- | --- | --- |
 | ${capture.pages.length} workloads · five processes per cell | ${date} | \`${capture.provenance.proa_revision.slice(0, 12)}\` |
 
-Standard Proa uses its 4 KiB chained writer. The full-size variant allocates a
+This is an explicit **String-output control**, not the native RenderBuffer
+scoreboard lane. The default String API uses its 4 KiB chained writer and then
+flattens its pages into a String. The full-size String variant allocates a
 fresh contiguous output buffer for every render, with capacity set to the final
 HTML byte count measured before timing. Allocation, page construction and
 runtime-tag insertion are timed; response destruction is outside both timings.

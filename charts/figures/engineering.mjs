@@ -213,7 +213,7 @@ export function criterion(tables, meta) {
   b += rule(PX0, bBottom, PX1, bBottom, C.axis);
 
   const notes = footnotes(PAD, bBottom + 20,
-    'One Criterion process; output sizes differ between engines.', COL);
+    'Fresh Proa pages are owned RenderBuffer output; String controls include conversion. One Criterion process; output sizes differ between engines.', COL);
 
   return doc({
     w: WIDTH, h: bBottom + 20 + notes.h + 12,
@@ -243,7 +243,7 @@ export function cardScaling(tables, meta) {
   const allV = rows.flatMap((r) => r.values.map((v) => v.v));
 
   const hdr = header(PAD, 44, 'Product-card render scaling',
-    `Engineering capture · ${meta.scalingDate} UTC${meta.refreshSuffix ?? ""} · fresh full responses · five processes per cell`, COL);
+    `Engineering capture · ${meta.scalingDate} UTC${meta.refreshSuffix ?? ""} · ${meta.proaNativeOutput ? "Proa: fresh RenderBuffer" : "fresh full responses"} · five processes per cell`, COL);
   let b = hdr.svg;
 
   const marker = (x, y, shape, color) => {

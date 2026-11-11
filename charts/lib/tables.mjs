@@ -40,6 +40,7 @@ export function readMeta(md) {
   const refreshSuffix = refreshDates.length ? ` · Proa refresh; peers ${refreshDates[0][2]}` : '';
   return {
     refreshSuffix,
+    proaNativeOutput: /^- Proa output:.*RenderBuffer/m.test(md),
     engineeringRefreshDate: /<!-- proa-engineering:start -->[\s\S]*?\*\*([0-9-]+) UTC/.exec(md)?.[1],
     date: within('canonical-scoreboard', /\*\*(\w+ \d+, \d{4}) · /, 'the canonical capture date'),
     scalingDate: within('product-scaling', /This (\w+ \d+, \d{4}) UTC engineering capture/, 'the product-scaling capture date'),

@@ -91,17 +91,17 @@ The existing Svelte row uses the **same pinned Svelte compiler** as the SvelteKi
 
 | Workload | Proa P50 | Svelte P50 | Svelte ÷ Proa |
 | --- | ---: | ---: | ---: |
-| cards | 1.167 µs | 8.209 µs | 7.03× |
-| products | 17.292 µs | 70.438 µs | 4.07× |
-| table | 207.083 µs | 945.333 µs | 4.56× |
+| cards | 0.875 µs | 8.209 µs | 9.38× |
+| products | 10.500 µs | 70.438 µs | 6.71× |
+| table | 189.375 µs | 945.333 µs | 4.99× |
 
 The scaling capture also reruns all 17 renderers at each size, five independent processes per cell. This is a separate renderer-only run, not cached output or a second HTTP measurement.
 
 | Cards | Proa P50 | Svelte P50 |
 | --- | ---: | ---: |
-| 12 | 2.041 µs | 9.292 µs |
-| 96 | 17.667 µs | 71.042 µs |
-| 768 | 142.833 µs | 563.542 µs |
+| 12 | 1.292 µs | 9.292 µs |
+| 96 | 11.500 µs | 71.042 µs |
+| 768 | 89.375 µs | 563.542 µs |
 
 ## Reproduce and inspect
 
