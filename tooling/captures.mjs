@@ -81,6 +81,9 @@ export function retainCapture(
   try {
     execFileSync("tar", ["-czf", snapshot, "-C", root, ...files], {
       stdio: "pipe",
+      // BSD tar otherwise adds AppleDouble resource forks hidden by macOS tar
+      // but listed as extra source files by GNU tar on Linux.
+      env: { ...process.env, COPYFILE_DISABLE: "1" },
     });
     verifySourceSnapshot(snapshot, expected, { sorted: false, prefix });
     mkdirSync(dirname(archive), { recursive: true });
