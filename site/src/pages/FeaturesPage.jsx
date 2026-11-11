@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { useLocation } from "react-router";
 import evidence from "../../.generated/features.json";
 import {
   featureGroups,
@@ -17,6 +16,7 @@ import {
   summarizeCapabilities,
 } from "../feature-summary.mjs";
 import { TOOL_GROUPS } from "../filters.mjs";
+import { useLocation } from "../navigation.jsx";
 
 const defaults = {
   group: "all",
@@ -368,7 +368,7 @@ export function CoverageBar({ row, group, onSelect }) {
 
 export function FeaturesPage({ rows = evidence.rows }) {
   const location = useLocation();
-  const [settings, setSettings] = useState(defaults);
+  const [settings, setSettings] = useState(() => readSettings(location.search));
   const [ready, setReady] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -447,7 +447,7 @@ export function FeaturesPage({ rows = evidence.rows }) {
     });
   const selectGroup = (group) => {
     change({ group });
-    table.current.scrollLeft = 0;
+    if (table.current) table.current.scrollLeft = 0;
   };
   const selectedRows = rows.filter((row) => tools?.includes(row.id));
   const sortButton = (key, label) => (
@@ -472,7 +472,10 @@ export function FeaturesPage({ rows = evidence.rows }) {
       </section>
       <main className="fw-features" id="feature-comparison">
         <div className="fw-features-layout">
-          <aside className="fw-feature-sidebar" aria-label="Feature categories">
+          <aside
+            className="fw-feature-sidebar min-w-0"
+            aria-label="Feature categories"
+          >
             <label className="fw-feature-mobile-category">
               Category
               <select
@@ -487,7 +490,7 @@ export function FeaturesPage({ rows = evidence.rows }) {
                 ))}
               </select>
             </label>
-            <fieldset className="fw-feature-groups">
+            <fieldset className="fw-feature-groups flex flex-col">
               <legend>Categories</legend>
               {categories.map((entry) => (
                 <button
@@ -504,11 +507,11 @@ export function FeaturesPage({ rows = evidence.rows }) {
             </fieldset>
           </aside>
           <section
-            className="fw-feature-results"
+            className="fw-feature-results min-w-0"
             aria-labelledby="feature-category-title"
           >
             <div className="fw-features-controls">
-              <div className="fw-feature-heading">
+              <div className="fw-feature-heading flex items-center">
                 <h2 id="feature-category-title" data-feature-category-title="">
                   {category?.label || "All features"}
                 </h2>
@@ -682,7 +685,7 @@ export function FeaturesPage({ rows = evidence.rows }) {
                     aria-label="Tools"
                     aria-multiselectable="true"
                   >
-                    {rows.map((row) => (
+                    {rows.filter(visible).map((row) => (
                       <button
                         key={row.id}
                         type="button"
@@ -768,7 +771,7 @@ export function FeaturesPage({ rows = evidence.rows }) {
             <span className="sr-only" data-feature-count="" role="status">
               {rows.filter(visible).length} tools
             </span>
-            <div className="fw-feature-display-controls">
+            <div className="fw-feature-display-controls flex items-center justify-between">
               <fieldset
                 className="fw-feature-display"
                 aria-label="Comparison display"
@@ -786,204 +789,225 @@ export function FeaturesPage({ rows = evidence.rows }) {
                 ))}
               </fieldset>
             </div>
-            <section
-              className="fw-feature-overview"
-              data-feature-overview=""
-              aria-label="Capability coverage overview"
-              hidden={display !== "overview"}
-            >
-              <p className="fw-feature-summary-note">
-                Bar length shows supported features. Select a segment for
-                evidence.
-              </p>
-              <div className="fw-coverage-key">
-                {SUPPORTED_STATES.map((status) => (
-                  <span key={status}>
-                    <i data-coverage={status} aria-hidden="true" />
-                    {supportStates[status].label}
-                  </span>
-                ))}
-              </div>
-              <table
-                className="fw-coverage-table"
-                aria-label="Capability coverage counts"
+            {display === "overview" && (
+              <section
+                className="fw-feature-overview"
+                data-feature-overview=""
+                aria-label="Capability coverage overview"
+                hidden={display !== "overview"}
               >
-                <thead>
-                  <tr className="fw-coverage-head">
-                    <th scope="col" aria-sort={sortAria("tool")}>
-                      {sortButton("tool", "Tool")}
-                    </th>
-                    <th scope="col" aria-sort={sortAria("support")}>
-                      {sortButton("support", "Support breakdown")}
-                    </th>
-                    <th scope="col" aria-sort={sortAria("supported")}>
-                      <span className="fw-coverage-heading">
-                        {sortButton("supported", "Supported")}
-                        <span className="fw-coverage-help">
-                          <button
-                            type="button"
-                            aria-label="What counts as supported?"
-                            aria-describedby="supported-definition"
-                          >
-                            ⓘ
-                          </button>
-                          <span role="tooltip" id="supported-definition">
-                            Built-in + official packages + third-party packages.
-                            Qualified and planned features are excluded. The
-                            total follows the selected category.
-                          </span>
-                        </span>
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody data-feature-summary-rows="">
-                  {sortCoverageRows(rows, group, sort, order).map((row) => {
-                    const summary = summarizeCapabilities(row, group);
-                    return (
-                      <tr
-                        key={row.id}
-                        className="fw-coverage-row"
-                        data-feature-summary-row={row.id}
-                        hidden={!visible(row)}
-                        style={colorStyle(row.color)}
-                      >
-                        <td>
-                          <button
-                            type="button"
-                            className="fw-coverage-project"
-                            data-feature-profile={row.id}
-                            onClick={() => setSelection({ row: row.id })}
-                          >
-                            <Logo row={row} />
-                            {row.label}
-                          </button>
-                        </td>
-                        <td
-                          className="fw-coverage-bar"
-                          data-coverage-group={group}
-                          data-feature-summary-bar={row.id}
-                        >
-                          <CoverageBar
-                            row={row}
-                            group={group}
-                            onSelect={setSelection}
-                          />
-                        </td>
-                        <td
-                          className="fw-coverage-total"
-                          data-feature-summary-total={row.id}
-                        >
-                          {summary.supported}
-                          <small> / {summary.total}</small>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </section>
-            {/* biome-ignore-start lint/a11y/noNoninteractiveTabindex: The scroll region needs keyboard focus so arrow keys can scroll the wide matrix. */}
-            <section
-              ref={table}
-              className="fw-feature-table-scroll"
-              hidden={display !== "matrix"}
-              aria-label="Scrollable capability comparison"
-              tabIndex={0}
-            >
-              <table className="fw-feature-table">
-                <caption className="sr-only">
-                  Framework capability comparison. Cells open documentation
-                  notes. No overall feature score is assigned.
-                </caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Tool</th>
-                    {features.map((feature) => (
-                      <th
-                        key={feature.id}
-                        scope="col"
-                        data-feature-column={feature.id}
-                        data-feature-category={feature.group}
-                        hidden={group !== "all" && feature.group !== group}
-                      >
-                        <button
-                          type="button"
-                          data-feature-definition={feature.id}
-                          onClick={() =>
-                            setSelection({
-                              feature: feature.id,
-                              definition: true,
-                            })
-                          }
-                        >
-                          {feature.label} <span aria-hidden="true">ⓘ</span>
-                        </button>
+                <p className="fw-feature-summary-note">
+                  Bar length shows supported features. Select a segment for
+                  evidence.
+                </p>
+                <div className="fw-coverage-key">
+                  {SUPPORTED_STATES.map((status) => (
+                    <span key={status}>
+                      <i data-coverage={status} aria-hidden="true" />
+                      {supportStates[status].label}
+                    </span>
+                  ))}
+                </div>
+                <table
+                  className="fw-coverage-table"
+                  aria-label="Capability coverage counts"
+                >
+                  <thead>
+                    <tr className="fw-coverage-head">
+                      <th scope="col" aria-sort={sortAria("tool")}>
+                        {sortButton("tool", "Tool")}
                       </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row) => (
-                    <tr
-                      key={row.id}
-                      data-feature-row={row.id}
-                      data-feature-kind={row.kind}
-                      data-feature-name={row.label.toLowerCase()}
-                      hidden={!visible(row)}
-                    >
-                      <th scope="row">
-                        <button
-                          type="button"
-                          className="fw-feature-project"
-                          data-feature-profile={row.id}
-                          aria-label={`${row.label}, ${row.kind}. View profile`}
-                          onClick={() => setSelection({ row: row.id })}
-                        >
-                          <Logo row={row} />
-                          <span>{row.label}</span>
-                        </button>
+                      <th scope="col" aria-sort={sortAria("support")}>
+                        {sortButton("support", "Support breakdown")}
                       </th>
-                      {features.map((feature) => {
-                        const capability = row.capabilities[feature.id],
-                          state = supportStates[capability.status];
-                        return (
-                          <td
-                            key={feature.id}
-                            data-feature-column={feature.id}
-                            data-feature-category={feature.group}
-                            hidden={group !== "all" && feature.group !== group}
-                          >
+                      <th scope="col" aria-sort={sortAria("supported")}>
+                        <span className="fw-coverage-heading">
+                          {sortButton("supported", "Supported")}
+                          <span className="fw-coverage-help">
                             <button
                               type="button"
-                              data-feature-cell={`${row.id}/${feature.id}`}
-                              data-support={capability.status}
-                              aria-label={`${row.label}: ${feature.label}, ${statusLabel(capability)}. View evidence`}
-                              onClick={() =>
-                                setSelection({
-                                  row: row.id,
-                                  feature: feature.id,
-                                })
-                              }
+                              aria-label="What counts as supported?"
+                              aria-describedby="supported-definition"
                             >
-                              <span>
-                                <b aria-hidden="true">{state.symbol}</b>{" "}
-                                {statusLabel(capability)}
-                              </span>
-                              {capability.label &&
-                                capability.status !== "partial" && (
-                                  <small>{capability.label}</small>
-                                )}
+                              ⓘ
+                            </button>
+                            <span role="tooltip" id="supported-definition">
+                              Built-in + official packages + third-party
+                              packages. Qualified and planned features are
+                              excluded. The total follows the selected category.
+                            </span>
+                          </span>
+                        </span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody data-feature-summary-rows="">
+                    {sortCoverageRows(rows, group, sort, order).map((row) => {
+                      const summary = summarizeCapabilities(row, group);
+                      return (
+                        <tr
+                          key={row.id}
+                          className="fw-coverage-row"
+                          data-feature-summary-row={row.id}
+                          hidden={!visible(row)}
+                          style={colorStyle(row.color)}
+                        >
+                          <td>
+                            <button
+                              type="button"
+                              className="fw-coverage-project"
+                              data-feature-profile={row.id}
+                              onClick={() => setSelection({ row: row.id })}
+                            >
+                              <Logo row={row} />
+                              {row.label}
                             </button>
                           </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </section>
-            {/* biome-ignore-end lint/a11y/noNoninteractiveTabindex: End keyboard-scrollable matrix region. */}
+                          <td
+                            className="fw-coverage-bar"
+                            data-coverage-group={group}
+                            data-feature-summary-bar={row.id}
+                          >
+                            <CoverageBar
+                              row={row}
+                              group={group}
+                              onSelect={setSelection}
+                            />
+                          </td>
+                          <td
+                            className="fw-coverage-total"
+                            data-feature-summary-total={row.id}
+                          >
+                            {summary.supported}
+                            <small> / {summary.total}</small>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </section>
+            )}
+            {display === "matrix" && (
+              <>
+                {/* biome-ignore-start lint/a11y/noNoninteractiveTabindex: The scroll region needs keyboard focus so arrow keys can scroll the wide matrix. */}
+                <section
+                  ref={table}
+                  className="fw-feature-table-scroll"
+                  hidden={display !== "matrix"}
+                  aria-label="Scrollable capability comparison"
+                  tabIndex={0}
+                >
+                  <table className="fw-feature-table">
+                    <caption className="sr-only">
+                      Framework capability comparison. Cells open documentation
+                      notes. No overall feature score is assigned.
+                    </caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">Tool</th>
+                        {features
+                          .filter(
+                            (feature) =>
+                              group === "all" || feature.group === group,
+                          )
+                          .map((feature) => (
+                            <th
+                              key={feature.id}
+                              scope="col"
+                              data-feature-column={feature.id}
+                              data-feature-category={feature.group}
+                              hidden={
+                                group !== "all" && feature.group !== group
+                              }
+                            >
+                              <button
+                                type="button"
+                                data-feature-definition={feature.id}
+                                onClick={() =>
+                                  setSelection({
+                                    feature: feature.id,
+                                    definition: true,
+                                  })
+                                }
+                              >
+                                {feature.label}{" "}
+                                <span aria-hidden="true">ⓘ</span>
+                              </button>
+                            </th>
+                          ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.filter(visible).map((row) => (
+                        <tr
+                          key={row.id}
+                          data-feature-row={row.id}
+                          data-feature-kind={row.kind}
+                          data-feature-name={row.label.toLowerCase()}
+                          hidden={!visible(row)}
+                        >
+                          <th scope="row">
+                            <button
+                              type="button"
+                              className="fw-feature-project"
+                              data-feature-profile={row.id}
+                              aria-label={`${row.label}, ${row.kind}. View profile`}
+                              onClick={() => setSelection({ row: row.id })}
+                            >
+                              <Logo row={row} />
+                              <span>{row.label}</span>
+                            </button>
+                          </th>
+                          {features
+                            .filter(
+                              (feature) =>
+                                group === "all" || feature.group === group,
+                            )
+                            .map((feature) => {
+                              const capability = row.capabilities[feature.id],
+                                state = supportStates[capability.status];
+                              return (
+                                <td
+                                  key={feature.id}
+                                  data-feature-column={feature.id}
+                                  data-feature-category={feature.group}
+                                  hidden={
+                                    group !== "all" && feature.group !== group
+                                  }
+                                >
+                                  <button
+                                    type="button"
+                                    data-feature-cell={`${row.id}/${feature.id}`}
+                                    data-support={capability.status}
+                                    aria-label={`${row.label}: ${feature.label}, ${statusLabel(capability)}. View evidence`}
+                                    onClick={() =>
+                                      setSelection({
+                                        row: row.id,
+                                        feature: feature.id,
+                                      })
+                                    }
+                                  >
+                                    <span>
+                                      <b aria-hidden="true">{state.symbol}</b>{" "}
+                                      {statusLabel(capability)}
+                                    </span>
+                                    {capability.label &&
+                                      capability.status !== "partial" && (
+                                        <small>{capability.label}</small>
+                                      )}
+                                  </button>
+                                </td>
+                              );
+                            })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </section>
+                {/* biome-ignore-end lint/a11y/noNoninteractiveTabindex: End keyboard-scrollable matrix region. */}
+              </>
+            )}
             <p
               className="fw-feature-empty"
               data-feature-empty=""
@@ -1042,12 +1066,14 @@ export function FeaturesPage({ rows = evidence.rows }) {
             behavior.
           </p>
           <dl>
-            {features.map((feature) => (
-              <div key={feature.id}>
-                <dt>{feature.label}</dt>
-                <dd>{feature.definition}</dd>
-              </div>
-            ))}
+            {features
+              .filter((feature) => group === "all" || feature.group === group)
+              .map((feature) => (
+                <div key={feature.id}>
+                  <dt>{feature.label}</dt>
+                  <dd>{feature.definition}</dd>
+                </div>
+              ))}
           </dl>
           <a
             href="https://github.com/Proa-Labs/framework-benchmarks/issues/new"

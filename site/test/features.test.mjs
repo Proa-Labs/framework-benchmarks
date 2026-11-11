@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import {
+  createMemoryHistory,
+  createRootRoute,
+  createRouter,
+  RouterContextProvider,
+} from "@tanstack/react-router";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { MemoryRouter } from "react-router";
 import { loadInputs, normalize } from "../data.mjs";
 import { expandedFeatures } from "../feature-expansion-schema.mjs";
 import {
@@ -21,8 +26,15 @@ const renderCoverageBar = (row, group = "all") =>
 const renderFeatures = (renderers) =>
   renderToStaticMarkup(
     createElement(
-      MemoryRouter,
-      null,
+      RouterContextProvider,
+      {
+        router: createRouter({
+          routeTree: createRootRoute(),
+          history: createMemoryHistory({
+            initialEntries: ["/features?display=matrix"],
+          }),
+        }),
+      },
       createElement(FeaturesPage, { rows: featureRows(renderers) }),
     ),
   );

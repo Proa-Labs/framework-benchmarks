@@ -23,59 +23,72 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       manifest.captures[id].artifactSha256,
     );
   }
-  const index = await readFile(join(outputDirectory, "index.html"), "utf8");
-  const viteManifest = JSON.parse(
-    await readFile(join(outputDirectory, ".vite/manifest.json"), "utf8"),
-  );
-  const entry = viteManifest["index.html"];
-  assert.equal(entry.isEntry, true);
-  assert.match(entry.file, /^assets\/index-[\w-]+\.js$/);
-  const versionedAssets = Object.values(viteManifest)
-    .flatMap((asset) => [asset.file, ...(asset.css || [])])
-    .filter(Boolean)
-    .map((asset) => `/${asset}`);
-  assert.ok(index.includes(`src="/${entry.file}"`));
-  for (const css of entry.css) assert.ok(index.includes(`href="/${css}"`));
-  const generatedData = JSON.parse(
-    await readFile(join(outputDirectory, "data/results.json"), "utf8"),
-  );
-  assert.deepEqual(generatedData, data);
-  assert.doesNotMatch(
-    index,
-    /cdn\.jsdelivr|window\.openai|independent research/i,
-  );
-  assert.match(index, /Maintained by Andrew Hariri, founder of Proa Labs/);
-  assert.match(index, /href="\/features"/);
-  assert.ok(
-    index.indexOf("data-initial-theme") < index.indexOf("data-theme-bootstrap"),
-  );
-  assert.ok(
-    index.indexOf("data-theme-bootstrap") < index.indexOf('rel="stylesheet"'),
-  );
-  assert.doesNotMatch(index, /<script src="theme\.js/);
-  const cardsPreview = await readFile(
-    join(outputDirectory, "previews/cards.html"),
-    "utf8",
-  );
-  const productsPreview = await readFile(
-    join(outputDirectory, "previews/products.html"),
-    "utf8",
-  );
-  const tablePreview = await readFile(
-    join(outputDirectory, "previews/table.html"),
-    "utf8",
-  );
-  assert.equal((cardsPreview.match(/data-card-id=/g) ?? []).length, 32);
-  assert.equal((productsPreview.match(/href="\/products\//g) ?? []).length, 96);
-  assert.equal(
-    (
-      tablePreview.match(/<tbody>[\s\S]*?<\/tbody>/)?.[0].match(/<tr[ >]/g) ??
-      []
-    ).length,
-    1000,
-  );
   const server = await startServer({ port: 0, live: false, build: false });
   try {
+    const initialResponse = await fetch(server.url);
+    assert.equal(initialResponse.status, 200);
+    assert.equal(
+      initialResponse.headers.get("x-content-type-options"),
+      "nosniff",
+    );
+    const index = await initialResponse.text();
+    const viteManifest = JSON.parse(
+      await readFile(join(outputDirectory, ".vite/manifest.json"), "utf8"),
+    );
+    const entry = Object.values(viteManifest).find((entry) => entry.isEntry);
+    assert.equal(entry.isEntry, true);
+    assert.match(entry.file, /^assets\/index-[\w-]+\.js$/);
+    const versionedAssets = Object.values(viteManifest)
+      .flatMap((asset) => [asset.file, ...(asset.css || [])])
+      .filter(Boolean)
+      .map((asset) => `/${asset}`);
+    assert.ok(index.includes(`src="/${entry.file}"`));
+    const cssAssets = Object.values(viteManifest).filter((asset) =>
+      asset.file.endsWith(".css"),
+    );
+    assert.ok(cssAssets.length > 0);
+    for (const css of cssAssets)
+      assert.ok(index.includes(`href="/${css.file}"`));
+    const generatedData = JSON.parse(
+      await readFile(join(outputDirectory, "data/results.json"), "utf8"),
+    );
+    assert.deepEqual(generatedData, data);
+    assert.doesNotMatch(
+      index,
+      /cdn\.jsdelivr|window\.openai|independent research/i,
+    );
+    assert.match(index, /Maintained by Andrew Hariri, founder of Proa Labs/);
+    assert.match(index, /href="\/features"/);
+    assert.ok(
+      index.indexOf("data-initial-theme") <
+        index.indexOf("data-theme-bootstrap"),
+    );
+    assert.ok(index.indexOf("data-theme-bootstrap") < index.indexOf("</head>"));
+    assert.doesNotMatch(index, /<script src="theme\.js/);
+    const cardsPreview = await readFile(
+      join(outputDirectory, "previews/cards.html"),
+      "utf8",
+    );
+    const productsPreview = await readFile(
+      join(outputDirectory, "previews/products.html"),
+      "utf8",
+    );
+    const tablePreview = await readFile(
+      join(outputDirectory, "previews/table.html"),
+      "utf8",
+    );
+    assert.equal((cardsPreview.match(/data-card-id=/g) ?? []).length, 32);
+    assert.equal(
+      (productsPreview.match(/href="\/products\//g) ?? []).length,
+      96,
+    );
+    assert.equal(
+      (
+        tablePreview.match(/<tbody>[\s\S]*?<\/tbody>/)?.[0].match(/<tr[ >]/g) ??
+        []
+      ).length,
+      1000,
+    );
     const legacyFeatures = await fetch(
       `${server.url}/features.html?group=server&display=matrix`,
       { redirect: "manual" },

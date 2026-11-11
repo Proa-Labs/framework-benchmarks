@@ -1,8 +1,11 @@
-import { Link } from "react-router";
+import { Link } from "../navigation.jsx";
 import { ThemeToggle } from "./ThemeToggle.jsx";
 export function Header({ active = "performance", interactive = false }) {
   const navigation = (
-    <nav className="fw-sections" aria-label="Research section">
+    <nav
+      className="fw-sections flex items-center"
+      aria-label="Research section"
+    >
       {[
         ["performance", "Performance"],
         ["features", "Features"],
@@ -31,8 +34,8 @@ export function Header({ active = "performance", interactive = false }) {
     </nav>
   );
   return (
-    <header>
-      <div className="fw-brand">
+    <header className="flex flex-wrap items-center justify-between">
+      <div className="fw-brand flex shrink-0 items-center">
         <Link className="fw-wordmark" to="/" aria-label="Frameworks home">
           <svg
             className="fw-mark"
@@ -52,7 +55,10 @@ export function Header({ active = "performance", interactive = false }) {
         </Link>
       </div>
       {navigation}
-      <nav className="fw-top-actions" aria-label="Site navigation">
+      <nav
+        className="fw-top-actions flex items-center"
+        aria-label="Site navigation"
+      >
         <Link
           className="fw-about"
           to="/about"

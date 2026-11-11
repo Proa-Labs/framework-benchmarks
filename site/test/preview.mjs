@@ -7,6 +7,25 @@ import { chromium } from "playwright";
 export async function verifyPreview(url) {
   const browser = await chromium.launch({ headless: true });
   try {
+    const initial = await browser.newPage({ javaScriptEnabled: false });
+    await initial.goto(new URL("/", url).href, {
+      waitUntil: "domcontentloaded",
+    });
+    assert.ok(
+      (await initial.locator(".fw-comparison tbody tr").count()) > 0,
+      "Preview must include benchmark results without JavaScript",
+    );
+    await initial.goto(
+      new URL("/features?group=server&display=matrix&tools=astro,nextjs", url)
+        .href,
+      { waitUntil: "domcontentloaded" },
+    );
+    assert.equal(
+      await initial.locator(".fw-feature-table tbody tr:visible").count(),
+      2,
+      "Server must apply query-string selections",
+    );
+    await initial.close();
     const page = await browser.newPage();
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));

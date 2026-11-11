@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   site:
-    name: Build and validate static website
+    name: Build and validate TanStack Start website
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -32,6 +32,10 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
+      - name: Set up Cloudflare local tooling host
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "26.13.0"
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: "1.4.2"

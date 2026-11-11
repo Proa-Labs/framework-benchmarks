@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from "react";
-import { Link } from "react-router";
 import metadata from "../../.generated/metadata.json";
 import { Header } from "../components/Header.jsx";
+import { Link } from "../navigation.jsx";
 
 function About() {
   return (

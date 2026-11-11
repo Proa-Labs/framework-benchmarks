@@ -128,7 +128,7 @@ bun run --cwd site test:browser
 
 `check` runs Biome, TypeScript 7's native Go compiler, contract tests, website
 unit tests, validation of every selected publication capture/source snapshot,
-and a React + Vite production build. Browser checks use Playwright's Chromium. The normal
+and a TanStack Start/Cloudflare production build. Browser checks use Playwright's Chromium. The normal
 repository CI additionally builds native adapters and checks generated reports
 and charts. The website workflow exercises the Bun-only contributor smoke run
 without private Proa build credentials. Exact's generated adapter types are
@@ -189,7 +189,7 @@ publication contract and its retained source. Do not edit an archive or fingerpr
 to make a check pass. Do not prune raw artifacts referenced by a retained public
 capture. Short-lived smoke archives may be removed together with their raw folder.
 
-`site/dist/`, reports and SVGs are derived outputs. Rebuild them; add measurements
+`site/dist/client/`, `site/dist/server/`, reports and SVGs are derived outputs. Rebuild them; add measurements
 by running a suite, not by editing those files.
 
 ## Automatic website updates
@@ -200,4 +200,4 @@ Keep capture JSON, its archive, referenced raw runs and verified source snapshot
 
 On the original capture machine, rerun only Proa with `bun run bench run rendering --publish --refresh-proa` (add `--product-scaling` for the engineering grid). This also works after an earlier Proa refresh: the original peer capture remains the baseline. Use `bun run refresh` to regenerate reports and figures, then `bun run check` before submitting the evidence.
 
-Same-repository PRs publish a non-production Cloudflare version after website validation. The workflow updates one preview comment and a GitHub deployment link on each successful push; forks run checks without the deploy secret. React pages and shared components live in `site/src/`; `bun run --cwd site dev` uses Vite Fast Refresh. Generated HTML in `site/dist/` is build output, not authored page source.
+Same-repository PRs publish a non-production Cloudflare version after website validation. The workflow updates one preview comment and a GitHub deployment link on each successful push; forks run checks without the deploy secret. TanStack Start routes, React pages and shared components live in `site/src/`; `bun run --cwd site dev` uses Vite Fast Refresh and Tailwind. The Cloudflare adapter builds a request-time SSR Worker in `site/dist/server/` with matching assets in `site/dist/client/`. Bun runs scripts and builds; Cloudflare local emulation uses the supported Node host (26.13.0 in CI).

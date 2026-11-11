@@ -51,6 +51,10 @@ jobs:
         if: matrix.suite == 'quality'
         uses: ./.github/actions/workflow-lint
 
+      - name: Set up Cloudflare local tooling host
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "26.13.0"
       - name: Set up Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:

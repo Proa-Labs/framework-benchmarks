@@ -20,7 +20,8 @@
       "!site/public",
       "!**/package-lock.json",
       "!**/bun.lock",
-      "!framework-ssr/results"
+      "!framework-ssr/results",
+      "!site/src/routeTree.gen.ts"
     ]
   },
   "formatter": {
@@ -65,5 +66,10 @@
         }
       }
     }
-  ]
+  ],
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  }
 }

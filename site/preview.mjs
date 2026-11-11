@@ -60,10 +60,10 @@ const upload = readFileSync(output, "utf8")
   .findLast((entry) => entry.type === "version-upload");
 const url = upload?.preview_alias_url ?? upload?.preview_url;
 assert.ok(url, "Cloudflare returned no version preview URL");
-const entryScript = readFileSync(join(here, "dist/index.html"), "utf8").match(
-  /<script[^>]+src="([^"]+)"/,
-)?.[1];
-assert.ok(entryScript, "Built site has no entry script");
+const manifest = JSON.parse(
+  readFileSync(join(here, "dist/client/.vite/manifest.json"), "utf8"),
+);
+const entryScript = `/${Object.values(manifest).find((entry) => entry.isEntry).file}`;
 for (const target of new Set([upload.preview_url, url].filter(Boolean))) {
   for (let attempt = 0; ; attempt++) {
     const response = await fetch(target);

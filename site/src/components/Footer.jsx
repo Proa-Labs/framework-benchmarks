@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "../navigation.jsx";
 export function Footer() {
   return (
     <footer className="fw-site-footer">

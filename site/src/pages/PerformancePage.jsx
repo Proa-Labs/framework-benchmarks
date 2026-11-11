@@ -1,28 +1,58 @@
-import { useLayoutEffect, useRef } from "react";
-import { Link } from "react-router";
+import { Fragment, useLayoutEffect, useMemo, useRef } from "react";
 import benchmarkData from "../../.generated/results.json";
+import { createChartMarkup } from "../charts/chart-markup.mjs";
 import { mountDashboard } from "../charts/dashboard-controller.mjs";
+import { createDashboardModel } from "../charts/dashboard-model.mjs";
+import {
+  ChartMarkup,
+  ToolTypes,
+  WorkloadChoices,
+} from "../charts/InitialDashboard.jsx";
 import { Header } from "../components/Header.jsx";
+import { Link, useLocation } from "../navigation.jsx";
 export function PerformancePage({ data = benchmarkData }) {
+  const location = useLocation();
+  // Hydrate the initial server snapshot once. D3 owns later updates inside
+  // this boundary; React must not replace its live SVG nodes on URL changes.
+  const snapshot = useRef(null);
+  if (snapshot.current?.data !== data)
+    snapshot.current = createDashboardModel(data, location.search);
+  const model = snapshot.current;
+  const { state } = model;
+  const initialChart = useMemo(
+    () => createChartMarkup(model).draw(model.visibleRows()),
+    [model],
+  );
+  const capture = data[state.view];
   const root = useRef(null);
+  const controller = useRef(null);
   useLayoutEffect(() => {
     const dispose = mountDashboard(root.current, data);
+    controller.current = dispose;
     root.current.dataset.appReady = "true";
     return dispose;
   }, [data]);
+  useLayoutEffect(() => {
+    controller.current?.setLocation(location.search);
+  }, [location.search]);
   return (
     <section
       ref={root}
       id="frameworks-explorer"
       data-app-ready="false"
+      data-compare={state.chart === "compare"}
       aria-label="Framework performance research dashboard"
     >
-      <Header interactive />
+      <Header active={state.section} interactive />
       <section className="fw-intro" aria-labelledby="site-title">
-        <h1 id="site-title">Web framework benchmarks</h1>
+        <h1 id="site-title">
+          {state.section === "ecosystem"
+            ? "The ecosystem"
+            : "Web framework benchmarks"}
+        </h1>
       </section>
 
-      <main data-performance="">
+      <main data-performance="" hidden={state.section !== "performance"}>
         <div
           className="fw-lab-nav"
           aria-label="Performance experiment"
@@ -35,9 +65,9 @@ export function PerformancePage({ data = benchmarkData }) {
               role="tab"
               id="experiment-rendering"
               aria-controls="experiment-panel"
-              aria-selected="true"
+              aria-selected={state.view === "rendering"}
               data-view="rendering"
-              aria-current="page"
+              aria-current={state.view === "rendering" ? "page" : undefined}
             >
               SSR Rendering
             </button>
@@ -74,9 +104,10 @@ export function PerformancePage({ data = benchmarkData }) {
             role="tab"
             id="experiment-framework"
             aria-controls="experiment-panel"
-            aria-selected="false"
+            aria-selected={state.view === "framework"}
+            aria-current={state.view === "framework" ? "page" : undefined}
             data-view="framework"
-            hidden
+            hidden={!data.framework}
           >
             Framework SSR
           </button>
@@ -86,7 +117,8 @@ export function PerformancePage({ data = benchmarkData }) {
             role="tab"
             id="experiment-http"
             aria-controls="experiment-panel"
-            aria-selected="false"
+            aria-selected={state.view === "http"}
+            aria-current={state.view === "http" ? "page" : undefined}
             data-view="http"
           >
             HTTP
@@ -97,7 +129,8 @@ export function PerformancePage({ data = benchmarkData }) {
             role="tab"
             id="experiment-streaming"
             aria-controls="experiment-panel"
-            aria-selected="false"
+            aria-selected={state.view === "streaming"}
+            aria-current={state.view === "streaming" ? "page" : undefined}
             data-view="streaming"
           >
             Streaming
@@ -108,7 +141,8 @@ export function PerformancePage({ data = benchmarkData }) {
             role="tab"
             id="experiment-startup"
             aria-controls="experiment-panel"
-            aria-selected="false"
+            aria-selected={state.view === "startup"}
+            aria-current={state.view === "startup" ? "page" : undefined}
             data-view="startup"
           >
             Startup
@@ -118,18 +152,19 @@ export function PerformancePage({ data = benchmarkData }) {
           className="fw-experiment-layout"
           id="experiment-panel"
           role="tabpanel"
-          aria-labelledby="experiment-rendering"
+          aria-labelledby={`experiment-${state.view}`}
         >
           <aside className="fw-scenarios" aria-label="Workloads">
             <h2 className="fw-sidebar-label">Workloads</h2>
             <fieldset
               className="fw-workload-tabs"
               aria-label="Choose workloads"
-            ></fieldset>
-            <fieldset
-              className="fw-type-filters"
-              aria-label="Tool types"
-            ></fieldset>
+            >
+              <WorkloadChoices model={model} />
+            </fieldset>
+            <fieldset className="fw-type-filters" aria-label="Tool types">
+              <ToolTypes model={model} />
+            </fieldset>
           </aside>
           <section
             className="fw-results-area"
@@ -137,9 +172,13 @@ export function PerformancePage({ data = benchmarkData }) {
             tabIndex="-1"
             aria-label="Benchmark results"
           >
-            <div className="fw-main-heading" data-results-title="" hidden>
+            <div
+              className="fw-main-heading"
+              data-results-title=""
+              hidden={state.view === "rendering"}
+            >
               <div>
-                <h2 data-heading="">Render time</h2>
+                <h2 data-heading="">{model.heading()}</h2>
               </div>
             </div>
             <p
@@ -149,12 +188,16 @@ export function PerformancePage({ data = benchmarkData }) {
               hidden
             ></p>
             <div className="fw-toolbar">
-              <fieldset className="fw-view-switch" aria-label="Chart view">
+              <fieldset
+                className="fw-view-switch"
+                aria-label="Chart view"
+                hidden={state.view === "streaming"}
+              >
                 <button
                   type="button"
                   className="cursor-interaction"
                   data-chart="bars"
-                  aria-pressed="true"
+                  aria-pressed={state.chart === "bars"}
                 >
                   Bars
                 </button>
@@ -162,7 +205,7 @@ export function PerformancePage({ data = benchmarkData }) {
                   type="button"
                   className="cursor-interaction"
                   data-chart="lines"
-                  aria-pressed="false"
+                  aria-pressed={state.chart === "lines"}
                 >
                   Lines
                 </button>
@@ -170,18 +213,23 @@ export function PerformancePage({ data = benchmarkData }) {
                   type="button"
                   className="cursor-interaction"
                   data-chart="balls"
-                  aria-pressed="false"
+                  aria-pressed={state.chart === "balls"}
                 >
                   Flow
                 </button>
-                <button type="button" data-chart="table" aria-pressed="false">
+                <button
+                  type="button"
+                  data-chart="table"
+                  aria-pressed={state.chart === "table"}
+                >
                   Table
                 </button>
               </fieldset>
               <select
                 data-framework-view
                 aria-label="Framework SSR analysis"
-                hidden
+                hidden={state.view !== "framework"}
+                defaultValue={state.framework}
               >
                 <option value="throughput">Capacity</option>
                 <option value="p50">Equal-load P50</option>
@@ -192,7 +240,8 @@ export function PerformancePage({ data = benchmarkData }) {
               <select
                 data-http-view=""
                 aria-label="HTTP analysis"
-                hidden={true}
+                hidden={state.view !== "http"}
+                defaultValue={state.http}
               >
                 <option value="throughput">Capacity</option>
                 <option value="cpu">CPU / response</option>
@@ -205,7 +254,8 @@ export function PerformancePage({ data = benchmarkData }) {
               <select
                 data-stream-view=""
                 aria-label="Streaming analysis"
-                hidden={true}
+                hidden={state.view !== "streaming"}
+                defaultValue={state.stream}
               >
                 <option value="completion">Completion · P50 + P99</option>
                 <option value="completeP99">Complete P99</option>
@@ -228,37 +278,57 @@ export function PerformancePage({ data = benchmarkData }) {
                 Play
               </button>
             </div>
-            <div data-results="" aria-live="off"></div>
-            <noscript>
-              <p>
-                This explorer needs JavaScript.{" "}
-                <a href="data/results.json">Download the complete dataset</a> or
-                read the{" "}
-                <a href="https://github.com/Proa-Labs/framework-benchmarks/blob/main/scoreboard.md">
-                  static result tables
-                </a>
-                .
-              </p>
-            </noscript>
-            <div className="fw-chart-note" data-chart-note=""></div>
+            <ChartMarkup model={model} initialChart={initialChart} />
+
+            <div className="fw-chart-note" data-chart-note="">
+              {initialChart.note}
+            </div>
             <footer className="fw-footer">
               <div className="fw-capture-metadata">
-                <span data-capture=""></span>
-                <span data-cpu-context hidden>
+                <span data-capture="">{`${capture.host?.cloud || capture.host?.cpu_model || capture.host?.cpuModel || "Recorded host"} · ${capture.date}`}</span>
+                <span
+                  data-cpu-context
+                  hidden={
+                    state.view !== "streaming" ||
+                    !/^\d+$/.test(capture.host?.serverCpuAffinity ?? "")
+                  }
+                >
                   1 logical CPU per server
                 </span>
               </div>
-              <span data-coverage=""></span>
+              <span data-coverage="">
+                {(() => {
+                  const missing = data.renderers.filter(
+                    (r) =>
+                      model.isVisible(r) &&
+                      !model.getRows().some((v) => v.id === r.id),
+                  );
+                  return missing.length
+                    ? `${missing.length} roster entries not measured here`
+                    : "";
+                })()}
+              </span>
               <details>
                 <summary className="cursor-interaction">
                   Method &amp; data
                 </summary>
                 <div className="fw-evidence">
-                  <p data-scope=""></p>
-                  <p data-method=""></p>
+                  <p data-scope="">{model.suites[state.view].scope}</p>
+                  <p data-method="">{model.suites[state.view].method}</p>
                   <details className="fw-recorded-versions">
                     <summary>Recorded versions</summary>
-                    <dl data-versions=""></dl>
+                    <dl data-versions="">
+                      {Object.entries(capture.versions).map(([id, version]) => (
+                        <Fragment key={id}>
+                          <dt>{model.renderer(id)?.label || id}</dt>
+                          <dd>
+                            {typeof version === "string"
+                              ? version
+                              : JSON.stringify(version)}
+                          </dd>
+                        </Fragment>
+                      ))}
+                    </dl>
                   </details>
                   <div className="fw-options"></div>
                   <div className="fw-export">
@@ -284,7 +354,28 @@ export function PerformancePage({ data = benchmarkData }) {
                       CSV
                     </a>
                   </div>
-                  <p data-source=""></p>
+                  <p data-source="">
+                    <a href={capture.download} download>
+                      Original capture ↗
+                    </a>
+                    {" · "}
+                    <a
+                      href={`https://github.com/Proa-Labs/framework-benchmarks/blob/main/${capture.source}`}
+                    >
+                      View source ↗
+                    </a>
+                    <br />
+                    <span className="fw-source-hash">
+                      Source SHA-256 {capture.hash} · Artifact SHA-256{" "}
+                      {capture.artifactSha256}
+                    </span>
+                    {capture.note && (
+                      <>
+                        <br />
+                        {capture.note}
+                      </>
+                    )}
+                  </p>
                   <p>
                     Maintained by Andrew Hariri, founder of Proa Labs. Proa is
                     included in the comparisons. Each experiment identifies its
@@ -298,8 +389,12 @@ export function PerformancePage({ data = benchmarkData }) {
           </section>
         </div>
       </main>
-      <section data-ecosystem="" hidden={true} aria-label="Ecosystem directory">
-        <div data-catalog=""></div>
+      <section
+        data-ecosystem=""
+        hidden={state.section !== "ecosystem"}
+        aria-label="Ecosystem directory"
+      >
+        <ChartMarkup model={model} slot="catalog" />
         <p className="fw-chart-note">
           <Link to="/features">Compare documented features ↗</Link>
         </p>

@@ -33,6 +33,13 @@ try {
   });
   page = await context.newPage();
   page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (
+      message.type() === "error" &&
+      /hydrat|server.rendered|didn.t match/i.test(message.text())
+    )
+      errors.push(message.text());
+  });
   page.on("response", (response) => {
     if (response.status() >= 400)
       errors.push(`${response.status()} ${response.url()}`);
@@ -152,6 +159,9 @@ try {
     /not separated/,
   );
   await page.getByRole("link", { name: "About", exact: true }).click();
+  await page
+    .getByRole("heading", { name: "Why frameworks.run exists", exact: true })
+    .waitFor();
   assert.equal(await page.getByRole("heading", { level: 1 }).count(), 1);
   assert.equal(
     new URL(
@@ -966,7 +976,45 @@ try {
     "retained",
   );
   checks.push(
-    "React routes preserve the document, page titles and remounted chart hover behavior",
+    "TanStack routes preserve the document, page titles and remounted chart hover behavior",
+  );
+  await page.getByRole("link", { name: "Performance", exact: true }).click();
+  await page.locator("#experiment-rendering").waitFor();
+  await ready();
+  await page.locator('[data-section="ecosystem"]').click();
+  await page.locator("[data-ecosystem]").waitFor({ state: "visible" });
+  await page
+    .getByRole("link", { name: "Frameworks home", exact: true })
+    .click();
+  await page.locator("[data-performance]").waitFor({ state: "visible" });
+  assert.equal(
+    await page.locator("#site-title").textContent(),
+    "Web framework benchmarks",
+  );
+  const noJS = await browser.newContext({ javaScriptEnabled: false });
+  const initial = await noJS.newPage();
+  for (const [path, selector, count] of [
+    ["/", ".fw-comparison tbody tr", 21],
+    ["/?chart=bars&workload=products&selected=proa,react", ".fw-row", 2],
+    ["/?view=framework", ".fw-row", 4],
+    ["/?view=streaming", ".fw-stream-panel svg", 2],
+    [
+      "/features?group=server&display=matrix&tools=astro,nextjs",
+      ".fw-feature-table tbody tr:visible",
+      2,
+    ],
+  ]) {
+    const response = await initial.goto(server.url + path, {
+      waitUntil: "domcontentloaded",
+    });
+    assert.equal(response.status(), 200, path);
+    assert.equal(await initial.locator(selector).count(), count, path);
+    const html = await response.text();
+    assert.doesNotMatch(html, /This explorer needs JavaScript/);
+  }
+  await noJS.close();
+  checks.push(
+    "Cloudflare request-time SSR sends selected benchmark tables, bars, streaming panels and feature filters with JavaScript disabled",
   );
   const reduced = await browser.newContext({ reducedMotion: "reduce" });
   const reducedPage = await reduced.newPage();
