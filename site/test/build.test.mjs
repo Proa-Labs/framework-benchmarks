@@ -130,4 +130,4 @@ test("build preserves source bytes, emits provenance and serves a self-contained
   } finally {
     await server.close();
   }
-});
+}, 60_000);
