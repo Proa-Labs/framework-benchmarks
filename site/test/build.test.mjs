@@ -1,8 +1,8 @@
+import { test } from "bun:test";
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import test from "node:test";
 import { buildSite, outputDirectory } from "../build.mjs";
 import { loadInputs } from "../data.mjs";
 import { startServer } from "../dev.mjs";
