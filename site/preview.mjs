@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import { appendFileSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { verifyPreview } from "./test/preview.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const config = JSON.parse(readFileSync(join(here, "wrangler.json")));
@@ -59,12 +60,19 @@ const upload = readFileSync(output, "utf8")
   .findLast((entry) => entry.type === "version-upload");
 const url = upload?.preview_alias_url ?? upload?.preview_url;
 assert.ok(url, "Cloudflare returned no version preview URL");
-for (let attempt = 0; ; attempt++) {
-  const response = await fetch(upload.preview_url ?? url);
-  if (response.ok) break;
-  assert.ok(attempt < 10, `Preview is not reachable: HTTP ${response.status}`);
-  await Bun.sleep(2000);
+const entryScript = readFileSync(join(here, "dist/index.html"), "utf8").match(
+  /<script[^>]+src="([^"]+)"/,
+)?.[1];
+assert.ok(entryScript, "Built site has no entry script");
+for (const target of new Set([upload.preview_url, url].filter(Boolean))) {
+  for (let attempt = 0; ; attempt++) {
+    const response = await fetch(target);
+    if (response.ok && (await response.text()).includes(entryScript)) break;
+    assert.ok(attempt < 10, `Current preview is not reachable: ${target}`);
+    await Bun.sleep(2000);
+  }
 }
+await verifyPreview(url);
 appendFileSync(process.env.GITHUB_OUTPUT, `url=${url}\n`);
 appendFileSync(
   process.env.GITHUB_STEP_SUMMARY,
