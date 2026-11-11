@@ -3,7 +3,7 @@ import { watch } from "node:fs";
 import { createServer as createSocket } from "node:net";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { promisify } from "node:util";
+import { promisify, stripVTControlCharacters } from "node:util";
 import { buildSite, siteRoot } from "./build.mjs";
 import { captures, repositoryRoot } from "./data.mjs";
 import { prepareData } from "./prepare-data.mjs";
@@ -46,7 +46,11 @@ export async function startServer({
     const read = (chunk) => {
       const text = chunk.toString();
       output = (output + text).slice(-12000);
-      if (/Local:\s+http:\/\/127\.0\.0\.1:\d+/.test(output)) {
+      if (
+        /Local:\s+http:\/\/127\.0\.0\.1:\d+/.test(
+          stripVTControlCharacters(output),
+        )
+      ) {
         clearTimeout(timer);
         resolve();
       }
