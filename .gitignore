@@ -28,3 +28,6 @@ travel-agent/results/*.json
 travel-agent/results/*.in-progress
 travel-agent/results/*.partial
 !travel-agent/results/latest.json
+
+# Local experiment outputs; retained publication archives stay reviewable.
+**/results/local/

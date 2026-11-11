@@ -1,0 +1,17 @@
+import { runStringAdapter } from "../../../tooling/string-adapter.mjs";
+// Construct deterministic inputs and compile templates HERE, before timing.
+// Port the existing fixture semantics from ../react/suite_components.mjs.
+// Shared data is in ../shared/suite_data.mjs. Do not read pre-rendered HTML.
+
+function render(workload) {
+  // Call your renderer's normal production render-to-string API here.
+  // It must build a fresh complete result on every call; no output cache/pool.
+  throw new Error(`Implement ADAPTER_ID render(${workload}) before benchmarking`);
+}
+runStringAdapter({
+  id: "ADAPTER_ID",
+  label: "ADAPTER_ID",
+  language: "JavaScript",
+  allocationPolicy: "fresh independently owned string",
+  render,
+});

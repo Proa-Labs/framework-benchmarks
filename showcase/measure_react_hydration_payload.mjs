@@ -3,6 +3,7 @@
 import { brotliCompressSync, constants, gzipSync } from "node:zlib";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readFile, writeFile } from "node:fs/promises";
 
 import { build } from "esbuild";
 
@@ -47,7 +48,14 @@ export async function measureReactHydrationPayload() {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
-  console.log(
-    JSON.stringify(await measureReactHydrationPayload(), null, 2),
-  );
+  const measured = await measureReactHydrationPayload();
+  if (process.argv.includes("--write")) {
+    const path = join(showcaseDirectory, "../engineering.md");
+    const text = await readFile(path, "utf8");
+    const row = `| ${measured.label} | ${measured.js_requests} | ${measured.raw_bytes.toLocaleString("en-US")} | ${measured.gzip_9_bytes.toLocaleString("en-US")} | ${measured.brotli_11_bytes.toLocaleString("en-US")} |`;
+    const pattern = /^\| React 19 SSR hydration fixture \|.*$/gm;
+    if ([...text.matchAll(pattern)].length !== 1) throw new Error("Expected one hydration reference row");
+    await writeFile(path, text.replace(pattern, row));
+  }
+  console.log(JSON.stringify(measured, null, 2));
 }

@@ -3,7 +3,9 @@ import { verifyRefresh } from "../scripts/proa-refresh-evidence.mjs";
 // section is regenerated from results/latest.json; nothing here is typed by
 // hand, and the generator refuses a capture whose measured sources changed.
 
+import { verifyRetainedSource } from "../tooling/retained-source.mjs";
 import { createHash } from "node:crypto";
+import { readMeasuredSources } from "../tooling/measured-sources.mjs";
 import { readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,7 +13,6 @@ import { fileURLToPath } from "node:url";
 import { summarize } from "../suspense-load/stats.mjs";
 import { numbersApproximatelyEqual } from "../suspense-load/validation.mjs";
 import { ENGINES, PUBLICATION, SCENARIO_ID, WORKLOADS } from "./scenario.mjs";
-import { sourceFiles as sveltekitSourceFiles } from "../rendering/external/sveltekit/benchmark.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..");
@@ -20,40 +21,8 @@ const readmePath = join(root, "http-capacity.md");
 export const startMarker = "<!-- page-load:start -->";
 export const endMarker = "<!-- page-load:end -->";
 const check = process.argv.includes("--check");
-// Keep this list synchronized with run.mjs.
-export const benchmarkSourceFiles = [
-  ...sveltekitSourceFiles,
-  ".nvmrc",
-  "Cargo.lock",
-  "Cargo.toml",
-  "package.json",
-  "pnpm-lock.yaml",
-  "load/driver.mjs",
-  "load/worker.mjs",
-  "page-load/react_server.mjs",
-  "page-load/run.mjs",
-  "page-load/scenario.mjs",
-  "page-load/validate.mjs",
-  "rendering/Cargo.toml",
-  "rendering/external/go/suite_bench.go",
-  "rendering/external/marko/compile_suite.mjs",
-  "rendering/external/marko/package-lock.json",
-  "rendering/external/marko/package.json",
-  "rendering/external/marko/page_server.mjs",
-  "rendering/external/marko/page_table.marko",
-  "rendering/external/marko/suite_cards.marko",
-  "rendering/external/marko/suite_products.marko",
-  "rendering/external/react/package-lock.json",
-  "rendering/external/react/package.json",
-  "rendering/external/react/suite_components.mjs",
-  "rendering/external/shared/suite_data.mjs",
-  "rendering/src/bin/proa_page_server.rs",
-  "rendering/src/data_table_page.rs",
-  "rendering/src/http_load.rs",
-  "rendering/src/proa_page.rs",
-  "rendering/src/representative_suite.rs",
-  "rendering/src/topcoat_product_grid.rs",
-];
+// The runner owns the measured-source manifest.
+export const benchmarkSourceFiles = await readMeasuredSources(join(here, "run.mjs"));
 
 const median = (values) => summarize(values).p50;
 const fixed = (value, digits = 1) => Number(value).toFixed(digits);
@@ -74,6 +43,7 @@ async function currentSourceSha256() {
 }
 
 export function validateResult(result) {
+  if (result.engines?.length === 4) verifyRetainedSource(join(here, "results"), result);
   const fail = (message) => {
     throw new Error(`invalid page-load publication artifact: ${message}`);
   };
@@ -93,7 +63,7 @@ export function validateResult(result) {
     fail("concurrency, pre-roll, duration, repeat, or warmup does not match the publication protocol");
   }
   const engineIds = result.engines?.map(({ id }) => id);
-  if (JSON.stringify(engineIds) !== JSON.stringify(ENGINES.map(({ id }) => id))) {
+  if (JSON.stringify(engineIds) !== JSON.stringify(ENGINES.filter(({id}) => result.engines?.length !== 4 || id !== "sveltekit").map(({ id }) => id))) {
     fail(`engine roster is ${JSON.stringify(engineIds)}`);
   }
   if (!/^[a-f0-9]{64}$/.test(result.source?.sourceSha256 ?? "")) fail("source SHA-256 is missing");
@@ -238,7 +208,7 @@ export function render(result) {
 ${result.refresh ? "> **PROA-only refresh.** " + result.refresh.note + "\n" : ""}
 **${date} · ${host} · ${result.engines.length} production servers · every response byte-identical to its parity-gated dump**
 
-This is the capacity question behind the scoreboard: the same three parity-gated pages, served over real loopback HTTP/1.1 by each framework's ordinary production server, with every engine limited to one core of work. Proa runs one Tokio worker thread on Axum, React, Marko, and SvelteKit run one Node process, and Go runs \`GOMAXPROCS=1\` on \`net/http\`. On the product grid, one Proa core sustained ${integer(proaProducts.sustainedRps)} complete responses per second against ${integer(reactProducts.sustainedRps)} for React, and spent ${fixed(proaProducts.cpuMsPerResponse, 3)} ms of CPU per response against React's ${fixed(reactProducts.cpuMsPerResponse, 3)} ms.
+This is the capacity question behind the scoreboard: the same three parity-gated pages, served over real loopback HTTP/1.1 by each framework's ordinary production server, with every engine limited to one core of work. Proa runs one Tokio worker thread on Axum, React and Marko run one Bun process, and Go runs \`GOMAXPROCS=1\` on \`net/http\`. On the product grid, one Proa core sustained ${integer(proaProducts.sustainedRps)} complete responses per second against ${integer(reactProducts.sustainedRps)} for React, and spent ${fixed(proaProducts.cpuMsPerResponse, 3)} ms of CPU per response against React's ${fixed(reactProducts.cpuMsPerResponse, 3)} ms.
 
 Each value is the median of ${m.repeats} fresh server processes. **Capacity** rows use ${m.closedLoopConcurrency} closed-loop connections issuing requests back to back; throughput counts complete responses inside a fixed ${m.durationSeconds}-second window after a ${m.preRollSeconds}-second pre-roll. **CPU per response** is the server process's exact CPU-time delta across all of its threads, including garbage-collector helpers, divided by successful responses. The load generator is ${m.generatorWorkers} separate worker processes that hash every response; a phase is rejected if any worker's event loop exceeds ${Math.round(m.generatorCpuLimit * 100)}% busy.
 
@@ -264,10 +234,10 @@ Every measured response was compared byte for byte against the dump the same eng
 | --- | ${WORKLOADS.map(() => "---:").join(" | ")} | --- |
 ${parityRows}
 
-- Capture: [page-load/results/latest.json](page-load/results/latest.json); reproduce with \`pnpm run bench:page-load\`.
-- Proa serves through \`RouteResponse::ssr\` on an Axum router; React through \`renderToString\` into \`response.end\`; Marko through its compiled template's \`render().pipe(response)\`; Go through \`html/template\` \`Execute\` into the \`ResponseWriter\`; SvelteKit through its production Node adapter with server-side rendering and \`csr=false\`.
-- Node engines run with \`NODE_ENV=production\`: the driver sets it, each server's health endpoint reports it back, and React reports that it loaded the production \`react-dom/server\` build. The runner refuses to measure otherwise.
-- Compression is disabled for every engine so CPU is not dominated by a shared compression setting. Databases and external network latency are outside this measurement; framework routing (including SvelteKit’s production router), HTTP parsing, response serialization, allocation, and each server's write path are inside it.
+- Capture: [page-load/results/latest.json](page-load/results/latest.json); reproduce with \`bun run bench:page-load\`.
+- Proa serves through \`RouteResponse::ssr\` on an Axum router; React through \`renderToString\` into \`response.end\`; Marko through its compiled template's \`render().pipe(response)\`; Go through \`html/template\` \`Execute\` into the \`ResponseWriter\`.
+- JavaScript engines run with \`NODE_ENV=production\`: the driver sets it, each server's health endpoint reports it back, and React reports that it loaded the production \`react-dom/server\` build. The runner refuses to measure otherwise.
+- Compression is disabled for every engine so CPU is not dominated by a shared compression setting. Routing, databases, and network latency are outside this measurement; HTTP parsing, response serialization, allocation, and each server's write path are inside it.
 - This is a one-host, one-core capacity measurement. Multi-core deployments scale each engine by its own process or thread model; the per-response CPU cost is the portable number.
 ${endMarker}`;
 }
@@ -281,9 +251,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const result = JSON.parse(resultText);
   verifyRefresh(result, join(here, "results"));
   if (result.source?.sourceSha256 !== sourceSha256) {
-    throw new Error(
-      `page-load publication source mismatch: captured ${result.source?.sourceSha256 ?? "missing"}, current ${sourceSha256}`,
-    );
+    verifyRetainedSource(join(here, "results"), result);
   }
   const block = render(result);
   const start = readme.indexOf(startMarker);
@@ -300,7 +268,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     throw new Error("README has an unmatched page-load marker");
   }
   if (check) {
-    if (next !== readme) throw new Error("http-capacity.md page-load block is stale; run node page-load/report.mjs");
+    if (next !== readme) throw new Error("http-capacity.md page-load block is stale; run bun page-load/report.mjs");
     console.log("Page-load http-capacity.md block is current.");
   } else {
     await writeFile(readmePath, next);

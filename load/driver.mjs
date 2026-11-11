@@ -122,7 +122,9 @@ export async function waitForSocketDrain(limit = DEFAULT_TIME_WAIT_LIMIT, timeou
 // Server process management
 
 export function startServer(spec, env = {}) {
-  const child = spawn(spec.command, spec.args, {
+  const serverCpu = process.env.BENCH_SERVER_CPU;
+  if (serverCpu && process.platform !== "linux") throw new Error("BENCH_SERVER_CPU requires Linux taskset");
+  const child = spawn(serverCpu ? "taskset" : spec.command, serverCpu ? ["-c", serverCpu, spec.command, ...spec.args] : spec.args, {
     cwd: spec.cwd,
     env: { ...process.env, NODE_ENV: "production", ...env },
     stdio: ["ignore", "pipe", "pipe"],
@@ -543,5 +545,7 @@ export function hostMetadata() {
     logicalCpuCount: os.cpus().length,
     totalMemoryBytes: os.totalmem(),
     node: process.version,
+    javascriptRuntime: process.versions.bun ? `Bun ${process.versions.bun}` : `Node ${process.version}`,
+    serverCpuAffinity: process.env.BENCH_SERVER_CPU ?? null,
   };
 }

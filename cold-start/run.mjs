@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+import { validateResult } from "./report.mjs";
+import { readMeasuredSources } from "../tooling/measured-sources.mjs";
+import { atomicWrite, captureId, retainCapture } from "../tooling/captures.mjs";
 // Cold start: the time from spawning each framework's production server to
 // its first complete product-grid response, repeated across fresh processes.
 // This is the cost paid by every autoscaling event, serverless invocation on a
@@ -7,7 +9,7 @@
 import { execFile as execFileCallback, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from "node:fs";
-import { mkdir, rename, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import http from "node:http";
 import os from "node:os";
 import { dirname, isAbsolute, join } from "node:path";
@@ -17,7 +19,9 @@ import { fileURLToPath } from "node:url";
 
 import { delay, gitMetadata, hostMetadata, processSample, acquireRunLock } from "../load/driver.mjs";
 import { summarize } from "../suspense-load/stats.mjs";
-import { sourceFiles as sveltekitSourceFiles, build as buildSvelteKit, directory as sveltekitDirectory, serverSpec as sveltekitServerSpec, validateDump as validateSvelteKitDump } from "../rendering/external/sveltekit/benchmark.mjs";
+import { build as buildSvelteKit, directory as sveltekitDirectory, serverSpec as sveltekitServerSpec, validateDump as validateSvelteKitDump } from "../rendering/external/sveltekit/benchmark.mjs";
+
+if (process.versions.bun !== "1.4.2") throw new Error("Use pinned Bun 1.4.2");
 
 const execFile = promisify(execFileCallback);
 const here = dirname(fileURLToPath(import.meta.url));
@@ -34,30 +38,7 @@ const ENGINES = [
 const WORKLOAD = { id: "products", path: "/products", label: "Product grid" };
 export const PUBLICATION = Object.freeze({ starts: 15, warmupStarts: 2 });
 
-export const benchmarkSourceFiles = [
-  ...sveltekitSourceFiles,
-  ".nvmrc",
-  "Cargo.lock",
-  "Cargo.toml",
-  "package.json",
-  "pnpm-lock.yaml",
-  "cold-start/run.mjs",
-  "load/driver.mjs",
-  "page-load/react_server.mjs",
-  "rendering/Cargo.toml",
-  "rendering/external/go/suite_bench.go",
-  "rendering/external/marko/compile_suite.mjs",
-  "rendering/external/marko/package-lock.json",
-  "rendering/external/marko/page_server.mjs",
-  "rendering/external/marko/suite_products.marko",
-  "rendering/external/react/package-lock.json",
-  "rendering/external/react/suite_components.mjs",
-  "rendering/external/shared/suite_data.mjs",
-  "rendering/src/bin/proa_page_server.rs",
-  "rendering/src/http_load.rs",
-  "rendering/src/representative_suite.rs",
-  "rendering/src/topcoat_product_grid.rs",
-];
+export const benchmarkSourceFiles = await readMeasuredSources(import.meta.url);
 
 function option(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -170,7 +151,9 @@ function attempt(port, path, agent) {
 async function coldStart(engine, port, expected) {
   const spec = serverSpec(engine, port);
   const spawnedAt = performance.now();
-  const child = spawn(spec.command, spec.args, {
+  const cpu = process.env.BENCH_SERVER_CPU;
+  if (cpu && process.platform !== "linux") throw new Error("CPU affinity requires Linux");
+  const child = spawn(cpu ? "taskset" : spec.command, cpu ? ["-c", cpu, spec.command, ...spec.args] : spec.args, {
     cwd: spec.cwd,
     env: { ...process.env, NODE_ENV: "production", ...spec.env },
     stdio: ["ignore", "ignore", "pipe"],
@@ -238,19 +221,20 @@ async function main() {
     schemaVersion: 1,
     status: "incomplete",
     captureKind: config.outputPath === defaultOutput ? "publication" : "engineering",
+    captureId: captureId("cold-start"),
     capturedAt: new Date().toISOString(),
     scenario: {
       id: "cold_start_products_v1",
       workload: WORKLOAD,
       definition: "wall time from process spawn to the end of the first complete product-grid response, polling the port every millisecond; the response must be byte-identical to the engine's canonical dump",
-      concurrencyModel: "same per-core server configuration as page-load: Proa one Tokio worker thread, Node single process, Go GOMAXPROCS=1",
+      concurrencyModel: "same per-core server configuration as page-load: Proa one Tokio worker thread, Bun single process, Go GOMAXPROCS=1",
     },
     methodology: {
       starts: config.starts,
       warmupStarts: config.warmupStarts,
       order: "engines rotate every start so no engine always follows a cold disk cache",
       rss: "server RSS sampled with ps immediately after the first response",
-      javascriptMode: "production: NODE_ENV=production is set for every spawn and confirmed by each Node server's health endpoint after its first response",
+      javascriptMode: "production: NODE_ENV=production is set for every spawn and confirmed by each JavaScript server's health endpoint after its first response",
     },
     host: { ...hostMetadata(), loadAverage1m: os.loadavg()[0] },
     source: git,
@@ -282,7 +266,10 @@ async function main() {
   result.status = "pass";
   result.completedAt = new Date().toISOString();
   await writeFile(partialOutputPath, `${JSON.stringify(result, null, 2)}\n`);
-  await rename(partialOutputPath, config.outputPath);
+  if (result.captureKind === "publication") validateResult(result);
+  retainCapture(root, join(here, "results", result.captureKind === "publication" ? "." : "local"), result, benchmarkSourceFiles);
+  atomicWrite(config.outputPath, `${JSON.stringify(result, null, 2)}\n`);
+  await rm(partialOutputPath, { force: true });
   console.log(`\nResult written to ${config.outputPath}`);
 }
 

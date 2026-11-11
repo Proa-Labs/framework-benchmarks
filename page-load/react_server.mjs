@@ -21,7 +21,7 @@ const { version: reactVersion } = require("react/package.json");
 // Which react-dom server build actually loaded: React chooses at require
 // time from NODE_ENV, so this is the ground truth the artifact records.
 function reactDomBuild() {
-  const loaded = Object.keys(require.cache).filter((path) => /react-dom-server\.node\.(production|development)\.js$/.test(path));
+  const loaded = Object.keys(require.cache).filter((path) => /react-dom-server\.(node|bun)\.(production|development)\.js$/.test(path));
   if (loaded.some((path) => path.endsWith("development.js"))) return "development";
   return loaded.length ? "production" : "unknown";
 }

@@ -10,6 +10,7 @@ import { summarize } from '../suspense-load/stats.mjs';
 import { rowsFor, benchmarkSourceFiles as pageSources, validateResult as validatePages } from '../page-load/report.mjs';
 import { benchmarkSourceFiles as coldSources, validateResult as validateCold } from '../cold-start/report.mjs';
 import { renderingSourceFingerprint } from '../rendering/canonical/source_fingerprint.mjs';
+import { verifyRetainedSource } from '../tooling/retained-source.mjs';
 // Share series colors with chart 07 so each framework keeps one color across figures.
 import { C } from '../charts/lib/theme.mjs';
 
@@ -226,15 +227,18 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const read = async path=>JSON.parse(await readFile(join(root,path),'utf8'));
   const [stream, canonical, scaling, pages, cold] = await Promise.all(['sveltekit/results/latest.json','rendering/results/latest.json','rendering/results/product-scaling.json','page-load/results/latest.json','cold-start/results/latest.json'].map(read));
   verifyProaRefresh(stream);
-  if (stream.source?.sourceSha256 !== await sourceSha256(root,sourceFiles)) throw new Error('SvelteKit measured sources changed; rerun the comparison');
+  if (stream.source?.sourceSha256 !== await sourceSha256(root,sourceFiles)) verifyRetainedSource(join(root, 'sveltekit/results'), stream, { verify: verifyProaRefresh });
   for (const capture of [canonical,scaling,pages,cold]) {
     const host = capture.host;
     if ((host.cpuModel ?? host.cpu_model) !== stream.host.cpuModel || (host.arch ?? host.architecture) !== stream.host.arch || (host.logicalCpuCount ?? host.logical_cpus) !== stream.host.logicalCpuCount) throw new Error('Comparison captures came from different hosts');
   }
   const fingerprint = renderingSourceFingerprint(root);
-  for(const capture of [canonical,scaling]) if(capture.status !== 'pass' || capture.provenance?.source_sha256 !== fingerprint) throw new Error('Renderer/scaling sources changed; rerun these captures');
+  for(const capture of [canonical,scaling]) {
+    if(capture.status !== 'pass') throw new Error('Invalid renderer/scaling capture');
+    if(capture.provenance?.source_sha256 !== fingerprint) verifyRetainedSource(join(root, 'rendering/results'), capture);
+  }
   for (const [label,capture,files] of [['HTTP',pages,pageSources],['cold start',cold,coldSources]]) {
-    if(capture.source?.sourceSha256 !== await sourceSha256(root,files)) throw new Error(`${label} measured sources changed`);
+    if(capture.source?.sourceSha256 !== await sourceSha256(root,files)) verifyRetainedSource(join(root, label === 'HTTP' ? 'page-load/results' : 'cold-start/results'), capture);
   }
   const outputs = [['sveltekit.md',render(stream,canonical,scaling,pages,cold)],['sveltekit/browser.svg',figure(stream)]];
   for(const [path,text] of outputs) {

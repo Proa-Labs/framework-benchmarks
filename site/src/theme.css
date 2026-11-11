@@ -1,0 +1,123 @@
+:root {
+  --fw-scheme: dark;
+  --fw-logo-filter: brightness(0) invert(1);
+  --fw-logo-jte-filter: grayscale(1) brightness(0.65) contrast(20);
+  --fw-bg: #090a0b;
+  --fw-fg: #efeff1;
+  --fw-muted: #a1aab8;
+  --fw-line: #272a2f;
+  --fw-border: #64748b;
+  --fw-surface: #111418;
+  --fw-hover: #0e1116;
+  --fw-selected: #202630;
+  --fw-track: #191e25;
+  --fw-plot: #8793a4;
+  --fw-plot-dark: #64748b;
+  --fw-plot-border: #c2c8d2;
+  --fw-accent: #9abfff;
+  --fw-skip: #dbe6ff;
+}
+:root[data-theme="light"] {
+  --fw-scheme: light;
+  --fw-logo-filter: brightness(0);
+  --fw-logo-jte-filter: grayscale(1) brightness(0.65) contrast(20) invert(1);
+  --fw-bg: #fafbfc;
+  --fw-fg: #202630;
+  --fw-muted: #586476;
+  --fw-line: #dce1e8;
+  --fw-border: #8795a8;
+  --fw-surface: #f0f3f7;
+  --fw-hover: #eaf0f7;
+  --fw-selected: #e1e8f1;
+  --fw-track: #dce3ec;
+  --fw-plot: #63758d;
+  --fw-plot-dark: #4d607a;
+  --fw-plot-border: #34465f;
+  --fw-accent: #2858aa;
+  --fw-skip: #dbe6ff;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --fw-scheme: light;
+    --fw-logo-filter: brightness(0);
+    --fw-logo-jte-filter: grayscale(1) brightness(0.65) contrast(20) invert(1);
+    --fw-bg: #fafbfc;
+    --fw-fg: #202630;
+    --fw-muted: #586476;
+    --fw-line: #dce1e8;
+    --fw-border: #8795a8;
+    --fw-surface: #f0f3f7;
+    --fw-hover: #eaf0f7;
+    --fw-selected: #e1e8f1;
+    --fw-track: #dce3ec;
+    --fw-plot: #63758d;
+    --fw-plot-dark: #4d607a;
+    --fw-plot-border: #34465f;
+    --fw-accent: #2858aa;
+    --fw-skip: #dbe6ff;
+  }
+}
+#frameworks-explorer .theme-toggle-button,
+.theme-toggle-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: var(--fw-muted);
+  background: transparent;
+  border: 1px solid var(--fw-line);
+  border-radius: 6px;
+  cursor: pointer;
+}
+#frameworks-explorer .theme-toggle-button:hover,
+.theme-toggle-button:hover {
+  color: var(--fw-fg);
+  background: var(--fw-surface);
+}
+.theme-toggle-button:focus-visible {
+  outline: 2px solid var(--fw-accent);
+  outline-offset: 3px;
+}
+.theme-toggle-icon {
+  width: 17px;
+  height: 17px;
+  pointer-events: none;
+}
+.theme-toggle-moon {
+  display: none;
+}
+.theme-toggle-sun {
+  display: block;
+}
+:root[data-theme="light"] .theme-toggle-moon {
+  display: block;
+}
+:root[data-theme="light"] .theme-toggle-sun {
+  display: none;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) .theme-toggle-moon {
+    display: block;
+  }
+  :root:not([data-theme]) .theme-toggle-sun {
+    display: none;
+  }
+}
+.document-toolbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 20px;
+}
+.document-toolbar .back {
+  margin-bottom: 35px;
+}
+/* Paint the correct canvas while the main stylesheet is still loading. */
+:root {
+  background: var(--fw-bg);
+  color: var(--fw-fg);
+  color-scheme: var(--fw-scheme);
+}

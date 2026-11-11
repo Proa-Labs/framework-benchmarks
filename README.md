@@ -1,6 +1,8 @@
-# Proa benchmarks
+# Framework benchmarks
 
-[Proa](https://github.com/Proa-Labs/proa) renders typed Rust components to HTML on the server, streams them, and hydrates fine-grained browser islands. This page shows what one core [serves over HTTP](#serving-three-pages-on-one-core), how fast [seventeen renderers](#rendering-the-same-pages-in-seventeen-renderers) render those pages, and [how to reproduce them](#reproducing-a-capture).
+Explore the interactive results and feature comparison at [frameworks.run](https://frameworks.run). See [CONTRIBUTING.md](CONTRIBUTING.md) for the Bun contributor workflow and automatic publication pipeline.
+
+Reproducible benchmarks for web frameworks and rendering engines: what one core [serves over HTTP](#serving-three-pages-on-one-core), how fast [seventeen renderers](#rendering-the-same-pages-in-seventeen-renderers) render the same pages, and [how to reproduce a capture](#reproducing-a-capture). Maintained by Andrew Hariri, founder of Proa Labs; Proa is one of the measured projects.
 
 The [SvelteKit comparison](sveltekit.md) adds production HTTP, cold-start, product-scaling, and browser-complete streaming measurements. Native SvelteKit promise streaming sends data for the browser to render; its response end is a different boundary from Proa’s resolved-HTML stream.
 
@@ -90,9 +92,11 @@ If you see an issue with the benchmarks or would like to add any, please open an
   </tr>
 </table>
 
+The separate [full-framework SSR suite](framework-ssr/README.md) compares production request pipelines on one shared catalog. It reuses the load generator and statistics helpers; these results have a different boundary from pure render times.
+
 ## Reproducing a capture
 
-Install the JavaScript dependencies once. You need Node.js 24.20.0 exactly — the canonical runner compares `process.version` and refuses to run on anything else — with pnpm, the Rust toolchain in [`rust-toolchain.toml`](rust-toolchain.toml), and Go 1.25. The full scoreboard also needs Ruby 3.2+, a JDK 17+ with Gradle, PHP 8, and Python 3.13+.
+Install the JavaScript dependencies once. Use Bun 1.4.2 (the canonical runner rejects other runtimes), the Rust toolchain in [`rust-toolchain.toml`](rust-toolchain.toml), and Go 1.25. The full scoreboard also needs Ruby 3.2+, a JDK 17+ with Gradle, PHP 8, and Python 3.13+.
 
 ```sh filename="Terminal"
 pnpm install --frozen-lockfile

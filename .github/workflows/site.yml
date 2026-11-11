@@ -1,0 +1,83 @@
+name: Frameworks website
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy the validated site to Cloudflare production
+        type: boolean
+        default: false
+
+# Serialize main publications so an older build cannot overwrite a newer one.
+concurrency:
+  group: frameworks-site-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  site:
+    name: Build and validate static website
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      - run: bun install --frozen-lockfile
+      - run: bun install --cwd site --frozen-lockfile
+      - run: bun install --cwd framework-ssr --frozen-lockfile
+      - run: bun install --cwd rendering/external/react --frozen-lockfile
+      - run: bun install --cwd rendering/external/vue --frozen-lockfile
+      - name: Validate contracts, source snapshots, types and site build
+        run: bun run check
+      - name: Install browser
+        run: bun node_modules/playwright/cli.js install --with-deps chromium
+      - name: Verify browser interactions
+        run: bun site/test/browser.mjs
+      - name: Verify contributor benchmark path
+        run: bun run bench run rendering --renderers react,vue --workloads cards
+      - name: Retain validated website
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: frameworks-site-${{ github.sha }}
+          path: site/dist/
+          if-no-files-found: error
+          retention-days: 7
+
+  deploy:
+    name: Deploy validated website
+    needs: site
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      - run: bun install --cwd site --frozen-lockfile
+      - name: Download the validated website from this run
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: frameworks-site-${{ github.sha }}
+          path: site/dist/
+      - name: Deploy validated static assets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "Configure the CLOUDFLARE_API_TOKEN repository secret before deploying."
+            exit 1
+          fi
+          cd site
+          bun --bun node_modules/wrangler/bin/wrangler.js deploy

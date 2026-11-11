@@ -145,9 +145,9 @@ This repository's agent-chain fixture uses React 19, `hydrateRoot`, and an inter
 
 | Client reference | JS requests | Raw bytes | Gzip-9 bytes | Brotli-11 bytes |
 | --- | ---: | ---: | ---: | ---: |
-| React 19 SSR hydration fixture | 1 | 195,379 | 60,911 | 52,455 |
+| React 19 SSR hydration fixture | 1 | 195,379 | 61,110 | 52,426 |
 
-Recompute it with `pnpm run bench:react-hydration-payload`.
+Recompute it with `bun run bench:react-hydration-payload`. `bun run refresh` updates the table using the pinned Bun runtime; compressed byte sizes depend on the compressor implementation.
 
 [![Render latency for eleven showcase pages on a logarithmic axis with bootstrap intervals](charts/svg/06-showcase-corpus.svg)](charts/svg/06-showcase-corpus.svg)
 

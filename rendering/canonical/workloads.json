@@ -7,7 +7,11 @@
       "cardinality": 32,
       "description": "4 sections, 32 cards, and 160 feature-list items",
       "warmup": 200,
-      "iterations": 2000
+      "iterations": 2000,
+      "negative_control": {
+        "from": "SSR Framework Benchmark",
+        "to": "SSR Framework Benchmark changed"
+      }
     },
     {
       "id": "table",
@@ -15,7 +19,11 @@
       "cardinality": 1000,
       "description": "1,000 rows and 12 columns with escaping, formatting, branches, and variable-length lists",
       "warmup": 20,
-      "iterations": 200
+      "iterations": 200,
+      "negative_control": {
+        "from": "Customer Accounts",
+        "to": "Customer Accounts changed"
+      }
     },
     {
       "id": "products",
@@ -23,7 +31,12 @@
       "cardinality": 96,
       "description": "96 product cards and 480 SVG stars",
       "warmup": 50,
-      "iterations": 500
+      "iterations": 500,
+      "negative_control": {
+        "from": "All products",
+        "to": "All products changed"
+      }
     }
-  ]
+  ],
+  "display_order": ["cards", "products", "table"]
 }
