@@ -14,7 +14,7 @@ The fixed roster is in [`canonical/roster.json`](canonical/roster.json), the wor
 
 That command builds every adapter, dumps all 51 renderer/workload outputs, refuses to measure if any parity cell fails, benchmarks a complete roster with one sampling policy, writes [`results/latest.json`](results/latest.json), and generates [`results/latest.md`](results/latest.md) plus the root scoreboard.
 
-The current result refreshes only Proa after PR #83 on the same Apple M4 Max used for the October 21 baseline. All other renderer measurements and versions retain that baseline date. The retained baseline, its hash, and the new process summaries are linked from the capture; peer measurements are checked for exact preservation.
+The current result refreshes only Proa at `bbbc968` after PR #84 on the same Apple M4 Max used for the October 21 baseline. All other renderer measurements and versions retain that baseline date. The retained baseline, its hash, and the new process summaries are linked from the capture; peer measurements are checked for exact preservation.
 
 ## Engineering laboratory
 

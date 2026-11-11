@@ -6,12 +6,12 @@
   "iterations": 500,
   "warmup": 50,
   "output_bytes": 230741,
-  "latency_us": 28.02,
-  "min_us": 23.33,
-  "mean_us": 28.02,
-  "p50_us": 27.31,
-  "p95_us": 33.38,
-  "p99_us": 34.09,
-  "max_us": 35.46,
-  "renders_per_sec": 35651
+  "latency_us": 24.82,
+  "min_us": 23.54,
+  "mean_us": 24.82,
+  "p50_us": 24.08,
+  "p95_us": 26.09,
+  "p99_us": 28.17,
+  "max_us": 33.17,
+  "renders_per_sec": 40244
 }

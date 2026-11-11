@@ -17,7 +17,7 @@ renders per process respectively.
 
 | Renderer | 12 cards P50 | 96 cards P50 | 768 cards P50 |
 | --- | ---: | ---: | ---: |
-| Proa | 2.125 µs | 18.291 µs | 141.458 µs |
+| Proa | 2.041 µs | 17.667 µs | 142.833 µs |
 | Marko | 12.188 µs | 87.855 µs | 587.188 µs |
 | React | 47.291 µs | 403.083 µs | 3.391 ms |
 | Vue | 12.375 µs | 84.480 µs | 650.021 µs |
@@ -39,7 +39,7 @@ The 96-card column is an independent engineering capture, not a replacement
 for the canonical result. Reproduce the matrix with
 `./rendering/run-all --product-scaling`; the retained summary and per-process
 measurements are in [`rendering/results/product-scaling.json`](rendering/results/product-scaling.json)
-and [its raw process artifact](rendering/results/raw/product-scaling-v1-proa-2026-11-11T05-38-17-489Z/process-summaries.json).
+and [its raw process artifact](rendering/results/raw/product-scaling-v1-proa-2026-11-11T17-59-45-827Z/process-summaries.json).
 <!-- product-scaling:end -->
 
 [![Full fresh-response render scaling for seventeen frameworks across twelve, ninety-six and 768 product cards](charts/svg/05-product-card-scaling.svg)](charts/svg/05-product-card-scaling.svg)
@@ -53,28 +53,28 @@ The next two captures ask how close Proa's render sits to the cost of copying it
 
 | Memcpy capture | Date (UTC) | Proa revision |
 | --- | --- | --- |
-| All 12 linked pages | November 11, 2026 | `78f9c0edd00e` |
+| All 12 linked pages | November 11, 2026 | `bbbc96843351` |
 
 Complete Proa page rendering against a hot-buffer copy of that page's exact
 pre-rendered HTML. Each cell is the median of five process P50s; brackets show
 their min–max range. Rendering includes page construction and fresh output
 allocation. Copying reuses warmed source and destination buffers and excludes
-allocation. All linked pages are included: **6 of 12 are within 10×** in this capture.
+allocation. All linked pages are included: **7 of 12 are within 10×** in this capture.
 
 | Showcase page | Output bytes | Proa P50 µs [min–max] | Memcpy P50 µs [min–max] | Proa / memcpy |
 | --- | ---: | ---: | ---: | ---: |
-| Airbnb parity | 149,567 | 172.958 [172.708–173.416] | 1.426 [1.417–1.453] | 121.30× |
-| Airbnb home | 162,883 | 11.292 [11.250–11.333] | 1.926 [1.924–1.947] | 5.86× |
-| Airbnb search | 49,996 | 2.875 [2.833–2.916] | 0.433 [0.420–0.444] | 6.64× |
-| Airbnb listing | 96,250 | 16.625 [16.542–16.708] | 0.781 [0.777–0.783] | 21.28× |
-| Nike catalog | 128,294 | 18.084 [18.041–18.125] | 1.035 [1.031–1.047] | 17.47× |
-| Nike product | 59,042 | 4.500 [4.459–4.666] | 0.488 [0.485–0.501] | 9.21× |
-| eBay cards | 239,235 | 24.750 [24.625–24.792] | 2.802 [2.802–2.808] | 8.83× |
-| eBay chrome | 521,326 | 40.458 [40.375–40.625] | 6.078 [6.076–6.092] | 6.66× |
-| eBay real chrome | 793,226 | 50.791 [50.666–51.042] | 9.250 [9.233–9.273] | 5.49× |
-| ESPN game page | 33,765 | 8.167 [8.167–8.417] | 0.277 [0.276–0.279] | 29.45× |
-| Sentry OTel, 400 rows | 875,478 | 116.542 [114.375–120.208] | 10.213 [10.188–10.256] | 11.41× |
-| Settings console | 7,925 | 2.916 [2.833–3.083] | 0.076 [0.075–0.083] | 38.28× |
+| Airbnb parity | 149,567 | 171.584 [170.709–173.667] | 1.475 [1.438–1.487] | 116.36× |
+| Airbnb home | 162,883 | 11.042 [11.000–11.125] | 1.954 [1.924–1.972] | 5.65× |
+| Airbnb search | 49,996 | 2.792 [2.750–2.792] | 0.436 [0.432–0.447] | 6.40× |
+| Airbnb listing | 96,250 | 16.375 [16.250–16.667] | 0.783 [0.776–0.785] | 20.91× |
+| Nike catalog | 128,294 | 16.334 [16.042–16.542] | 1.046 [1.036–1.052] | 15.61× |
+| Nike product | 59,042 | 4.250 [4.125–4.250] | 0.499 [0.494–0.513] | 8.51× |
+| eBay cards | 239,235 | 23.125 [23.042–23.416] | 2.843 [2.834–2.914] | 8.13× |
+| eBay chrome | 521,326 | 38.042 [37.958–39.125] | 6.222 [6.169–6.369] | 6.11× |
+| eBay real chrome | 793,226 | 49.375 [48.833–49.375] | 9.453 [9.229–9.483] | 5.22× |
+| ESPN game page | 33,765 | 7.750 [7.625–7.917] | 0.282 [0.279–0.283] | 27.51× |
+| Sentry OTel, 400 rows | 875,478 | 100.667 [99.375–101.667] | 10.313 [10.181–10.454] | 9.76× |
+| Settings console | 7,925 | 2.959 [2.916–3.125] | 0.080 [0.078–0.084] | 36.79× |
 
 Render and copy cells run in seeded randomized blocks, one fresh process per
 page and mode in each of five repeats. Rendering uses 1,000 warmups and 10,000
@@ -94,7 +94,7 @@ See [reproduction instructions](showcase/README.md#memcpy-floor).
 
 | Buffer capture | Date (UTC) | Proa revision |
 | --- | --- | --- |
-| 14 workloads · five processes per cell | 2026-11-11 | `78f9c0edd00e` |
+| 14 workloads · five processes per cell | 2026-11-11 | `bbbc96843351` |
 
 Standard Proa uses its 4 KiB chained writer. The full-size variant allocates a
 fresh contiguous output buffer for every render, with capacity set to the final
@@ -104,20 +104,20 @@ Memcpy copies the same HTML into a warmed reusable buffer with allocation exclud
 
 | Buffer comparison workload | Output bytes | Default P50 µs [min–max] | Full-size P50 µs [min–max] | Copy P50 µs [min–max] | Default / copy | Full-size / copy | Speedup |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Cards | 25,108 | 1.291 [1.250–1.333] | 0.750 [0.750–0.750] | 0.248 [0.208–0.289] | 5.21× | 3.02× | 1.72× |
-| 96-product grid | 284,908 | 18.125 [18.041–18.375] | 9.458 [9.209–9.458] | 3.338 [3.333–3.354] | 5.43× | 2.83× | 1.92× |
-| 1,000-row table | 988,509 | 211.084 [209.875–215.792] | 193.375 [191.416–193.917] | 11.498 [11.498–11.515] | 18.36× | 16.82× | 1.09× |
-| Airbnb home | 162,883 | 11.209 [11.208–11.458] | 6.792 [6.750–6.917] | 1.925 [1.924–1.928] | 5.82× | 3.53× | 1.65× |
-| Airbnb search | 49,996 | 2.875 [2.833–2.958] | 1.625 [1.583–1.750] | 0.434 [0.414–0.446] | 6.62× | 3.74× | 1.77× |
-| Airbnb listing | 96,250 | 16.542 [16.250–16.708] | 13.917 [13.875–14.083] | 0.780 [0.779–0.783] | 21.21× | 17.84× | 1.19× |
-| Nike catalog | 128,294 | 18.125 [18.041–18.375] | 14.917 [14.833–15.208] | 1.031 [1.030–1.046] | 17.58× | 14.47× | 1.22× |
-| Nike product | 59,042 | 4.500 [4.500–4.583] | 2.875 [2.750–2.958] | 0.497 [0.489–0.531] | 9.05× | 5.78× | 1.57× |
-| eBay cards | 239,235 | 24.542 [24.459–24.667] | 24.084 [23.750–24.375] | 2.807 [2.803–2.836] | 8.74× | 8.58× | 1.02× |
-| eBay chrome | 521,326 | 40.542 [40.167–41.375] | 30.333 [29.875–30.625] | 6.144 [6.086–6.419] | 6.60× | 4.94× | 1.34× |
-| eBay real chrome | 793,226 | 51.417 [51.292–52.167] | 31.333 [31.250–31.458] | 9.261 [9.229–9.400] | 5.55× | 3.38× | 1.64× |
-| ESPN game page | 33,765 | 8.291 [8.125–8.500] | 7.625 [7.542–7.667] | 0.278 [0.277–0.282] | 29.83× | 27.44× | 1.09× |
-| Sentry OTel, 400 rows | 875,478 | 116.458 [113.291–117.500] | 123.958 [121.334–125.458] | 10.188 [10.181–10.240] | 11.43× | 12.17× | 0.94× |
-| Settings console | 7,925 | 3.041 [2.958–3.083] | 3.000 [2.916–3.042] | 0.076 [0.075–0.077] | 40.02× | 39.48× | 1.01× |
+| Cards | 25,108 | 1.250 [1.250–1.333] | 0.750 [0.750–0.750] | 0.278 [0.253–0.299] | 4.49× | 2.69× | 1.67× |
+| 96-product grid | 284,908 | 18.541 [18.375–18.583] | 9.375 [9.292–9.417] | 3.419 [3.388–3.427] | 5.42× | 2.74× | 1.98× |
+| 1,000-row table | 988,509 | 215.916 [212.583–216.000] | 191.833 [189.791–195.125] | 11.789 [11.647–12.054] | 18.31× | 16.27× | 1.13× |
+| Airbnb home | 162,883 | 11.250 [11.125–11.333] | 6.250 [6.125–6.292] | 1.964 [1.953–1.970] | 5.73× | 3.18× | 1.80× |
+| Airbnb search | 49,996 | 2.792 [2.750–2.875] | 1.583 [1.542–1.584] | 0.438 [0.422–0.467] | 6.37× | 3.61× | 1.76× |
+| Airbnb listing | 96,250 | 16.500 [16.417–16.708] | 14.083 [13.833–14.250] | 0.787 [0.784–0.791] | 20.97× | 17.90× | 1.17× |
+| Nike catalog | 128,294 | 16.250 [16.125–16.416] | 15.333 [14.834–15.541] | 1.048 [1.041–1.070] | 15.51× | 14.63× | 1.06× |
+| Nike product | 59,042 | 4.250 [4.042–4.292] | 2.792 [2.750–2.875] | 0.510 [0.495–0.517] | 8.34× | 5.48× | 1.52× |
+| eBay cards | 239,235 | 23.250 [23.084–23.667] | 20.875 [20.625–21.292] | 2.877 [2.852–2.919] | 8.08× | 7.25× | 1.11× |
+| eBay chrome | 521,326 | 38.583 [38.375–39.000] | 27.125 [26.791–27.375] | 6.222 [6.146–6.237] | 6.20× | 4.36× | 1.42× |
+| eBay real chrome | 793,226 | 50.500 [50.125–51.167] | 28.167 [27.917–28.542] | 9.396 [9.364–9.475] | 5.37× | 3.00× | 1.79× |
+| ESPN game page | 33,765 | 7.833 [7.667–8.333] | 7.500 [7.500–7.542] | 0.283 [0.279–0.306] | 27.68× | 26.51× | 1.04× |
+| Sentry OTel, 400 rows | 875,478 | 109.041 [107.542–110.000] | 120.375 [119.000–122.625] | 10.450 [10.400–10.471] | 10.43× | 11.52× | 0.91× |
+| Settings console | 7,925 | 2.958 [2.833–3.000] | 3.000 [2.958–3.125] | 0.078 [0.078–0.079] | 37.86× | 38.39× | 0.99× |
 
 Cells run in seeded randomized blocks, with five fresh processes per workload
 and mode. Values are medians of process P50s; ranges show their min–max.
@@ -163,13 +163,13 @@ These tables keep their original fixtures and measurement boundaries. Their sect
 <!-- proa-engineering:start -->
 ## PROA engineering refresh
 
-**2026-11-11 UTC** · Proa `78f9c0edd00e934978f2c7e1fa6a0d06af491407` · Apple M4 Max.
+**2026-11-11 UTC** · Proa `bbbc9684335109949257eea8b4c98bb7bc8572ae` · Apple M4 Max.
 Only PROA was rerun. Peer Criterion rows below retain their August 30–31 measurements; they are dated engineering context, not simultaneous comparisons. Output ownership, batch sizes, and benchmark sample policies remain as declared in each fixture. Intervals are Criterion's 95% slope intervals (mean intervals for flat sampling). The [retained estimates and samples](rendering/results/proa-pr83-criterion.json) contain all 38 measured PROA rows and the reproduction command.
 
 | Refreshed standard-page row | Output bytes/render | Raw time, µs/10 renders |
 | --- | ---: | ---: |
-| Proa fresh owned | 25,108 | 13.1695 / 13.2606 / 13.3892 |
-| Proa reused chained | 25,108 | 8.0125 / 8.0312 / 8.0519 |
+| Proa fresh owned | 25,108 | 12.3823 / 12.4367 / 12.4926 |
+| Proa reused chained | 25,108 | 6.6158 / 6.6272 / 6.6394 |
 | Askama | 44,849 | 15.934 / 16.000 / 16.070 |
 | Sailfish | 44,849 | 24.641 / 24.787 / 24.914 |
 | Leptos | 25,219 | 212.79 / 214.07 / 215.36 |
@@ -180,35 +180,35 @@ Only PROA was rerun. Peer Criterion rows below retain their August 30–31 measu
 
 | Refreshed Criterion row | Output bytes | Raw time, µs |
 | --- | ---: | ---: |
-| `escape_heavy/proa_reuse` | 2,729 | 1.0434 / 1.0486 / 1.0539 |
-| `escape_heavy/proa_fresh` | 2,729 | 1.0815 / 1.0864 / 1.0915 |
+| `escape_heavy/proa_reuse` | 2,729 | 0.8879 / 0.8909 / 0.8943 |
+| `escape_heavy/proa_fresh` | 2,729 | 0.9085 / 0.9111 / 0.9137 |
 | `escape_heavy/askama` | 3,179 | 1.5633 / 1.5963 / 1.6455 |
-| `large_page/proa_reuse` | 269,751 | 8.6715 / 8.7217 / 8.7874 |
-| `large_page/proa_fresh` | 269,751 | 20.4998 / 20.8477 / 21.4782 |
+| `large_page/proa_reuse` | 269,751 | 8.0549 / 8.0716 / 8.0899 |
+| `large_page/proa_fresh` | 269,751 | 15.4618 / 15.4962 / 15.5303 |
 | `large_page/askama` | 465,296 | 13.521 / 13.666 / 13.781 |
-| `request_burst/proa_100req` | 25,108/request | 85.0196 / 85.4762 / 85.9790 |
+| `request_burst/proa_100req` | 25,108/request | 68.8038 / 68.9283 / 69.0601 |
 | `request_burst/askama_100req` | 44,849/request | 216.57 / 218.92 / 221.34 |
 | `request_burst/sailfish_100req` | 44,849/request | 292.39 / 294.22 / 295.86 |
-| `airbnb_search/proa_chained` | 20,208 | 0.9111 / 0.9144 / 0.9178 |
-| `airbnb_search/proa_reuse` | 20,208 | 1.2768 / 1.2837 / 1.2909 |
-| `airbnb_search/proa_fresh` | 20,208 | 1.3504 / 1.3586 / 1.3678 |
+| `airbnb_search/proa_chained` | 20,208 | 0.8108 / 0.8149 / 0.8189 |
+| `airbnb_search/proa_reuse` | 20,208 | 0.9006 / 0.9031 / 0.9056 |
+| `airbnb_search/proa_fresh` | 20,208 | 0.9841 / 0.9869 / 0.9897 |
 | `airbnb_search/askama` | 26,851 | 1.5542 / 1.5755 / 1.6002 |
 | `airbnb_search/sailfish` | 47,970 | 1.3311 / 1.3627 / 1.3932 |
-| `showcase/home_proa_chained` | 162,883 | 7.4083 / 7.4351 / 7.4665 |
+| `showcase/home_proa_chained` | 162,883 | 6.1372 / 6.1544 / 6.1748 |
 | `showcase/home_sailfish` | 140,627 | 6.2845 / 6.3039 / 6.3237 |
-| `showcase/search_proa_chained` | 49,996 | 1.6130 / 1.6193 / 1.6261 |
+| `showcase/search_proa_chained` | 49,996 | 1.4733 / 1.4771 / 1.4811 |
 | `showcase/search_sailfish` | 47,970 | 1.0972 / 1.1009 / 1.1046 |
-| `showcase/listing_proa_chained` | 96,250 | 16.8308 / 16.9173 / 17.0071 |
+| `showcase/listing_proa_chained` | 96,250 | 12.9180 / 12.9509 / 12.9841 |
 | `showcase/listing_sailfish` | 100,176 | 3.3948 / 3.4031 / 3.4120 |
-| `showcase/nike_catalog_proa_fresh` | 128,294 | 18.6025 / 18.6671 / 18.7446 |
-| `showcase/nike_catalog_proa_reused` | 128,294 | 16.3420 / 16.3928 / 16.4512 |
-| `showcase/nike_product_proa_fresh` | 59,042 | 4.6110 / 4.6306 / 4.6528 |
-| `showcase/nike_product_proa_reused` | 59,042 | 2.9728 / 2.9873 / 3.0031 |
-| `showcase/ebay_cards_60_proa_fresh` | 239,235 | 25.8148 / 25.8820 / 25.9656 |
-| `showcase/ebay_cards_60_proa_reused` | 239,235 | 18.2691 / 18.3262 / 18.3870 |
-| `showcase/ebay_chrome_60_proa_fresh` | 521,326 | 45.3015 / 45.4278 / 45.5605 |
-| `showcase/ebay_real_chrome_60_proa_fresh` | 793,226 | 56.0587 / 56.2938 / 56.5774 |
-| `showcase/sentry_otel_400_proa_fresh` | 874,615 | 122.6023 / 122.9394 / 123.2784 |
+| `showcase/nike_catalog_proa_fresh` | 128,294 | 16.6215 / 16.6717 / 16.7220 |
+| `showcase/nike_catalog_proa_reused` | 128,294 | 12.9298 / 12.9812 / 13.0350 |
+| `showcase/nike_product_proa_fresh` | 59,042 | 4.1716 / 4.1816 / 4.1919 |
+| `showcase/nike_product_proa_reused` | 59,042 | 2.5447 / 2.5529 / 2.5611 |
+| `showcase/ebay_cards_60_proa_fresh` | 239,235 | 22.9513 / 23.0040 / 23.0645 |
+| `showcase/ebay_cards_60_proa_reused` | 239,235 | 15.4085 / 15.4415 / 15.4741 |
+| `showcase/ebay_chrome_60_proa_fresh` | 521,326 | 38.9826 / 39.0595 / 39.1427 |
+| `showcase/ebay_real_chrome_60_proa_fresh` | 793,226 | 49.7625 / 49.8636 / 49.9686 |
+| `showcase/sentry_otel_400_proa_fresh` | 874,615 | 99.2659 / 99.5906 / 99.9129 |
 
 The [data table](rendering/results/proa-pr83-data_table_bench.json), [marketplace SRP](rendering/results/proa-pr83-ebay_srp_bench.json), and [synthetic listings](rendering/results/proa-pr83-ebay_srp_real_bench.json) standalone PROA fixtures were rerun at their default sample counts. Their original cross-language comparisons remain archived.
 
@@ -216,22 +216,22 @@ The integer and product-grid controls below were also rerun for PROA only. Value
 
 | PROA benchmark ID | Raw time, µs |
 | --- | ---: |
-| `integer_serialization_fresh_owned/proa/1` | 0.1267 / 0.1279 / 0.1291 |
-| `integer_serialization_fresh_owned/proa/10` | 0.4372 / 0.4389 / 0.4407 |
-| `integer_serialization_fresh_owned/proa/100` | 4.2227 / 4.2340 / 4.2475 |
-| `integer_serialization_fresh_owned/proa/1000` | 43.5657 / 43.7203 / 43.8818 |
-| `integer_serialization_fresh_owned/proa/10000` | 435.7485 / 437.3515 / 439.1825 |
-| `integer_serialization_reused_contiguous/proa/1` | 0.0311 / 0.0312 / 0.0313 |
-| `integer_serialization_reused_contiguous/proa/10` | 0.3382 / 0.3392 / 0.3403 |
-| `integer_serialization_reused_contiguous/proa/100` | 3.5284 / 3.5475 / 3.5789 |
-| `integer_serialization_reused_contiguous/proa/1000` | 35.3651 / 35.4440 / 35.5366 |
-| `integer_serialization_reused_contiguous/proa/10000` | 363.2803 / 364.2689 / 365.5479 |
-| `topcoat_upstream_product_grid/proa_owned_full/12` | 2.0231 / 2.0320 / 2.0417 |
-| `topcoat_upstream_product_grid/proa_owned_full/768` | 146.3149 / 146.7268 / 147.2725 |
-| `topcoat_upstream_product_grid/proa_owned_full/96` | 18.4295 / 18.4787 / 18.5294 |
-| `topcoat_upstream_product_grid/proa_reused_chained_full/12` | 1.1595 / 1.1626 / 1.1666 |
-| `topcoat_upstream_product_grid/proa_reused_chained_full/768` | 84.0593 / 84.4775 / 84.9972 |
-| `topcoat_upstream_product_grid/proa_reused_chained_full/96` | 10.2310 / 10.2605 / 10.2910 |
+| `integer_serialization_fresh_owned/proa/1` | 0.1189 / 0.1194 / 0.1200 |
+| `integer_serialization_fresh_owned/proa/10` | 0.4238 / 0.4253 / 0.4269 |
+| `integer_serialization_fresh_owned/proa/100` | 4.0930 / 4.1039 / 4.1146 |
+| `integer_serialization_fresh_owned/proa/1000` | 43.0309 / 43.1218 / 43.2160 |
+| `integer_serialization_fresh_owned/proa/10000` | 419.3241 / 420.4631 / 421.6172 |
+| `integer_serialization_reused_contiguous/proa/1` | 0.0310 / 0.0310 / 0.0311 |
+| `integer_serialization_reused_contiguous/proa/10` | 0.3342 / 0.3393 / 0.3481 |
+| `integer_serialization_reused_contiguous/proa/100` | 3.4301 / 3.4411 / 3.4551 |
+| `integer_serialization_reused_contiguous/proa/1000` | 34.6564 / 34.8942 / 35.2182 |
+| `integer_serialization_reused_contiguous/proa/10000` | 352.4354 / 353.0625 / 353.8420 |
+| `topcoat_upstream_product_grid/proa_owned_full/12` | 2.1897 / 2.1981 / 2.2067 |
+| `topcoat_upstream_product_grid/proa_owned_full/768` | 151.1185 / 151.5263 / 151.9285 |
+| `topcoat_upstream_product_grid/proa_owned_full/96` | 19.4739 / 19.5746 / 19.7187 |
+| `topcoat_upstream_product_grid/proa_reused_chained_full/12` | 1.0587 / 1.0622 / 1.0657 |
+| `topcoat_upstream_product_grid/proa_reused_chained_full/768` | 77.6550 / 77.8463 / 78.0763 |
+| `topcoat_upstream_product_grid/proa_reused_chained_full/96` | 9.5916 / 9.6067 / 9.6236 |
 
 ### Refreshed linked showcase corpus
 
@@ -239,18 +239,18 @@ The locked deployable fixture covers all twelve pages, five independent processe
 
 | Refreshed showcase page | Output bytes | Recorded renders | Process-median P50 µs [95% CI] | Pooled P95 µs | Raw bytes stable? |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Airbnb parity | 149,567 | 50,000 | 173.750 [173.375, 174.208] | 185.627 | yes |
-| Airbnb home | 162,883 | 50,000 | 11.292 [11.208, 11.333] | 11.917 | yes |
-| Airbnb search | 49,996 | 50,000 | 2.875 [2.875, 2.916] | 3.042 | yes |
-| Airbnb listing | 96,250 | 50,000 | 16.791 [16.583, 20.292] | 21.542 | no; 5 raw hashes, 1 canonical hash |
-| Nike catalog | 128,294 | 50,000 | 17.958 [17.833, 18.000] | 19.291 | yes |
-| Nike product | 59,042 | 50,000 | 4.542 [4.541, 5.416] | 5.875 | yes |
-| eBay cards | 239,235 | 50,000 | 24.875 [24.833, 24.959] | 26.958 | yes |
-| eBay chrome | 521,326 | 50,000 | 40.417 [40.292, 41.583] | 44.958 | yes |
-| eBay real chrome | 793,226 | 50,000 | 51.000 [50.750, 51.000] | 55.875 | yes |
-| ESPN game page | 33,765 | 50,000 | 8.208 [8.166, 8.250] | 8.583 | yes |
-| Sentry OTel, 400 rows | 875,478 | 1,500 | 115.917 [113.541, 119.333] | 126.720 | yes |
-| Settings console | 7,925 | 50,000 | 3.000 [2.958, 3.041] | 3.209 | yes |
+| Airbnb parity | 149,567 | 50,000 | 169.375 [168.458, 175.041] | 183.542 | yes |
+| Airbnb home | 162,883 | 50,000 | 11.000 [10.958, 11.125] | 11.625 | yes |
+| Airbnb search | 49,996 | 50,000 | 2.750 [2.750, 2.792] | 2.958 | yes |
+| Airbnb listing | 96,250 | 50,000 | 16.250 [16.125, 16.333] | 16.959 | no; 5 raw hashes, 1 canonical hash |
+| Nike catalog | 128,294 | 50,000 | 16.167 [16.042, 16.458] | 17.209 | yes |
+| Nike product | 59,042 | 50,000 | 4.250 [4.250, 5.084] | 5.834 | yes |
+| eBay cards | 239,235 | 50,000 | 22.959 [22.917, 23.000] | 25.208 | yes |
+| eBay chrome | 521,326 | 50,000 | 37.958 [37.791, 37.959] | 41.041 | yes |
+| eBay real chrome | 793,226 | 50,000 | 48.875 [48.792, 49.000] | 53.834 | yes |
+| ESPN game page | 33,765 | 50,000 | 7.500 [7.458, 7.542] | 7.875 | yes |
+| Sentry OTel, 400 rows | 875,478 | 1,500 | 99.875 [98.458, 101.125] | 107.419 | yes |
+| Settings console | 7,925 | 50,000 | 2.958 [2.917, 2.958] | 3.125 | yes |
 <!-- proa-engineering:end -->
 
 <!-- historical-results:start -->

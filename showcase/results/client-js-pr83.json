@@ -56,18 +56,18 @@
     "bootstrapResamples": 5000
   },
   "provenance": {
-    "generatedAt": "2026-11-11T05:51:55.065Z",
+    "generatedAt": "2026-11-11T18:21:54.517Z",
     "repository": {
-      "commit": "92aab464b8718e4eca06f34f522b18decc8364cf",
+      "commit": "5ddbbafac452906d92f72db57a44235c4c3a391f",
       "branch": "codex/proa-pr83-benchmark-refresh",
-      "status": "M Cargo.lock\n M README.md\n M charts/README.md\n M charts/figures/application.mjs\n M charts/figures/canonical.mjs\n M charts/figures/engineering.mjs\n M charts/figures/pages.mjs\n M charts/figures/suspense.mjs\n M charts/lib/tables.mjs\n M charts/svg/01-canonical-scoreboard.svg\n M charts/svg/02-canonical-tail-dispersion.svg\n M charts/svg/04-criterion-microbenchmarks.svg\n M charts/svg/05-product-card-scaling.svg\n M charts/svg/07-suspense-load.svg\n M charts/svg/08-canonical-pages-http.svg\n M charts/svg/09-cold-start.svg\n M cold-start/report.mjs\n M cold-start/results/latest.json\n M engineering.md\n M fixtures/airbnb-parity-dump/Cargo.lock\n M fixtures/airbnb-parity-dump/Cargo.toml\n M fixtures/airbnb-parity-dump/src/main.rs\n M fixtures/proa-buffer-comparison/Cargo.lock\n M fixtures/proa-buffer-comparison/src/preallocated.rs\n M http-capacity.md\n M page-load/report.mjs\n M page-load/results/latest.json\n M rendering/README.md\n M rendering/benches/showcase_pages.rs\n M rendering/canonical/report.mjs\n M rendering/canonical/report.test.mjs\n M rendering/canonical/run.mjs\n M rendering/canonical/source_fingerprint.mjs\n M rendering/generate-report.mjs\n M rendering/protocol.md\n M rendering/results/latest.json\n M rendering/results/latest.md\n M rendering/results/product-scaling.json\n M rendering/src/bin/proa_page_server.rs\n M rendering/src/bin/proa_suspense_server.rs\n M rendering/src/ebay_srp_page.rs\n M rendering/src/ebay_srp_real.rs\n M rendering/src/lib.rs\n M rendering/src/proa_page.rs\n M rendering/src/topcoat_product_grid.rs\n M scoreboard.md\n M scripts/refresh-proa.sh\n M showcase/capture_buffers.mjs\n M showcase/capture_client_js.mjs\n M showcase/capture_memcpy.mjs\n M showcase/capture_ssr.mjs\n M showcase/results/buffer-comparison.json\n M showcase/results/memcpy-floor.json\n M suspense-load/report.mjs\n M suspense-load/results/latest.json\n M sveltekit/README.md\n M sveltekit/report.mjs\n M sveltekit/sources.mjs\n?? cold-start/results/raw/\n?? fixtures/legacy-ebay-chrome/\n?? page-load/results/raw/\n?? rendering/canonical/refresh-proa.mjs\n?? rendering/results/archive/canonical-ssr-v1-proa-2026-11-11T05-27-20-700Z.json\n?? rendering/results/archive/canonical-ssr-v1-proa-2026-11-11T05-38-15-421Z.json\n?? rendering/results/archive/product-scaling-v1-proa-2026-11-11T05-27-37-008Z.json\n?? rendering/results/archive/product-scaling-v1-proa-2026-11-11T05-38-17-489Z.json\n?? rendering/results/raw/canonical-ssr-v1-proa-2026-11-11T05-27-20-700Z/\n?? rendering/results/raw/canonical-ssr-v1-proa-2026-11-11T05-38-15-421Z/\n?? rendering/results/raw/product-scaling-v1-proa-2026-11-11T05-27-37-008Z/\n?? rendering/results/raw/product-scaling-v1-proa-2026-11-11T05-38-17-489Z/\n?? scripts/bench-proa-engineering.sh\n?? scripts/merge-proa-refresh.mjs\n?? scripts/proa-refresh-evidence.mjs\n?? scripts/proa-refresh-evidence.test.mjs\n?? scripts/report-proa-engineering.mjs\n?? scripts/retain-proa-engineering.mjs\n?? sveltekit/refresh-proa.mjs"
+      "status": "M Cargo.lock\n M README.md\n M cold-start/results/latest.json\n M engineering.md\n M fixtures/airbnb-parity-dump/Cargo.lock\n M fixtures/proa-buffer-comparison/Cargo.lock\n M page-load/results/latest.json\n M rendering/README.md\n M rendering/protocol.md\n M rendering/results/latest.json\n M rendering/results/latest.md\n M rendering/results/product-scaling.json\n M scoreboard.md\n M scripts/bench-proa-engineering.sh\n M scripts/report-proa-engineering.mjs\n M showcase/results/buffer-comparison.json\n M showcase/results/memcpy-floor.json\n M suspense-load/results/latest.json\n M sveltekit/results/latest.json\n?? cold-start/results/raw/proa-2026-11-11T18-01-57-303Z/\n?? page-load/results/raw/proa-2026-11-11T17-59-47-630Z/\n?? rendering/results/archive/canonical-ssr-v1-proa-2026-11-11T05-27-20-700Z.json\n?? rendering/results/archive/canonical-ssr-v1-proa-2026-11-11T17-59-43-534Z.json\n?? rendering/results/archive/product-scaling-v1-proa-2026-11-11T05-27-37-008Z.json\n?? rendering/results/archive/product-scaling-v1-proa-2026-11-11T17-59-45-827Z.json\n?? rendering/results/raw/canonical-ssr-v1-proa-2026-11-11T05-27-20-700Z/\n?? rendering/results/raw/canonical-ssr-v1-proa-2026-11-11T17-59-43-534Z/\n?? rendering/results/raw/product-scaling-v1-proa-2026-11-11T05-27-37-008Z/\n?? rendering/results/raw/product-scaling-v1-proa-2026-11-11T17-59-45-827Z/"
     },
-    "proaRevision": "78f9c0edd00e934978f2c7e1fa6a0d06af491407",
+    "proaRevision": "bbbc9684335109949257eea8b4c98bb7bc8572ae",
     "fixtureBinary": {
       "path": "/Users/andrewhariri/Desktop/proa-benchmarks-pr83/fixtures/airbnb-parity-dump/target/showcase-dump",
-      "bytes": 5400128,
-      "sha256": "06bd4d0dca2c0f18eb55af5c02383e336fb648a4c9d9f15c5841c921ead21ea6",
-      "modifiedAt": "2026-11-11T05:45:21.917Z",
+      "bytes": 5863776,
+      "sha256": "f8c9c8999d8088981fba5a015666cdb6102499aa0005725e48e5e5dae371486c",
+      "modifiedAt": "2026-11-11T18:15:11.085Z",
       "buildCommand": "cargo-proa proa build --root fixtures/airbnb-parity-dump --no-check --no-assets -p proa_bench_airbnb_parity_dump --artifact-out target/showcase-dump"
     },
     "inputs": [
@@ -94,7 +94,7 @@
       {
         "path": "fixtures/airbnb-parity-dump/Cargo.lock",
         "bytes": 29862,
-        "sha256": "bba976b39565ebc85b8f7d2c566cf9dbbe1c4a569d5a74fb4bca28a782042afc"
+        "sha256": "8d00d0bf0bb773f88bcc83e7aec65c98d49a8cfd63c6eb4bfae73a7864c9b9f2"
       },
       {
         "path": "fixtures/airbnb-parity-dump/src/main.rs",
@@ -150,76 +150,76 @@
         "sha256": "0a642d46209b6d4e5480410980e396d7a6f6976932c30a3b1bc37710f40f5bbf"
       },
       {
-        "key": "rsjs_owner_2f9c594270c7e4f391d2bf5df4b6bdb7878e2e4436b29a41f87d069f7bf565e8",
-        "kind": "island-owner",
-        "rawBytes": 29256,
-        "gzip9Bytes": 3159,
-        "brotli11Bytes": 2152,
-        "sha256": "4b8ca9817a38aae956d4ee411a48f52d195f69ae4988b62ee338f825ce518ad9"
-      },
-      {
-        "key": "rsjs_owner_3aa614cdbdf65c858a72e30ad2c6c1b1dc9fed076b4b9d7900a08b02d7e726ec",
-        "kind": "island-owner",
-        "rawBytes": 2784,
-        "gzip9Bytes": 877,
-        "brotli11Bytes": 740,
-        "sha256": "c4cc9d4559e993f945827d1751245e3edc9ea1790b576ca3703cddedc482f626"
-      },
-      {
-        "key": "rsjs_owner_4e7d935d5ce5ae442bd9eb66308b3e0c1dca7533a5fc5475e89d2ee8fcfdf071",
-        "kind": "island-owner",
-        "rawBytes": 2788,
-        "gzip9Bytes": 876,
-        "brotli11Bytes": 746,
-        "sha256": "4890848201a078d82fbc6bf13be0b6062ff96eb879663a19da7bddadf6acedc3"
-      },
-      {
-        "key": "rsjs_owner_4f32a6d545d54b76fc3092b178c6715a18ebb2a5251392949674b87541093fd9",
+        "key": "rsjs_owner_817cf808d0a873b213678cdfecbe2b4c2b024a49483399fa8e74ddeb44d6564d",
         "kind": "island-owner",
         "rawBytes": 2784,
         "gzip9Bytes": 879,
-        "brotli11Bytes": 737,
-        "sha256": "4fd5018bada854d9bbf7465fb78f5e56b439328a45a91171cc507db6eb349630"
+        "brotli11Bytes": 740,
+        "sha256": "cf567ad2bd431eba50d3b1e8a681b1d723c725ca839a7d63030d6e4de262a789"
       },
       {
-        "key": "component_rsjs_fragment_5387e608571c4c02a65b9b2fc024c470922fbfa0c5fc652675fea0109cfeb09b",
+        "key": "rsjs_owner_86ee14f261b8e483cae7312ead473f078939b3cdb5421ead2b29cc271b30d2cd",
+        "kind": "island-owner",
+        "rawBytes": 2784,
+        "gzip9Bytes": 876,
+        "brotli11Bytes": 738,
+        "sha256": "030f6775016637c6a4c881ee1710a7d1c7b29482765d89ea829c2d0d47e8ced4"
+      },
+      {
+        "key": "rsjs_owner_d89a2a0c2cf5aef884277a8dad196c82123b9c067ccbd818749c636b0ee807ee",
+        "kind": "island-owner",
+        "rawBytes": 2788,
+        "gzip9Bytes": 878,
+        "brotli11Bytes": 738,
+        "sha256": "c2932f51fb5a394c8ce24e8c79efc0f9cacb0fffb075bb20d230458b41587231"
+      },
+      {
+        "key": "rsjs_owner_f5b0ab82697b8aceaab53f01607eeee9958658970f53cf59c4755448d609019f",
+        "kind": "island-owner",
+        "rawBytes": 29256,
+        "gzip9Bytes": 3159,
+        "brotli11Bytes": 2154,
+        "sha256": "3d5450e2cb7061614dffedab96a29805d4fe411eab75e6bf484487fda9be955a"
+      },
+      {
+        "key": "component_rsjs_fragment_448056c60a6e1c99c48e5870de856c2ac4eec784092157621c9a78a525142616",
+        "kind": "component-fragment",
+        "rawBytes": 51271,
+        "gzip9Bytes": 5352,
+        "brotli11Bytes": 3805,
+        "sha256": "e1a7c3315b7fb66392f2169c33d22b17f6799408a233867b5871e9b494297323"
+      },
+      {
+        "key": "component_rsjs_fragment_9452c6593b1a162c5236d95fee059245aa6d00ecdf1478e7296f4c8c50639815",
         "kind": "component-fragment",
         "rawBytes": 11522,
-        "gzip9Bytes": 1686,
-        "brotli11Bytes": 1290,
-        "sha256": "353f7252987c7e98ae575a9fa8a4403d741a99badd8cc4094e30ac4e31357848"
+        "gzip9Bytes": 1684,
+        "brotli11Bytes": 1283,
+        "sha256": "1d59f34d0ddb756fe6daf585921cad613dd963949d2193d880e03b9dda652414"
       },
       {
-        "key": "component_rsjs_fragment_6efb8e3c7ddf58df8a691fc79af0c957660fa38908be7078315c8ddaa4d8e599",
+        "key": "component_rsjs_fragment_b9eec9fbf6df504efce12b7d3100eef2fe74b9bd2e818492f0e678bf7c786414",
+        "kind": "component-fragment",
+        "rawBytes": 4622,
+        "gzip9Bytes": 1292,
+        "brotli11Bytes": 1096,
+        "sha256": "b3d80b11a60bf6152461141422d43aa94d2c7406efabe2e33e1014e6c1f40bf2"
+      },
+      {
+        "key": "component_rsjs_fragment_c5f83b4048eb7ca9e4f4aa108f0c58f6c87c043a1e7fcec8f13c746246a364e8",
+        "kind": "component-fragment",
+        "rawBytes": 2246,
+        "gzip9Bytes": 812,
+        "brotli11Bytes": 703,
+        "sha256": "0f17c9620151209890374a4d3bfa5a4febdfdcf5e3136dfc560bc180534284f6"
+      },
+      {
+        "key": "component_rsjs_fragment_d870f92ce98b6a59d2bbd139c48eae7a18046a44a08a68dac57445f707879263",
         "kind": "component-fragment",
         "rawBytes": 2479,
         "gzip9Bytes": 742,
-        "brotli11Bytes": 626,
-        "sha256": "092dd0d807303e8983095976cea4d0a92e5891e42c56d15e8a16fca341b1adb6"
-      },
-      {
-        "key": "component_rsjs_fragment_a90f7c0c08f7a04c23c73d74a23c4c6825c2554b6e5d8598d5d9d7826009c604",
-        "kind": "component-fragment",
-        "rawBytes": 2246,
-        "gzip9Bytes": 811,
-        "brotli11Bytes": 709,
-        "sha256": "6d164166fa6ae77c24c41a2ec70e3e2ebbd07a714065194b77d77d92e455576f"
-      },
-      {
-        "key": "component_rsjs_fragment_dd3d55fa9aaa2d237004275c481c3cedd4eee2fcef401b84d2e5b487c440fb1c",
-        "kind": "component-fragment",
-        "rawBytes": 4622,
-        "gzip9Bytes": 1290,
-        "brotli11Bytes": 1100,
-        "sha256": "46211f29fc20305e19cac937a7b3836ff641238322f95a7628c5cc191a0afbf6"
-      },
-      {
-        "key": "component_rsjs_fragment_e13e6100fe6e927947adac7b63aa45dc28d7d5b5c90879546f9c59de5d0d9813",
-        "kind": "component-fragment",
-        "rawBytes": 51271,
-        "gzip9Bytes": 5354,
-        "brotli11Bytes": 3803,
-        "sha256": "b1f3353d6f02a825b5864a30f96e91d4753e38f6651b9400cc203afcf3ce3e0a"
+        "brotli11Bytes": 630,
+        "sha256": "f82e28eadd3a6f7b4eddd1df5f43f793a2509ffe90a4031bf7271179a1d21469"
       }
     ],
     "node": "v24.20.0",
@@ -235,7 +235,7 @@
       "cpuModel": "Apple M4 Max",
       "logicalCpuCount": 16,
       "totalMemoryBytes": 137438953472,
-      "freeMemoryBytesAtReport": 7350747136
+      "freeMemoryBytesAtReport": 2242314240
     }
   },
   "summaries": [
@@ -249,16 +249,16 @@
         "key": "airbnb-parity",
         "kind": "document",
         "rawBytes": 149567,
-        "gzip9Bytes": 16026,
-        "brotli11Bytes": 12616,
-        "sha256": "f59f401ed608f4c8a3da3c7049e0f2c09972eda45e73ebca75e22eac020fa51a"
+        "gzip9Bytes": 16027,
+        "brotli11Bytes": 12655,
+        "sha256": "c722e94655b56624eb05d618bd05e5f67a60892a1c820167278e2884b0d75bd2"
       },
       "javascript": {
         "assetSets": [
           [
-            "component_rsjs_fragment_dd3d55fa9aaa2d237004275c481c3cedd4eee2fcef401b84d2e5b487c440fb1c",
-            "component_rsjs_fragment_e13e6100fe6e927947adac7b63aa45dc28d7d5b5c90879546f9c59de5d0d9813",
-            "rsjs_owner_2f9c594270c7e4f391d2bf5df4b6bdb7878e2e4436b29a41f87d069f7bf565e8",
+            "component_rsjs_fragment_448056c60a6e1c99c48e5870de856c2ac4eec784092157621c9a78a525142616",
+            "component_rsjs_fragment_b9eec9fbf6df504efce12b7d3100eef2fe74b9bd2e818492f0e678bf7c786414",
+            "rsjs_owner_f5b0ab82697b8aceaab53f01607eeee9958658970f53cf59c4755448d609019f",
             "runtime-core",
             "runtime-query"
           ]
@@ -274,55 +274,55 @@
           "unit": "ms",
           "n": 30,
           "min": 0.09999990463256836,
-          "mean": 0.1733332633972168,
+          "mean": 0.16666665077209472,
           "p50": 0.19999980926513672,
           "p95": 0.20000028610229492,
-          "max": 0.40000009536743164,
+          "max": 0.3000001907348633,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.14999985694885254,
+            "low": 0.10000038146972656,
             "high": 0.19999980926513672
           }
         },
         "navigation.loadMs": {
           "unit": "ms",
           "n": 30,
-          "min": 52.89999961853027,
-          "mean": 72.15999997456869,
-          "p50": 73.7000002861023,
-          "p95": 76.69999980926514,
-          "max": 76.80000019073486,
+          "min": 56.19999980926514,
+          "mean": 69.48666661580404,
+          "p50": 70.54999995231628,
+          "p95": 73.8299999475479,
+          "max": 76.59999990463257,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 72.10000014305115,
-            "high": 74.35000014305115
+            "low": 69.5,
+            "high": 71.5
           }
         },
         "navigation.readyWallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 130.32849999999962,
-          "mean": 149.64238329999984,
-          "p50": 151.05556250000154,
-          "p95": 154.200614699996,
-          "max": 154.55583399999887,
+          "min": 132.74604199999885,
+          "mean": 146.1606737000014,
+          "p50": 147.3726665000031,
+          "p95": 150.62087514999786,
+          "max": 152.7754590000004,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 149.77662500000042,
-            "high": 152.15060449999964
+            "low": 146.53112672501737,
+            "high": 148.39008350000222
           }
         },
         "navigation.firstContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
           "min": 36,
-          "mean": 39.6,
+          "mean": 40.13333333333333,
           "p50": 40,
           "p95": 44,
           "max": 44,
@@ -338,7 +338,7 @@
           "unit": "ms",
           "n": 30,
           "min": 36,
-          "mean": 39.6,
+          "mean": 40.13333333333333,
           "p50": 40,
           "p95": 44,
           "max": 44,
@@ -369,17 +369,17 @@
         "initial.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 6.635000000000001,
-          "mean": 6.850199999999998,
-          "p50": 6.8740000000000006,
-          "p95": 7.02515,
-          "max": 7.114,
+          "min": 6.959,
+          "mean": 7.1852333333333345,
+          "p50": 7.1945,
+          "p95": 7.4620999999999995,
+          "max": 7.477,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 6.812,
-            "high": 6.9105
+            "low": 7.114000000000001,
+            "high": 7.2379999999999995
           }
         },
         "initial.cpu.v8CompileMs": {
@@ -401,64 +401,64 @@
         "initial.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 45.324,
-          "mean": 46.59653333333332,
-          "p50": 46.353,
-          "p95": 48.36704999999999,
-          "max": 48.705999999999996,
+          "min": 47.613,
+          "mean": 50.45156666666666,
+          "p50": 50.370000000000005,
+          "p95": 52.781699999999994,
+          "max": 53.76200000000001,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 46.089,
-            "high": 46.9725
+            "low": 49.677499999999995,
+            "high": 51.085499999999996
           }
         },
         "initial.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 7.577,
-          "mean": 8.3559,
-          "p50": 8.36,
-          "p95": 8.7846,
-          "max": 9.179,
+          "min": 8.404,
+          "mean": 9.143299999999998,
+          "p50": 9.214,
+          "p95": 9.54795,
+          "max": 10.131,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 8.2665,
-            "high": 8.468499999999999
+            "low": 9.0035,
+            "high": 9.373999999999999
           }
         },
         "initial.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 5.473999999999999,
-          "mean": 6.009899999999999,
-          "p50": 6.019500000000001,
-          "p95": 6.293,
-          "max": 6.398,
+          "min": 6.006,
+          "mean": 6.4994000000000005,
+          "p50": 6.4955,
+          "p95": 6.9238,
+          "max": 7.054,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 5.89,
-            "high": 6.1625
+            "low": 6.346,
+            "high": 6.604
           }
         },
         "initial.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
           "min": 2186672,
-          "mean": 2186710.4,
+          "mean": 2186721.466666667,
           "p50": 2186736,
           "p95": 2186736,
-          "max": 2186736,
+          "max": 2186748,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2186672,
+            "low": 2186736,
             "high": 2186736
           }
         },
@@ -466,48 +466,48 @@
           "unit": "bytes",
           "n": 30,
           "min": 2560096,
-          "mean": 2560631.2,
-          "p50": 2560584,
-          "p95": 2561800.4,
-          "max": 2563008,
+          "mean": 2560577.8666666667,
+          "p50": 2560524,
+          "p95": 2561980.8,
+          "max": 2563088,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
             "low": 2560176,
-            "high": 2560624
+            "high": 2560584
           }
         },
         "interaction.wallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 126.43279199999233,
-          "mean": 132.2692999666661,
-          "p50": 132.407021,
-          "p95": 136.3940125000019,
-          "max": 140.4230840000091,
+          "min": 130.78787500000908,
+          "mean": 136.62635556666518,
+          "p50": 136.63785400000052,
+          "p95": 141.8193395499965,
+          "max": 143.0607500000042,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 131.28831200000332,
-            "high": 132.9556249999987
+            "low": 134.51370849999876,
+            "high": 138.68006250000326
           }
         },
         "interaction.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.8149999999999997,
-          "mean": 0.8781666666666668,
-          "p50": 0.8665,
-          "p95": 0.9680500000000003,
-          "max": 1.005,
+          "min": 0.9709999999999996,
+          "mean": 1.0920666666666667,
+          "p50": 1.091,
+          "p95": 1.1676999999999997,
+          "max": 1.202,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.8554999999999999,
-            "high": 0.8844999999999998
+            "low": 1.0785,
+            "high": 1.1015000000000001
           }
         },
         "interaction.cpu.v8CompileMs": {
@@ -529,56 +529,56 @@
         "interaction.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 29.757000000000005,
-          "mean": 30.6135,
-          "p50": 30.482,
-          "p95": 31.842850000000002,
-          "max": 33.123999999999995,
+          "min": 32.491,
+          "mean": 34.34360000000001,
+          "p50": 34.25149999999999,
+          "p95": 36.285450000000004,
+          "max": 36.34599999999999,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 30.3,
-            "high": 30.6655
+            "low": 33.780499999999996,
+            "high": 34.632000000000005
           }
         },
         "interaction.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 7.507999999999999,
-          "mean": 7.993966666666668,
-          "p50": 7.998000000000001,
-          "p95": 8.15055,
-          "max": 8.431,
+          "min": 8.196999999999997,
+          "mean": 8.883366666666666,
+          "p50": 8.8965,
+          "p95": 9.304049999999998,
+          "max": 9.509,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 7.955000000000002,
-            "high": 8.046000000000001
+            "low": 8.816,
+            "high": 8.968
           }
         },
         "interaction.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.876,
-          "mean": 0.9306666666666668,
-          "p50": 0.9195000000000002,
-          "p95": 1.0024,
-          "max": 1.045,
+          "min": 1.066,
+          "mean": 1.1459333333333332,
+          "p50": 1.1470000000000005,
+          "p95": 1.1994000000000002,
+          "max": 1.2629999999999995,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.9095000000000002,
-            "high": 0.9420000000000002
+            "low": 1.1275,
+            "high": 1.1654999999999998
           }
         },
         "interaction.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
           "min": 3105440,
-          "mean": 3105516.8,
+          "mean": 3105537.3333333335,
           "p50": 3105568,
           "p95": 3105568,
           "max": 3105568,
@@ -586,7 +586,7 @@
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 3105440,
+            "low": 3105568,
             "high": 3105568
           }
         },
@@ -594,16 +594,16 @@
           "unit": "bytes",
           "n": 30,
           "min": 2797696,
-          "mean": 2798225.3333333335,
-          "p50": 2798124,
-          "p95": 2799482.4,
+          "mean": 2798215.466666667,
+          "p50": 2798104,
+          "p95": 2799708.8,
           "max": 2800608,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2797836,
-            "high": 2798188
+            "low": 2797824,
+            "high": 2798264
           }
         },
         "interaction.longTaskDurationMs": {
@@ -714,16 +714,16 @@
         "key": "airbnb-parity",
         "kind": "document",
         "rawBytes": 149567,
-        "gzip9Bytes": 16026,
-        "brotli11Bytes": 12616,
-        "sha256": "f59f401ed608f4c8a3da3c7049e0f2c09972eda45e73ebca75e22eac020fa51a"
+        "gzip9Bytes": 16027,
+        "brotli11Bytes": 12655,
+        "sha256": "c722e94655b56624eb05d618bd05e5f67a60892a1c820167278e2884b0d75bd2"
       },
       "javascript": {
         "assetSets": [
           [
-            "component_rsjs_fragment_dd3d55fa9aaa2d237004275c481c3cedd4eee2fcef401b84d2e5b487c440fb1c",
-            "component_rsjs_fragment_e13e6100fe6e927947adac7b63aa45dc28d7d5b5c90879546f9c59de5d0d9813",
-            "rsjs_owner_2f9c594270c7e4f391d2bf5df4b6bdb7878e2e4436b29a41f87d069f7bf565e8",
+            "component_rsjs_fragment_448056c60a6e1c99c48e5870de856c2ac4eec784092157621c9a78a525142616",
+            "component_rsjs_fragment_b9eec9fbf6df504efce12b7d3100eef2fe74b9bd2e818492f0e678bf7c786414",
+            "rsjs_owner_f5b0ab82697b8aceaab53f01607eeee9958658970f53cf59c4755448d609019f",
             "runtime-core",
             "runtime-query"
           ]
@@ -738,113 +738,113 @@
         "navigation.requestToFirstByteMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0,
-          "mean": 0.14333327611287436,
-          "p50": 0.10000014305114746,
-          "p95": 0.20000028610229492,
+          "min": 0.09999990463256836,
+          "mean": 0.17999995549519857,
+          "p50": 0.19999980926513672,
+          "p95": 0.2999999761581421,
           "max": 0.3000001907348633,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.09999990463256836,
-            "high": 0.19999980926513672
+            "low": 0.14999985694885254,
+            "high": 0.20000004768371582
           }
         },
         "navigation.loadMs": {
           "unit": "ms",
           "n": 30,
-          "min": 243.19999980926514,
-          "mean": 275.0499999364217,
-          "p50": 258.75,
-          "p95": 333.2549999475479,
-          "max": 347.5,
+          "min": 280.59999990463257,
+          "mean": 326.91666668256124,
+          "p50": 314.5,
+          "p95": 368.49499967098234,
+          "max": 382.40000009536743,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 252.30000019073486,
-            "high": 293.09999990463257
+            "low": 309.90000009536743,
+            "high": 339.40000009536743
           }
         },
         "navigation.readyWallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 320.3417499999923,
-          "mean": 351.60490840000085,
-          "p50": 335.21183349999774,
-          "p95": 410.4331043499992,
-          "max": 425.734209000002,
+          "min": 356.9032920000027,
+          "mean": 403.437590200001,
+          "p50": 390.6823745000074,
+          "p95": 444.8930059500006,
+          "max": 459.4375830000008,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 328.9934790000043,
-            "high": 369.85256180000107
+            "low": 386.53662499999336,
+            "high": 415.8061044999922
           }
         },
         "navigation.firstContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
-          "min": 96,
-          "mean": 115.2,
-          "p50": 116,
-          "p95": 128,
-          "max": 128,
+          "min": 112,
+          "mean": 125.86666666666666,
+          "p50": 124,
+          "p95": 140,
+          "max": 148,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 110,
-            "high": 124
+            "low": 120,
+            "high": 128
           }
         },
         "navigation.largestContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
-          "min": 96,
-          "mean": 115.2,
-          "p50": 116,
-          "p95": 128,
-          "max": 128,
+          "min": 112,
+          "mean": 125.86666666666666,
+          "p50": 124,
+          "p95": 140,
+          "max": 148,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 110,
-            "high": 124
+            "low": 120,
+            "high": 128
           }
         },
         "navigation.longTaskDurationMs": {
           "unit": "ms",
           "n": 30,
           "min": 0,
-          "mean": 20.466666666666665,
-          "p50": 0,
-          "p95": 52,
-          "max": 54,
+          "mean": 40.06666666666667,
+          "p50": 51.5,
+          "p95": 67.1,
+          "max": 73,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0,
-            "high": 50
+            "low": 50,
+            "high": 55.5
           }
         },
         "initial.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 25.44,
-          "mean": 27.1149,
-          "p50": 26.807000000000002,
-          "p95": 29.79175,
-          "max": 30.807000000000002,
+          "min": 28.229,
+          "mean": 30.611833333333337,
+          "p50": 30.158499999999997,
+          "p95": 33.736,
+          "max": 35.333999999999996,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 26.641,
-            "high": 27.0375
+            "low": 29.5505,
+            "high": 31.3235
           }
         },
         "initial.cpu.v8CompileMs": {
@@ -866,113 +866,113 @@
         "initial.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 172.655,
-          "mean": 179.6566666666667,
-          "p50": 178.9765,
-          "p95": 187.23324999999997,
-          "max": 188.20399999999998,
+          "min": 202.691,
+          "mean": 216.45266666666672,
+          "p50": 211.7115,
+          "p95": 242.35769999999994,
+          "max": 250.14799999999997,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 177.33249999999998,
-            "high": 181.07973749999996
+            "low": 208.9305,
+            "high": 218.474
           }
         },
         "initial.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 26.703,
-          "mean": 30.99273333333333,
-          "p50": 30.855,
-          "p95": 33.71,
-          "max": 34.821999999999996,
+          "min": 34.368,
+          "mean": 40.558200000000014,
+          "p50": 39.0715,
+          "p95": 48.81259999999999,
+          "max": 52.416,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 30.3525,
-            "high": 32.006
+            "low": 38.376000000000005,
+            "high": 41.436
           }
         },
         "initial.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 17.876,
-          "mean": 20.867733333333334,
-          "p50": 20.7155,
-          "p95": 22.46975,
-          "max": 23.031,
+          "min": 21.676000000000002,
+          "mean": 24.873166666666666,
+          "p50": 24.8455,
+          "p95": 27.73605,
+          "max": 28.579,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 20.354,
-            "high": 21.2645
+            "low": 24.114,
+            "high": 25.695500000000003
           }
         },
         "initial.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
           "min": 2230792,
-          "mean": 2231472,
-          "p50": 2230856,
+          "mean": 2231951.066666667,
+          "p50": 2232396,
           "p95": 2232460,
           "max": 2232460,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2230856,
-            "high": 2232396
+            "low": 2232396,
+            "high": 2232428
           }
         },
         "initial.heapAfterForcedGc.embedderUsedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 2462152,
-          "mean": 2474766.933333333,
-          "p50": 2468372,
-          "p95": 2491130.8,
-          "max": 2491560,
+          "min": 2462032,
+          "mean": 2471925.066666667,
+          "p50": 2467952,
+          "p95": 2491274.8,
+          "max": 2491448,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2464632,
-            "high": 2484352
+            "low": 2467928,
+            "high": 2469384
           }
         },
         "interaction.wallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 228.9184169999935,
-          "mean": 242.78386243333244,
-          "p50": 242.80954150000616,
-          "p95": 256.58308124999746,
-          "max": 258.5821670000005,
+          "min": 252.5802079999994,
+          "mean": 268.82361950000137,
+          "p50": 266.64647950000654,
+          "p95": 291.2974268999951,
+          "max": 293.1946250000001,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 238.7064375000009,
-            "high": 245.50739549999707
+            "low": 262.86481249999633,
+            "high": 273.25983350000024
           }
         },
         "interaction.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 1.6320000000000014,
-          "mean": 3.3323666666666654,
-          "p50": 3.3200000000000003,
-          "p95": 4.650099999999997,
-          "max": 5.180000000000001,
+          "min": 3.523999999999999,
+          "mean": 4.777066666666666,
+          "p50": 4.8649999999999975,
+          "p95": 5.670000000000001,
+          "max": 6.156999999999999,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2.990999999999997,
-            "high": 3.7059999999999995
+            "low": 4.416000000000003,
+            "high": 5.195
           }
         },
         "interaction.cpu.v8CompileMs": {
@@ -994,81 +994,81 @@
         "interaction.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 114.39700000000002,
-          "mean": 122.82849999999999,
-          "p50": 120.9265,
-          "p95": 132.82764999999998,
-          "max": 135.77800000000002,
+          "min": 132.831,
+          "mean": 148.90526666666668,
+          "p50": 147.45750000000004,
+          "p95": 162.9316,
+          "max": 167.412,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 119.52149999999997,
-            "high": 124.4175
+            "low": 145.3245,
+            "high": 152.08499999999998
           }
         },
         "interaction.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 28.466000000000005,
-          "mean": 31.81093333333333,
-          "p50": 31.502499999999998,
-          "p95": 35.3228,
-          "max": 37.507000000000005,
+          "min": 33.268,
+          "mean": 37.9739,
+          "p50": 37.3215,
+          "p95": 42.751549999999995,
+          "max": 48.415000000000006,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 31.245999999999995,
-            "high": 32.283
+            "low": 36.845,
+            "high": 37.7795
           }
         },
         "interaction.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 1.6539999999999992,
-          "mean": 3.673566666666667,
-          "p50": 3.700500000000001,
-          "p95": 5.189449999999999,
-          "max": 5.714,
+          "min": 2.6900000000000013,
+          "mean": 4.263766666666668,
+          "p50": 4.1815000000000015,
+          "p95": 5.3239,
+          "max": 6.010000000000002,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 3.1445,
-            "high": 4.262999999999999
+            "low": 3.883000000000001,
+            "high": 4.7195
           }
         },
         "interaction.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 3134884,
-          "mean": 3135630.6666666665,
-          "p50": 3135088,
-          "p95": 3136616,
+          "min": 3134924,
+          "mean": 3136114,
+          "p50": 3136508,
+          "p95": 3136675.8,
           "max": 3136692,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 3135032,
-            "high": 3136488
+            "low": 3136488,
+            "high": 3136590
           }
         },
         "interaction.heapAfterForcedGc.embedderUsedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 2700496,
-          "mean": 2709030.933333333,
-          "p50": 2703740,
-          "p95": 2725858.8,
+          "min": 2699160,
+          "mean": 2707587.2,
+          "p50": 2703792,
+          "p95": 2725998.8,
           "max": 2726208,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2700968,
-            "high": 2710864
+            "low": 2703768,
+            "high": 2704200
           }
         },
         "interaction.longTaskDurationMs": {
@@ -1179,32 +1179,32 @@
         "key": "espn",
         "kind": "document",
         "rawBytes": 33765,
-        "gzip9Bytes": 7782,
-        "brotli11Bytes": 6639,
-        "sha256": "5cc3e03eb779924ea0e67cd7e85889bc4ba795a20dd424b4b50cda8129a03441"
+        "gzip9Bytes": 7781,
+        "brotli11Bytes": 6631,
+        "sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e"
       },
       "javascript": {
         "assetSets": [
           [
-            "component_rsjs_fragment_6efb8e3c7ddf58df8a691fc79af0c957660fa38908be7078315c8ddaa4d8e599",
-            "rsjs_owner_4e7d935d5ce5ae442bd9eb66308b3e0c1dca7533a5fc5475e89d2ee8fcfdf071",
+            "component_rsjs_fragment_d870f92ce98b6a59d2bbd139c48eae7a18046a44a08a68dac57445f707879263",
+            "rsjs_owner_d89a2a0c2cf5aef884277a8dad196c82123b9c067ccbd818749c636b0ee807ee",
             "runtime-core"
           ]
         ],
         "requestCount": 3,
         "uniqueRequestCount": 3,
         "rawBytes": 192121,
-        "gzip9BodyBytes": 48433,
-        "brotli11BodyBytes": 40389
+        "gzip9BodyBytes": 48435,
+        "brotli11BodyBytes": 40385
       },
       "metrics": {
         "navigation.requestToFirstByteMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.09999990463256836,
-          "mean": 0.16666663487752278,
+          "min": 0,
+          "mean": 0.15999999046325683,
           "p50": 0.19999980926513672,
-          "p95": 0.25500023365020724,
+          "p95": 0.2549999713897702,
           "max": 0.3000001907348633,
           "medianCi95": {
             "confidence": 0.95,
@@ -1217,43 +1217,43 @@
         "navigation.loadMs": {
           "unit": "ms",
           "n": 30,
-          "min": 36.5,
-          "mean": 40.00999999046326,
-          "p50": 40.10000014305115,
-          "p95": 42.609999895095825,
-          "max": 43.5,
+          "min": 37.299999713897705,
+          "mean": 41.03333336512248,
+          "p50": 40.59999990463257,
+          "p95": 44.50999999046326,
+          "max": 44.59999990463257,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 39.39750009775163,
-            "high": 41.14999985694885
+            "low": 39.5,
+            "high": 42.200000047683716
           }
         },
         "navigation.readyWallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 114.0291670000006,
-          "mean": 117.31270416666557,
-          "p50": 116.883896000003,
-          "p95": 120.2722106000023,
-          "max": 121.8544159999874,
+          "min": 113.79899999999907,
+          "mean": 117.72463603333459,
+          "p50": 117.2507079999923,
+          "p95": 121.35040854999534,
+          "max": 121.89075000000594,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 115.95847899999717,
-            "high": 118.62218749999738
+            "low": 116.2613540000093,
+            "high": 118.6191669999971
           }
         },
         "navigation.firstContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
           "min": 44,
-          "mean": 45.86666666666667,
-          "p50": 44,
-          "p95": 48,
-          "max": 48,
+          "mean": 47.06666666666667,
+          "p50": 48,
+          "p95": 52,
+          "max": 52,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
@@ -1266,10 +1266,10 @@
           "unit": "ms",
           "n": 30,
           "min": 44,
-          "mean": 45.86666666666667,
-          "p50": 44,
-          "p95": 48,
-          "max": 48,
+          "mean": 47.06666666666667,
+          "p50": 48,
+          "p95": 52,
+          "max": 52,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
@@ -1297,17 +1297,17 @@
         "initial.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 2.3800000000000003,
-          "mean": 2.6477666666666666,
-          "p50": 2.6485000000000003,
-          "p95": 2.74715,
-          "max": 2.833,
+          "min": 2.626,
+          "mean": 2.747966666666666,
+          "p50": 2.7439999999999998,
+          "p95": 2.8291,
+          "max": 2.876,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2.6345,
-            "high": 2.6809999999999996
+            "low": 2.729,
+            "high": 2.7625
           }
         },
         "initial.cpu.v8CompileMs": {
@@ -1329,56 +1329,56 @@
         "initial.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 37.03,
-          "mean": 39.32916666666667,
-          "p50": 39.152,
-          "p95": 41.13335,
-          "max": 42.652,
+          "min": 39.904,
+          "mean": 42.0987,
+          "p50": 42.1,
+          "p95": 43.34735,
+          "max": 44.073,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 38.8145,
-            "high": 39.7435
+            "low": 41.762,
+            "high": 42.528999999999996
           }
         },
         "initial.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 15.599,
-          "mean": 16.487033333333336,
-          "p50": 16.4445,
-          "p95": 17.34975,
-          "max": 17.67,
+          "min": 16.535,
+          "mean": 17.550599999999996,
+          "p50": 17.494,
+          "p95": 18.4119,
+          "max": 18.573,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 16.235,
-            "high": 16.706674999999997
+            "low": 17.2795,
+            "high": 17.711
           }
         },
         "initial.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.972,
-          "mean": 1.0735000000000003,
-          "p50": 1.0765,
-          "p95": 1.1545,
-          "max": 1.171,
+          "min": 0.9970000000000001,
+          "mean": 1.1181333333333334,
+          "p50": 1.125,
+          "p95": 1.20815,
+          "max": 1.245,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 1.0445,
-            "high": 1.105
+            "low": 1.0825,
+            "high": 1.154
           }
         },
         "initial.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
           "min": 1634248,
-          "mean": 1634273.6,
+          "mean": 1634275.7333333334,
           "p50": 1634280,
           "p95": 1634280,
           "max": 1634280,
@@ -1394,48 +1394,48 @@
           "unit": "bytes",
           "n": 30,
           "min": 2210744,
-          "mean": 2211229.066666667,
+          "mean": 2211185.8666666667,
           "p50": 2210872,
-          "p95": 2212270,
+          "p95": 2211982.4,
           "max": 2212288,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
             "low": 2210872,
-            "high": 2211696
+            "high": 2211568
           }
         },
         "interaction.wallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 105.2179160000087,
-          "mean": 112.25762636666623,
-          "p50": 112.81275000000278,
-          "p95": 116.61294145000429,
-          "max": 118.69550000000163,
+          "min": 106.84162500000093,
+          "mean": 111.57525416666589,
+          "p50": 111.6103335000007,
+          "p95": 115.79559215000245,
+          "max": 116.63787500000035,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 110.19472949999908,
-            "high": 114.43581249999261
+            "low": 110.13977049999812,
+            "high": 113.48791699999128
           }
         },
         "interaction.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.2170000000000002,
-          "mean": 0.2517000000000001,
-          "p50": 0.24899999999999986,
-          "p95": 0.2984999999999998,
-          "max": 0.32400000000000007,
+          "min": 0.2629999999999998,
+          "mean": 0.3167666666666666,
+          "p50": 0.3105,
+          "p95": 0.3979999999999999,
+          "max": 0.41200000000000003,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.23599999999999988,
-            "high": 0.25650000000000023
+            "low": 0.304,
+            "high": 0.32299999999999995
           }
         },
         "interaction.cpu.v8CompileMs": {
@@ -1457,56 +1457,56 @@
         "interaction.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 17.300000000000004,
-          "mean": 18.337666666666667,
-          "p50": 18.359,
-          "p95": 19.564949999999996,
-          "max": 21.563,
+          "min": 18.422999999999995,
+          "mean": 19.94606666666666,
+          "p50": 20.005000000000003,
+          "p95": 21.536299999999997,
+          "max": 21.796000000000003,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 17.868500000000004,
-            "high": 18.58
+            "low": 19.592,
+            "high": 20.3005
           }
         },
         "interaction.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 3.9409999999999985,
-          "mean": 4.191966666666665,
-          "p50": 4.1555,
-          "p95": 4.620499999999998,
-          "max": 4.768999999999999,
+          "min": 4.167999999999998,
+          "mean": 4.579699999999999,
+          "p50": 4.512499999999999,
+          "p95": 5.12085,
+          "max": 5.287,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 4.106999999999999,
-            "high": 4.2075
+            "low": 4.442999999999999,
+            "high": 4.663499999999999
           }
         },
         "interaction.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 1.199,
-          "mean": 1.2953999999999999,
-          "p50": 1.2950000000000002,
-          "p95": 1.4098499999999998,
-          "max": 1.488,
+          "min": 1.276,
+          "mean": 1.4568999999999999,
+          "p50": 1.4465,
+          "p95": 1.6242,
+          "max": 1.635,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 1.254,
-            "high": 1.324
+            "low": 1.4189999999999998,
+            "high": 1.486
           }
         },
         "interaction.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
           "min": 2410828,
-          "mean": 2410904.8,
+          "mean": 2410911.2,
           "p50": 2410924,
           "p95": 2410924,
           "max": 2410924,
@@ -1522,16 +1522,16 @@
           "unit": "bytes",
           "n": 30,
           "min": 2292648,
-          "mean": 2293555.466666667,
-          "p50": 2293672,
-          "p95": 2294518,
+          "mean": 2293431.2,
+          "p50": 2293572,
+          "p95": 2294623.6,
           "max": 2294832,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
             "low": 2292776,
-            "high": 2293784
+            "high": 2293656
           }
         },
         "interaction.longTaskDurationMs": {
@@ -1617,17 +1617,17 @@
         "javascript.networkEncodedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 49164,
-          "mean": 49164,
-          "p50": 49164,
-          "p95": 49164,
-          "max": 49164,
+          "min": 49166,
+          "mean": 49166,
+          "p50": 49166,
+          "p95": 49166,
+          "max": 49166,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 49164,
-            "high": 49164
+            "low": 49166,
+            "high": 49166
           }
         }
       }
@@ -1642,135 +1642,135 @@
         "key": "espn",
         "kind": "document",
         "rawBytes": 33765,
-        "gzip9Bytes": 7782,
-        "brotli11Bytes": 6639,
-        "sha256": "5cc3e03eb779924ea0e67cd7e85889bc4ba795a20dd424b4b50cda8129a03441"
+        "gzip9Bytes": 7781,
+        "brotli11Bytes": 6631,
+        "sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e"
       },
       "javascript": {
         "assetSets": [
           [
-            "component_rsjs_fragment_6efb8e3c7ddf58df8a691fc79af0c957660fa38908be7078315c8ddaa4d8e599",
-            "rsjs_owner_4e7d935d5ce5ae442bd9eb66308b3e0c1dca7533a5fc5475e89d2ee8fcfdf071",
+            "component_rsjs_fragment_d870f92ce98b6a59d2bbd139c48eae7a18046a44a08a68dac57445f707879263",
+            "rsjs_owner_d89a2a0c2cf5aef884277a8dad196c82123b9c067ccbd818749c636b0ee807ee",
             "runtime-core"
           ]
         ],
         "requestCount": 3,
         "uniqueRequestCount": 3,
         "rawBytes": 192121,
-        "gzip9BodyBytes": 48433,
-        "brotli11BodyBytes": 40389
+        "gzip9BodyBytes": 48435,
+        "brotli11BodyBytes": 40385
       },
       "metrics": {
         "navigation.requestToFirstByteMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0,
-          "mean": 0.27666668891906737,
-          "p50": 0.15000009536743164,
-          "p95": 0.2999997138977051,
-          "max": 3.8000001907348633,
+          "min": 0.09999990463256836,
+          "mean": 0.16000003814697267,
+          "p50": 0.19999980926513672,
+          "p95": 0.20000028610229492,
+          "max": 0.3000001907348633,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
             "low": 0.09999990463256836,
-            "high": 0.20000028610229492
+            "high": 0.20000004768371582
           }
         },
         "navigation.loadMs": {
           "unit": "ms",
           "n": 30,
-          "min": 156.7000002861023,
-          "mean": 169.5300000031789,
-          "p50": 167.60000014305115,
-          "p95": 192.86999998092642,
-          "max": 210,
+          "min": 167.90000009536743,
+          "mean": 177.6866666316986,
+          "p50": 174.70000004768372,
+          "p95": 194.11499993801115,
+          "max": 195.69999980926514,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 165.39999985694885,
-            "high": 168.99999976158142
+            "low": 172.04999995231628,
+            "high": 180.04999995231628
           }
         },
         "navigation.readyWallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 233.72541600000113,
-          "mean": 246.5418278333329,
-          "p50": 244.53337499999907,
-          "p95": 270.44988559999933,
-          "max": 287.8953329999931,
+          "min": 243.1126660000009,
+          "mean": 254.2631263333322,
+          "p50": 250.83804200000122,
+          "p95": 270.8567730999951,
+          "max": 271.87804199999664,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 242.4979580000072,
-            "high": 246.11658350000562
+            "low": 248.72195800000918,
+            "high": 256.92716700000165
           }
         },
         "navigation.firstContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
-          "min": 144,
-          "mean": 151.06666666666666,
-          "p50": 152,
-          "p95": 158.2,
-          "max": 160,
+          "min": 152,
+          "mean": 165.06666666666666,
+          "p50": 164,
+          "p95": 180,
+          "max": 180,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 148,
-            "high": 152
+            "low": 160,
+            "high": 168
           }
         },
         "navigation.largestContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
-          "min": 144,
-          "mean": 151.06666666666666,
-          "p50": 152,
-          "p95": 158.2,
-          "max": 160,
+          "min": 152,
+          "mean": 165.06666666666666,
+          "p50": 164,
+          "p95": 180,
+          "max": 180,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 148,
-            "high": 152
+            "low": 160,
+            "high": 168
           }
         },
         "navigation.longTaskDurationMs": {
           "unit": "ms",
           "n": 30,
-          "min": 73,
-          "mean": 77.5,
-          "p50": 77,
-          "p95": 81.55,
-          "max": 86,
+          "min": 80,
+          "mean": 91.23333333333333,
+          "p50": 90,
+          "p95": 103.1,
+          "max": 108,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 76,
-            "high": 78.5
+            "low": 86.5,
+            "high": 93
           }
         },
         "initial.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 8.892000000000001,
-          "mean": 10.394166666666665,
-          "p50": 10.35,
-          "p95": 11.39775,
-          "max": 11.801,
+          "min": 9.843,
+          "mean": 11.398133333333334,
+          "p50": 11.3855,
+          "p95": 12.58725,
+          "max": 13.667,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 10.012500000000001,
-            "high": 10.695
+            "low": 11.1035,
+            "high": 11.579
           }
         },
         "initial.cpu.v8CompileMs": {
@@ -1792,56 +1792,56 @@
         "initial.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 141.379,
-          "mean": 146.57673333333332,
-          "p50": 146.93649999999997,
-          "p95": 149.9775,
-          "max": 156.053,
+          "min": 154.947,
+          "mean": 167.21669999999995,
+          "p50": 165.95749999999998,
+          "p95": 185.78794999999997,
+          "max": 189.48600000000002,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 144.53,
-            "high": 147.8535
+            "low": 161.35500000000002,
+            "high": 167.577
           }
         },
         "initial.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 59.712,
-          "mean": 63.169099999999986,
-          "p50": 62.5175,
-          "p95": 68.30170000000001,
-          "max": 70.021,
+          "min": 65.10199999999999,
+          "mean": 74.03586666666665,
+          "p50": 72.70400000000001,
+          "p95": 84.04745,
+          "max": 88.25099999999999,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 61.662,
-            "high": 63.6535
+            "low": 70.1825,
+            "high": 75.209
           }
         },
         "initial.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 1.08,
-          "mean": 4.159666666666667,
-          "p50": 4.2455,
-          "p95": 4.8454500000000005,
-          "max": 5.754,
+          "min": 4.094,
+          "mean": 4.7765,
+          "p50": 4.794499999999999,
+          "p95": 5.381599999999999,
+          "max": 6.577999999999999,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 4.015000000000001,
-            "high": 4.4030000000000005
+            "low": 4.42,
+            "high": 4.9135
           }
         },
         "initial.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
           "min": 1679988,
-          "mean": 1680011.4666666666,
+          "mean": 1680014.6666666667,
           "p50": 1680020,
           "p95": 1680020,
           "max": 1680020,
@@ -1857,10 +1857,10 @@
           "unit": "bytes",
           "n": 30,
           "min": 2181976,
-          "mean": 2182397.066666667,
+          "mean": 2182317.6,
           "p50": 2181976,
-          "p95": 2183392,
-          "max": 2183688,
+          "p95": 2183121.6,
+          "max": 2183352,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
@@ -1872,33 +1872,33 @@
         "interaction.wallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 156.89158299998962,
-          "mean": 168.12476249999963,
-          "p50": 169.32139550000647,
-          "p95": 174.79166655000117,
-          "max": 180.40004200000112,
+          "min": 175.49145800000406,
+          "mean": 182.8934861000024,
+          "p50": 181.65424999999595,
+          "p95": 193.03819169999932,
+          "max": 202.12062500000138,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 166.88666699999976,
-            "high": 170.1944999999978
+            "low": 180.1536250000063,
+            "high": 184.28708349999215
           }
         },
         "interaction.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.2199999999999997,
-          "mean": 0.812433333333333,
-          "p50": 0.8894999999999988,
-          "p95": 1.4749499999999987,
-          "max": 1.7209999999999985,
+          "min": 0.28300000000000025,
+          "mean": 1.1730000000000003,
+          "p50": 1.0574999999999994,
+          "p95": 2.3471999999999986,
+          "max": 2.8520000000000003,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.6334999999999995,
-            "high": 1.0004999999999997
+            "low": 0.8900000000000001,
+            "high": 1.3366124999999984
           }
         },
         "interaction.cpu.v8CompileMs": {
@@ -1920,81 +1920,81 @@
         "interaction.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 66.404,
-          "mean": 71.17156666666666,
-          "p50": 70.59300000000002,
-          "p95": 76.9678,
-          "max": 79.14000000000001,
+          "min": 75.17899999999997,
+          "mean": 84.38156666666666,
+          "p50": 83.317,
+          "p95": 92.99774999999998,
+          "max": 100.45499999999996,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 69.93549999999999,
-            "high": 71.67399999999998
+            "low": 82.00600000000003,
+            "high": 85.419
           }
         },
         "interaction.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 14.489000000000003,
-          "mean": 16.1834,
-          "p50": 16.078000000000003,
-          "p95": 17.34035,
-          "max": 18.708000000000002,
+          "min": 16.82800000000001,
+          "mean": 18.812133333333335,
+          "p50": 18.461499999999997,
+          "p95": 21.3727,
+          "max": 23.404000000000007,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 15.795500000000004,
-            "high": 16.531499999999998
+            "low": 18.140500000000003,
+            "high": 19.033
           }
         },
         "interaction.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 3.843000000000001,
-          "mean": 5.128733333333333,
-          "p50": 5.2044999999999995,
-          "p95": 5.9198,
-          "max": 6.296,
+          "min": 4.806,
+          "mean": 6.002133333333332,
+          "p50": 6.052,
+          "p95": 6.695799999999999,
+          "max": 6.788,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 4.888499999999999,
-            "high": 5.276000000000001
+            "low": 5.8825,
+            "high": 6.263
           }
         },
         "interaction.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 2456568,
-          "mean": 2456666.4,
+          "min": 2456584,
+          "mean": 2456682.933333333,
           "p50": 2456680,
-          "p95": 2456740,
-          "max": 2456740,
+          "p95": 2456756,
+          "max": 2456756,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2456664,
-            "high": 2456680
+            "low": 2456680,
+            "high": 2456696
           }
         },
         "interaction.heapAfterForcedGc.embedderUsedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 2277264,
-          "mean": 2277786.933333333,
-          "p50": 2277468,
-          "p95": 2278560,
-          "max": 2278856,
+          "min": 2277400,
+          "mean": 2277783.466666667,
+          "p50": 2277536,
+          "p95": 2278466,
+          "max": 2278520,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2277400,
-            "high": 2278224
+            "low": 2277536,
+            "high": 2278108
           }
         },
         "interaction.longTaskDurationMs": {
@@ -2080,17 +2080,17 @@
         "javascript.networkEncodedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 49164,
-          "mean": 49164,
-          "p50": 49164,
-          "p95": 49164,
-          "max": 49164,
+          "min": 49166,
+          "mean": 49166,
+          "p50": 49166,
+          "p95": 49166,
+          "max": 49166,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 49164,
-            "high": 49164
+            "low": 49166,
+            "high": 49166
           }
         }
       }
@@ -2105,15 +2105,15 @@
         "key": "sentry-otel",
         "kind": "document",
         "rawBytes": 875478,
-        "gzip9Bytes": 14025,
-        "brotli11Bytes": 6833,
-        "sha256": "41f806f2833f1dd76803a1063b27b6e315602185db178557a59e350d216db279"
+        "gzip9Bytes": 14023,
+        "brotli11Bytes": 6881,
+        "sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f"
       },
       "javascript": {
         "assetSets": [
           [
-            "component_rsjs_fragment_a90f7c0c08f7a04c23c73d74a23c4c6825c2554b6e5d8598d5d9d7826009c604",
-            "rsjs_owner_4f32a6d545d54b76fc3092b178c6715a18ebb2a5251392949674b87541093fd9",
+            "component_rsjs_fragment_c5f83b4048eb7ca9e4f4aa108f0c58f6c87c043a1e7fcec8f13c746246a364e8",
+            "rsjs_owner_86ee14f261b8e483cae7312ead473f078939b3cdb5421ead2b29cc271b30d2cd",
             "runtime-core",
             "runtime-query"
           ]
@@ -2121,88 +2121,88 @@
         "requestCount": 4,
         "uniqueRequestCount": 4,
         "rawBytes": 278790,
-        "gzip9BodyBytes": 70999,
-        "brotli11BodyBytes": 59430
+        "gzip9BodyBytes": 70997,
+        "brotli11BodyBytes": 59425
       },
       "metrics": {
         "navigation.requestToFirstByteMs": {
           "unit": "ms",
           "n": 30,
           "min": 0.09999990463256836,
-          "mean": 0.1700000286102295,
+          "mean": 0.15999991099039715,
           "p50": 0.19999980926513672,
-          "p95": 0.2999999761581421,
+          "p95": 0.2549999713897702,
           "max": 0.3000001907348633,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
             "low": 0.09999990463256836,
-            "high": 0.20000028610229492
+            "high": 0.19999980926513672
           }
         },
         "navigation.loadMs": {
           "unit": "ms",
           "n": 30,
-          "min": 66.59999990463257,
-          "mean": 69.0733333269755,
-          "p50": 68.54999995231628,
-          "p95": 71.35500013828278,
-          "max": 72.2999997138977,
+          "min": 67,
+          "mean": 71.48333333333333,
+          "p50": 71.40000009536743,
+          "p95": 75.66500010490418,
+          "max": 81.69999980926514,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 67.85000014305115,
-            "high": 69.95000004768372
+            "low": 70.35000014305115,
+            "high": 72.10000014305115
           }
         },
         "navigation.readyWallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 142.41820799999914,
-          "mean": 146.4321763666656,
-          "p50": 146.24093799999537,
-          "p95": 149.75162905000178,
-          "max": 150.91058399999747,
+          "min": 143.91308299999218,
+          "mean": 148.04410553333432,
+          "p50": 147.89241649999894,
+          "p95": 152.03757745000348,
+          "max": 157.74612499999967,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 145.43958349999957,
-            "high": 147.49517956249966
+            "low": 146.9308955000015,
+            "high": 148.71706300000187
           }
         },
         "navigation.firstContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
-          "min": 56,
-          "mean": 59.733333333333334,
-          "p50": 60,
-          "p95": 60,
-          "max": 60,
+          "min": 60,
+          "mean": 63.6,
+          "p50": 64,
+          "p95": 68,
+          "max": 72,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 60,
-            "high": 60
+            "low": 64,
+            "high": 64
           }
         },
         "navigation.largestContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
-          "min": 56,
-          "mean": 59.733333333333334,
-          "p50": 60,
-          "p95": 60,
-          "max": 60,
+          "min": 60,
+          "mean": 63.6,
+          "p50": 64,
+          "p95": 68,
+          "max": 72,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 60,
-            "high": 60
+            "low": 64,
+            "high": 64
           }
         },
         "navigation.longTaskDurationMs": {
@@ -2224,17 +2224,17 @@
         "initial.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 3.089,
-          "mean": 3.199133333333333,
-          "p50": 3.181,
-          "p95": 3.4255999999999998,
-          "max": 3.509,
+          "min": 3.334,
+          "mean": 3.5472666666666663,
+          "p50": 3.5294999999999996,
+          "p95": 3.7611999999999997,
+          "max": 4.109,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 3.153,
-            "high": 3.2145
+            "low": 3.49,
+            "high": 3.6055
           }
         },
         "initial.cpu.v8CompileMs": {
@@ -2256,113 +2256,113 @@
         "initial.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 69.522,
-          "mean": 75.42826666666666,
-          "p50": 75.47149999999999,
-          "p95": 78.26975,
-          "max": 78.661,
+          "min": 74.833,
+          "mean": 82.02226666666665,
+          "p50": 82.307,
+          "p95": 85.99000000000001,
+          "max": 88.172,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 74.37800000000001,
-            "high": 76.755
+            "low": 81.209,
+            "high": 82.58449999999999
           }
         },
         "initial.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 14.494,
-          "mean": 15.274033333333332,
-          "p50": 15.097999999999999,
-          "p95": 16.429399999999998,
-          "max": 16.712,
+          "min": 15.578,
+          "mean": 17.129099999999998,
+          "p50": 16.9825,
+          "p95": 18.96475,
+          "max": 20.561,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 14.8605,
-            "high": 15.3725
+            "low": 16.578000000000003,
+            "high": 17.434537499999998
           }
         },
         "initial.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 4.683,
-          "mean": 4.875533333333334,
-          "p50": 4.822,
-          "p95": 5.13155,
-          "max": 5.247,
+          "min": 5.046,
+          "mean": 5.3736999999999995,
+          "p50": 5.3705,
+          "p95": 5.68985,
+          "max": 5.8580000000000005,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 4.7940000000000005,
-            "high": 4.909025000000001
+            "low": 5.286,
+            "high": 5.429500000000001
           }
         },
         "initial.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 1749884,
-          "mean": 1764047.7333333334,
-          "p50": 1758164,
-          "p95": 1796764,
-          "max": 1796764,
+          "min": 1749244,
+          "mean": 1764045.0666666667,
+          "p50": 1759492,
+          "p95": 1797507.2,
+          "max": 1797644,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 1750444,
-            "high": 1759548
+            "low": 1750884,
+            "high": 1760652
           }
         },
         "initial.heapAfterForcedGc.embedderUsedBytes": {
           "unit": "bytes",
           "n": 30,
           "min": 9927576,
-          "mean": 9927691.2,
+          "mean": 9928010.666666666,
           "p50": 9927576,
-          "p95": 9928440,
-          "max": 9928440,
+          "p95": 9928933.6,
+          "max": 9929472,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
             "low": 9927576,
-            "high": 9927576
+            "high": 9928428
           }
         },
         "interaction.wallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 119.39579200001026,
-          "mean": 125.79589863333422,
-          "p50": 126.16512499999953,
-          "p95": 131.1024312499914,
-          "max": 132.0047080000004,
+          "min": 121.79570799999055,
+          "mean": 128.2461611333342,
+          "p50": 127.63922900000398,
+          "p95": 134.70901440000324,
+          "max": 136.32300000000032,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 124.10366700001032,
-            "high": 126.95154199999524
+            "low": 125.97722899999644,
+            "high": 129.97739599999477
           }
         },
         "interaction.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.307,
-          "mean": 0.3484666666666667,
-          "p50": 0.34400000000000014,
-          "p95": 0.4005499999999998,
-          "max": 0.402,
+          "min": 0.3810000000000003,
+          "mean": 0.4175999999999999,
+          "p50": 0.41450000000000037,
+          "p95": 0.4569499999999998,
+          "max": 0.48400000000000004,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.33497500000000013,
-            "high": 0.35450000000000004
+            "low": 0.40349999999999997,
+            "high": 0.4275000000000003
           }
         },
         "interaction.cpu.v8CompileMs": {
@@ -2384,81 +2384,81 @@
         "interaction.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 32.685,
-          "mean": 34.8297,
-          "p50": 34.745000000000005,
-          "p95": 36.974700000000006,
-          "max": 37.89099999999999,
+          "min": 35.58599999999999,
+          "mean": 38.802800000000005,
+          "p50": 38.815500000000014,
+          "p95": 41.4008,
+          "max": 42.44100000000001,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 34.29600000000001,
-            "high": 35.10700000000001
+            "low": 38.1535,
+            "high": 39.386
           }
         },
         "interaction.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.988000000000001,
-          "mean": 1.0672666666666664,
-          "p50": 1.060000000000001,
-          "p95": 1.1504000000000008,
-          "max": 1.2080000000000006,
+          "min": 1.0819999999999996,
+          "mean": 1.1602000000000003,
+          "p50": 1.1595000000000009,
+          "p95": 1.242499999999999,
+          "max": 1.2570000000000012,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 1.0500000000000007,
-            "high": 1.0844999999999994
+            "low": 1.1284999999999994,
+            "high": 1.1885000000000003
           }
         },
         "interaction.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 1.5000000000000004,
-          "mean": 1.6371666666666664,
-          "p50": 1.6290000000000002,
-          "p95": 1.7722999999999998,
-          "max": 1.7940000000000005,
+          "min": 1.6749999999999994,
+          "mean": 1.9069333333333334,
+          "p50": 1.9039999999999995,
+          "p95": 2.1009499999999997,
+          "max": 2.184,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 1.5934999999999997,
-            "high": 1.6804999999999997
+            "low": 1.8730000000000007,
+            "high": 1.9430000000000003
           }
         },
         "interaction.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 2460696,
-          "mean": 2474739.2,
-          "p50": 2468464,
-          "p95": 2507608,
-          "max": 2507608,
+          "min": 2460056,
+          "mean": 2474713.2,
+          "p50": 2469704,
+          "p95": 2508336.8,
+          "max": 2508488,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2461288,
-            "high": 2470216
+            "low": 2461336,
+            "high": 2472104
           }
         },
         "interaction.heapAfterForcedGc.embedderUsedBytes": {
           "unit": "bytes",
           "n": 30,
           "min": 11187584,
-          "mean": 11317560.266666668,
-          "p50": 11187656,
-          "p95": 11712856,
+          "mean": 11327209.066666666,
+          "p50": 11188608,
+          "p95": 11712918,
           "max": 11712936,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 11187616,
-            "high": 11188608
+            "low": 11187656,
+            "high": 11220156
           }
         },
         "interaction.longTaskDurationMs": {
@@ -2544,17 +2544,17 @@
         "javascript.networkEncodedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 71975,
-          "mean": 71975,
-          "p50": 71975,
-          "p95": 71975,
-          "max": 71975,
+          "min": 71973,
+          "mean": 71973,
+          "p50": 71973,
+          "p95": 71973,
+          "max": 71973,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 71975,
-            "high": 71975
+            "low": 71973,
+            "high": 71973
           }
         }
       }
@@ -2569,15 +2569,15 @@
         "key": "sentry-otel",
         "kind": "document",
         "rawBytes": 875478,
-        "gzip9Bytes": 14025,
-        "brotli11Bytes": 6833,
-        "sha256": "41f806f2833f1dd76803a1063b27b6e315602185db178557a59e350d216db279"
+        "gzip9Bytes": 14023,
+        "brotli11Bytes": 6881,
+        "sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f"
       },
       "javascript": {
         "assetSets": [
           [
-            "component_rsjs_fragment_a90f7c0c08f7a04c23c73d74a23c4c6825c2554b6e5d8598d5d9d7826009c604",
-            "rsjs_owner_4f32a6d545d54b76fc3092b178c6715a18ebb2a5251392949674b87541093fd9",
+            "component_rsjs_fragment_c5f83b4048eb7ca9e4f4aa108f0c58f6c87c043a1e7fcec8f13c746246a364e8",
+            "rsjs_owner_86ee14f261b8e483cae7312ead473f078939b3cdb5421ead2b29cc271b30d2cd",
             "runtime-core",
             "runtime-query"
           ]
@@ -2585,120 +2585,120 @@
         "requestCount": 4,
         "uniqueRequestCount": 4,
         "rawBytes": 278790,
-        "gzip9BodyBytes": 70999,
-        "brotli11BodyBytes": 59430
+        "gzip9BodyBytes": 70997,
+        "brotli11BodyBytes": 59425
       },
       "metrics": {
         "navigation.requestToFirstByteMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.09999990463256836,
-          "mean": 0.18000000317891438,
+          "min": 0,
+          "mean": 0.16333335240681965,
           "p50": 0.19999980926513672,
-          "p95": 0.2999997138977051,
+          "p95": 0.3000001907348633,
           "max": 0.3000001907348633,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.15000009536743164,
-            "high": 0.20000028610229492
+            "low": 0.10000014305114746,
+            "high": 0.19999980926513672
           }
         },
         "navigation.loadMs": {
           "unit": "ms",
           "n": 30,
-          "min": 329.09999990463257,
-          "mean": 339.56666669845583,
-          "p50": 337.2000002861023,
-          "p95": 354.9650000095367,
-          "max": 370.19999980926514,
+          "min": 348.19999980926514,
+          "mean": 368.1166666666667,
+          "p50": 366.2999999523163,
+          "p95": 392.49999992847444,
+          "max": 396.09999990463257,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 335.80000019073486,
-            "high": 341.00500023365015
+            "low": 360.2999999523163,
+            "high": 371.09999990463257
           }
         },
         "navigation.readyWallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 404.9425829999964,
-          "mean": 416.5346944333331,
-          "p50": 414.78206249999494,
-          "p95": 431.8004812499988,
-          "max": 446.2824580000015,
+          "min": 424.5692080000008,
+          "mean": 444.625670833333,
+          "p50": 443.1226874999993,
+          "p95": 468.92029360000095,
+          "max": 471.547332999995,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 411.84827049999876,
-            "high": 418.3008755000046
+            "low": 436.3909790000016,
+            "high": 447.06847949999974
           }
         },
         "navigation.firstContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
-          "min": 160,
-          "mean": 173.46666666666667,
-          "p50": 172,
-          "p95": 184.39999999999998,
-          "max": 196,
+          "min": 180,
+          "mean": 194.93333333333334,
+          "p50": 192,
+          "p95": 212,
+          "max": 216,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 172,
-            "high": 176
+            "low": 190,
+            "high": 196
           }
         },
         "navigation.largestContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
-          "min": 160,
-          "mean": 173.46666666666667,
-          "p50": 172,
-          "p95": 184.39999999999998,
-          "max": 196,
+          "min": 180,
+          "mean": 194.93333333333334,
+          "p50": 192,
+          "p95": 212,
+          "max": 216,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 172,
-            "high": 176
+            "low": 190,
+            "high": 196
           }
         },
         "navigation.longTaskDurationMs": {
           "unit": "ms",
           "n": 30,
-          "min": 85,
-          "mean": 89.63333333333334,
-          "p50": 88,
-          "p95": 97.55,
-          "max": 105,
+          "min": 96,
+          "mean": 106.96666666666667,
+          "p50": 105,
+          "p95": 120.55,
+          "max": 124,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 88,
-            "high": 89
+            "low": 103.5,
+            "high": 107.5
           }
         },
         "initial.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 11.534,
-          "mean": 13.317266666666665,
-          "p50": 13.2195,
-          "p95": 15.0738,
-          "max": 15.315999999999999,
+          "min": 13.709000000000001,
+          "mean": 15.346766666666664,
+          "p50": 15.182,
+          "p95": 17.02205,
+          "max": 17.787,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 12.827,
-            "high": 13.8415
+            "low": 14.7965,
+            "high": 15.5595
           }
         },
         "initial.cpu.v8CompileMs": {
@@ -2720,75 +2720,75 @@
         "initial.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 275.95799999999997,
-          "mean": 285.92423333333323,
-          "p50": 283.85400000000004,
-          "p95": 299.09385,
-          "max": 330.82,
+          "min": 313.254,
+          "mean": 336.2742666666665,
+          "p50": 332.23199999999997,
+          "p95": 367.41229999999996,
+          "max": 369.954,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 281.629,
-            "high": 286.63199999999995
+            "low": 327.23749999999995,
+            "high": 337.295
           }
         },
         "initial.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 61.568999999999996,
-          "mean": 64.68973333333332,
-          "p50": 63.751000000000005,
-          "p95": 71.46954999999998,
-          "max": 76.913,
+          "min": 68.272,
+          "mean": 78.24946666666666,
+          "p50": 77.1145,
+          "p95": 89.39455,
+          "max": 93.575,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 63.350500000000004,
-            "high": 64.4705
+            "low": 75.209,
+            "high": 79.166
           }
         },
         "initial.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 16.024,
-          "mean": 18.258033333333337,
-          "p50": 18.168,
-          "p95": 20.909849999999995,
-          "max": 22.194,
+          "min": 20.057,
+          "mean": 22.063133333333326,
+          "p50": 21.247,
+          "p95": 25.249999999999996,
+          "max": 27.227,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 17.602,
-            "high": 18.535
+            "low": 20.9765,
+            "high": 22.5685
           }
         },
         "initial.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 1787888,
-          "mean": 1807707.7333333334,
-          "p50": 1805744,
-          "p95": 1827728,
+          "min": 1788160,
+          "mean": 1809617.0666666667,
+          "p50": 1807752,
+          "p95": 1835243.2,
           "max": 1841392,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 1800960,
-            "high": 1808944
+            "low": 1805056,
+            "high": 1809200
           }
         },
         "initial.heapAfterForcedGc.embedderUsedBytes": {
           "unit": "bytes",
           "n": 30,
           "min": 9951088,
-          "mean": 9951280.8,
+          "mean": 9951261.333333334,
           "p50": 9951240,
-          "p95": 9952035.6,
-          "max": 9952104,
+          "p95": 9951631.6,
+          "max": 9952080,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
@@ -2800,33 +2800,33 @@
         "interaction.wallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 224.28349999999045,
-          "mean": 235.29178750000173,
-          "p50": 231.96579150000798,
-          "p95": 249.93017720000643,
-          "max": 263.7593749999942,
+          "min": 243.33912500000588,
+          "mean": 260.7305166999993,
+          "p50": 258.8725414999926,
+          "p95": 283.5992909999993,
+          "max": 292.75870799999393,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 228.97635399999854,
-            "high": 237.6225420000119
+            "low": 254.0997714999976,
+            "high": 264.8668749999997
           }
         },
         "interaction.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.3220000000000011,
-          "mean": 1.4988666666666666,
-          "p50": 1.4874999999999994,
-          "p95": 2.6864999999999997,
-          "max": 3.440999999999998,
+          "min": 0.9179999999999987,
+          "mean": 1.7894333333333334,
+          "p50": 1.7054999999999996,
+          "p95": 2.53945,
+          "max": 3.3710000000000027,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 1.169000000000001,
-            "high": 1.7605
+            "low": 1.615499999999999,
+            "high": 2.0160000000000013
           }
         },
         "interaction.cpu.v8CompileMs": {
@@ -2848,80 +2848,80 @@
         "interaction.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 127.86900000000001,
-          "mean": 142.08133333333336,
-          "p50": 140.673,
-          "p95": 152.9051,
-          "max": 167.74699999999993,
+          "min": 155.128,
+          "mean": 170.03136666666666,
+          "p50": 167.041,
+          "p95": 194.44119999999992,
+          "max": 200.94799999999995,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 139.0935,
-            "high": 143.4605
+            "low": 165.00400000000002,
+            "high": 169.98350000000005
           }
         },
         "interaction.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 3.8679999999999963,
-          "mean": 4.703199999999999,
-          "p50": 4.646499999999998,
-          "p95": 5.460349999999997,
-          "max": 6.364000000000009,
+          "min": 4.899000000000001,
+          "mean": 5.576566666666666,
+          "p50": 5.437999999999999,
+          "p95": 6.290999999999996,
+          "max": 6.589999999999999,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 4.411999999999992,
-            "high": 4.984000000000005
+            "low": 5.340999999999998,
+            "high": 5.726500000000002
           }
         },
         "interaction.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 5.2079999999999975,
-          "mean": 6.762166666666668,
-          "p50": 6.658000000000001,
-          "p95": 8.298049999999998,
-          "max": 8.555,
+          "min": 6.992000000000002,
+          "mean": 8.890933333333333,
+          "p50": 8.836500000000001,
+          "p95": 10.943499999999998,
+          "max": 11.279000000000002,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 6.4704999999999995,
-            "high": 7.079999999999999
+            "low": 8.397499999999997,
+            "high": 9.1515
           }
         },
         "interaction.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 2497756,
-          "mean": 2518082.1333333333,
-          "p50": 2515788,
-          "p95": 2538557.6,
-          "max": 2551180,
+          "min": 2497948,
+          "mean": 2520029.066666667,
+          "p50": 2518236,
+          "p95": 2546069.6,
+          "max": 2552204,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2511588,
-            "high": 2519772
+            "low": 2515596,
+            "high": 2519908
           }
         },
         "interaction.heapAfterForcedGc.embedderUsedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 11226872,
-          "mean": 11317624.533333333,
-          "p50": 11227096,
-          "p95": 11754376,
-          "max": 11755240,
+          "min": 11226944,
+          "mean": 11333547.466666667,
+          "p50": 11230240,
+          "p95": 11751743.2,
+          "max": 11754376,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 11227024,
+            "low": 11227212,
             "high": 11230240
           }
         },
@@ -3008,17 +3008,17 @@
         "javascript.networkEncodedBytes": {
           "unit": "bytes",
           "n": 30,
-          "min": 71975,
-          "mean": 71975,
-          "p50": 71975,
-          "p95": 71975,
-          "max": 71975,
+          "min": 71973,
+          "mean": 71973,
+          "p50": 71973,
+          "p95": 71973,
+          "max": 71973,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 71975,
-            "high": 71975
+            "low": 71973,
+            "high": 71973
           }
         }
       }
@@ -3033,15 +3033,15 @@
         "key": "settings-console",
         "kind": "document",
         "rawBytes": 7925,
-        "gzip9Bytes": 2518,
-        "brotli11Bytes": 2021,
-        "sha256": "f5a1bf74290d6558441f8cb86e08d61dd05b66c9e753714a992fdca1a15bd21c"
+        "gzip9Bytes": 2517,
+        "brotli11Bytes": 2014,
+        "sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b"
       },
       "javascript": {
         "assetSets": [
           [
-            "component_rsjs_fragment_5387e608571c4c02a65b9b2fc024c470922fbfa0c5fc652675fea0109cfeb09b",
-            "rsjs_owner_3aa614cdbdf65c858a72e30ad2c6c1b1dc9fed076b4b9d7900a08b02d7e726ec",
+            "component_rsjs_fragment_9452c6593b1a162c5236d95fee059245aa6d00ecdf1478e7296f4c8c50639815",
+            "rsjs_owner_817cf808d0a873b213678cdfecbe2b4c2b024a49483399fa8e74ddeb44d6564d",
             "runtime-core"
           ]
         ],
@@ -3049,55 +3049,55 @@
         "uniqueRequestCount": 3,
         "rawBytes": 201160,
         "gzip9BodyBytes": 49378,
-        "brotli11BodyBytes": 41047
+        "brotli11BodyBytes": 41040
       },
       "metrics": {
         "navigation.requestToFirstByteMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.09999990463256836,
-          "mean": 0.1766666889190674,
-          "p50": 0.19999980926513672,
-          "p95": 0.2549999713897702,
+          "min": 0,
+          "mean": 0.14333332379659017,
+          "p50": 0.10000038146972656,
+          "p95": 0.20000028610229492,
           "max": 0.3000001907348633,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.19999980926513672,
-            "high": 0.20000028610229492
+            "low": 0.09999990463256836,
+            "high": 0.19999980926513672
           }
         },
         "navigation.loadMs": {
           "unit": "ms",
           "n": 30,
-          "min": 23.200000286102295,
-          "mean": 26.41666668256124,
-          "p50": 26.40000009536743,
-          "p95": 29.319999957084654,
-          "max": 30.199999809265137,
+          "min": 22.5,
+          "mean": 25.989999977747598,
+          "p50": 25.350000143051147,
+          "p95": 28.710000014305113,
+          "max": 28.799999713897705,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 25.59999990463257,
-            "high": 27.200000047683716
+            "low": 24.799999952316284,
+            "high": 26.550000190734863
           }
         },
         "navigation.readyWallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 100.58150000000023,
-          "mean": 103.86604729999932,
-          "p50": 103.74714599999425,
-          "p95": 106.89703139999646,
-          "max": 108.51483400000143,
+          "min": 99.00450000000274,
+          "mean": 102.56433203333205,
+          "p50": 102.0795625000028,
+          "p95": 105.8182813999938,
+          "max": 106.16795800000546,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 103.07624999999825,
-            "high": 104.15212499999325
+            "low": 101.176083499995,
+            "high": 103.34764600000199
           }
         },
         "navigation.firstContentfulPaintMs": {
@@ -3151,17 +3151,17 @@
         "initial.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 2.722,
-          "mean": 2.8817333333333335,
-          "p50": 2.8855,
-          "p95": 2.9934,
-          "max": 3.054,
+          "min": 2.725,
+          "mean": 3.0030666666666668,
+          "p50": 3.0125,
+          "p95": 3.08875,
+          "max": 3.1319999999999997,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 2.8665000000000003,
-            "high": 2.899
+            "low": 2.9795,
+            "high": 3.032
           }
         },
         "initial.cpu.v8CompileMs": {
@@ -3183,56 +3183,56 @@
         "initial.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 20.45,
-          "mean": 22.04396666666667,
-          "p50": 22.139499999999998,
-          "p95": 22.95705,
-          "max": 23.23,
+          "min": 22.02,
+          "mean": 23.4474,
+          "p50": 23.585,
+          "p95": 24.39825,
+          "max": 24.816000000000003,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 22.06,
-            "high": 22.4185
+            "low": 22.9915,
+            "high": 23.8516375
           }
         },
         "initial.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 5.2490000000000006,
-          "mean": 5.775466666666666,
-          "p50": 5.8345,
-          "p95": 6.077249999999999,
-          "max": 6.159000000000001,
+          "min": 5.6049999999999995,
+          "mean": 6.113666666666669,
+          "p50": 6.141,
+          "p95": 6.4064,
+          "max": 6.515,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 5.715999999999999,
-            "high": 5.897
+            "low": 6.0405,
+            "high": 6.231
           }
         },
         "initial.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.261,
-          "mean": 0.2970333333333333,
-          "p50": 0.2905,
-          "p95": 0.33475,
-          "max": 0.34600000000000003,
+          "min": 0.262,
+          "mean": 0.3179666666666667,
+          "p50": 0.316,
+          "p95": 0.37749999999999995,
+          "max": 0.39,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.2845,
-            "high": 0.3065
+            "low": 0.2955,
+            "high": 0.328
           }
         },
         "initial.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
           "min": 1607484,
-          "mean": 1607537.3333333333,
+          "mean": 1607535.2,
           "p50": 1607548,
           "p95": 1607548,
           "max": 1607548,
@@ -3248,10 +3248,10 @@
           "unit": "bytes",
           "n": 30,
           "min": 555712,
-          "mean": 564148.2666666667,
+          "mean": 555773.8666666667,
           "p50": 555712,
-          "p95": 556576,
-          "max": 806208,
+          "p95": 556187.2,
+          "max": 556704,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
@@ -3263,33 +3263,33 @@
         "interaction.wallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 105.33487500000047,
-          "mean": 111.4532070333323,
-          "p50": 112.3860835000014,
-          "p95": 115.67627089999732,
-          "max": 116.56929200000013,
+          "min": 107.086707999988,
+          "mean": 111.79392493333465,
+          "p50": 112.01083350001136,
+          "p95": 115.08017880000133,
+          "max": 117.11941599998681,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 110.42045800000778,
-            "high": 113.25447949999943
+            "low": 110.91891649999889,
+            "high": 112.7789580000026
           }
         },
         "interaction.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.31400000000000006,
-          "mean": 0.3533666666666665,
-          "p50": 0.3520000000000001,
-          "p95": 0.39305,
-          "max": 0.415,
+          "min": 0.3629999999999996,
+          "mean": 0.4321666666666666,
+          "p50": 0.4245,
+          "p95": 0.5141499999999998,
+          "max": 0.5300000000000001,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.3474999999999999,
-            "high": 0.35750000000000015
+            "low": 0.4135,
+            "high": 0.44650000000000006
           }
         },
         "interaction.cpu.v8CompileMs": {
@@ -3311,56 +3311,56 @@
         "interaction.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 11.982000000000003,
-          "mean": 12.998733333333332,
-          "p50": 13.058499999999999,
-          "p95": 13.6163,
-          "max": 13.648999999999997,
+          "min": 13.288000000000002,
+          "mean": 14.3978,
+          "p50": 14.324000000000003,
+          "p95": 15.3668,
+          "max": 15.727000000000006,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 12.843499999999999,
-            "high": 13.190999999999997
+            "low": 14.159000000000002,
+            "high": 14.591499999999996
           }
         },
         "interaction.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.17200000000000026,
-          "mean": 0.21383333333333338,
-          "p50": 0.21100000000000024,
-          "p95": 0.24950000000000006,
-          "max": 0.26400000000000035,
+          "min": 0.23499999999999996,
+          "mean": 0.2940999999999999,
+          "p50": 0.2769999999999999,
+          "p95": 0.41224999999999995,
+          "max": 0.42400000000000077,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.20500000000000032,
-            "high": 0.21799999999999986
+            "low": 0.2615,
+            "high": 0.29699999999999993
           }
         },
         "interaction.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.18199999999999997,
-          "mean": 0.21526666666666666,
-          "p50": 0.21349999999999997,
-          "p95": 0.24949999999999997,
-          "max": 0.261,
+          "min": 0.22899999999999998,
+          "mean": 0.29100000000000004,
+          "p50": 0.28250000000000003,
+          "p95": 0.35559999999999997,
+          "max": 0.398,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.20399999999999996,
-            "high": 0.21999999999999997
+            "low": 0.27249999999999996,
+            "high": 0.30300000000000005
           }
         },
         "interaction.heapAfterForcedGc.usedBytes": {
           "unit": "bytes",
           "n": 30,
           "min": 2428932,
-          "mean": 2429065.3333333335,
+          "mean": 2429060,
           "p50": 2429092,
           "p95": 2429092,
           "max": 2429092,
@@ -3376,16 +3376,16 @@
           "unit": "bytes",
           "n": 30,
           "min": 575232,
-          "mean": 581367.2,
-          "p50": 575360,
-          "p95": 576174.4,
-          "max": 754312,
+          "mean": 575307.2,
+          "p50": 575240,
+          "p95": 575764.8,
+          "max": 576104,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
             "low": 575240,
-            "high": 575360
+            "high": 575240
           }
         },
         "interaction.longTaskDurationMs": {
@@ -3496,15 +3496,15 @@
         "key": "settings-console",
         "kind": "document",
         "rawBytes": 7925,
-        "gzip9Bytes": 2518,
-        "brotli11Bytes": 2021,
-        "sha256": "f5a1bf74290d6558441f8cb86e08d61dd05b66c9e753714a992fdca1a15bd21c"
+        "gzip9Bytes": 2517,
+        "brotli11Bytes": 2014,
+        "sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b"
       },
       "javascript": {
         "assetSets": [
           [
-            "component_rsjs_fragment_5387e608571c4c02a65b9b2fc024c470922fbfa0c5fc652675fea0109cfeb09b",
-            "rsjs_owner_3aa614cdbdf65c858a72e30ad2c6c1b1dc9fed076b4b9d7900a08b02d7e726ec",
+            "component_rsjs_fragment_9452c6593b1a162c5236d95fee059245aa6d00ecdf1478e7296f4c8c50639815",
+            "rsjs_owner_817cf808d0a873b213678cdfecbe2b4c2b024a49483399fa8e74ddeb44d6564d",
             "runtime-core"
           ]
         ],
@@ -3512,63 +3512,63 @@
         "uniqueRequestCount": 3,
         "rawBytes": 201160,
         "gzip9BodyBytes": 49378,
-        "brotli11BodyBytes": 41047
+        "brotli11BodyBytes": 41040
       },
       "metrics": {
         "navigation.requestToFirstByteMs": {
           "unit": "ms",
           "n": 30,
           "min": 0.09999990463256836,
-          "mean": 0.17666667302449543,
+          "mean": 0.18000001907348634,
           "p50": 0.19999980926513672,
-          "p95": 0.2999999761581421,
+          "p95": 0.2549999713897702,
           "max": 0.3000001907348633,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.15000009536743164,
+            "low": 0.19999980926513672,
             "high": 0.19999980926513672
           }
         },
         "navigation.loadMs": {
           "unit": "ms",
           "n": 30,
-          "min": 148.40000009536743,
-          "mean": 158.35666669209797,
-          "p50": 158.89999985694885,
-          "p95": 164.83000020980836,
-          "max": 165.80000019073486,
+          "min": 153.2999997138977,
+          "mean": 156.8633333047231,
+          "p50": 156.54999995231628,
+          "p95": 159.83999993801118,
+          "max": 160.5,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 156.79999995231628,
-            "high": 159.9499998152256
+            "low": 155.70000004768372,
+            "high": 158.24999976158142
           }
         },
         "navigation.readyWallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 225.11583300000348,
-          "mean": 234.98353596666706,
-          "p50": 235.29079199999978,
-          "p95": 241.87311004999955,
-          "max": 243.14104099999895,
+          "min": 229.4482080000016,
+          "mean": 233.42127500000055,
+          "p50": 233.09381250000297,
+          "p95": 236.5958517500003,
+          "max": 237.69145900000876,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 233.2647705000054,
-            "high": 236.50829149998754
+            "low": 232.47341700000834,
+            "high": 234.44033349999881
           }
         },
         "navigation.firstContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
-          "min": 88,
-          "mean": 96.66666666666667,
-          "p50": 96,
+          "min": 96,
+          "mean": 98.53333333333333,
+          "p50": 100,
           "p95": 104,
           "max": 104,
           "medianCi95": {
@@ -3582,9 +3582,9 @@
         "navigation.largestContentfulPaintMs": {
           "unit": "ms",
           "n": 30,
-          "min": 88,
-          "mean": 96.66666666666667,
-          "p50": 96,
+          "min": 96,
+          "mean": 98.53333333333333,
+          "p50": 100,
           "p95": 104,
           "max": 104,
           "medianCi95": {
@@ -3614,17 +3614,17 @@
         "initial.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 9.785,
-          "mean": 11.191433333333332,
-          "p50": 11.3025,
-          "p95": 12.281099999999999,
-          "max": 12.934,
+          "min": 11.076,
+          "mean": 12.612033333333333,
+          "p50": 12.643,
+          "p95": 13.615449999999997,
+          "max": 14.271,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 10.8995,
-            "high": 11.499
+            "low": 12.274000000000001,
+            "high": 12.841
           }
         },
         "initial.cpu.v8CompileMs": {
@@ -3646,49 +3646,49 @@
         "initial.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 76.14,
-          "mean": 79.88873333333332,
-          "p50": 79.465,
-          "p95": 84.3368,
-          "max": 87.48,
+          "min": 84.62899999999999,
+          "mean": 91.17423333333335,
+          "p50": 91.0515,
+          "p95": 98.42320000000001,
+          "max": 99.85900000000001,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 78.261,
-            "high": 80.642
+            "low": 88.5895,
+            "high": 92.34400000000001
           }
         },
         "initial.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 19.098,
-          "mean": 20.747433333333333,
-          "p50": 20.670500000000004,
-          "p95": 22.383849999999995,
-          "max": 23.143,
+          "min": 21.149,
+          "mean": 23.8838,
+          "p50": 24.031,
+          "p95": 26.556949999999997,
+          "max": 26.912,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 20.403,
-            "high": 20.997500000000002
+            "low": 22.991,
+            "high": 24.422
           }
         },
         "initial.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.61,
-          "mean": 1.1620333333333333,
-          "p50": 1.0645,
-          "p95": 1.7319499999999999,
-          "max": 1.8090000000000002,
+          "min": 0.559,
+          "mean": 1.2143333333333335,
+          "p50": 1.164,
+          "p95": 1.7938999999999996,
+          "max": 1.975,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.9775,
-            "high": 1.325
+            "low": 1.054,
+            "high": 1.321
           }
         },
         "initial.heapAfterForcedGc.usedBytes": {
@@ -3711,9 +3711,9 @@
           "unit": "bytes",
           "n": 30,
           "min": 556640,
-          "mean": 556726.4,
+          "mean": 556697.6,
           "p50": 556640,
-          "p95": 557504,
+          "p95": 557115.2,
           "max": 557504,
           "medianCi95": {
             "confidence": 0.95,
@@ -3726,33 +3726,33 @@
         "interaction.wallMs": {
           "unit": "ms",
           "n": 30,
-          "min": 149.85387499999888,
-          "mean": 155.81141953333372,
-          "p50": 155.14956299999903,
-          "p95": 164.36311905000656,
-          "max": 165.3024999999907,
+          "min": 151.59133400000428,
+          "mean": 164.1305999333333,
+          "p50": 163.32404199999928,
+          "p95": 174.45235379999903,
+          "max": 180.615249999988,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 153.35258349999822,
-            "high": 156.7678330000017
+            "low": 161.62847899999178,
+            "high": 166.5172915000021
           }
         },
         "interaction.cpu.scriptMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.37400000000000105,
-          "mean": 1.4744999999999997,
-          "p50": 1.4810000000000005,
-          "p95": 2.5540499999999993,
-          "max": 2.879999999999999,
+          "min": 0.418,
+          "mean": 1.7162333333333328,
+          "p50": 1.6255000000000002,
+          "p95": 2.7006499999999996,
+          "max": 2.8719999999999994,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 1.2300000000000002,
-            "high": 1.7134999999999998
+            "low": 1.3199999999999998,
+            "high": 1.9830000000000003
           }
         },
         "interaction.cpu.v8CompileMs": {
@@ -3774,49 +3774,49 @@
         "interaction.cpu.taskMs": {
           "unit": "ms",
           "n": 30,
-          "min": 43.208999999999996,
-          "mean": 48.23023333333333,
-          "p50": 47.98299999999999,
-          "p95": 52.497199999999985,
-          "max": 56.853999999999985,
+          "min": 49.11899999999999,
+          "mean": 58.227733333333354,
+          "p50": 58.528999999999996,
+          "p95": 65.2444,
+          "max": 69.717,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 46.599000000000004,
-            "high": 49.13849999999999
+            "low": 55.99549999999999,
+            "high": 60.10849999999999
           }
         },
         "interaction.cpu.layoutMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.18400000000000014,
-          "mean": 0.8759999999999997,
-          "p50": 0.9114999999999991,
-          "p95": 1.5555000000000005,
-          "max": 1.6359999999999986,
+          "min": 0.41199999999999914,
+          "mean": 1.2887666666666662,
+          "p50": 1.174999999999999,
+          "p95": 2.0754000000000015,
+          "max": 3.4730000000000003,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.5709999999999986,
-            "high": 1.1564999999999996
+            "low": 1.02,
+            "high": 1.4754999999999994
           }
         },
         "interaction.cpu.recalcStyleMs": {
           "unit": "ms",
           "n": 30,
-          "min": 0.25299999999999995,
-          "mean": 0.9327666666666665,
-          "p50": 0.8764999999999998,
-          "p95": 2.0111499999999998,
-          "max": 2.05,
+          "min": 0.36300000000000004,
+          "mean": 1.4553333333333334,
+          "p50": 1.5255,
+          "p95": 2.162,
+          "max": 2.7259999999999995,
           "medianCi95": {
             "confidence": 0.95,
             "method": "percentile bootstrap",
             "resamples": 5000,
-            "low": 0.6824999999999999,
-            "high": 0.9670499999999993
+            "low": 1.2915,
+            "high": 1.6665
           }
         },
         "interaction.heapAfterForcedGc.usedBytes": {
@@ -3839,9 +3839,9 @@
           "unit": "bytes",
           "n": 30,
           "min": 575960,
-          "mean": 576068,
+          "mean": 576030.4,
           "p50": 575960,
-          "p95": 576952,
+          "p95": 576563.2,
           "max": 576952,
           "medianCi95": {
             "confidence": 0.95,
@@ -3952,8 +3952,8 @@
   ],
   "rawArtifact": {
     "path": "showcase/results/raw/proa-pr83-client_js.json.gz",
-    "sha256": "f67ccf13d96273c8ee3730738e893f60fd64d61f1ef8fff027952cc8b0045090",
-    "uncompressedSha256": "d7e970eec3544a067bb455664cc8eb130afd90fa84b1cd1c39baeb1e2dc40934",
+    "sha256": "90482cb675cb217483ef22c40e9b628a3ccf57508fbbd8a40edf14d8a15e8af8",
+    "uncompressedSha256": "0d469565250e332e359dbef8751bdfb2d4496005225ef7e81b1a287b06da016d",
     "encoding": "gzip"
   }
 }

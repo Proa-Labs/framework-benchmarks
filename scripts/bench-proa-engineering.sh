@@ -10,10 +10,11 @@ fi
 export PATH="$(dirname "$node_bin"):$PATH"
 proa_cli="${1:-proa}"
 logs_directory="rendering/results/raw/proa-pr83-criterion"
+criterion_baseline="$("$node_bin" --input-type=module -e 'import {readFileSync} from "node:fs"; const lock=readFileSync("Cargo.lock","utf8"); console.log("proa-"+lock.match(/name = "proa_core"[\s\S]*?#([a-f0-9]{40})/)[1].slice(0,12));')"
 mkdir -p "$logs_directory"
 cargo bench --locked -p proa_bench --features topcoat --no-run
 for bench in ssr_comparison targeted_comparison airbnb_search_comparison showcase_pages integer_serialization topcoat_comparison; do
-  cargo bench --locked -p proa_bench --features topcoat --bench "$bench" -- proa --save-baseline pr83-20261111 > "$logs_directory/proa-pr83-$bench.log" 2>&1
+  cargo bench --locked -p proa_bench --features topcoat --bench "$bench" -- proa --save-baseline "$criterion_baseline" > "$logs_directory/proa-pr83-$bench.log" 2>&1
 done
 "$proa_cli" build --root fixtures/airbnb-parity-dump --locked --no-check --no-assets -p proa_bench_airbnb_parity_dump --artifact-out target/showcase-dump
 node showcase/build_buffer_bench.mjs "$proa_cli"

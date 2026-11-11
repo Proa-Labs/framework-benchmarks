@@ -4,7 +4,7 @@
 
 The [SvelteKit comparison](sveltekit.md) adds production HTTP, cold-start, product-scaling, and browser-complete streaming measurements. Native SvelteKit promise streaming sends data for the browser to render; its response end is a different boundary from Proa’s resolved-HTML stream.
 
-**PROA refresh after [PR #83](https://github.com/Proa-Labs/proa/pull/83):** only PROA was rerun on this Apple M4 Max. Other engines retain their original dated measurements. PROA now has the lowest P50 in all three canonical workloads and all three product-grid sizes. See the [measured results and provenance](scoreboard.md); this is a comparison across capture dates, not a simultaneous rerun.
+**PROA `main` refresh at `bbbc968` ([PR #84](https://github.com/Proa-Labs/proa/pull/84)):** only PROA was rerun on this Apple M4 Max. Other engines retain their original dated measurements. PROA now has the lowest P50 in all three canonical workloads and all three product-grid sizes. See the [measured results and provenance](scoreboard.md); this is a comparison across capture dates, not a simultaneous rerun.
 
 If you see an issue with the benchmarks or would like to add any, please open an issue!
 

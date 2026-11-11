@@ -7,7 +7,11 @@ import { parseTables, pick } from "../charts/lib/tables.mjs";
 import { PAGES } from "../showcase/capture_memcpy.mjs";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const path = join(root, "rendering/results/proa-pr83-criterion.json");
-const baselineName = "pr83-20261111";
+const baselineName =
+	"proa-" +
+	readFileSync(join(root, "Cargo.lock"), "utf8")
+		.match(/name = "proa_core"[\s\S]*?#([a-f0-9]{40})/)[1]
+		.slice(0, 12);
 const read = (p) => JSON.parse(readFileSync(p, "utf8"));
 const hash = (s) => createHash("sha256").update(s).digest("hex");
 if (process.argv.includes("--collect")) {
@@ -72,6 +76,7 @@ if (process.argv.includes("--collect")) {
 		JSON.stringify(
 			{
 				captured_at: new Date().toISOString(),
+				criterion_baseline: baselineName,
 				proa_revision: lock.match(
 					/name = "proa_core"[\s\S]*?#([a-f0-9]{40})/,
 				)[1],
