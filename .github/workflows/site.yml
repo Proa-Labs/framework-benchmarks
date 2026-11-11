@@ -24,6 +24,10 @@ jobs:
     name: Build and validate static website
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -44,67 +48,15 @@ jobs:
         run: bun site/test/browser.mjs
       - name: Verify contributor benchmark path
         run: bun run bench run rendering --renderers react,vue --workloads cards
-      - name: Retain validated website
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: frameworks-site-${{ github.sha }}
-          path: site/dist/
-          if-no-files-found: error
-          retention-days: 7
-
-  preview:
-    name: Cloudflare PR preview
-    needs: site
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: read
-      deployments: write
-      pull-requests: write
-    environment:
-      name: preview-pr-${{ github.event.pull_request.number }}
-      url: ${{ steps.preview.outputs.url }}
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          persist-credentials: false
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: "1.4.2"
-      - run: bun install --cwd site --frozen-lockfile
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: frameworks-site-${{ github.sha }}
-          path: site/dist/
-      - name: Upload isolated version and publish preview link
-        id: preview
+      - name: Publish Cloudflare PR preview
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: bun site/preview.mjs
-
-  deploy:
-    name: Deploy validated website
-    needs: site
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy))
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          persist-credentials: false
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: "1.4.2"
-      - run: bun install --cwd site --frozen-lockfile
-      - name: Download the validated website from this run
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: frameworks-site-${{ github.sha }}
-          path: site/dist/
-      - name: Deploy validated static assets
+      - name: Deploy validated production assets
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy))
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |

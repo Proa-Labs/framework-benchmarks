@@ -74,6 +74,41 @@ const marker = "<!-- frameworks-run-preview -->";
 const body = `${marker}\n**Cloudflare preview:** ${url}\n\nUpdated for \`${process.env.GITHUB_SHA?.slice(0, 7)}\`. This version does not change production.`;
 const api = (args, input) =>
   execFileSync("gh", ["api", ...args], { input, encoding: "utf8" });
+const deployment = JSON.parse(
+  api(
+    [
+      `repos/${process.env.GITHUB_REPOSITORY}/deployments`,
+      "--method",
+      "POST",
+      "--input",
+      "-",
+    ],
+    JSON.stringify({
+      ref: process.env.GITHUB_SHA,
+      environment: `preview-pr-${number}`,
+      auto_merge: false,
+      required_contexts: [],
+      transient_environment: true,
+      production_environment: false,
+      description: `Cloudflare preview for PR #${number}`,
+    }),
+  ),
+);
+api(
+  [
+    `repos/${process.env.GITHUB_REPOSITORY}/deployments/${deployment.id}/statuses`,
+    "--method",
+    "POST",
+    "--input",
+    "-",
+  ],
+  JSON.stringify({
+    state: "success",
+    environment_url: url,
+    auto_inactive: true,
+    log_url: `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`,
+  }),
+);
 const path = `repos/${process.env.GITHUB_REPOSITORY}/issues/${number}/comments`;
 const comments = JSON.parse(api([`${path}?per_page=100`]));
 const existing = comments.find(
