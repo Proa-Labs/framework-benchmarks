@@ -193,7 +193,6 @@ function resolveJavaEnvironment() {
   const javaHome = homes.find((home) => existsSync(join(home, "bin", "java")));
   if (!javaHome) throw new Error("Java 17+ is required for jte and Rocker");
   return {
-    ...process.env,
     JAVA_HOME: javaHome,
     PATH: `${join(javaHome, "bin")}:${process.env.PATH}`,
   };
@@ -306,7 +305,7 @@ function buildAll() {
         ],
         {
           cwd: join(externalDirectory, id),
-          env: javaEnvironment,
+          env: { ...process.env, ...javaEnvironment },
           stdio: "inherit",
         },
       );
@@ -327,9 +326,10 @@ function invocation(rendererId, workloadId, extraArguments) {
     options: {
       cwd: selected.cwd,
       env: {
+        ...process.env,
         ...(adapter.setup === "jte" || adapter.setup === "rocker"
           ? javaEnvironment
-          : process.env),
+          : {}),
         NODE_ENV: "production",
         ...(adapter.setup === "rails"
           ? { PATH: `${ruby.rubyDirectory}:${process.env.PATH}` }
@@ -744,7 +744,7 @@ function metadata(capturedAt, fingerprint, browserVersion) {
     : null;
   const java = javaEnvironment
     ? firstLine(join(javaEnvironment.JAVA_HOME, "bin", "java"), ["--version"], {
-        env: javaEnvironment,
+        env: { ...process.env, ...javaEnvironment },
       })
     : null;
   const go = selectedSetups.has("go") ? firstLine("go", ["version"]) : null;
