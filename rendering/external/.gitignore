@@ -3,6 +3,7 @@
 jinja/.venv/
 rails/.gems/
 rails/.bundle/
+rails/vendor/bundle/
 marko/suite_*.compiled.mjs
 svelte/suite_*.compiled.mjs
 
