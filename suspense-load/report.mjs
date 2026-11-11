@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { verifyRefresh } from "../scripts/proa-refresh-evidence.mjs";
 
 import { createHash } from "node:crypto";
 import { readFile, writeFile } from "node:fs/promises";
@@ -291,6 +291,7 @@ function render(result) {
   return `${startMarker}
 ## Suspense streaming over HTTP, one core each
 
+${result.refresh ? "> **PROA-only refresh.** " + result.refresh.note + "\n" : ""}
 **${date} · ${host} · ${boundaries} async boundaries × ${result.scenario.cardsPerPanel} product cards · one worker thread or process per engine**
 
 This is the product grid from the capacity section, streamed. Equivalent production-mode Proa, Marko, and React applications run over real loopback HTTP/1.1. Every request streams a shell with ${boundaries} fallback panels, starts ${boundaries} independent data operations across the ${result.scenario.delayTiersMs.join(", ")} ms delay tiers, and completes only after every panel has resolved to its ${result.scenario.cardsPerPanel} product cards on the wire, ${result.scenario.productCards} cards in all. Delayed values stay typed and in memory; there is no JSON serialization, deserialization, or external I/O in the measured request path. Rendering, boundary scheduling, replacement framing, and one flush per boundary are all inside the measurement.
@@ -318,7 +319,7 @@ The parity gate checks the browser-consumable stream payload before load begins 
 ${parityRows}
 
 - Capture: [suspense-load/results/latest.json](suspense-load/results/latest.json); reproduce with \`pnpm run bench:suspense-load\`.
-- The retained source hash predates three wording-only changes in the runner. The report verifier records both exact source hashes; measurements and the original capture hash are unchanged.
+${result.refresh ? "- The retained peer capture and its original source hash are linked from the PROA-only refresh metadata; the new source hash applies to PROA." : "- The retained source hash predates three wording-only changes in the runner. The report verifier records both exact source hashes; measurements and the original capture hash are unchanged."}
 - Proa source: Cargo.lock revision ${proaRevision}${proaBranch}; Rust release build with native Proa Suspense and the direct \`ssr_stream_send\` Axum route. The same binary also serves the bounded local-executor path (\`ssr_stream\`) at \`/local\` for engineering comparison; it is not part of the published rows.
 - Marko source: optimized ahead-of-time Marko template using native &lt;await&gt; plus &lt;@placeholder&gt;; its compiler is not resident in the measured server.
 - React source: production React server build using renderToPipeableStream, Suspense, and use.
@@ -334,6 +335,7 @@ const [resultText, readme, sourceSha256] = await Promise.all([
   currentSourceSha256(),
 ]);
 const result = JSON.parse(resultText);
+  verifyRefresh(result, join(here, "results"));
 if (
   result.source?.sourceSha256 !== sourceSha256 &&
   displayOnlySourceRevisions.get(result.source?.sourceSha256) !== sourceSha256

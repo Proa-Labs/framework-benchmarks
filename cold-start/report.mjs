@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { verifyRefresh } from "../scripts/proa-refresh-evidence.mjs";
 // Renders the cold-start capture into its README section.
 
 import { createHash } from "node:crypto";
@@ -100,6 +100,7 @@ export function render(result) {
   return `${startMarker}
 ## Cold start to first response
 
+${result.refresh ? "> **PROA-only refresh.** " + result.refresh.note + "\n" : ""}
 **${date} · ${result.host.cpuModel} · ${result.methodology.starts} fresh processes per engine**
 
 Every autoscaling event, cold serverless instance, per-tenant process, and developer restart pays this cost. Each row spawns the same production server used in the HTTP capacity section, polls its port every millisecond, and stops the clock when the first complete product-grid response ends; that response must be byte-identical to the engine's canonical dump. Proa's first response arrived in ${ms(proa.summary.firstResponseMs.p50)} at the median against ${ms(react.summary.firstResponseMs.p50)} for React, whose figure includes Node start-up and loading React and the page module. Engines rotate every start, ${result.methodology.warmupStarts} untimed starts warm the disk cache, and the RSS column is sampled immediately after the first response.
@@ -121,6 +122,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     currentSourceSha256(),
   ]);
   const result = JSON.parse(resultText);
+  verifyRefresh(result, join(here, "results"));
   if (result.source?.sourceSha256 !== sourceSha256) {
     throw new Error(`cold-start publication source mismatch: captured ${result.source?.sourceSha256 ?? "missing"}, current ${sourceSha256}`);
   }

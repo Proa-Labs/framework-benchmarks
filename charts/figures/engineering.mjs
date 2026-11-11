@@ -12,19 +12,32 @@ const HIST = 'Superseded capture · Aug 30–31, 2026';
 // ---------------------------------------------------------------------------
 // 05 · Core renderers and showcase pages against memcpy
 // ---------------------------------------------------------------------------
-export function representative(tables) {
-  const t = pick(tables, ['Workload', 'Renderer/control', 'Language', 'Output bytes']);
-  const P50 = 'Process-median P50 µs [min–max]';
+export function currentCoreMatrix(tables) {
+  const t = pick(tables, ['Renderer', 'Workload', 'P50', 'P95']);
+  const copies = pick(tables, ['Buffer comparison workload', 'Output bytes']);
+  const workloads = { 'Cards': 'Component page', '96-product grid': 'Product grid', '1,000-row table': '1,000-row table' };
   const byW = {};
-  for (const o of t.objs) {
-    const r = withRange(o[P50]);
-    (byW[clean(o.Workload)] ||= []).push({
-      name: clean(o['Renderer/control']), lang: clean(o.Language),
-      p50: r.v, lo: r.lo, hi: r.hi, p95: num(o['Process-median P95 µs']),
-      bytes: num(o['Output bytes']),
-      control: /memcpy/i.test(o['Renderer/control']),
+  for (const [label, workload] of Object.entries(workloads)) {
+    const copy = copies.objs.find((o) => clean(o['Buffer comparison workload']) === label);
+    if (!copy) throw new Error(`Missing current memcpy control for ${workload}`);
+    const floor = withRange(copy['Copy P50 µs [min–max]']);
+    const rows = t.objs.filter((o) => clean(o.Workload) === workload).map((o) => {
+      const [lo, hi] = clean(o['Process P50 range']).split('–').map(toUs);
+      return { name: clean(o.Renderer), p50: toUs(o.P50), lo, hi,
+        bytes: num(o['Payload bytes']), control: false };
     });
+    const proa = rows.find((r) => r.name === 'Proa');
+    if (!proa || proa.bytes !== num(copy['Output bytes']))
+      throw new Error(`Current Proa output does not match memcpy bytes for ${workload}`);
+    byW[label] = [{ name: 'Memcpy control', p50: floor.v, lo: floor.lo, hi: floor.hi,
+      bytes: num(copy['Output bytes']), control: true }, ...rows];
   }
+  return byW;
+}
+
+export function representative(tables, meta) {
+  const byW = currentCoreMatrix(tables);
+  const capture = pick(tables, ['Buffer capture', 'Date (UTC)', 'Proa revision']).objs[0];
   const ws = ['Cards', '96-product grid', '1,000-row table'];
   // Panels share one row order (the order the first workload lists) so a single
   // left gutter labels all three. Rank changes between panels then read as
@@ -37,11 +50,11 @@ export function representative(tables) {
     'P50 / hot-buffer copy · log scales · lower is better', COL);
   let b = hdr.svg;
 
-  const gutter = 122, gap = 26;
+  const gutter = 144, gap = 26;
   const panelW = (COL - gutter - gap * 2) / 3;
   const px0 = (i) => PAD + gutter + i * (panelW + gap);
   const sectionY = 44 + hdr.h + 34;
-  const eyeY = sectionY + 26, tickY = eyeY + 36, top = tickY + 12, rowH = 22;
+  const eyeY = sectionY + 42, tickY = eyeY + 36, top = tickY + 12, rowH = 22;
   const bottom = top + rows * rowH - 6;
   const coreMax = Math.max(...ws.flatMap((w) => {
     const floor = byW[w].find((r) => r.control);
@@ -49,7 +62,8 @@ export function representative(tables) {
     return byW[w].map((r) => r.hi / floor.p50);
   }));
   const coreHi = Math.max(10, 10 ** Math.ceil(Math.log10(coreMax)));
-  b += eyebrow(PAD, sectionY, 'Core workloads · Aug 31, 2026 · superseded');
+  b += eyebrow(PAD, sectionY, `Core workloads · ${meta.date}${meta.refreshSuffix ?? ''}`);
+  b += txt(PAD, sectionY + 16, `Proa: ${meta.proaNativeOutput ? 'fresh RenderBuffer' : 'owned output'} · copy: ${clean(capture['Date (UTC)'])} · each floor copies the Proa payload`, 'note');
 
   // All ratios in a workload use its measured Proa-byte copy P50. The shaded
   // decade and 10× guide make the requested threshold visible without a claim
@@ -99,7 +113,7 @@ export function representative(tables) {
   return doc({
     w: WIDTH, h: allocation.bottom + 22 + notes.h + 12,
     title: `Render time relative to memcpy across ${ws.length} core workloads and ${allocation.pageCount} showcase pages`,
-    desc: 'Each denominator copies the workload’s pre-rendered Proa HTML into a warmed, preallocated buffer. ' +
+    desc: `Current canonical rendering table: ${meta.date}${meta.refreshSuffix ?? ''}. Proa uses ${meta.proaNativeOutput ? 'fresh owned RenderBuffer pages' : 'owned output'}; peers retain their declared output policies. Copy controls captured ${clean(capture['Date (UTC)'])}. Render and copy are separate captures, not paired samples. Each denominator copies the workload’s pre-rendered Proa HTML into a warmed, preallocated buffer; peer payload sizes can differ. ` +
       ws.map((w) => {
         const floor = byW[w].find((r) => r.control);
         return `${w} — ` + byW[w].map((r) => `${r.name}: ${ratio(r.p50 / floor.p50)} memcpy, P50 ${dur(r.p50)}, range ${dur(r.lo)} to ${dur(r.hi)}, ${commas(r.bytes)} bytes`).join('; ');
@@ -111,13 +125,16 @@ export function representative(tables) {
 // ---------------------------------------------------------------------------
 // 06 · Criterion micro-benchmarks
 // ---------------------------------------------------------------------------
-export function criterion(tables) {
-  const std = pick(tables, ['Standard-page row', 'Output bytes/render', 'Raw time, µs/10 renders']);
-  const cri = pick(tables, ['Criterion row', 'Output bytes', 'Raw time, µs']);
+export function criterion(tables, meta) {
+  const refreshed = tables.some((t) => t.headers[0] === "Refreshed Criterion row");
+  const standardKey = refreshed ? "Refreshed standard-page row" : "Standard-page row";
+  const criterionKey = refreshed ? "Refreshed Criterion row" : "Criterion row";
+  const std = pick(tables, [standardKey, 'Output bytes/render', 'Raw time, µs/10 renders']);
+  const cri = pick(tables, [criterionKey, 'Output bytes', 'Raw time, µs']);
 
   const stdRows = std.objs.map((o) => {
     const [lo, v, hi] = slashTriple(o['Raw time, µs/10 renders']);
-    return { label: clean(o['Standard-page row']), lo, v, hi, bytes: num(o['Output bytes/render']) };
+    return { label: clean(o[standardKey]), lo, v, hi, bytes: num(o['Output bytes/render']) };
   });
 
   // Split each Criterion id into family / fixture / engine so the head-to-head
@@ -125,7 +142,7 @@ export function criterion(tables) {
   const ENGINE = /(proa|sailfish|askama|topcoat|leptos|dioxus|yew)/;
   const all = cri.objs.map((o) => {
     const [lo, v, hi] = slashTriple(o['Raw time, µs']);
-    const id = clean(o['Criterion row']);
+    const id = clean(o[criterionKey]);
     const [fam, variant = ''] = id.split('/');
     const m = ENGINE.exec(variant);
     const fixture = m ? variant.slice(0, m.index).replace(/_$/, '') : '';
@@ -141,7 +158,7 @@ export function criterion(tables) {
     .filter((g) => all.some((r) => r.group === g && !r.proa));
   const head = all.filter((r) => groups.includes(r.group));
   const hdr = header(PAD, 44, 'Criterion microbenchmarks',
-    `${HIST} · point estimates with 95% slope intervals · log scales`, COL);
+    `${refreshed ? "Proa refreshed " + meta.engineeringRefreshDate + " · peers Aug 30–31" : HIST} · 95% intervals · log scales`, COL);
   let b = hdr.svg;
 
   const LX = PAD + 214, PX0 = PAD + 224, PX1 = PAD + COL - 196;
@@ -210,7 +227,7 @@ export function criterion(tables) {
   b += rule(PX0, bBottom, PX1, bBottom, C.axis);
 
   const notes = footnotes(PAD, bBottom + 20,
-    'One Criterion process; output sizes differ between engines.', COL);
+    'Fresh Proa pages are owned RenderBuffer output; String controls include conversion. One Criterion process; output sizes differ between engines.', COL);
 
   return doc({
     w: WIDTH, h: bBottom + 20 + notes.h + 12,
@@ -240,7 +257,7 @@ export function cardScaling(tables, meta) {
   const allV = rows.flatMap((r) => r.values.map((v) => v.v));
 
   const hdr = header(PAD, 44, 'Product-card render scaling',
-    `Engineering capture · ${meta.scalingDate} UTC · fresh full responses · five processes per cell`, COL);
+    `Engineering capture · ${meta.scalingDate} UTC${meta.refreshSuffix ?? ""} · ${meta.proaNativeOutput ? "Proa: fresh RenderBuffer" : "fresh full responses"} · five processes per cell`, COL);
   let b = hdr.svg;
 
   const marker = (x, y, shape, color) => {

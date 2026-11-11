@@ -18,6 +18,9 @@ const INPUTS = [
   'fixtures/airbnb-parity-dump/src/memcpy.rs',
   'showcase/capture_memcpy.mjs',
   'showcase/client_js_stats.mjs',
+  "fixtures/legacy-ebay-chrome/mod.rs",
+  "fixtures/legacy-ebay-chrome/data/srp_chrome_style.css",
+  "fixtures/legacy-ebay-chrome/data/shell_pre.html",
 ];
 export const PAGES = {
   'airbnb-parity': 'Airbnb parity',

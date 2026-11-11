@@ -1,4 +1,7 @@
 use proa_core::{WebContext, WebRenderSync};
+#[path = "../../legacy-ebay-chrome/mod.rs"]
+mod legacy_ebay_chrome;
+
 use proa_showcase::{airbnb, ebay, espn, nike, sentry_otel, settings_console};
 
 #[allow(dead_code)]
@@ -40,9 +43,9 @@ pub fn render(page: &str, capacity: usize) -> String {
         .unwrap(),
         "ebay-chrome" => {
             let listings = ebay::srp::default_listings(60);
-            let meta = ebay::srp_chrome::derive_srp_meta(listings);
-            ebay::srp_chrome::SrpDocument {
-                query: ebay::srp_chrome::DEFAULT_QUERY,
+            let meta = legacy_ebay_chrome::derive_srp_meta(listings);
+            legacy_ebay_chrome::SrpDocument {
+                query: legacy_ebay_chrome::DEFAULT_QUERY,
                 meta: &meta,
                 per_page: listings.len() as u64,
                 river: ebay::srp::ListingsList { listings },
@@ -77,16 +80,12 @@ pub fn render(page: &str, capacity: usize) -> String {
         None
     };
     drop(cx);
-    // Match the response owner's UTF-8 policy: render_to_string validates;
-    // RenderBuffer::into_string trusts its HTML writer in release builds.
-    let mut html = if page.starts_with("core-") || page == "ebay-cards" {
-        String::from_utf8(output).expect("renderer produced invalid UTF-8")
-    } else {
-        debug_assert!(std::str::from_utf8(&output).is_ok());
-        // SAFETY: only the same typed HTML renderers and UTF-8 static text used
-        // by the standard response owners above write into this vector.
-        unsafe { String::from_utf8_unchecked(output) }
-    };
+    // Match PR #83's output owners: typed text and checked byte writes establish
+    // UTF-8 at each write, so completing the response needs no full-output scan.
+    debug_assert!(std::str::from_utf8(&output).is_ok());
+    // SAFETY: output starts empty and is written only through the UTF-8-preserving
+    // WriteBuf API by the same typed renderers as the standard response owners.
+    let mut html = unsafe { String::from_utf8_unchecked(output) };
     if let Some((artifacts, nonce)) = runtime {
         let plan = rsjs::manifest()
             .page_runtime_plan(artifacts.rendered_islands())

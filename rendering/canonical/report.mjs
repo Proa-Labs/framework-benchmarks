@@ -25,17 +25,18 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
     fail("captured_at is invalid");
   }
   if (result.status !== "pass") fail("status must be pass");
-  if (!new Set(["canonical", "historical_partial"]).has(result.capture_kind)) {
+  if (!new Set(["canonical", "historical_partial", "proa_refresh"]).has(result.capture_kind)) {
     fail("capture_kind must be canonical or historical_partial");
   }
   if (
-    result.capture_kind === "canonical" &&
+    ["canonical", "proa_refresh"].includes(result.capture_kind) &&
     (!result.completed_at || Number.isNaN(Date.parse(result.completed_at)) ||
       Date.parse(result.completed_at) < Date.parse(result.captured_at))
   ) {
     fail("completed_at is missing or invalid");
   }
 
+  if (result.capture_kind === "proa_refresh" && (result.refresh?.renderer !== "proa" || !result.refresh.baseline_capture_id || !result.refresh.baseline_captured_at || !/^[a-f0-9]{64}$/.test(result.refresh.baseline_sha256 ?? ""))) fail("PROA refresh provenance is missing");
   const expectedRendererIds = roster.renderers.map(({ id }) => id);
   const expectedWorkloadIds = workloadManifest.workloads.map(({ id }) => id);
   const resultWorkloadIds = (result.workloads ?? []).map(({ id }) => id);
@@ -99,7 +100,7 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
         `${renderer.id} ${renderer.status} status requires a concrete reason`,
       );
     }
-    if (result.capture_kind === "canonical" && renderer.status !== "included") {
+    if (["canonical", "proa_refresh"].includes(result.capture_kind) && renderer.status !== "included") {
       fail(`${renderer.id} is not included in a canonical capture`);
     }
     const measurements = result.measurements?.[renderer.id] ?? {};
@@ -110,7 +111,7 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
         if (!measurement) {
           fail(`${renderer.id}/${workloadId} measurement is missing`);
         }
-        if (measurement.capture_id !== result.capture_id) {
+        if (measurement.capture_id !== (result.capture_kind === "proa_refresh" && renderer.id !== "proa" ? result.refresh?.baseline_capture_id : result.capture_id)) {
           fail(`${renderer.id}/${workloadId} comes from a different capture`);
         }
         for (
@@ -345,6 +346,7 @@ export function renderScoreboard(result, roster, workloadManifest) {
   );
   const headings = workloadManifest.workloads.map(({ label }) => label);
   const lines = [`${SCOREBOARD_START}`];
+  if (result.refresh) lines.push("", `> **PROA-only refresh.** ${result.refresh.note}`);
   if (result.capture_kind === "historical_partial") {
     lines.push(
       "",
@@ -445,6 +447,7 @@ export function renderReadmeDetails(result, roster, workloadManifest) {
   return [
     DETAILS_START,
     "### Capture metadata",
+    ...(result.refresh ? ["", result.refresh.note] : []),
     "",
     ...metadata,
     "",
@@ -598,6 +601,7 @@ export function renderDetailedReport(result, roster, workloadManifest) {
     ...(result.completed_at ? [`- Completed: ${result.completed_at}`] : []),
     `- Host: ${result.host.cpu_model}, ${result.host.logical_cpus} logical CPUs, ${result.host.memory_bytes} bytes RAM`,
     `- OS: ${result.host.os_name} (${result.host.os_release}), ${result.host.architecture}`,
+    ...(result.proa_output ? [`- Proa output: ${result.proa_output}`] : []),
     `- Harness commit: \`${result.provenance.harness_commit}\`${
       result.provenance.dirty ? " (dirty; source digest retained)" : ""
     }`,

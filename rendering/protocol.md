@@ -28,7 +28,7 @@ An included renderer must:
 4. pass every parity cell before timing begins; and
 5. appear exactly once in the result artifact and generated table.
 
-There are no partial public rows. An unexpected disappearance, missing workload, absent parity decision, or measurement from another capture invalidates report generation. The public Proa row is named exactly `Proa` and uses the ordinary owned-output path. Reuse, chaining, manual writes, capacity experiments, and controls remain in engineering reports.
+There are no partial public rows. An unexpected disappearance, missing workload, absent parity decision, or measurement from another capture invalidates report generation. The public Proa row is named exactly `Proa` and returns a freshly allocated, independently owned `RenderBuffer`. This is the native paged HTML output before optional conversion to a contiguous `String`. Other adapters retain their independently owned String outputs. Proa's context construction, page allocation, component rendering and the previous output's destruction are inside timing. Flattening is performed only for untimed parity dumps. The entire returned owner is passed to an optimizer barrier; no byte-count traversal or page concatenation runs in the measured Proa loop. The former `render_to_string` path remains an explicitly labeled engineering control. This is an output-boundary change, not an upstream framework speedup. Reuse, chaining, manual writes, capacity experiments, and controls remain in engineering reports.
 
 ## Parity gate
 
@@ -87,4 +87,8 @@ Lower render time is better for this specific boundary. Results answer only the 
 
 Serializer payload differences remain visible in the detailed report. Tail anomalies and contradictory results remain reported. A production HTTP throughput claim requires a separate suite in which every framework uses its normal server, allocator, pooling, response-management, concurrency, and backpressure behavior.
 
-The current checked-in sample is the September 1, 2026 unified run of all 17 adapters. It contains no value from the older cross-language fixture.
+### Explicit PROA-only refreshes
+
+`--refresh-proa` is a separate comparison mode, not a new simultaneous canonical capture. It requires the same CPU model, architecture and memory as the retained original machine, five new Proa processes per cell, and unchanged semantic DOM digests and payload sizes. The original capture is retained with a SHA-256; every peer measurement, parity record and version must remain identical. Peer measurement capture IDs remain attached to the original capture. New Proa rows use the refresh ID. Reports and charts disclose both dates. `latest.json` records `capture_kind: "proa_refresh"`; ordinary canonical captures continue rejecting mixed capture IDs.
+
+The current checked-in comparison is a PROA-only refresh at Proa `bbbc968` after PR #84 against the October 21, 2026 Apple M4 Max baseline.

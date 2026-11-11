@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { refreshProa } from "./refresh-proa.mjs";
 import { canonicalDocument, firstDifference } from "./dom.mjs";
 
 import { execFileSync } from "node:child_process";
@@ -36,7 +37,8 @@ const roster = JSON.parse(
 const workloadManifest = JSON.parse(
   readFileSync(join(canonicalDirectory, "workloads.json"), "utf8"),
 );
-const rendererIds = roster.renderers.map(({ id }) => id);
+const refresh = process.argv.includes("--refresh-proa");
+const rendererIds = refresh ? ["proa"] : roster.renderers.map(({ id }) => id);
 const workloads = workloadManifest.workloads;
 const smoke = process.argv.includes("--smoke");
 const skipSetup = process.argv.includes("--no-setup");
@@ -117,8 +119,8 @@ function resolveJavaEnvironment() {
   };
 }
 
-const ruby = resolveRuby();
-const javaEnvironment = resolveJavaEnvironment();
+const ruby = refresh ? null : resolveRuby();
+const javaEnvironment = refresh ? null : resolveJavaEnvironment();
 const railsDirectory = join(externalDirectory, "rails");
 const rustBinary = join(
   workspaceDirectory,
@@ -772,6 +774,17 @@ function metadata(capturedAt, fingerprint, browserVersion) {
       source_sha256: fingerprint,
     },
   };
+}
+
+if (refresh) {
+  if (smoke || parityOnly || setupOnly || repeats !== 5) throw new Error("PROA refresh requires the full five-process protocol");
+  if (!skipSetup) run("cargo", ["build", "--locked", "--release", "-p", "proa_bench", "--features", "topcoat", "--bin", "representative_suite_bench"], {stdio:"inherit"});
+  const temporaryDirectory = mkdtempSync(join(tmpdir(), "proa-refresh-"));
+  try {
+    await refreshProa({root: workspaceDirectory, workloads, benchmark, parityGate, fingerprint: sourceFingerprint(), temporaryDirectory, scaling: productScaling});
+    run(process.execPath, [join(renderingDirectory, "generate-report.mjs")], {stdio:"inherit"});
+  } finally { rmSync(temporaryDirectory, {recursive:true, force:true}); }
+  process.exit(0);
 }
 
 if (!skipSetup) buildAll();

@@ -174,7 +174,7 @@ provided the same capability.
 
 ## Output-buffer comparison
 
-Figure 05 includes standard Proa and a fresh contiguous output buffer whose
+This String-output experiment includes the String-returning Proa API and a fresh contiguous output buffer whose
 capacity equals the full response size. It covers Cards, the 96-product grid,
 the 1,000-row table and all 11 showcase pages shown in figure 05.
 
@@ -197,7 +197,7 @@ timed region. Output size is measured before timing and supplied as a capacity
 hint; it is not computed by an extra render inside each sample. Full-size output
 must retain that capacity through every measured render. Both paths return
 owned strings and exclude response destruction. The UTF-8 validation policy
-matches each original response owner.
+matches each original response owner. Both variants return String; this experiment is distinct from the native RenderBuffer scoreboard lane.
 
 Five seeded randomized repeats use a fresh process for each workload and mode.
 Rendering uses 1,000 warmups and 10,000 samples, except the core table and Sentry

@@ -17,6 +17,9 @@ const INPUTS = [
   'fixtures/airbnb-parity-dump/src/main.rs', 'fixtures/airbnb-parity-dump/src/memcpy.rs',
   'showcase/build_buffer_bench.mjs', 'showcase/capture_buffers.mjs',
   'showcase/capture_memcpy.mjs', 'showcase/client_js_stats.mjs',
+  "fixtures/legacy-ebay-chrome/mod.rs",
+  "fixtures/legacy-ebay-chrome/data/srp_chrome_style.css",
+  "fixtures/legacy-ebay-chrome/data/shell_pre.html",
 ];
 export const PAGES = {
   'core-cards': 'Cards', 'core-products': '96-product grid', 'core-table': '1,000-row table',
@@ -85,7 +88,9 @@ export function bufferTable(capture) {
 | --- | --- | --- |
 | ${capture.pages.length} workloads · five processes per cell | ${date} | \`${capture.provenance.proa_revision.slice(0, 12)}\` |
 
-Standard Proa uses its 4 KiB chained writer. The full-size variant allocates a
+This is an explicit **String-output control**, not the native RenderBuffer
+scoreboard lane. The default String API uses its 4 KiB chained writer and then
+flattens its pages into a String. The full-size String variant allocates a
 fresh contiguous output buffer for every render, with capacity set to the final
 HTML byte count measured before timing. Allocation, page construction and
 runtime-tag insertion are timed; response destruction is outside both timings.

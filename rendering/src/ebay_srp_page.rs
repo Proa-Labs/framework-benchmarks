@@ -504,12 +504,12 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for Currency {
     fn render(self, cx: &mut WebContext<L, B>) -> Result<(), WriteError> {
         let cents = self.0;
         if cents < 0 {
-            cx.out.extend(b"-")?;
+            cx.out.extend_str("-")?;
         }
         let abs = cents.unsigned_abs();
-        cx.out.extend(b"$")?;
+        cx.out.extend_str("$")?;
         write_with_commas(cx, abs / 100)?;
-        cx.out.extend(b".")?;
+        cx.out.extend_str(".")?;
         write_two_digits(cx, (abs % 100) as u32)
     }
 }
@@ -530,7 +530,7 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for Uint {
     fn render(self, cx: &mut WebContext<L, B>) -> Result<(), WriteError> {
         let mut buf = [0u8; 20];
         let s = format_u64(&mut buf, self.0);
-        cx.out.extend(s.as_bytes())
+        cx.out.extend_str(s)
     }
 }
 
@@ -545,10 +545,10 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for FeedbackPc
         let tenth = v % 10;
         let mut buf = [0u8; 20];
         let s = format_u64(&mut buf, whole as u64);
-        cx.out.extend(s.as_bytes())?;
-        cx.out.extend(b".")?;
+        cx.out.extend_str(s)?;
+        cx.out.extend_str(".")?;
         cx.out.extend(&[b'0' + tenth as u8])?;
-        cx.out.extend(b"%")
+        cx.out.extend_str("%")
     }
 }
 
@@ -567,8 +567,8 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for DiscountPc
         let pct = (((self.original_cents - self.sale_cents) * 100) / self.original_cents) as u64;
         let mut buf = [0u8; 20];
         let s = format_u64(&mut buf, pct);
-        cx.out.extend(s.as_bytes())?;
-        cx.out.extend(b"% off")
+        cx.out.extend_str(s)?;
+        cx.out.extend_str("% off")
     }
 }
 
@@ -582,7 +582,7 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for DateRange 
     #[inline]
     fn render(self, cx: &mut WebContext<L, B>) -> Result<(), WriteError> {
         write_short_date(cx, self.min_unix)?;
-        cx.out.extend(b" - ")?;
+        cx.out.extend_str(" - ")?;
         write_short_date(cx, self.max_unix)
     }
 }
@@ -598,7 +598,7 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for TimeLeft {
     fn render(self, cx: &mut WebContext<L, B>) -> Result<(), WriteError> {
         let remaining = self.end_unix - self.now_unix;
         if remaining <= 0 {
-            return cx.out.extend(b"Ended");
+            return cx.out.extend_str("Ended");
         }
         let days = remaining / 86_400;
         let hours = (remaining % 86_400) / 3_600;
@@ -606,22 +606,22 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for TimeLeft {
         let mut buf = [0u8; 20];
         if days > 0 {
             let s = format_u64(&mut buf, days as u64);
-            cx.out.extend(s.as_bytes())?;
-            cx.out.extend(b"d ")?;
+            cx.out.extend_str(s)?;
+            cx.out.extend_str("d ")?;
             let s = format_u64(&mut buf, hours as u64);
-            cx.out.extend(s.as_bytes())?;
-            cx.out.extend(b"h")
+            cx.out.extend_str(s)?;
+            cx.out.extend_str("h")
         } else if hours > 0 {
             let s = format_u64(&mut buf, hours as u64);
-            cx.out.extend(s.as_bytes())?;
-            cx.out.extend(b"h ")?;
+            cx.out.extend_str(s)?;
+            cx.out.extend_str("h ")?;
             let s = format_u64(&mut buf, mins as u64);
-            cx.out.extend(s.as_bytes())?;
-            cx.out.extend(b"m")
+            cx.out.extend_str(s)?;
+            cx.out.extend_str("m")
         } else {
             let s = format_u64(&mut buf, mins as u64);
-            cx.out.extend(s.as_bytes())?;
-            cx.out.extend(b"m")
+            cx.out.extend_str(s)?;
+            cx.out.extend_str("m")
         }
     }
 }
@@ -656,7 +656,7 @@ fn write_with_commas<B: WriteBuf, L: ::proa_core::DataLoader>(
     v: u64,
 ) -> Result<(), WriteError> {
     if v == 0 {
-        return cx.out.extend(b"0");
+        return cx.out.extend_str("0");
     }
     let mut digits = [0u8; 20];
     let s = format_u64(&mut digits, v);
@@ -666,7 +666,7 @@ fn write_with_commas<B: WriteBuf, L: ::proa_core::DataLoader>(
     cx.out.extend(&bytes[..first])?;
     let mut i = first;
     while i < len {
-        cx.out.extend(b",")?;
+        cx.out.extend_str(",")?;
         cx.out.extend(&bytes[i..i + 3])?;
         i += 3;
     }
@@ -687,12 +687,12 @@ fn write_short_date<B: WriteBuf, L: ::proa_core::DataLoader>(
     // Offset Unix-epoch days to Sunday-based weekday indexing.
     let dow = ((days % 7 + 7 + 4) % 7) as usize;
     cx.out.extend(DOW_ABBR[dow].as_bytes())?;
-    cx.out.extend(b", ")?;
+    cx.out.extend_str(", ")?;
     cx.out.extend(MONTH_ABBR[(m - 1) as usize].as_bytes())?;
-    cx.out.extend(b" ")?;
+    cx.out.extend_str(" ")?;
     let mut buf = [0u8; 20];
     let s = format_u64(&mut buf, d as u64);
-    cx.out.extend(s.as_bytes())
+    cx.out.extend_str(s)
 }
 
 #[inline]
@@ -880,7 +880,7 @@ impl<'a, B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for Listin
     fn render(self, cx: &mut WebContext<L, B>) -> Result<(), WriteError> {
         // proa-perf-ok: benchmark intentionally measures direct WriteBuf grid framing
         cx.out
-            .extend(b"<ul class=\"grid grid-cols-1 md:grid-cols-3 gap-4\">")?;
+            .extend_str("<ul class=\"grid grid-cols-1 md:grid-cols-3 gap-4\">")?;
         for listing in self.listings {
             ListingCard {
                 listing: *listing,
@@ -889,7 +889,7 @@ impl<'a, B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for Listin
             .render(cx)?;
         }
         // proa-perf-ok: benchmark intentionally measures direct WriteBuf grid framing
-        cx.out.extend(b"</ul>")
+        cx.out.extend_str("</ul>")
     }
 }
 

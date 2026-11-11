@@ -25,9 +25,10 @@ env:
 jobs:
   checks:
     name: ${{ matrix.name }}
-    # Pull-request code can execute build scripts and browser tooling. Keep it
-    # on the untrusted PR pool; trusted events use the configured GCP runner.
-    runs-on: ${{ github.event_name == 'pull_request' && 'gcp-proa-benchmarks-pr-ci' || vars.CI_RUNNER }}
+    # PR build scripts and browser tooling run on disposable GitHub-hosted VMs,
+    # without depending on the availability of the self-hosted PR runner pool.
+    # Trusted events continue to use the configured GCP runner.
+    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-24.04' || vars.CI_RUNNER }}
     timeout-minutes: ${{ matrix.timeout }}
     strategy:
       fail-fast: false
@@ -220,7 +221,7 @@ jobs:
     # canceled; otherwise an unavailable pool can retain the concurrency lock.
     if: ${{ always() && !cancelled() }}
     needs: [checks]
-    runs-on: ${{ github.event_name == 'pull_request' && 'gcp-proa-benchmarks-pr-ci' || vars.CI_RUNNER }}
+    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-24.04' || vars.CI_RUNNER }}
     timeout-minutes: 2
     steps:
       - name: Require every merge prerequisite
