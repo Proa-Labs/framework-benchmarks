@@ -5,10 +5,10 @@
   "type": "module",
   "description": "TanStack Start + Tailwind website with Cloudflare SSR, built from validated benchmark captures.",
   "scripts": {
-    "build": "bun build.mjs",
-    "dev": "bun dev.mjs",
-    "test": "bun prepare-data.mjs && bun test test",
-    "test:browser": "bun test/browser.mjs",
+    "build": "bun build.ts",
+    "dev": "bun dev.ts",
+    "test": "bun prepare-data.ts && bun test test",
+    "test:browser": "bun test/browser.ts",
     "deploy:check": "bun run build && wrangler deploy --dry-run",
     "deploy": "bun run build && wrangler deploy",
     "lint": "biome check ."
@@ -26,6 +26,9 @@
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.69.0",
     "@tailwindcss/vite": "4.3.5",
+    "@types/d3-array": "3.2.2",
+    "@types/d3-scale": "4.0.9",
+    "@types/d3-shape": "3.2.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.3.0",

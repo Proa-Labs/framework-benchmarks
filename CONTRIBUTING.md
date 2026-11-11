@@ -48,7 +48,7 @@ complete owned output using its declared native API. HTTP and streaming are sepa
 | Files included in load/startup source fingerprints | `<suite>/sources.json` |
 | Measurement storage, source snapshots, atomic writes | `tooling/captures.mjs` |
 | Display metadata, logos and classifications | `site/catalog.json`, `site/public/logos/` |
-| Feature definitions / primary-source findings | `site/feature-schema.mjs`, `site/feature-evidence.mjs`, `site/feature-audit.mjs` |
+| Feature definitions / primary-source findings | `site/feature-definitions.json`, `site/feature-reviews.json`, `site/feature-projects.json` |
 
 The suite registry also supplies the website's capture paths. It does not put
 render-only timings, HTTP capacity and startup into a common scoring formula.

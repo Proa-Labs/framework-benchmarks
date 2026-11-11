@@ -65,6 +65,16 @@
           }
         }
       }
+    },
+    {
+      "includes": ["site/test/browser.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNonNullAssertion": "off"
+          }
+        }
+      }
     }
   ],
   "css": {

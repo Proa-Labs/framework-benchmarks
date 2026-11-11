@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as LegacyRouteImport } from './routes/$legacy'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as FeaturesRouteImport } from './routes/features'
 import { Route as MethodologyRouteImport } from './routes/methodology'
@@ -18,11 +17,6 @@ import { Route as MethodologyRouteImport } from './routes/methodology'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LegacyRoute = LegacyRouteImport.update({
-  id: '/$legacy',
-  path: '/$legacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -43,14 +37,12 @@ const MethodologyRoute = MethodologyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/$legacy': typeof LegacyRoute
   '/about': typeof AboutRoute
   '/features': typeof FeaturesRoute
   '/methodology': typeof MethodologyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/$legacy': typeof LegacyRoute
   '/about': typeof AboutRoute
   '/features': typeof FeaturesRoute
   '/methodology': typeof MethodologyRoute
@@ -58,22 +50,20 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/$legacy': typeof LegacyRoute
   '/about': typeof AboutRoute
   '/features': typeof FeaturesRoute
   '/methodology': typeof MethodologyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/$legacy' | '/about' | '/features' | '/methodology'
+  fullPaths: '/' | '/about' | '/features' | '/methodology'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/$legacy' | '/about' | '/features' | '/methodology'
-  id: '__root__' | '/' | '/$legacy' | '/about' | '/features' | '/methodology'
+  to: '/' | '/about' | '/features' | '/methodology'
+  id: '__root__' | '/' | '/about' | '/features' | '/methodology'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  LegacyRoute: typeof LegacyRoute
   AboutRoute: typeof AboutRoute
   FeaturesRoute: typeof FeaturesRoute
   MethodologyRoute: typeof MethodologyRoute
@@ -86,13 +76,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/$legacy': {
-      id: '/$legacy'
-      path: '/$legacy'
-      fullPath: '/$legacy'
-      preLoaderRoute: typeof LegacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -121,7 +104,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  LegacyRoute: LegacyRoute,
   AboutRoute: AboutRoute,
   FeaturesRoute: FeaturesRoute,
   MethodologyRoute: MethodologyRoute,

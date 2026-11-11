@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import appCss from "../app.css?url";
-import themeBootstrap from "../theme-bootstrap.js?raw";
+import themeBootstrap from "../theme-bootstrap.ts?raw";
 import themeCss from "../theme-tokens.css?raw";
 
 export const Route = createRootRoute({

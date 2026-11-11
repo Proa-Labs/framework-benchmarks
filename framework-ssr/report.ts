@@ -8,8 +8,8 @@ export interface Phase {
   loadGeneratorValid: boolean;
   completionThroughputRps: number;
   latencyMs: {
-    complete: { p50: number; p99: number };
-    scheduledComplete: { p50: number; p99: number };
+    complete: { p50: number; p95: number; p99: number };
+    scheduledComplete: { p50: number; p95: number; p99: number };
   };
   cpu: { cpuMsPerSuccessfulRequest: number };
   memory: { peakSampledRssBytes: number };
@@ -31,7 +31,7 @@ export interface Capture {
     framework: string;
     runtime: string;
     phases: Phase[];
-    parity: { pass: boolean };
+    parity: { pass: boolean; responseBytes: number; semanticSha256: string };
   }[];
 }
 export const median = (values: number[]) => summarize(values).p50;

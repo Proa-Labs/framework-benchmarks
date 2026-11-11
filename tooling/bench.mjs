@@ -174,7 +174,7 @@ async function main() {
       run(["run", task]);
     for (const key of Object.keys(suites))
       run(["tooling/bench.mjs", "validate", key]);
-    run(["site/build.mjs"]);
+    run(["site/build.ts"]);
   } else {
     console.log(
       "bun run bench list\nbun run bench doctor <suite>\nbun run bench run <suite> [options]           # local smoke, preserves publication\nbun run bench run <suite> --publish          # full protocol, retains evidence\nbun run bench validate <suite> [capture.json]  # publication + source checks\nbun run bench new-adapter <id>\nbun run bench check                          # portable contributor checks\n\nSee CONTRIBUTING.md for adding adapters/workloads and reproducible capture instructions.",

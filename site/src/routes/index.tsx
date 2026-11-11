@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { PerformancePage } from "../pages/PerformancePage.jsx";
+import { PerformancePage } from "../pages/PerformancePage.tsx";
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>) => search,
   head: ({ match }) => ({
