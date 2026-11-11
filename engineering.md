@@ -5,7 +5,9 @@ These captures answer narrower questions than the scoreboard, and each states it
 <!-- product-scaling:start -->
 ## Product-grid scaling capture
 
-This October 21, 2026 UTC engineering capture repeats the canonical product-grid
+Only Proa was rerun on 2026-11-11; every peer retains its 2026-10-21 measurement and version. These are different capture dates on the same machine.
+
+This November 11, 2026 UTC engineering capture repeats the canonical product-grid
 contract at 12, 96, and 768 cards. Every value includes component/template
 execution and a fresh independently owned response; deterministic input
 construction remains outside timing. All 51 renderer/size cells passed the same
@@ -15,7 +17,7 @@ renders per process respectively.
 
 | Renderer | 12 cards P50 | 96 cards P50 | 768 cards P50 |
 | --- | ---: | ---: | ---: |
-| Proa | 3.208 µs | 26.417 µs | 214.854 µs |
+| Proa | 2.125 µs | 18.291 µs | 141.458 µs |
 | Marko | 12.188 µs | 87.855 µs | 587.188 µs |
 | React | 47.291 µs | 403.083 µs | 3.391 ms |
 | Vue | 12.375 µs | 84.480 µs | 650.021 µs |
@@ -37,7 +39,7 @@ The 96-card column is an independent engineering capture, not a replacement
 for the canonical result. Reproduce the matrix with
 `./rendering/run-all --product-scaling`; the retained summary and per-process
 measurements are in [`rendering/results/product-scaling.json`](rendering/results/product-scaling.json)
-and [its raw process artifact](rendering/results/raw/product-scaling-v1-2026-10-21-77c5c5fce085/process-summaries.json).
+and [its raw process artifact](rendering/results/raw/product-scaling-v1-proa-2026-11-11T05-38-17-489Z/process-summaries.json).
 <!-- product-scaling:end -->
 
 [![Full fresh-response render scaling for seventeen frameworks across twelve, ninety-six and 768 product cards](charts/svg/05-product-card-scaling.svg)](charts/svg/05-product-card-scaling.svg)
@@ -51,28 +53,28 @@ The next two captures ask how close Proa's render sits to the cost of copying it
 
 | Memcpy capture | Date (UTC) | Proa revision |
 | --- | --- | --- |
-| All 12 linked pages | September 7, 2026 | `9f8a8fa9bde1` |
+| All 12 linked pages | November 11, 2026 | `78f9c0edd00e` |
 
 Complete Proa page rendering against a hot-buffer copy of that page's exact
 pre-rendered HTML. Each cell is the median of five process P50s; brackets show
 their min–max range. Rendering includes page construction and fresh output
 allocation. Copying reuses warmed source and destination buffers and excludes
-allocation. All linked pages are included: **4 of 12 are within 10×** in this capture.
+allocation. All linked pages are included: **6 of 12 are within 10×** in this capture.
 
 | Showcase page | Output bytes | Proa P50 µs [min–max] | Memcpy P50 µs [min–max] | Proa / memcpy |
 | --- | ---: | ---: | ---: | ---: |
-| Airbnb parity | 149,339 | 165.792 [164.291–166.750] | 1.415 [1.413–1.420] | 117.15× |
-| Airbnb home | 162,800 | 12.958 [12.834–13.000] | 1.917 [1.862–1.919] | 6.76× |
-| Airbnb search | 49,913 | 3.375 [3.292–3.417] | 0.469 [0.411–0.476] | 7.20× |
-| Airbnb listing | 95,588 | 17.167 [17.125–17.209] | 0.777 [0.762–0.778] | 22.09× |
-| Nike catalog | 128,211 | 19.292 [19.042–19.459] | 1.031 [1.029–1.032] | 18.71× |
-| Nike product | 58,959 | 5.083 [4.958–5.166] | 0.505 [0.489–0.553] | 10.07× |
-| eBay cards | 240,785 | 35.083 [34.875–35.333] | 2.819 [2.807–2.820] | 12.45× |
-| eBay chrome | 522,876 | 47.666 [47.333–48.000] | 6.092 [6.086–6.092] | 7.82× |
-| eBay real chrome | 794,776 | 60.916 [60.041–61.083] | 9.239 [9.239–9.241] | 6.59× |
-| ESPN game page | 33,618 | 7.875 [7.833–8.000] | 0.275 [0.273–0.278] | 28.62× |
-| Sentry OTel, 400 rows | 875,334 | 131.500 [129.250–132.709] | 10.173 [10.171–10.175] | 12.93× |
-| Settings console | 7,860 | 2.917 [2.834–2.917] | 0.073 [0.072–0.080] | 39.78× |
+| Airbnb parity | 149,567 | 172.958 [172.708–173.416] | 1.426 [1.417–1.453] | 121.30× |
+| Airbnb home | 162,883 | 11.292 [11.250–11.333] | 1.926 [1.924–1.947] | 5.86× |
+| Airbnb search | 49,996 | 2.875 [2.833–2.916] | 0.433 [0.420–0.444] | 6.64× |
+| Airbnb listing | 96,250 | 16.625 [16.542–16.708] | 0.781 [0.777–0.783] | 21.28× |
+| Nike catalog | 128,294 | 18.084 [18.041–18.125] | 1.035 [1.031–1.047] | 17.47× |
+| Nike product | 59,042 | 4.500 [4.459–4.666] | 0.488 [0.485–0.501] | 9.21× |
+| eBay cards | 239,235 | 24.750 [24.625–24.792] | 2.802 [2.802–2.808] | 8.83× |
+| eBay chrome | 521,326 | 40.458 [40.375–40.625] | 6.078 [6.076–6.092] | 6.66× |
+| eBay real chrome | 793,226 | 50.791 [50.666–51.042] | 9.250 [9.233–9.273] | 5.49× |
+| ESPN game page | 33,765 | 8.167 [8.167–8.417] | 0.277 [0.276–0.279] | 29.45× |
+| Sentry OTel, 400 rows | 875,478 | 116.542 [114.375–120.208] | 10.213 [10.188–10.256] | 11.41× |
+| Settings console | 7,925 | 2.916 [2.833–3.083] | 0.076 [0.075–0.083] | 38.28× |
 
 Render and copy cells run in seeded randomized blocks, one fresh process per
 page and mode in each of five repeats. Rendering uses 1,000 warmups and 10,000
@@ -92,7 +94,7 @@ See [reproduction instructions](showcase/README.md#memcpy-floor).
 
 | Buffer capture | Date (UTC) | Proa revision |
 | --- | --- | --- |
-| 14 workloads · five processes per cell | 2026-10-21 | `9f8a8fa9bde1` |
+| 14 workloads · five processes per cell | 2026-11-11 | `78f9c0edd00e` |
 
 Standard Proa uses its 4 KiB chained writer. The full-size variant allocates a
 fresh contiguous output buffer for every render, with capacity set to the final
@@ -102,20 +104,20 @@ Memcpy copies the same HTML into a warmed reusable buffer with allocation exclud
 
 | Buffer comparison workload | Output bytes | Default P50 µs [min–max] | Full-size P50 µs [min–max] | Copy P50 µs [min–max] | Default / copy | Full-size / copy | Speedup |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Cards | 25,108 | 1.958 [1.917–2.000] | 1.167 [1.166–1.208] | 0.211 [0.209–0.211] | 9.30× | 5.54× | 1.68× |
-| 96-product grid | 284,908 | 25.000 [24.917–25.750] | 15.458 [15.333–15.459] | 3.331 [3.331–3.331] | 7.51× | 4.64× | 1.62× |
-| 1,000-row table | 988,509 | 240.708 [237.834–241.167] | 270.250 [267.458–274.916] | 11.490 [11.490–11.490] | 20.95× | 23.52× | 0.89× |
-| Airbnb home | 162,800 | 13.041 [13.000–13.084] | 6.750 [6.708–6.833] | 1.919 [1.919–1.919] | 6.80× | 3.52× | 1.93× |
-| Airbnb search | 49,913 | 3.458 [3.458–3.500] | 1.875 [1.833–2.000] | 0.424 [0.408–0.438] | 8.16× | 4.42× | 1.84× |
-| Airbnb listing | 95,588 | 17.375 [17.208–17.417] | 13.958 [13.875–14.000] | 0.766 [0.763–0.771] | 22.69× | 18.23× | 1.24× |
-| Nike catalog | 128,211 | 19.375 [19.375–19.750] | 14.208 [14.084–14.458] | 1.030 [1.028–1.035] | 18.82× | 13.80× | 1.36× |
-| Nike product | 58,959 | 5.167 [5.083–5.209] | 2.916 [2.875–3.000] | 0.480 [0.479–0.504] | 10.76× | 6.07× | 1.77× |
-| eBay cards | 240,785 | 35.292 [34.959–35.333] | 31.917 [31.458–32.083] | 2.820 [2.819–2.837] | 12.52× | 11.32× | 1.11× |
-| eBay chrome | 522,876 | 48.083 [48.000–48.125] | 31.708 [31.542–32.542] | 6.095 [6.093–6.095] | 7.89× | 5.20× | 1.52× |
-| eBay real chrome | 794,776 | 61.041 [60.792–61.042] | 33.042 [32.792–33.458] | 9.242 [9.242–9.244] | 6.60× | 3.58× | 1.85× |
-| ESPN game page | 33,618 | 8.084 [7.833–8.250] | 8.250 [8.166–8.375] | 0.277 [0.274–0.277] | 29.22× | 29.82× | 0.98× |
-| Sentry OTel, 400 rows | 875,334 | 134.834 [132.458–136.292] | 149.667 [145.916–154.209] | 10.177 [10.177–10.185] | 13.25× | 14.71× | 0.90× |
-| Settings console | 7,860 | 2.917 [2.916–3.042] | 2.833 [2.750–2.875] | 0.077 [0.074–0.079] | 37.99× | 36.90× | 1.03× |
+| Cards | 25,108 | 1.291 [1.250–1.333] | 0.750 [0.750–0.750] | 0.248 [0.208–0.289] | 5.21× | 3.02× | 1.72× |
+| 96-product grid | 284,908 | 18.125 [18.041–18.375] | 9.458 [9.209–9.458] | 3.338 [3.333–3.354] | 5.43× | 2.83× | 1.92× |
+| 1,000-row table | 988,509 | 211.084 [209.875–215.792] | 193.375 [191.416–193.917] | 11.498 [11.498–11.515] | 18.36× | 16.82× | 1.09× |
+| Airbnb home | 162,883 | 11.209 [11.208–11.458] | 6.792 [6.750–6.917] | 1.925 [1.924–1.928] | 5.82× | 3.53× | 1.65× |
+| Airbnb search | 49,996 | 2.875 [2.833–2.958] | 1.625 [1.583–1.750] | 0.434 [0.414–0.446] | 6.62× | 3.74× | 1.77× |
+| Airbnb listing | 96,250 | 16.542 [16.250–16.708] | 13.917 [13.875–14.083] | 0.780 [0.779–0.783] | 21.21× | 17.84× | 1.19× |
+| Nike catalog | 128,294 | 18.125 [18.041–18.375] | 14.917 [14.833–15.208] | 1.031 [1.030–1.046] | 17.58× | 14.47× | 1.22× |
+| Nike product | 59,042 | 4.500 [4.500–4.583] | 2.875 [2.750–2.958] | 0.497 [0.489–0.531] | 9.05× | 5.78× | 1.57× |
+| eBay cards | 239,235 | 24.542 [24.459–24.667] | 24.084 [23.750–24.375] | 2.807 [2.803–2.836] | 8.74× | 8.58× | 1.02× |
+| eBay chrome | 521,326 | 40.542 [40.167–41.375] | 30.333 [29.875–30.625] | 6.144 [6.086–6.419] | 6.60× | 4.94× | 1.34× |
+| eBay real chrome | 793,226 | 51.417 [51.292–52.167] | 31.333 [31.250–31.458] | 9.261 [9.229–9.400] | 5.55× | 3.38× | 1.64× |
+| ESPN game page | 33,765 | 8.291 [8.125–8.500] | 7.625 [7.542–7.667] | 0.278 [0.277–0.282] | 29.83× | 27.44× | 1.09× |
+| Sentry OTel, 400 rows | 875,478 | 116.458 [113.291–117.500] | 123.958 [121.334–125.458] | 10.188 [10.181–10.240] | 11.43× | 12.17× | 0.94× |
+| Settings console | 7,925 | 3.041 [2.958–3.083] | 3.000 [2.916–3.042] | 0.076 [0.075–0.077] | 40.02× | 39.48× | 1.01× |
 
 Cells run in seeded randomized blocks, with five fresh processes per workload
 and mode. Values are medians of process P50s; ranges show their min–max.
@@ -157,6 +159,99 @@ These tables keep their original fixtures and measurement boundaries. Their sect
 
 <details>
 <summary>Archived engineering, application, browser, and agent tables (long)</summary>
+
+<!-- proa-engineering:start -->
+## PROA engineering refresh
+
+**2026-11-11 UTC** · Proa `78f9c0edd00e934978f2c7e1fa6a0d06af491407` · Apple M4 Max.
+Only PROA was rerun. Peer Criterion rows below retain their August 30–31 measurements; they are dated engineering context, not simultaneous comparisons. Output ownership, batch sizes, and benchmark sample policies remain as declared in each fixture. Intervals are Criterion's 95% slope intervals (mean intervals for flat sampling). The [retained estimates and samples](rendering/results/proa-pr83-criterion.json) contain all 38 measured PROA rows and the reproduction command.
+
+| Refreshed standard-page row | Output bytes/render | Raw time, µs/10 renders |
+| --- | ---: | ---: |
+| Proa fresh owned | 25,108 | 13.1695 / 13.2606 / 13.3892 |
+| Proa reused chained | 25,108 | 8.0125 / 8.0312 / 8.0519 |
+| Askama | 44,849 | 15.934 / 16.000 / 16.070 |
+| Sailfish | 44,849 | 24.641 / 24.787 / 24.914 |
+| Leptos | 25,219 | 212.79 / 214.07 / 215.36 |
+| Dioxus | 25,141 | 1,053.9 / 1,058.4 / 1,062.7 |
+| Yew | 26,741 | 1,573.5 / 1,622.8 / 1,675.9 |
+| Topcoat cached view render | 25,108 | 50.407 / 50.691 / 51.003 |
+| Topcoat build view and render | 25,108 | 119.17 / 119.64 / 120.10 |
+
+| Refreshed Criterion row | Output bytes | Raw time, µs |
+| --- | ---: | ---: |
+| `escape_heavy/proa_reuse` | 2,729 | 1.0434 / 1.0486 / 1.0539 |
+| `escape_heavy/proa_fresh` | 2,729 | 1.0815 / 1.0864 / 1.0915 |
+| `escape_heavy/askama` | 3,179 | 1.5633 / 1.5963 / 1.6455 |
+| `large_page/proa_reuse` | 269,751 | 8.6715 / 8.7217 / 8.7874 |
+| `large_page/proa_fresh` | 269,751 | 20.4998 / 20.8477 / 21.4782 |
+| `large_page/askama` | 465,296 | 13.521 / 13.666 / 13.781 |
+| `request_burst/proa_100req` | 25,108/request | 85.0196 / 85.4762 / 85.9790 |
+| `request_burst/askama_100req` | 44,849/request | 216.57 / 218.92 / 221.34 |
+| `request_burst/sailfish_100req` | 44,849/request | 292.39 / 294.22 / 295.86 |
+| `airbnb_search/proa_chained` | 20,208 | 0.9111 / 0.9144 / 0.9178 |
+| `airbnb_search/proa_reuse` | 20,208 | 1.2768 / 1.2837 / 1.2909 |
+| `airbnb_search/proa_fresh` | 20,208 | 1.3504 / 1.3586 / 1.3678 |
+| `airbnb_search/askama` | 26,851 | 1.5542 / 1.5755 / 1.6002 |
+| `airbnb_search/sailfish` | 47,970 | 1.3311 / 1.3627 / 1.3932 |
+| `showcase/home_proa_chained` | 162,883 | 7.4083 / 7.4351 / 7.4665 |
+| `showcase/home_sailfish` | 140,627 | 6.2845 / 6.3039 / 6.3237 |
+| `showcase/search_proa_chained` | 49,996 | 1.6130 / 1.6193 / 1.6261 |
+| `showcase/search_sailfish` | 47,970 | 1.0972 / 1.1009 / 1.1046 |
+| `showcase/listing_proa_chained` | 96,250 | 16.8308 / 16.9173 / 17.0071 |
+| `showcase/listing_sailfish` | 100,176 | 3.3948 / 3.4031 / 3.4120 |
+| `showcase/nike_catalog_proa_fresh` | 128,294 | 18.6025 / 18.6671 / 18.7446 |
+| `showcase/nike_catalog_proa_reused` | 128,294 | 16.3420 / 16.3928 / 16.4512 |
+| `showcase/nike_product_proa_fresh` | 59,042 | 4.6110 / 4.6306 / 4.6528 |
+| `showcase/nike_product_proa_reused` | 59,042 | 2.9728 / 2.9873 / 3.0031 |
+| `showcase/ebay_cards_60_proa_fresh` | 239,235 | 25.8148 / 25.8820 / 25.9656 |
+| `showcase/ebay_cards_60_proa_reused` | 239,235 | 18.2691 / 18.3262 / 18.3870 |
+| `showcase/ebay_chrome_60_proa_fresh` | 521,326 | 45.3015 / 45.4278 / 45.5605 |
+| `showcase/ebay_real_chrome_60_proa_fresh` | 793,226 | 56.0587 / 56.2938 / 56.5774 |
+| `showcase/sentry_otel_400_proa_fresh` | 874,615 | 122.6023 / 122.9394 / 123.2784 |
+
+The [data table](rendering/results/proa-pr83-data_table_bench.json), [marketplace SRP](rendering/results/proa-pr83-ebay_srp_bench.json), and [synthetic listings](rendering/results/proa-pr83-ebay_srp_real_bench.json) standalone PROA fixtures were rerun at their default sample counts. Their original cross-language comparisons remain archived.
+
+The integer and product-grid controls below were also rerun for PROA only. Values are µs per render; fresh and reused ownership remain separate.
+
+| PROA benchmark ID | Raw time, µs |
+| --- | ---: |
+| `integer_serialization_fresh_owned/proa/1` | 0.1267 / 0.1279 / 0.1291 |
+| `integer_serialization_fresh_owned/proa/10` | 0.4372 / 0.4389 / 0.4407 |
+| `integer_serialization_fresh_owned/proa/100` | 4.2227 / 4.2340 / 4.2475 |
+| `integer_serialization_fresh_owned/proa/1000` | 43.5657 / 43.7203 / 43.8818 |
+| `integer_serialization_fresh_owned/proa/10000` | 435.7485 / 437.3515 / 439.1825 |
+| `integer_serialization_reused_contiguous/proa/1` | 0.0311 / 0.0312 / 0.0313 |
+| `integer_serialization_reused_contiguous/proa/10` | 0.3382 / 0.3392 / 0.3403 |
+| `integer_serialization_reused_contiguous/proa/100` | 3.5284 / 3.5475 / 3.5789 |
+| `integer_serialization_reused_contiguous/proa/1000` | 35.3651 / 35.4440 / 35.5366 |
+| `integer_serialization_reused_contiguous/proa/10000` | 363.2803 / 364.2689 / 365.5479 |
+| `topcoat_upstream_product_grid/proa_owned_full/12` | 2.0231 / 2.0320 / 2.0417 |
+| `topcoat_upstream_product_grid/proa_owned_full/768` | 146.3149 / 146.7268 / 147.2725 |
+| `topcoat_upstream_product_grid/proa_owned_full/96` | 18.4295 / 18.4787 / 18.5294 |
+| `topcoat_upstream_product_grid/proa_reused_chained_full/12` | 1.1595 / 1.1626 / 1.1666 |
+| `topcoat_upstream_product_grid/proa_reused_chained_full/768` | 84.0593 / 84.4775 / 84.9972 |
+| `topcoat_upstream_product_grid/proa_reused_chained_full/96` | 10.2310 / 10.2605 / 10.2910 |
+
+### Refreshed linked showcase corpus
+
+The locked deployable fixture covers all twelve pages, five independent processes per page, with the original warmup and iteration counts. Raw byte variation is retained separately from canonical JSON-key-order equivalence. The process summaries, binary/source digests and compressed raw-sample link are in [the SSR artifact](showcase/results/ssr-pr83.json). The [browser JavaScript capture](showcase/results/client-js-pr83.json) also reruns all four interactive pages under both desktop and 4× CPU-throttled mobile profiles, with 30 recorded navigations per page/profile. Figure 06 uses these new samples; the original application capture remains in the archive below.
+
+| Refreshed showcase page | Output bytes | Recorded renders | Process-median P50 µs [95% CI] | Pooled P95 µs | Raw bytes stable? |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Airbnb parity | 149,567 | 50,000 | 173.750 [173.375, 174.208] | 185.627 | yes |
+| Airbnb home | 162,883 | 50,000 | 11.292 [11.208, 11.333] | 11.917 | yes |
+| Airbnb search | 49,996 | 50,000 | 2.875 [2.875, 2.916] | 3.042 | yes |
+| Airbnb listing | 96,250 | 50,000 | 16.791 [16.583, 20.292] | 21.542 | no; 5 raw hashes, 1 canonical hash |
+| Nike catalog | 128,294 | 50,000 | 17.958 [17.833, 18.000] | 19.291 | yes |
+| Nike product | 59,042 | 50,000 | 4.542 [4.541, 5.416] | 5.875 | yes |
+| eBay cards | 239,235 | 50,000 | 24.875 [24.833, 24.959] | 26.958 | yes |
+| eBay chrome | 521,326 | 50,000 | 40.417 [40.292, 41.583] | 44.958 | yes |
+| eBay real chrome | 793,226 | 50,000 | 51.000 [50.750, 51.000] | 55.875 | yes |
+| ESPN game page | 33,765 | 50,000 | 8.208 [8.166, 8.250] | 8.583 | yes |
+| Sentry OTel, 400 rows | 875,478 | 1,500 | 115.917 [113.541, 119.333] | 126.720 | yes |
+| Settings console | 7,925 | 50,000 | 3.000 [2.958, 3.041] | 3.209 | yes |
+<!-- proa-engineering:end -->
 
 <!-- historical-results:start -->
 > **Historical and engineering evidence.** The tables below retain their original fixtures and measurement boundaries. Do not compare them with the current canonical scoreboard unless a section explicitly says it uses the same contract. The superseded seven-renderer matrix and the non-parity-gated cross-language loop are preserved as dated evidence, not current rankings.

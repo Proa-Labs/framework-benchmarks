@@ -87,4 +87,8 @@ Lower render time is better for this specific boundary. Results answer only the 
 
 Serializer payload differences remain visible in the detailed report. Tail anomalies and contradictory results remain reported. A production HTTP throughput claim requires a separate suite in which every framework uses its normal server, allocator, pooling, response-management, concurrency, and backpressure behavior.
 
-The current checked-in sample is the September 1, 2026 unified run of all 17 adapters. It contains no value from the older cross-language fixture.
+### Explicit PROA-only refreshes
+
+`--refresh-proa` is a separate comparison mode, not a new simultaneous canonical capture. It requires the same CPU model, architecture and memory as the retained original machine, five new Proa processes per cell, and unchanged semantic DOM digests and payload sizes. The original capture is retained with a SHA-256; every peer measurement, parity record and version must remain identical. Peer measurement capture IDs remain attached to the original capture. New Proa rows use the refresh ID. Reports and charts disclose both dates. `latest.json` records `capture_kind: "proa_refresh"`; ordinary canonical captures continue rejecting mixed capture IDs.
+
+The current checked-in comparison is a PROA-only refresh after Proa PR #83 against the October 21, 2026 Apple M4 Max baseline.

@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "benchmark_version": "product-scaling-v1",
-  "capture_id": "product-scaling-v1-2026-10-21-77c5c5fce085",
+  "capture_id": "product-scaling-v1-proa-2026-11-11T05-38-17-489Z",
   "capture_kind": "engineering",
   "status": "pass",
-  "captured_at": "2026-10-21T01:24:00.128Z",
-  "completed_at": "2026-10-21T01:25:12.440Z",
+  "captured_at": "2026-11-11T05:38:17.489Z",
+  "completed_at": "2026-11-11T05:38:19.110Z",
   "host": {
     "cpu_model": "Apple M4 Max",
     "logical_cpus": 16,
@@ -553,43 +553,46 @@
   "measurements": {
     "proa": {
       "12": {
-        "p50_us": 3.208,
-        "p95_us": 3.334,
-        "p99_us": 4.00041,
-        "mean_us": 3.2302845,
-        "process_p50_min_us": 3.167,
-        "process_p50_max_us": 3.25,
+        "p50_us": 2.125,
+        "p95_us": 2.25,
+        "p99_us": 2.708,
+        "mean_us": 2.1542185000000034,
+        "process_p50_min_us": 2.125,
+        "process_p50_max_us": 2.166,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 35762,
-        "allocation_policy": "standard render_to_string; fresh owned String"
+        "allocation_policy": "standard render_to_string; fresh owned String",
+        "capture_id": "product-scaling-v1-proa-2026-11-11T05-38-17-489Z"
       },
       "96": {
-        "p50_us": 26.417,
-        "p95_us": 28.5,
-        "p99_us": 32.24550999999997,
-        "mean_us": 26.70251999999997,
-        "process_p50_min_us": 25.916999999999998,
-        "process_p50_max_us": 26.709,
+        "p50_us": 18.2915,
+        "p95_us": 20.26249999999999,
+        "p99_us": 22.460659999999997,
+        "mean_us": 18.50515000000001,
+        "process_p50_min_us": 17.875,
+        "process_p50_max_us": 18.541999999999998,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 284908,
-        "allocation_policy": "standard render_to_string; fresh owned String"
+        "allocation_policy": "standard render_to_string; fresh owned String",
+        "capture_id": "product-scaling-v1-proa-2026-11-11T05-38-17-489Z"
       },
       "768": {
-        "p50_us": 214.85399999999998,
-        "p95_us": 226.3979,
-        "p99_us": 233.90416000000002,
-        "mean_us": 215.20460000000006,
-        "process_p50_min_us": 209.708,
-        "process_p50_max_us": 217.14600000000002,
+        "p50_us": 141.45800000000003,
+        "p95_us": 152.07229999999998,
+        "p99_us": 161.75208,
+        "mean_us": 142.80953000000005,
+        "process_p50_min_us": 139.8755,
+        "process_p50_max_us": 143.52100000000002,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
         "output_bytes": 2278716,
-        "allocation_policy": "standard render_to_string; fresh owned String"
+        "allocation_policy": "standard render_to_string; fresh owned String",
+        "capture_id": "product-scaling-v1-proa-2026-11-11T05-38-17-489Z"
       }
     },
     "marko": {
@@ -1250,7 +1253,7 @@
     }
   },
   "versions": {
-    "Proa": "0.3.0 @ 7ffb8a19ecfa601fb496d825e0677dce29ea3af4 / rustc 1.95.0 (59807616e 2026-04-14)",
+    "Proa": "0.4.0 @ 78f9c0edd00e934978f2c7e1fa6a0d06af491407 / rustc 1.95.0 (59807616e 2026-04-14)",
     "Marko": "6.0.150 / Node v24.20.0",
     "React": "19.2.4 / Node v24.20.0",
     "Vue": "3.5.42 / Node v24.20.0",
@@ -1271,15 +1274,28 @@
     "Chromium": "149.0.7827.55"
   },
   "provenance": {
-    "harness_commit": "82f32206ec5c87449e1dfb8ceff9a0e977d883d8",
+    "harness_commit": "92aab464b8718e4eca06f34f522b18decc8364cf",
     "dirty": true,
-    "source_sha256": "77c5c5fce085f658cebcadc649c908b13243b0590cfe0ab214db365bcc70dd2d"
+    "source_sha256": "361074ab55cddaed70a4eafa909852f7afdb7f1d41cf29357a4bae103ff3201e",
+    "os_release": "25.5.0"
   },
-  "command": "./rendering/run-all --product-scaling",
+  "command": "./rendering/run-all --refresh-proa --product-scaling",
   "limitations": [
     "Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.",
     "Every row builds a fresh independently owned response; fixture data construction is outside the timed region.",
-    "This engineering capture describes one machine and one scaling workload; it is not a universal application ranking."
+    "This engineering capture describes one machine and one scaling workload; it is not a universal application ranking.",
+    "Only Proa was rerun on 2026-11-11; every peer retains its 2026-10-21 measurement and version. These are different capture dates on the same machine."
   ],
-  "raw_artifact": "raw/product-scaling-v1-2026-10-21-77c5c5fce085/process-summaries.json"
+  "raw_artifact": "raw/product-scaling-v1-proa-2026-11-11T05-38-17-489Z/process-summaries.json",
+  "refresh": {
+    "renderer": "proa",
+    "baseline_capture_id": "product-scaling-v1-2026-10-21-77c5c5fce085",
+    "baseline_captured_at": "2026-10-21T01:24:00.128Z",
+    "baseline_path": "raw/product-scaling-v1-proa-2026-11-11T05-38-17-489Z/baseline.json",
+    "baseline_sha256": "dee35a2ff803a7729a3614a03fa163b08ea8ddba7e29c46991a346d7aaffb0f4",
+    "note": "Only Proa was rerun on 2026-11-11; every peer retains its 2026-10-21 measurement and version. These are different capture dates on the same machine."
+  },
+  "commands": [
+    "./rendering/run-all --refresh-proa --product-scaling"
+  ]
 }

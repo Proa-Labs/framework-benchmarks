@@ -807,6 +807,9 @@ async function provenance(options, fixture, browserVersions) {
 		/name = "proa_showcase"[\s\S]*?source = "git\+[^#]+#([0-9a-f]{40})"/,
 	)?.[1];
 	const inputPaths = [
+		"fixtures/legacy-ebay-chrome/mod.rs",
+		"fixtures/legacy-ebay-chrome/data/srp_chrome_style.css",
+		"fixtures/legacy-ebay-chrome/data/shell_pre.html",
 		"fixtures/airbnb-parity-dump/Cargo.toml",
 		"fixtures/airbnb-parity-dump/Cargo.lock",
 		"fixtures/airbnb-parity-dump/src/main.rs",

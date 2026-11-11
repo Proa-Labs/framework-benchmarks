@@ -5,26 +5,14 @@
 //! Axum router. Fixture data is built once before the listener opens; every
 //! request renders a fresh, independently owned response.
 
-use std::sync::Arc;
-
 use axum::{routing::get, Json};
 use proa_bench::data_table_page::DataTablePage;
 use proa_bench::http_load::{bind_address, process_metrics, worker_threads};
 use proa_bench::proa_page::SafeTextBenchmarkPage;
 use proa_bench::representative_suite::{product_count, products, table_rows, TABLE_ROW_COUNT};
 use proa_bench::topcoat_product_grid::ProaProductGrid;
-use proa_framework_axum::manifest::IslandManifest;
 use proa_framework_axum::{router_from_spec, Route, RouteContextLayer, RouteResponse};
 use serde_json::json;
-
-fn empty_manifest() -> Arc<IslandManifest> {
-    Arc::new(IslandManifest {
-        islands: Default::default(),
-        assets: Default::default(),
-        import_map: Default::default(),
-        ssr_bundle: Default::default(),
-    })
-}
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let threads = worker_threads()?;
@@ -78,7 +66,7 @@ async fn serve(worker_threads: usize) -> Result<(), Box<dyn std::error::Error>> 
     ];
 
     let (router, computed_metadata) = router_from_spec(routes);
-    let app = router.layer(RouteContextLayer::new(empty_manifest(), computed_metadata));
+    let app = router.layer(RouteContextLayer::new(computed_metadata));
     let listener = tokio::net::TcpListener::bind((host.as_str(), port)).await?;
     println!("Proa page server listening on http://{host}:{port}");
     axum::serve(listener, app).await?;

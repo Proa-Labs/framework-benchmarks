@@ -1,0 +1,3959 @@
+{
+  "schemaVersion": 1,
+  "method": {
+    "unit": "one navigation in a fresh browser context followed by a page-specific verified interaction trace",
+    "order": "complete randomized blocks; one sample from every page/profile cell per block",
+    "cache": "disabled through CDP; service workers blocked; a new context is used for every sample",
+    "transport": "loopback HTTP; documents and JavaScript served with deterministic gzip level 9; Brotli-11 sizes computed offline",
+    "coverage": "V8 precise block coverage, split into initial-load and interaction phases; UTF-16 offsets converted to UTF-8 bytes",
+    "heap": "Runtime.getHeapUsage immediately after an explicit HeapProfiler.collectGarbage",
+    "confidenceIntervals": "deterministic 95% percentile bootstrap of the median (5000 resamples)",
+    "externalResources": "fulfilled locally with HTTP 204; only fixture HTML and linked RSJS JavaScript are measured"
+  },
+  "configuration": {
+    "pages": [
+      "airbnb-parity",
+      "espn",
+      "sentry-otel",
+      "settings-console"
+    ],
+    "profiles": {
+      "desktop": {
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "deviceScaleFactor": 1,
+        "cpuSlowdown": 1,
+        "latencyMs": 5,
+        "downloadKbps": 100000,
+        "uploadKbps": 100000
+      },
+      "mobile4x": {
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "deviceScaleFactor": 2,
+        "isMobile": true,
+        "hasTouch": true,
+        "cpuSlowdown": 4,
+        "latencyMs": 40,
+        "downloadKbps": 10000,
+        "uploadKbps": 5000
+      }
+    },
+    "runsPerCell": 30,
+    "browserRestarts": 3,
+    "blocksPerBrowser": [
+      10,
+      10,
+      10
+    ],
+    "warmupRunsPerCellPerBrowser": 2,
+    "settleMs": 75,
+    "seed": 8402026,
+    "bootstrapResamples": 5000
+  },
+  "provenance": {
+    "generatedAt": "2026-11-11T05:51:55.065Z",
+    "repository": {
+      "commit": "92aab464b8718e4eca06f34f522b18decc8364cf",
+      "branch": "codex/proa-pr83-benchmark-refresh",
+      "status": "M Cargo.lock\n M README.md\n M charts/README.md\n M charts/figures/application.mjs\n M charts/figures/canonical.mjs\n M charts/figures/engineering.mjs\n M charts/figures/pages.mjs\n M charts/figures/suspense.mjs\n M charts/lib/tables.mjs\n M charts/svg/01-canonical-scoreboard.svg\n M charts/svg/02-canonical-tail-dispersion.svg\n M charts/svg/04-criterion-microbenchmarks.svg\n M charts/svg/05-product-card-scaling.svg\n M charts/svg/07-suspense-load.svg\n M charts/svg/08-canonical-pages-http.svg\n M charts/svg/09-cold-start.svg\n M cold-start/report.mjs\n M cold-start/results/latest.json\n M engineering.md\n M fixtures/airbnb-parity-dump/Cargo.lock\n M fixtures/airbnb-parity-dump/Cargo.toml\n M fixtures/airbnb-parity-dump/src/main.rs\n M fixtures/proa-buffer-comparison/Cargo.lock\n M fixtures/proa-buffer-comparison/src/preallocated.rs\n M http-capacity.md\n M page-load/report.mjs\n M page-load/results/latest.json\n M rendering/README.md\n M rendering/benches/showcase_pages.rs\n M rendering/canonical/report.mjs\n M rendering/canonical/report.test.mjs\n M rendering/canonical/run.mjs\n M rendering/canonical/source_fingerprint.mjs\n M rendering/generate-report.mjs\n M rendering/protocol.md\n M rendering/results/latest.json\n M rendering/results/latest.md\n M rendering/results/product-scaling.json\n M rendering/src/bin/proa_page_server.rs\n M rendering/src/bin/proa_suspense_server.rs\n M rendering/src/ebay_srp_page.rs\n M rendering/src/ebay_srp_real.rs\n M rendering/src/lib.rs\n M rendering/src/proa_page.rs\n M rendering/src/topcoat_product_grid.rs\n M scoreboard.md\n M scripts/refresh-proa.sh\n M showcase/capture_buffers.mjs\n M showcase/capture_client_js.mjs\n M showcase/capture_memcpy.mjs\n M showcase/capture_ssr.mjs\n M showcase/results/buffer-comparison.json\n M showcase/results/memcpy-floor.json\n M suspense-load/report.mjs\n M suspense-load/results/latest.json\n M sveltekit/README.md\n M sveltekit/report.mjs\n M sveltekit/sources.mjs\n?? cold-start/results/raw/\n?? fixtures/legacy-ebay-chrome/\n?? page-load/results/raw/\n?? rendering/canonical/refresh-proa.mjs\n?? rendering/results/archive/canonical-ssr-v1-proa-2026-11-11T05-27-20-700Z.json\n?? rendering/results/archive/canonical-ssr-v1-proa-2026-11-11T05-38-15-421Z.json\n?? rendering/results/archive/product-scaling-v1-proa-2026-11-11T05-27-37-008Z.json\n?? rendering/results/archive/product-scaling-v1-proa-2026-11-11T05-38-17-489Z.json\n?? rendering/results/raw/canonical-ssr-v1-proa-2026-11-11T05-27-20-700Z/\n?? rendering/results/raw/canonical-ssr-v1-proa-2026-11-11T05-38-15-421Z/\n?? rendering/results/raw/product-scaling-v1-proa-2026-11-11T05-27-37-008Z/\n?? rendering/results/raw/product-scaling-v1-proa-2026-11-11T05-38-17-489Z/\n?? scripts/bench-proa-engineering.sh\n?? scripts/merge-proa-refresh.mjs\n?? scripts/proa-refresh-evidence.mjs\n?? scripts/proa-refresh-evidence.test.mjs\n?? scripts/report-proa-engineering.mjs\n?? scripts/retain-proa-engineering.mjs\n?? sveltekit/refresh-proa.mjs"
+    },
+    "proaRevision": "78f9c0edd00e934978f2c7e1fa6a0d06af491407",
+    "fixtureBinary": {
+      "path": "/Users/andrewhariri/Desktop/proa-benchmarks-pr83/fixtures/airbnb-parity-dump/target/showcase-dump",
+      "bytes": 5400128,
+      "sha256": "06bd4d0dca2c0f18eb55af5c02383e336fb648a4c9d9f15c5841c921ead21ea6",
+      "modifiedAt": "2026-11-11T05:45:21.917Z",
+      "buildCommand": "cargo-proa proa build --root fixtures/airbnb-parity-dump --no-check --no-assets -p proa_bench_airbnb_parity_dump --artifact-out target/showcase-dump"
+    },
+    "inputs": [
+      {
+        "path": "fixtures/legacy-ebay-chrome/mod.rs",
+        "bytes": 36390,
+        "sha256": "47f8f3e526bda00a25ec2a2a4030d1c306827a3701f7e8c917ac573371f6d2eb"
+      },
+      {
+        "path": "fixtures/legacy-ebay-chrome/data/srp_chrome_style.css",
+        "bytes": 5466,
+        "sha256": "f34000e8991912b790b32627028cd1ca5346d61103a8239cb0c140c45a48c169"
+      },
+      {
+        "path": "fixtures/legacy-ebay-chrome/data/shell_pre.html",
+        "bytes": 725591,
+        "sha256": "bfca3d5cbd7f8bcb8ccade097267c72303d655ca1d65e238a57b523b58a8d91a"
+      },
+      {
+        "path": "fixtures/airbnb-parity-dump/Cargo.toml",
+        "bytes": 627,
+        "sha256": "13f26db39d33e9078188f40e1983060a9782d65af6a223862540d4f1274f630f"
+      },
+      {
+        "path": "fixtures/airbnb-parity-dump/Cargo.lock",
+        "bytes": 29862,
+        "sha256": "bba976b39565ebc85b8f7d2c566cf9dbbe1c4a569d5a74fb4bca28a782042afc"
+      },
+      {
+        "path": "fixtures/airbnb-parity-dump/src/main.rs",
+        "bytes": 15827,
+        "sha256": "21f2e2f60ef2d0accda769e3912da11e68614752b5c00537e8f3ff5aa062e3fb"
+      },
+      {
+        "path": "package.json",
+        "bytes": 5504,
+        "sha256": "2c83659bd7aa6f4b1b862aa5a770c28f68008019452e179d29ce010638cc7cf6"
+      },
+      {
+        "path": "pnpm-lock.yaml",
+        "bytes": 10273,
+        "sha256": "bf5bbf12e818615ccd0b91547abd2bbc82e13b147f9165c2e19da8aa6ad04d59"
+      },
+      {
+        "path": "pnpm-workspace.yaml",
+        "bytes": 46,
+        "sha256": "e4025590afcb0a904a1a1c9c4f55b6bcc00c47ba1851811b8142b07945050cd1"
+      },
+      {
+        "path": "showcase/capture_client_js.mjs",
+        "bytes": 33297,
+        "sha256": "1399790f50f3b700bc33427dc890371e2c7c36f82f9ea3c749fef784408faeca"
+      },
+      {
+        "path": "showcase/client_js_stats.mjs",
+        "bytes": 4572,
+        "sha256": "c385649809fcf52eb0b0a4aefd3d5cbed13fde65111e67a249f15b65186e0a91"
+      },
+      {
+        "path": "showcase/workloads.mjs",
+        "bytes": 7391,
+        "sha256": "bb090d3bf8c8843bf48f1ee44fa8a2ed4c8603426c1b356bbc4d6866aabf8d47"
+      }
+    ],
+    "runtimeAssets": [
+      {
+        "key": "runtime-core",
+        "kind": "runtime",
+        "rawBytes": 186854,
+        "gzip9Bytes": 46815,
+        "brotli11Bytes": 39017,
+        "sha256": "a743f1337e3357783e1a792a74fb01632d6dd6c7cf6cc659eca0bbf46dbc4049"
+      },
+      {
+        "key": "runtime-query",
+        "kind": "query-runtime",
+        "rawBytes": 86906,
+        "gzip9Bytes": 22494,
+        "brotli11Bytes": 18967,
+        "sha256": "0a642d46209b6d4e5480410980e396d7a6f6976932c30a3b1bc37710f40f5bbf"
+      },
+      {
+        "key": "rsjs_owner_2f9c594270c7e4f391d2bf5df4b6bdb7878e2e4436b29a41f87d069f7bf565e8",
+        "kind": "island-owner",
+        "rawBytes": 29256,
+        "gzip9Bytes": 3159,
+        "brotli11Bytes": 2152,
+        "sha256": "4b8ca9817a38aae956d4ee411a48f52d195f69ae4988b62ee338f825ce518ad9"
+      },
+      {
+        "key": "rsjs_owner_3aa614cdbdf65c858a72e30ad2c6c1b1dc9fed076b4b9d7900a08b02d7e726ec",
+        "kind": "island-owner",
+        "rawBytes": 2784,
+        "gzip9Bytes": 877,
+        "brotli11Bytes": 740,
+        "sha256": "c4cc9d4559e993f945827d1751245e3edc9ea1790b576ca3703cddedc482f626"
+      },
+      {
+        "key": "rsjs_owner_4e7d935d5ce5ae442bd9eb66308b3e0c1dca7533a5fc5475e89d2ee8fcfdf071",
+        "kind": "island-owner",
+        "rawBytes": 2788,
+        "gzip9Bytes": 876,
+        "brotli11Bytes": 746,
+        "sha256": "4890848201a078d82fbc6bf13be0b6062ff96eb879663a19da7bddadf6acedc3"
+      },
+      {
+        "key": "rsjs_owner_4f32a6d545d54b76fc3092b178c6715a18ebb2a5251392949674b87541093fd9",
+        "kind": "island-owner",
+        "rawBytes": 2784,
+        "gzip9Bytes": 879,
+        "brotli11Bytes": 737,
+        "sha256": "4fd5018bada854d9bbf7465fb78f5e56b439328a45a91171cc507db6eb349630"
+      },
+      {
+        "key": "component_rsjs_fragment_5387e608571c4c02a65b9b2fc024c470922fbfa0c5fc652675fea0109cfeb09b",
+        "kind": "component-fragment",
+        "rawBytes": 11522,
+        "gzip9Bytes": 1686,
+        "brotli11Bytes": 1290,
+        "sha256": "353f7252987c7e98ae575a9fa8a4403d741a99badd8cc4094e30ac4e31357848"
+      },
+      {
+        "key": "component_rsjs_fragment_6efb8e3c7ddf58df8a691fc79af0c957660fa38908be7078315c8ddaa4d8e599",
+        "kind": "component-fragment",
+        "rawBytes": 2479,
+        "gzip9Bytes": 742,
+        "brotli11Bytes": 626,
+        "sha256": "092dd0d807303e8983095976cea4d0a92e5891e42c56d15e8a16fca341b1adb6"
+      },
+      {
+        "key": "component_rsjs_fragment_a90f7c0c08f7a04c23c73d74a23c4c6825c2554b6e5d8598d5d9d7826009c604",
+        "kind": "component-fragment",
+        "rawBytes": 2246,
+        "gzip9Bytes": 811,
+        "brotli11Bytes": 709,
+        "sha256": "6d164166fa6ae77c24c41a2ec70e3e2ebbd07a714065194b77d77d92e455576f"
+      },
+      {
+        "key": "component_rsjs_fragment_dd3d55fa9aaa2d237004275c481c3cedd4eee2fcef401b84d2e5b487c440fb1c",
+        "kind": "component-fragment",
+        "rawBytes": 4622,
+        "gzip9Bytes": 1290,
+        "brotli11Bytes": 1100,
+        "sha256": "46211f29fc20305e19cac937a7b3836ff641238322f95a7628c5cc191a0afbf6"
+      },
+      {
+        "key": "component_rsjs_fragment_e13e6100fe6e927947adac7b63aa45dc28d7d5b5c90879546f9c59de5d0d9813",
+        "kind": "component-fragment",
+        "rawBytes": 51271,
+        "gzip9Bytes": 5354,
+        "brotli11Bytes": 3803,
+        "sha256": "b1f3353d6f02a825b5864a30f96e91d4753e38f6651b9400cc203afcf3ce3e0a"
+      }
+    ],
+    "node": "v24.20.0",
+    "playwright": "1.61.1",
+    "browserVersions": [
+      "149.0.7827.55"
+    ],
+    "browserExecutable": "/Users/andrewhariri/Library/Caches/ms-playwright/chromium-1228/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+    "host": {
+      "hostname": "mac.lan",
+      "platform": "darwin",
+      "osRelease": "25.5.0",
+      "cpuModel": "Apple M4 Max",
+      "logicalCpuCount": 16,
+      "totalMemoryBytes": 137438953472,
+      "freeMemoryBytesAtReport": 7350747136
+    }
+  },
+  "summaries": [
+    {
+      "page": "airbnb-parity",
+      "profile": "desktop",
+      "description": "large travel landing page with nested islands and broad UI state",
+      "runs": 30,
+      "browserInstances": 3,
+      "document": {
+        "key": "airbnb-parity",
+        "kind": "document",
+        "rawBytes": 149567,
+        "gzip9Bytes": 16026,
+        "brotli11Bytes": 12616,
+        "sha256": "f59f401ed608f4c8a3da3c7049e0f2c09972eda45e73ebca75e22eac020fa51a"
+      },
+      "javascript": {
+        "assetSets": [
+          [
+            "component_rsjs_fragment_dd3d55fa9aaa2d237004275c481c3cedd4eee2fcef401b84d2e5b487c440fb1c",
+            "component_rsjs_fragment_e13e6100fe6e927947adac7b63aa45dc28d7d5b5c90879546f9c59de5d0d9813",
+            "rsjs_owner_2f9c594270c7e4f391d2bf5df4b6bdb7878e2e4436b29a41f87d069f7bf565e8",
+            "runtime-core",
+            "runtime-query"
+          ]
+        ],
+        "requestCount": 5,
+        "uniqueRequestCount": 5,
+        "rawBytes": 358909,
+        "gzip9BodyBytes": 79112,
+        "brotli11BodyBytes": 65039
+      },
+      "metrics": {
+        "navigation.requestToFirstByteMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.09999990463256836,
+          "mean": 0.1733332633972168,
+          "p50": 0.19999980926513672,
+          "p95": 0.20000028610229492,
+          "max": 0.40000009536743164,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.14999985694885254,
+            "high": 0.19999980926513672
+          }
+        },
+        "navigation.loadMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 52.89999961853027,
+          "mean": 72.15999997456869,
+          "p50": 73.7000002861023,
+          "p95": 76.69999980926514,
+          "max": 76.80000019073486,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 72.10000014305115,
+            "high": 74.35000014305115
+          }
+        },
+        "navigation.readyWallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 130.32849999999962,
+          "mean": 149.64238329999984,
+          "p50": 151.05556250000154,
+          "p95": 154.200614699996,
+          "max": 154.55583399999887,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 149.77662500000042,
+            "high": 152.15060449999964
+          }
+        },
+        "navigation.firstContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 36,
+          "mean": 39.6,
+          "p50": 40,
+          "p95": 44,
+          "max": 44,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 40,
+            "high": 40
+          }
+        },
+        "navigation.largestContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 36,
+          "mean": 39.6,
+          "p50": 40,
+          "p95": 44,
+          "max": 44,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 40,
+            "high": 40
+          }
+        },
+        "navigation.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 6.635000000000001,
+          "mean": 6.850199999999998,
+          "p50": 6.8740000000000006,
+          "p95": 7.02515,
+          "max": 7.114,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 6.812,
+            "high": 6.9105
+          }
+        },
+        "initial.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 45.324,
+          "mean": 46.59653333333332,
+          "p50": 46.353,
+          "p95": 48.36704999999999,
+          "max": 48.705999999999996,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 46.089,
+            "high": 46.9725
+          }
+        },
+        "initial.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 7.577,
+          "mean": 8.3559,
+          "p50": 8.36,
+          "p95": 8.7846,
+          "max": 9.179,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 8.2665,
+            "high": 8.468499999999999
+          }
+        },
+        "initial.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 5.473999999999999,
+          "mean": 6.009899999999999,
+          "p50": 6.019500000000001,
+          "p95": 6.293,
+          "max": 6.398,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 5.89,
+            "high": 6.1625
+          }
+        },
+        "initial.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2186672,
+          "mean": 2186710.4,
+          "p50": 2186736,
+          "p95": 2186736,
+          "max": 2186736,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2186672,
+            "high": 2186736
+          }
+        },
+        "initial.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2560096,
+          "mean": 2560631.2,
+          "p50": 2560584,
+          "p95": 2561800.4,
+          "max": 2563008,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2560176,
+            "high": 2560624
+          }
+        },
+        "interaction.wallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 126.43279199999233,
+          "mean": 132.2692999666661,
+          "p50": 132.407021,
+          "p95": 136.3940125000019,
+          "max": 140.4230840000091,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 131.28831200000332,
+            "high": 132.9556249999987
+          }
+        },
+        "interaction.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.8149999999999997,
+          "mean": 0.8781666666666668,
+          "p50": 0.8665,
+          "p95": 0.9680500000000003,
+          "max": 1.005,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.8554999999999999,
+            "high": 0.8844999999999998
+          }
+        },
+        "interaction.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "interaction.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 29.757000000000005,
+          "mean": 30.6135,
+          "p50": 30.482,
+          "p95": 31.842850000000002,
+          "max": 33.123999999999995,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 30.3,
+            "high": 30.6655
+          }
+        },
+        "interaction.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 7.507999999999999,
+          "mean": 7.993966666666668,
+          "p50": 7.998000000000001,
+          "p95": 8.15055,
+          "max": 8.431,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 7.955000000000002,
+            "high": 8.046000000000001
+          }
+        },
+        "interaction.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.876,
+          "mean": 0.9306666666666668,
+          "p50": 0.9195000000000002,
+          "p95": 1.0024,
+          "max": 1.045,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.9095000000000002,
+            "high": 0.9420000000000002
+          }
+        },
+        "interaction.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 3105440,
+          "mean": 3105516.8,
+          "p50": 3105568,
+          "p95": 3105568,
+          "max": 3105568,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 3105440,
+            "high": 3105568
+          }
+        },
+        "interaction.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2797696,
+          "mean": 2798225.3333333335,
+          "p50": 2798124,
+          "p95": 2799482.4,
+          "max": 2800608,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2797836,
+            "high": 2798188
+          }
+        },
+        "interaction.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 42.8292408382069,
+          "mean": 42.82924083820692,
+          "p50": 42.8292408382069,
+          "p95": 42.8292408382069,
+          "max": 42.8292408382069,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 42.8292408382069,
+            "high": 42.8292408382069
+          }
+        },
+        "interaction.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 3.6892975445123763,
+          "mean": 3.689297544512375,
+          "p50": 3.6892975445123763,
+          "p95": 3.6892975445123763,
+          "max": 3.6892975445123763,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 3.6892975445123763,
+            "high": 3.6892975445123763
+          }
+        },
+        "cumulativeCoverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 43.90444374479325,
+          "mean": 43.90444374479328,
+          "p50": 43.90444374479325,
+          "p95": 43.90444374479325,
+          "max": 43.90444374479325,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 43.90444374479325,
+            "high": 43.90444374479325
+          }
+        },
+        "cumulativeCoverage.executedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 157577,
+          "mean": 157577,
+          "p50": 157577,
+          "p95": 157577,
+          "max": 157577,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 157577,
+            "high": 157577
+          }
+        },
+        "javascript.networkEncodedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 80334,
+          "mean": 80334,
+          "p50": 80334,
+          "p95": 80334,
+          "max": 80334,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 80334,
+            "high": 80334
+          }
+        }
+      }
+    },
+    {
+      "page": "airbnb-parity",
+      "profile": "mobile4x",
+      "description": "large travel landing page with nested islands and broad UI state",
+      "runs": 30,
+      "browserInstances": 3,
+      "document": {
+        "key": "airbnb-parity",
+        "kind": "document",
+        "rawBytes": 149567,
+        "gzip9Bytes": 16026,
+        "brotli11Bytes": 12616,
+        "sha256": "f59f401ed608f4c8a3da3c7049e0f2c09972eda45e73ebca75e22eac020fa51a"
+      },
+      "javascript": {
+        "assetSets": [
+          [
+            "component_rsjs_fragment_dd3d55fa9aaa2d237004275c481c3cedd4eee2fcef401b84d2e5b487c440fb1c",
+            "component_rsjs_fragment_e13e6100fe6e927947adac7b63aa45dc28d7d5b5c90879546f9c59de5d0d9813",
+            "rsjs_owner_2f9c594270c7e4f391d2bf5df4b6bdb7878e2e4436b29a41f87d069f7bf565e8",
+            "runtime-core",
+            "runtime-query"
+          ]
+        ],
+        "requestCount": 5,
+        "uniqueRequestCount": 5,
+        "rawBytes": 358909,
+        "gzip9BodyBytes": 79112,
+        "brotli11BodyBytes": 65039
+      },
+      "metrics": {
+        "navigation.requestToFirstByteMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0.14333327611287436,
+          "p50": 0.10000014305114746,
+          "p95": 0.20000028610229492,
+          "max": 0.3000001907348633,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.09999990463256836,
+            "high": 0.19999980926513672
+          }
+        },
+        "navigation.loadMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 243.19999980926514,
+          "mean": 275.0499999364217,
+          "p50": 258.75,
+          "p95": 333.2549999475479,
+          "max": 347.5,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 252.30000019073486,
+            "high": 293.09999990463257
+          }
+        },
+        "navigation.readyWallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 320.3417499999923,
+          "mean": 351.60490840000085,
+          "p50": 335.21183349999774,
+          "p95": 410.4331043499992,
+          "max": 425.734209000002,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 328.9934790000043,
+            "high": 369.85256180000107
+          }
+        },
+        "navigation.firstContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 96,
+          "mean": 115.2,
+          "p50": 116,
+          "p95": 128,
+          "max": 128,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 110,
+            "high": 124
+          }
+        },
+        "navigation.largestContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 96,
+          "mean": 115.2,
+          "p50": 116,
+          "p95": 128,
+          "max": 128,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 110,
+            "high": 124
+          }
+        },
+        "navigation.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 20.466666666666665,
+          "p50": 0,
+          "p95": 52,
+          "max": 54,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 50
+          }
+        },
+        "initial.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 25.44,
+          "mean": 27.1149,
+          "p50": 26.807000000000002,
+          "p95": 29.79175,
+          "max": 30.807000000000002,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 26.641,
+            "high": 27.0375
+          }
+        },
+        "initial.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 172.655,
+          "mean": 179.6566666666667,
+          "p50": 178.9765,
+          "p95": 187.23324999999997,
+          "max": 188.20399999999998,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 177.33249999999998,
+            "high": 181.07973749999996
+          }
+        },
+        "initial.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 26.703,
+          "mean": 30.99273333333333,
+          "p50": 30.855,
+          "p95": 33.71,
+          "max": 34.821999999999996,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 30.3525,
+            "high": 32.006
+          }
+        },
+        "initial.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 17.876,
+          "mean": 20.867733333333334,
+          "p50": 20.7155,
+          "p95": 22.46975,
+          "max": 23.031,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 20.354,
+            "high": 21.2645
+          }
+        },
+        "initial.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2230792,
+          "mean": 2231472,
+          "p50": 2230856,
+          "p95": 2232460,
+          "max": 2232460,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2230856,
+            "high": 2232396
+          }
+        },
+        "initial.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2462152,
+          "mean": 2474766.933333333,
+          "p50": 2468372,
+          "p95": 2491130.8,
+          "max": 2491560,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2464632,
+            "high": 2484352
+          }
+        },
+        "interaction.wallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 228.9184169999935,
+          "mean": 242.78386243333244,
+          "p50": 242.80954150000616,
+          "p95": 256.58308124999746,
+          "max": 258.5821670000005,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 238.7064375000009,
+            "high": 245.50739549999707
+          }
+        },
+        "interaction.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 1.6320000000000014,
+          "mean": 3.3323666666666654,
+          "p50": 3.3200000000000003,
+          "p95": 4.650099999999997,
+          "max": 5.180000000000001,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2.990999999999997,
+            "high": 3.7059999999999995
+          }
+        },
+        "interaction.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "interaction.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 114.39700000000002,
+          "mean": 122.82849999999999,
+          "p50": 120.9265,
+          "p95": 132.82764999999998,
+          "max": 135.77800000000002,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 119.52149999999997,
+            "high": 124.4175
+          }
+        },
+        "interaction.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 28.466000000000005,
+          "mean": 31.81093333333333,
+          "p50": 31.502499999999998,
+          "p95": 35.3228,
+          "max": 37.507000000000005,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 31.245999999999995,
+            "high": 32.283
+          }
+        },
+        "interaction.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 1.6539999999999992,
+          "mean": 3.673566666666667,
+          "p50": 3.700500000000001,
+          "p95": 5.189449999999999,
+          "max": 5.714,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 3.1445,
+            "high": 4.262999999999999
+          }
+        },
+        "interaction.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 3134884,
+          "mean": 3135630.6666666665,
+          "p50": 3135088,
+          "p95": 3136616,
+          "max": 3136692,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 3135032,
+            "high": 3136488
+          }
+        },
+        "interaction.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2700496,
+          "mean": 2709030.933333333,
+          "p50": 2703740,
+          "p95": 2725858.8,
+          "max": 2726208,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2700968,
+            "high": 2710864
+          }
+        },
+        "interaction.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 42.8292408382069,
+          "mean": 42.82924083820692,
+          "p50": 42.8292408382069,
+          "p95": 42.8292408382069,
+          "max": 42.8292408382069,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 42.8292408382069,
+            "high": 42.8292408382069
+          }
+        },
+        "interaction.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 3.6892975445123763,
+          "mean": 3.689297544512375,
+          "p50": 3.6892975445123763,
+          "p95": 3.6892975445123763,
+          "max": 3.6892975445123763,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 3.6892975445123763,
+            "high": 3.6892975445123763
+          }
+        },
+        "cumulativeCoverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 43.90444374479325,
+          "mean": 43.90444374479328,
+          "p50": 43.90444374479325,
+          "p95": 43.90444374479325,
+          "max": 43.90444374479325,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 43.90444374479325,
+            "high": 43.90444374479325
+          }
+        },
+        "cumulativeCoverage.executedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 157577,
+          "mean": 157577,
+          "p50": 157577,
+          "p95": 157577,
+          "max": 157577,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 157577,
+            "high": 157577
+          }
+        },
+        "javascript.networkEncodedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 80334,
+          "mean": 80334,
+          "p50": 80334,
+          "p95": 80334,
+          "max": 80334,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 80334,
+            "high": 80334
+          }
+        }
+      }
+    },
+    {
+      "page": "espn",
+      "profile": "desktop",
+      "description": "sports game page with mutually exclusive, structurally different tabs",
+      "runs": 30,
+      "browserInstances": 3,
+      "document": {
+        "key": "espn",
+        "kind": "document",
+        "rawBytes": 33765,
+        "gzip9Bytes": 7782,
+        "brotli11Bytes": 6639,
+        "sha256": "5cc3e03eb779924ea0e67cd7e85889bc4ba795a20dd424b4b50cda8129a03441"
+      },
+      "javascript": {
+        "assetSets": [
+          [
+            "component_rsjs_fragment_6efb8e3c7ddf58df8a691fc79af0c957660fa38908be7078315c8ddaa4d8e599",
+            "rsjs_owner_4e7d935d5ce5ae442bd9eb66308b3e0c1dca7533a5fc5475e89d2ee8fcfdf071",
+            "runtime-core"
+          ]
+        ],
+        "requestCount": 3,
+        "uniqueRequestCount": 3,
+        "rawBytes": 192121,
+        "gzip9BodyBytes": 48433,
+        "brotli11BodyBytes": 40389
+      },
+      "metrics": {
+        "navigation.requestToFirstByteMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.09999990463256836,
+          "mean": 0.16666663487752278,
+          "p50": 0.19999980926513672,
+          "p95": 0.25500023365020724,
+          "max": 0.3000001907348633,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.09999990463256836,
+            "high": 0.19999980926513672
+          }
+        },
+        "navigation.loadMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 36.5,
+          "mean": 40.00999999046326,
+          "p50": 40.10000014305115,
+          "p95": 42.609999895095825,
+          "max": 43.5,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 39.39750009775163,
+            "high": 41.14999985694885
+          }
+        },
+        "navigation.readyWallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 114.0291670000006,
+          "mean": 117.31270416666557,
+          "p50": 116.883896000003,
+          "p95": 120.2722106000023,
+          "max": 121.8544159999874,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 115.95847899999717,
+            "high": 118.62218749999738
+          }
+        },
+        "navigation.firstContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 44,
+          "mean": 45.86666666666667,
+          "p50": 44,
+          "p95": 48,
+          "max": 48,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 44,
+            "high": 48
+          }
+        },
+        "navigation.largestContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 44,
+          "mean": 45.86666666666667,
+          "p50": 44,
+          "p95": 48,
+          "max": 48,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 44,
+            "high": 48
+          }
+        },
+        "navigation.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 2.3800000000000003,
+          "mean": 2.6477666666666666,
+          "p50": 2.6485000000000003,
+          "p95": 2.74715,
+          "max": 2.833,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2.6345,
+            "high": 2.6809999999999996
+          }
+        },
+        "initial.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 37.03,
+          "mean": 39.32916666666667,
+          "p50": 39.152,
+          "p95": 41.13335,
+          "max": 42.652,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 38.8145,
+            "high": 39.7435
+          }
+        },
+        "initial.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 15.599,
+          "mean": 16.487033333333336,
+          "p50": 16.4445,
+          "p95": 17.34975,
+          "max": 17.67,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 16.235,
+            "high": 16.706674999999997
+          }
+        },
+        "initial.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.972,
+          "mean": 1.0735000000000003,
+          "p50": 1.0765,
+          "p95": 1.1545,
+          "max": 1.171,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1.0445,
+            "high": 1.105
+          }
+        },
+        "initial.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 1634248,
+          "mean": 1634273.6,
+          "p50": 1634280,
+          "p95": 1634280,
+          "max": 1634280,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1634280,
+            "high": 1634280
+          }
+        },
+        "initial.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2210744,
+          "mean": 2211229.066666667,
+          "p50": 2210872,
+          "p95": 2212270,
+          "max": 2212288,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2210872,
+            "high": 2211696
+          }
+        },
+        "interaction.wallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 105.2179160000087,
+          "mean": 112.25762636666623,
+          "p50": 112.81275000000278,
+          "p95": 116.61294145000429,
+          "max": 118.69550000000163,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 110.19472949999908,
+            "high": 114.43581249999261
+          }
+        },
+        "interaction.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.2170000000000002,
+          "mean": 0.2517000000000001,
+          "p50": 0.24899999999999986,
+          "p95": 0.2984999999999998,
+          "max": 0.32400000000000007,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.23599999999999988,
+            "high": 0.25650000000000023
+          }
+        },
+        "interaction.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "interaction.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 17.300000000000004,
+          "mean": 18.337666666666667,
+          "p50": 18.359,
+          "p95": 19.564949999999996,
+          "max": 21.563,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 17.868500000000004,
+            "high": 18.58
+          }
+        },
+        "interaction.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 3.9409999999999985,
+          "mean": 4.191966666666665,
+          "p50": 4.1555,
+          "p95": 4.620499999999998,
+          "max": 4.768999999999999,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 4.106999999999999,
+            "high": 4.2075
+          }
+        },
+        "interaction.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 1.199,
+          "mean": 1.2953999999999999,
+          "p50": 1.2950000000000002,
+          "p95": 1.4098499999999998,
+          "max": 1.488,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1.254,
+            "high": 1.324
+          }
+        },
+        "interaction.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2410828,
+          "mean": 2410904.8,
+          "p50": 2410924,
+          "p95": 2410924,
+          "max": 2410924,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2410924,
+            "high": 2410924
+          }
+        },
+        "interaction.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2292648,
+          "mean": 2293555.466666667,
+          "p50": 2293672,
+          "p95": 2294518,
+          "max": 2294832,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2292776,
+            "high": 2293784
+          }
+        },
+        "interaction.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 36.8699933895826,
+          "mean": 36.86999338958262,
+          "p50": 36.8699933895826,
+          "p95": 36.8699933895826,
+          "max": 36.8699933895826,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 36.8699933895826,
+            "high": 36.8699933895826
+          }
+        },
+        "interaction.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 2.2996519360069296,
+          "mean": 2.2996519360069305,
+          "p50": 2.2996519360069296,
+          "p95": 2.2996519360069296,
+          "max": 2.2996519360069296,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2.2996519360069296,
+            "high": 2.2996519360069296
+          }
+        },
+        "cumulativeCoverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 38.29201388708158,
+          "mean": 38.29201388708157,
+          "p50": 38.29201388708158,
+          "p95": 38.29201388708158,
+          "max": 38.29201388708158,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 38.29201388708158,
+            "high": 38.29201388708158
+          }
+        },
+        "cumulativeCoverage.executedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 73567,
+          "mean": 73567,
+          "p50": 73567,
+          "p95": 73567,
+          "max": 73567,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 73567,
+            "high": 73567
+          }
+        },
+        "javascript.networkEncodedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 49164,
+          "mean": 49164,
+          "p50": 49164,
+          "p95": 49164,
+          "max": 49164,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 49164,
+            "high": 49164
+          }
+        }
+      }
+    },
+    {
+      "page": "espn",
+      "profile": "mobile4x",
+      "description": "sports game page with mutually exclusive, structurally different tabs",
+      "runs": 30,
+      "browserInstances": 3,
+      "document": {
+        "key": "espn",
+        "kind": "document",
+        "rawBytes": 33765,
+        "gzip9Bytes": 7782,
+        "brotli11Bytes": 6639,
+        "sha256": "5cc3e03eb779924ea0e67cd7e85889bc4ba795a20dd424b4b50cda8129a03441"
+      },
+      "javascript": {
+        "assetSets": [
+          [
+            "component_rsjs_fragment_6efb8e3c7ddf58df8a691fc79af0c957660fa38908be7078315c8ddaa4d8e599",
+            "rsjs_owner_4e7d935d5ce5ae442bd9eb66308b3e0c1dca7533a5fc5475e89d2ee8fcfdf071",
+            "runtime-core"
+          ]
+        ],
+        "requestCount": 3,
+        "uniqueRequestCount": 3,
+        "rawBytes": 192121,
+        "gzip9BodyBytes": 48433,
+        "brotli11BodyBytes": 40389
+      },
+      "metrics": {
+        "navigation.requestToFirstByteMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0.27666668891906737,
+          "p50": 0.15000009536743164,
+          "p95": 0.2999997138977051,
+          "max": 3.8000001907348633,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.09999990463256836,
+            "high": 0.20000028610229492
+          }
+        },
+        "navigation.loadMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 156.7000002861023,
+          "mean": 169.5300000031789,
+          "p50": 167.60000014305115,
+          "p95": 192.86999998092642,
+          "max": 210,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 165.39999985694885,
+            "high": 168.99999976158142
+          }
+        },
+        "navigation.readyWallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 233.72541600000113,
+          "mean": 246.5418278333329,
+          "p50": 244.53337499999907,
+          "p95": 270.44988559999933,
+          "max": 287.8953329999931,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 242.4979580000072,
+            "high": 246.11658350000562
+          }
+        },
+        "navigation.firstContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 144,
+          "mean": 151.06666666666666,
+          "p50": 152,
+          "p95": 158.2,
+          "max": 160,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 148,
+            "high": 152
+          }
+        },
+        "navigation.largestContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 144,
+          "mean": 151.06666666666666,
+          "p50": 152,
+          "p95": 158.2,
+          "max": 160,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 148,
+            "high": 152
+          }
+        },
+        "navigation.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 73,
+          "mean": 77.5,
+          "p50": 77,
+          "p95": 81.55,
+          "max": 86,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 76,
+            "high": 78.5
+          }
+        },
+        "initial.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 8.892000000000001,
+          "mean": 10.394166666666665,
+          "p50": 10.35,
+          "p95": 11.39775,
+          "max": 11.801,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 10.012500000000001,
+            "high": 10.695
+          }
+        },
+        "initial.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 141.379,
+          "mean": 146.57673333333332,
+          "p50": 146.93649999999997,
+          "p95": 149.9775,
+          "max": 156.053,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 144.53,
+            "high": 147.8535
+          }
+        },
+        "initial.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 59.712,
+          "mean": 63.169099999999986,
+          "p50": 62.5175,
+          "p95": 68.30170000000001,
+          "max": 70.021,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 61.662,
+            "high": 63.6535
+          }
+        },
+        "initial.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 1.08,
+          "mean": 4.159666666666667,
+          "p50": 4.2455,
+          "p95": 4.8454500000000005,
+          "max": 5.754,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 4.015000000000001,
+            "high": 4.4030000000000005
+          }
+        },
+        "initial.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 1679988,
+          "mean": 1680011.4666666666,
+          "p50": 1680020,
+          "p95": 1680020,
+          "max": 1680020,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1680020,
+            "high": 1680020
+          }
+        },
+        "initial.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2181976,
+          "mean": 2182397.066666667,
+          "p50": 2181976,
+          "p95": 2183392,
+          "max": 2183688,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2181976,
+            "high": 2182800
+          }
+        },
+        "interaction.wallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 156.89158299998962,
+          "mean": 168.12476249999963,
+          "p50": 169.32139550000647,
+          "p95": 174.79166655000117,
+          "max": 180.40004200000112,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 166.88666699999976,
+            "high": 170.1944999999978
+          }
+        },
+        "interaction.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.2199999999999997,
+          "mean": 0.812433333333333,
+          "p50": 0.8894999999999988,
+          "p95": 1.4749499999999987,
+          "max": 1.7209999999999985,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.6334999999999995,
+            "high": 1.0004999999999997
+          }
+        },
+        "interaction.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "interaction.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 66.404,
+          "mean": 71.17156666666666,
+          "p50": 70.59300000000002,
+          "p95": 76.9678,
+          "max": 79.14000000000001,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 69.93549999999999,
+            "high": 71.67399999999998
+          }
+        },
+        "interaction.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 14.489000000000003,
+          "mean": 16.1834,
+          "p50": 16.078000000000003,
+          "p95": 17.34035,
+          "max": 18.708000000000002,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 15.795500000000004,
+            "high": 16.531499999999998
+          }
+        },
+        "interaction.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 3.843000000000001,
+          "mean": 5.128733333333333,
+          "p50": 5.2044999999999995,
+          "p95": 5.9198,
+          "max": 6.296,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 4.888499999999999,
+            "high": 5.276000000000001
+          }
+        },
+        "interaction.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2456568,
+          "mean": 2456666.4,
+          "p50": 2456680,
+          "p95": 2456740,
+          "max": 2456740,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2456664,
+            "high": 2456680
+          }
+        },
+        "interaction.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2277264,
+          "mean": 2277786.933333333,
+          "p50": 2277468,
+          "p95": 2278560,
+          "max": 2278856,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2277400,
+            "high": 2278224
+          }
+        },
+        "interaction.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 36.8699933895826,
+          "mean": 36.86999338958262,
+          "p50": 36.8699933895826,
+          "p95": 36.8699933895826,
+          "max": 36.8699933895826,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 36.8699933895826,
+            "high": 36.8699933895826
+          }
+        },
+        "interaction.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 2.2996519360069296,
+          "mean": 2.2996519360069305,
+          "p50": 2.2996519360069296,
+          "p95": 2.2996519360069296,
+          "max": 2.2996519360069296,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2.2996519360069296,
+            "high": 2.2996519360069296
+          }
+        },
+        "cumulativeCoverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 38.29201388708158,
+          "mean": 38.29201388708157,
+          "p50": 38.29201388708158,
+          "p95": 38.29201388708158,
+          "max": 38.29201388708158,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 38.29201388708158,
+            "high": 38.29201388708158
+          }
+        },
+        "cumulativeCoverage.executedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 73567,
+          "mean": 73567,
+          "p50": 73567,
+          "p95": 73567,
+          "max": 73567,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 73567,
+            "high": 73567
+          }
+        },
+        "javascript.networkEncodedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 49164,
+          "mean": 49164,
+          "p50": 49164,
+          "p95": 49164,
+          "max": 49164,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 49164,
+            "high": 49164
+          }
+        }
+      }
+    },
+    {
+      "page": "sentry-otel",
+      "profile": "desktop",
+      "description": "400-row observability log stream with scroll and toggle state",
+      "runs": 30,
+      "browserInstances": 3,
+      "document": {
+        "key": "sentry-otel",
+        "kind": "document",
+        "rawBytes": 875478,
+        "gzip9Bytes": 14025,
+        "brotli11Bytes": 6833,
+        "sha256": "41f806f2833f1dd76803a1063b27b6e315602185db178557a59e350d216db279"
+      },
+      "javascript": {
+        "assetSets": [
+          [
+            "component_rsjs_fragment_a90f7c0c08f7a04c23c73d74a23c4c6825c2554b6e5d8598d5d9d7826009c604",
+            "rsjs_owner_4f32a6d545d54b76fc3092b178c6715a18ebb2a5251392949674b87541093fd9",
+            "runtime-core",
+            "runtime-query"
+          ]
+        ],
+        "requestCount": 4,
+        "uniqueRequestCount": 4,
+        "rawBytes": 278790,
+        "gzip9BodyBytes": 70999,
+        "brotli11BodyBytes": 59430
+      },
+      "metrics": {
+        "navigation.requestToFirstByteMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.09999990463256836,
+          "mean": 0.1700000286102295,
+          "p50": 0.19999980926513672,
+          "p95": 0.2999999761581421,
+          "max": 0.3000001907348633,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.09999990463256836,
+            "high": 0.20000028610229492
+          }
+        },
+        "navigation.loadMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 66.59999990463257,
+          "mean": 69.0733333269755,
+          "p50": 68.54999995231628,
+          "p95": 71.35500013828278,
+          "max": 72.2999997138977,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 67.85000014305115,
+            "high": 69.95000004768372
+          }
+        },
+        "navigation.readyWallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 142.41820799999914,
+          "mean": 146.4321763666656,
+          "p50": 146.24093799999537,
+          "p95": 149.75162905000178,
+          "max": 150.91058399999747,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 145.43958349999957,
+            "high": 147.49517956249966
+          }
+        },
+        "navigation.firstContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 56,
+          "mean": 59.733333333333334,
+          "p50": 60,
+          "p95": 60,
+          "max": 60,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 60,
+            "high": 60
+          }
+        },
+        "navigation.largestContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 56,
+          "mean": 59.733333333333334,
+          "p50": 60,
+          "p95": 60,
+          "max": 60,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 60,
+            "high": 60
+          }
+        },
+        "navigation.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 3.089,
+          "mean": 3.199133333333333,
+          "p50": 3.181,
+          "p95": 3.4255999999999998,
+          "max": 3.509,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 3.153,
+            "high": 3.2145
+          }
+        },
+        "initial.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 69.522,
+          "mean": 75.42826666666666,
+          "p50": 75.47149999999999,
+          "p95": 78.26975,
+          "max": 78.661,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 74.37800000000001,
+            "high": 76.755
+          }
+        },
+        "initial.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 14.494,
+          "mean": 15.274033333333332,
+          "p50": 15.097999999999999,
+          "p95": 16.429399999999998,
+          "max": 16.712,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 14.8605,
+            "high": 15.3725
+          }
+        },
+        "initial.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 4.683,
+          "mean": 4.875533333333334,
+          "p50": 4.822,
+          "p95": 5.13155,
+          "max": 5.247,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 4.7940000000000005,
+            "high": 4.909025000000001
+          }
+        },
+        "initial.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 1749884,
+          "mean": 1764047.7333333334,
+          "p50": 1758164,
+          "p95": 1796764,
+          "max": 1796764,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1750444,
+            "high": 1759548
+          }
+        },
+        "initial.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 9927576,
+          "mean": 9927691.2,
+          "p50": 9927576,
+          "p95": 9928440,
+          "max": 9928440,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 9927576,
+            "high": 9927576
+          }
+        },
+        "interaction.wallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 119.39579200001026,
+          "mean": 125.79589863333422,
+          "p50": 126.16512499999953,
+          "p95": 131.1024312499914,
+          "max": 132.0047080000004,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 124.10366700001032,
+            "high": 126.95154199999524
+          }
+        },
+        "interaction.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.307,
+          "mean": 0.3484666666666667,
+          "p50": 0.34400000000000014,
+          "p95": 0.4005499999999998,
+          "max": 0.402,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.33497500000000013,
+            "high": 0.35450000000000004
+          }
+        },
+        "interaction.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "interaction.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 32.685,
+          "mean": 34.8297,
+          "p50": 34.745000000000005,
+          "p95": 36.974700000000006,
+          "max": 37.89099999999999,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 34.29600000000001,
+            "high": 35.10700000000001
+          }
+        },
+        "interaction.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.988000000000001,
+          "mean": 1.0672666666666664,
+          "p50": 1.060000000000001,
+          "p95": 1.1504000000000008,
+          "max": 1.2080000000000006,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1.0500000000000007,
+            "high": 1.0844999999999994
+          }
+        },
+        "interaction.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 1.5000000000000004,
+          "mean": 1.6371666666666664,
+          "p50": 1.6290000000000002,
+          "p95": 1.7722999999999998,
+          "max": 1.7940000000000005,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1.5934999999999997,
+            "high": 1.6804999999999997
+          }
+        },
+        "interaction.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2460696,
+          "mean": 2474739.2,
+          "p50": 2468464,
+          "p95": 2507608,
+          "max": 2507608,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2461288,
+            "high": 2470216
+          }
+        },
+        "interaction.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 11187584,
+          "mean": 11317560.266666668,
+          "p50": 11187656,
+          "p95": 11712856,
+          "max": 11712936,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 11187616,
+            "high": 11188608
+          }
+        },
+        "interaction.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 33.09516123246888,
+          "mean": 33.09516123246886,
+          "p50": 33.09516123246888,
+          "p95": 33.09516123246888,
+          "max": 33.09516123246888,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 33.09516123246888,
+            "high": 33.09516123246888
+          }
+        },
+        "interaction.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 2.9730301427815973,
+          "mean": 2.9730301427815964,
+          "p50": 2.9730301427815973,
+          "p95": 2.9730301427815973,
+          "max": 2.9730301427815973,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2.9730301427815973,
+            "high": 2.9730301427815973
+          }
+        },
+        "cumulativeCoverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 34.50841134904408,
+          "mean": 34.50841134904408,
+          "p50": 34.50841134904408,
+          "p95": 34.50841134904408,
+          "max": 34.50841134904408,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 34.50841134904408,
+            "high": 34.50841134904408
+          }
+        },
+        "cumulativeCoverage.executedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 96206,
+          "mean": 96206,
+          "p50": 96206,
+          "p95": 96206,
+          "max": 96206,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 96206,
+            "high": 96206
+          }
+        },
+        "javascript.networkEncodedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 71975,
+          "mean": 71975,
+          "p50": 71975,
+          "p95": 71975,
+          "max": 71975,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 71975,
+            "high": 71975
+          }
+        }
+      }
+    },
+    {
+      "page": "sentry-otel",
+      "profile": "mobile4x",
+      "description": "400-row observability log stream with scroll and toggle state",
+      "runs": 30,
+      "browserInstances": 3,
+      "document": {
+        "key": "sentry-otel",
+        "kind": "document",
+        "rawBytes": 875478,
+        "gzip9Bytes": 14025,
+        "brotli11Bytes": 6833,
+        "sha256": "41f806f2833f1dd76803a1063b27b6e315602185db178557a59e350d216db279"
+      },
+      "javascript": {
+        "assetSets": [
+          [
+            "component_rsjs_fragment_a90f7c0c08f7a04c23c73d74a23c4c6825c2554b6e5d8598d5d9d7826009c604",
+            "rsjs_owner_4f32a6d545d54b76fc3092b178c6715a18ebb2a5251392949674b87541093fd9",
+            "runtime-core",
+            "runtime-query"
+          ]
+        ],
+        "requestCount": 4,
+        "uniqueRequestCount": 4,
+        "rawBytes": 278790,
+        "gzip9BodyBytes": 70999,
+        "brotli11BodyBytes": 59430
+      },
+      "metrics": {
+        "navigation.requestToFirstByteMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.09999990463256836,
+          "mean": 0.18000000317891438,
+          "p50": 0.19999980926513672,
+          "p95": 0.2999997138977051,
+          "max": 0.3000001907348633,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.15000009536743164,
+            "high": 0.20000028610229492
+          }
+        },
+        "navigation.loadMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 329.09999990463257,
+          "mean": 339.56666669845583,
+          "p50": 337.2000002861023,
+          "p95": 354.9650000095367,
+          "max": 370.19999980926514,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 335.80000019073486,
+            "high": 341.00500023365015
+          }
+        },
+        "navigation.readyWallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 404.9425829999964,
+          "mean": 416.5346944333331,
+          "p50": 414.78206249999494,
+          "p95": 431.8004812499988,
+          "max": 446.2824580000015,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 411.84827049999876,
+            "high": 418.3008755000046
+          }
+        },
+        "navigation.firstContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 160,
+          "mean": 173.46666666666667,
+          "p50": 172,
+          "p95": 184.39999999999998,
+          "max": 196,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 172,
+            "high": 176
+          }
+        },
+        "navigation.largestContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 160,
+          "mean": 173.46666666666667,
+          "p50": 172,
+          "p95": 184.39999999999998,
+          "max": 196,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 172,
+            "high": 176
+          }
+        },
+        "navigation.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 85,
+          "mean": 89.63333333333334,
+          "p50": 88,
+          "p95": 97.55,
+          "max": 105,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 88,
+            "high": 89
+          }
+        },
+        "initial.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 11.534,
+          "mean": 13.317266666666665,
+          "p50": 13.2195,
+          "p95": 15.0738,
+          "max": 15.315999999999999,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 12.827,
+            "high": 13.8415
+          }
+        },
+        "initial.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 275.95799999999997,
+          "mean": 285.92423333333323,
+          "p50": 283.85400000000004,
+          "p95": 299.09385,
+          "max": 330.82,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 281.629,
+            "high": 286.63199999999995
+          }
+        },
+        "initial.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 61.568999999999996,
+          "mean": 64.68973333333332,
+          "p50": 63.751000000000005,
+          "p95": 71.46954999999998,
+          "max": 76.913,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 63.350500000000004,
+            "high": 64.4705
+          }
+        },
+        "initial.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 16.024,
+          "mean": 18.258033333333337,
+          "p50": 18.168,
+          "p95": 20.909849999999995,
+          "max": 22.194,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 17.602,
+            "high": 18.535
+          }
+        },
+        "initial.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 1787888,
+          "mean": 1807707.7333333334,
+          "p50": 1805744,
+          "p95": 1827728,
+          "max": 1841392,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1800960,
+            "high": 1808944
+          }
+        },
+        "initial.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 9951088,
+          "mean": 9951280.8,
+          "p50": 9951240,
+          "p95": 9952035.6,
+          "max": 9952104,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 9951240,
+            "high": 9951240
+          }
+        },
+        "interaction.wallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 224.28349999999045,
+          "mean": 235.29178750000173,
+          "p50": 231.96579150000798,
+          "p95": 249.93017720000643,
+          "max": 263.7593749999942,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 228.97635399999854,
+            "high": 237.6225420000119
+          }
+        },
+        "interaction.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.3220000000000011,
+          "mean": 1.4988666666666666,
+          "p50": 1.4874999999999994,
+          "p95": 2.6864999999999997,
+          "max": 3.440999999999998,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1.169000000000001,
+            "high": 1.7605
+          }
+        },
+        "interaction.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "interaction.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 127.86900000000001,
+          "mean": 142.08133333333336,
+          "p50": 140.673,
+          "p95": 152.9051,
+          "max": 167.74699999999993,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 139.0935,
+            "high": 143.4605
+          }
+        },
+        "interaction.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 3.8679999999999963,
+          "mean": 4.703199999999999,
+          "p50": 4.646499999999998,
+          "p95": 5.460349999999997,
+          "max": 6.364000000000009,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 4.411999999999992,
+            "high": 4.984000000000005
+          }
+        },
+        "interaction.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 5.2079999999999975,
+          "mean": 6.762166666666668,
+          "p50": 6.658000000000001,
+          "p95": 8.298049999999998,
+          "max": 8.555,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 6.4704999999999995,
+            "high": 7.079999999999999
+          }
+        },
+        "interaction.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2497756,
+          "mean": 2518082.1333333333,
+          "p50": 2515788,
+          "p95": 2538557.6,
+          "max": 2551180,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2511588,
+            "high": 2519772
+          }
+        },
+        "interaction.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 11226872,
+          "mean": 11317624.533333333,
+          "p50": 11227096,
+          "p95": 11754376,
+          "max": 11755240,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 11227024,
+            "high": 11230240
+          }
+        },
+        "interaction.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 33.09516123246888,
+          "mean": 33.09516123246886,
+          "p50": 33.09516123246888,
+          "p95": 33.09516123246888,
+          "max": 33.09516123246888,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 33.09516123246888,
+            "high": 33.09516123246888
+          }
+        },
+        "interaction.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 2.9730301427815973,
+          "mean": 2.9730301427815964,
+          "p50": 2.9730301427815973,
+          "p95": 2.9730301427815973,
+          "max": 2.9730301427815973,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2.9730301427815973,
+            "high": 2.9730301427815973
+          }
+        },
+        "cumulativeCoverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 34.50841134904408,
+          "mean": 34.50841134904408,
+          "p50": 34.50841134904408,
+          "p95": 34.50841134904408,
+          "max": 34.50841134904408,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 34.50841134904408,
+            "high": 34.50841134904408
+          }
+        },
+        "cumulativeCoverage.executedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 96206,
+          "mean": 96206,
+          "p50": 96206,
+          "p95": 96206,
+          "max": 96206,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 96206,
+            "high": 96206
+          }
+        },
+        "javascript.networkEncodedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 71975,
+          "mean": 71975,
+          "p50": 71975,
+          "p95": 71975,
+          "max": 71975,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 71975,
+            "high": 71975
+          }
+        }
+      }
+    },
+    {
+      "page": "settings-console",
+      "profile": "desktop",
+      "description": "application settings page stressing class, data, ARIA, and boolean attributes",
+      "runs": 30,
+      "browserInstances": 3,
+      "document": {
+        "key": "settings-console",
+        "kind": "document",
+        "rawBytes": 7925,
+        "gzip9Bytes": 2518,
+        "brotli11Bytes": 2021,
+        "sha256": "f5a1bf74290d6558441f8cb86e08d61dd05b66c9e753714a992fdca1a15bd21c"
+      },
+      "javascript": {
+        "assetSets": [
+          [
+            "component_rsjs_fragment_5387e608571c4c02a65b9b2fc024c470922fbfa0c5fc652675fea0109cfeb09b",
+            "rsjs_owner_3aa614cdbdf65c858a72e30ad2c6c1b1dc9fed076b4b9d7900a08b02d7e726ec",
+            "runtime-core"
+          ]
+        ],
+        "requestCount": 3,
+        "uniqueRequestCount": 3,
+        "rawBytes": 201160,
+        "gzip9BodyBytes": 49378,
+        "brotli11BodyBytes": 41047
+      },
+      "metrics": {
+        "navigation.requestToFirstByteMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.09999990463256836,
+          "mean": 0.1766666889190674,
+          "p50": 0.19999980926513672,
+          "p95": 0.2549999713897702,
+          "max": 0.3000001907348633,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.19999980926513672,
+            "high": 0.20000028610229492
+          }
+        },
+        "navigation.loadMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 23.200000286102295,
+          "mean": 26.41666668256124,
+          "p50": 26.40000009536743,
+          "p95": 29.319999957084654,
+          "max": 30.199999809265137,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 25.59999990463257,
+            "high": 27.200000047683716
+          }
+        },
+        "navigation.readyWallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 100.58150000000023,
+          "mean": 103.86604729999932,
+          "p50": 103.74714599999425,
+          "p95": 106.89703139999646,
+          "max": 108.51483400000143,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 103.07624999999825,
+            "high": 104.15212499999325
+          }
+        },
+        "navigation.firstContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 28,
+          "mean": 32.266666666666666,
+          "p50": 32,
+          "p95": 36,
+          "max": 36,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 32,
+            "high": 32
+          }
+        },
+        "navigation.largestContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 28,
+          "mean": 32.266666666666666,
+          "p50": 32,
+          "p95": 36,
+          "max": 36,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 32,
+            "high": 32
+          }
+        },
+        "navigation.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 2.722,
+          "mean": 2.8817333333333335,
+          "p50": 2.8855,
+          "p95": 2.9934,
+          "max": 3.054,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2.8665000000000003,
+            "high": 2.899
+          }
+        },
+        "initial.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 20.45,
+          "mean": 22.04396666666667,
+          "p50": 22.139499999999998,
+          "p95": 22.95705,
+          "max": 23.23,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 22.06,
+            "high": 22.4185
+          }
+        },
+        "initial.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 5.2490000000000006,
+          "mean": 5.775466666666666,
+          "p50": 5.8345,
+          "p95": 6.077249999999999,
+          "max": 6.159000000000001,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 5.715999999999999,
+            "high": 5.897
+          }
+        },
+        "initial.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.261,
+          "mean": 0.2970333333333333,
+          "p50": 0.2905,
+          "p95": 0.33475,
+          "max": 0.34600000000000003,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.2845,
+            "high": 0.3065
+          }
+        },
+        "initial.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 1607484,
+          "mean": 1607537.3333333333,
+          "p50": 1607548,
+          "p95": 1607548,
+          "max": 1607548,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1607548,
+            "high": 1607548
+          }
+        },
+        "initial.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 555712,
+          "mean": 564148.2666666667,
+          "p50": 555712,
+          "p95": 556576,
+          "max": 806208,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 555712,
+            "high": 555712
+          }
+        },
+        "interaction.wallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 105.33487500000047,
+          "mean": 111.4532070333323,
+          "p50": 112.3860835000014,
+          "p95": 115.67627089999732,
+          "max": 116.56929200000013,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 110.42045800000778,
+            "high": 113.25447949999943
+          }
+        },
+        "interaction.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.31400000000000006,
+          "mean": 0.3533666666666665,
+          "p50": 0.3520000000000001,
+          "p95": 0.39305,
+          "max": 0.415,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.3474999999999999,
+            "high": 0.35750000000000015
+          }
+        },
+        "interaction.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "interaction.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 11.982000000000003,
+          "mean": 12.998733333333332,
+          "p50": 13.058499999999999,
+          "p95": 13.6163,
+          "max": 13.648999999999997,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 12.843499999999999,
+            "high": 13.190999999999997
+          }
+        },
+        "interaction.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.17200000000000026,
+          "mean": 0.21383333333333338,
+          "p50": 0.21100000000000024,
+          "p95": 0.24950000000000006,
+          "max": 0.26400000000000035,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.20500000000000032,
+            "high": 0.21799999999999986
+          }
+        },
+        "interaction.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.18199999999999997,
+          "mean": 0.21526666666666666,
+          "p50": 0.21349999999999997,
+          "p95": 0.24949999999999997,
+          "max": 0.261,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.20399999999999996,
+            "high": 0.21999999999999997
+          }
+        },
+        "interaction.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2428932,
+          "mean": 2429065.3333333335,
+          "p50": 2429092,
+          "p95": 2429092,
+          "max": 2429092,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2429092,
+            "high": 2429092
+          }
+        },
+        "interaction.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 575232,
+          "mean": 581367.2,
+          "p50": 575360,
+          "p95": 576174.4,
+          "max": 754312,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 575240,
+            "high": 575360
+          }
+        },
+        "interaction.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 38.54444223503678,
+          "mean": 38.54444223503676,
+          "p50": 38.54444223503678,
+          "p95": 38.54444223503678,
+          "max": 38.54444223503678,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 38.54444223503678,
+            "high": 38.54444223503678
+          }
+        },
+        "interaction.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 3.2211557849739894,
+          "mean": 3.221155784973988,
+          "p50": 3.2211557849739894,
+          "p95": 3.2211557849739894,
+          "max": 3.2211557849739894,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 3.2211557849739894,
+            "high": 3.2211557849739894
+          }
+        },
+        "cumulativeCoverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 40.65172002386161,
+          "mean": 40.65172002386159,
+          "p50": 40.65172002386161,
+          "p95": 40.65172002386161,
+          "max": 40.65172002386161,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 40.65172002386161,
+            "high": 40.65172002386161
+          }
+        },
+        "cumulativeCoverage.executedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 81775,
+          "mean": 81775,
+          "p50": 81775,
+          "p95": 81775,
+          "max": 81775,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 81775,
+            "high": 81775
+          }
+        },
+        "javascript.networkEncodedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 50110,
+          "mean": 50110,
+          "p50": 50110,
+          "p95": 50110,
+          "max": 50110,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 50110,
+            "high": 50110
+          }
+        }
+      }
+    },
+    {
+      "page": "settings-console",
+      "profile": "mobile4x",
+      "description": "application settings page stressing class, data, ARIA, and boolean attributes",
+      "runs": 30,
+      "browserInstances": 3,
+      "document": {
+        "key": "settings-console",
+        "kind": "document",
+        "rawBytes": 7925,
+        "gzip9Bytes": 2518,
+        "brotli11Bytes": 2021,
+        "sha256": "f5a1bf74290d6558441f8cb86e08d61dd05b66c9e753714a992fdca1a15bd21c"
+      },
+      "javascript": {
+        "assetSets": [
+          [
+            "component_rsjs_fragment_5387e608571c4c02a65b9b2fc024c470922fbfa0c5fc652675fea0109cfeb09b",
+            "rsjs_owner_3aa614cdbdf65c858a72e30ad2c6c1b1dc9fed076b4b9d7900a08b02d7e726ec",
+            "runtime-core"
+          ]
+        ],
+        "requestCount": 3,
+        "uniqueRequestCount": 3,
+        "rawBytes": 201160,
+        "gzip9BodyBytes": 49378,
+        "brotli11BodyBytes": 41047
+      },
+      "metrics": {
+        "navigation.requestToFirstByteMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.09999990463256836,
+          "mean": 0.17666667302449543,
+          "p50": 0.19999980926513672,
+          "p95": 0.2999999761581421,
+          "max": 0.3000001907348633,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.15000009536743164,
+            "high": 0.19999980926513672
+          }
+        },
+        "navigation.loadMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 148.40000009536743,
+          "mean": 158.35666669209797,
+          "p50": 158.89999985694885,
+          "p95": 164.83000020980836,
+          "max": 165.80000019073486,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 156.79999995231628,
+            "high": 159.9499998152256
+          }
+        },
+        "navigation.readyWallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 225.11583300000348,
+          "mean": 234.98353596666706,
+          "p50": 235.29079199999978,
+          "p95": 241.87311004999955,
+          "max": 243.14104099999895,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 233.2647705000054,
+            "high": 236.50829149998754
+          }
+        },
+        "navigation.firstContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 88,
+          "mean": 96.66666666666667,
+          "p50": 96,
+          "p95": 104,
+          "max": 104,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 96,
+            "high": 100
+          }
+        },
+        "navigation.largestContentfulPaintMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 88,
+          "mean": 96.66666666666667,
+          "p50": 96,
+          "p95": 104,
+          "max": 104,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 96,
+            "high": 100
+          }
+        },
+        "navigation.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 9.785,
+          "mean": 11.191433333333332,
+          "p50": 11.3025,
+          "p95": 12.281099999999999,
+          "max": 12.934,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 10.8995,
+            "high": 11.499
+          }
+        },
+        "initial.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 76.14,
+          "mean": 79.88873333333332,
+          "p50": 79.465,
+          "p95": 84.3368,
+          "max": 87.48,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 78.261,
+            "high": 80.642
+          }
+        },
+        "initial.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 19.098,
+          "mean": 20.747433333333333,
+          "p50": 20.670500000000004,
+          "p95": 22.383849999999995,
+          "max": 23.143,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 20.403,
+            "high": 20.997500000000002
+          }
+        },
+        "initial.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.61,
+          "mean": 1.1620333333333333,
+          "p50": 1.0645,
+          "p95": 1.7319499999999999,
+          "max": 1.8090000000000002,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.9775,
+            "high": 1.325
+          }
+        },
+        "initial.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 1650508,
+          "mean": 1650557.0666666667,
+          "p50": 1650572,
+          "p95": 1650572,
+          "max": 1650572,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1650572,
+            "high": 1650572
+          }
+        },
+        "initial.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 556640,
+          "mean": 556726.4,
+          "p50": 556640,
+          "p95": 557504,
+          "max": 557504,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 556640,
+            "high": 556640
+          }
+        },
+        "interaction.wallMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 149.85387499999888,
+          "mean": 155.81141953333372,
+          "p50": 155.14956299999903,
+          "p95": 164.36311905000656,
+          "max": 165.3024999999907,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 153.35258349999822,
+            "high": 156.7678330000017
+          }
+        },
+        "interaction.cpu.scriptMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.37400000000000105,
+          "mean": 1.4744999999999997,
+          "p50": 1.4810000000000005,
+          "p95": 2.5540499999999993,
+          "max": 2.879999999999999,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 1.2300000000000002,
+            "high": 1.7134999999999998
+          }
+        },
+        "interaction.cpu.v8CompileMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "interaction.cpu.taskMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 43.208999999999996,
+          "mean": 48.23023333333333,
+          "p50": 47.98299999999999,
+          "p95": 52.497199999999985,
+          "max": 56.853999999999985,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 46.599000000000004,
+            "high": 49.13849999999999
+          }
+        },
+        "interaction.cpu.layoutMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.18400000000000014,
+          "mean": 0.8759999999999997,
+          "p50": 0.9114999999999991,
+          "p95": 1.5555000000000005,
+          "max": 1.6359999999999986,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.5709999999999986,
+            "high": 1.1564999999999996
+          }
+        },
+        "interaction.cpu.recalcStyleMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0.25299999999999995,
+          "mean": 0.9327666666666665,
+          "p50": 0.8764999999999998,
+          "p95": 2.0111499999999998,
+          "max": 2.05,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0.6824999999999999,
+            "high": 0.9670499999999993
+          }
+        },
+        "interaction.heapAfterForcedGc.usedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 2471956,
+          "mean": 2472078.6666666665,
+          "p50": 2472116,
+          "p95": 2472116,
+          "max": 2472116,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 2472116,
+            "high": 2472116
+          }
+        },
+        "interaction.heapAfterForcedGc.embedderUsedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 575960,
+          "mean": 576068,
+          "p50": 575960,
+          "p95": 576952,
+          "max": 576952,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 575960,
+            "high": 575960
+          }
+        },
+        "interaction.longTaskDurationMs": {
+          "unit": "ms",
+          "n": 30,
+          "min": 0,
+          "mean": 0,
+          "p50": 0,
+          "p95": 0,
+          "max": 0,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 0,
+            "high": 0
+          }
+        },
+        "initial.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 38.54444223503678,
+          "mean": 38.54444223503676,
+          "p50": 38.54444223503678,
+          "p95": 38.54444223503678,
+          "max": 38.54444223503678,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 38.54444223503678,
+            "high": 38.54444223503678
+          }
+        },
+        "interaction.coverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 3.2211557849739894,
+          "mean": 3.221155784973988,
+          "p50": 3.2211557849739894,
+          "p95": 3.2211557849739894,
+          "max": 3.2211557849739894,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 3.2211557849739894,
+            "high": 3.2211557849739894
+          }
+        },
+        "cumulativeCoverage.executedPercent": {
+          "unit": "percent",
+          "n": 30,
+          "min": 40.65172002386161,
+          "mean": 40.65172002386159,
+          "p50": 40.65172002386161,
+          "p95": 40.65172002386161,
+          "max": 40.65172002386161,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 40.65172002386161,
+            "high": 40.65172002386161
+          }
+        },
+        "cumulativeCoverage.executedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 81775,
+          "mean": 81775,
+          "p50": 81775,
+          "p95": 81775,
+          "max": 81775,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 81775,
+            "high": 81775
+          }
+        },
+        "javascript.networkEncodedBytes": {
+          "unit": "bytes",
+          "n": 30,
+          "min": 50110,
+          "mean": 50110,
+          "p50": 50110,
+          "p95": 50110,
+          "max": 50110,
+          "medianCi95": {
+            "confidence": 0.95,
+            "method": "percentile bootstrap",
+            "resamples": 5000,
+            "low": 50110,
+            "high": 50110
+          }
+        }
+      }
+    }
+  ],
+  "rawArtifact": {
+    "path": "showcase/results/raw/proa-pr83-client_js.json.gz",
+    "sha256": "f67ccf13d96273c8ee3730738e893f60fd64d61f1ef8fff027952cc8b0045090",
+    "uncompressedSha256": "d7e970eec3544a067bb455664cc8eb130afd90fa84b1cd1c39baeb1e2dc40934",
+    "encoding": "gzip"
+  }
+}

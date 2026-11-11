@@ -9,5 +9,5 @@ export const sourceFiles = [...new Set([...kitSources,
   'rendering/src/bin/proa_suspense_server.rs', 'rendering/src/topcoat_product_grid.rs',
   'rendering/external/shared/suite_data.mjs',
   'suspense-load/scenario.mjs', 'suspense-load/stats.mjs', 'suspense-load/validate.mjs',
-  'sveltekit/run.mjs', 'sveltekit/browser.mjs', 'sveltekit/sources.mjs',
+  'sveltekit/refresh-proa.mjs', 'sveltekit/run.mjs', 'sveltekit/browser.mjs', 'sveltekit/sources.mjs',
 ])].sort();

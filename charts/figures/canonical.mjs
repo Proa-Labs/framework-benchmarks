@@ -57,7 +57,7 @@ export function scoreboard(tables, meta) {
 
   const s = scaffold({
     title: 'Server-render latency',
-    decks: `P50 relative to Proa · log scale · lower is better · ${meta.date}`,
+    decks: `P50 relative to Proa · log scale · lower is better · ${meta.date}${meta.refreshSuffix ?? ""}`,
     rows: roster.length,
   });
   let b = s.svg;
@@ -119,7 +119,7 @@ export function tails(tables, meta) {
 
   const s = scaffold({
     title: 'Render latency: P50–P95',
-    decks: `Separate log scales · lower is better · ${meta.date}`,
+    decks: `Separate log scales · lower is better · ${meta.date}${meta.refreshSuffix ?? ""}`,
     legendItems: [
       { shape: 'dot', color: C.peer, label: 'P50' },
       { shape: 'hollow', color: C.peer, label: 'P95' },

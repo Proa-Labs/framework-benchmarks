@@ -111,13 +111,16 @@ export function representative(tables) {
 // ---------------------------------------------------------------------------
 // 06 · Criterion micro-benchmarks
 // ---------------------------------------------------------------------------
-export function criterion(tables) {
-  const std = pick(tables, ['Standard-page row', 'Output bytes/render', 'Raw time, µs/10 renders']);
-  const cri = pick(tables, ['Criterion row', 'Output bytes', 'Raw time, µs']);
+export function criterion(tables, meta) {
+  const refreshed = tables.some((t) => t.headers[0] === "Refreshed Criterion row");
+  const standardKey = refreshed ? "Refreshed standard-page row" : "Standard-page row";
+  const criterionKey = refreshed ? "Refreshed Criterion row" : "Criterion row";
+  const std = pick(tables, [standardKey, 'Output bytes/render', 'Raw time, µs/10 renders']);
+  const cri = pick(tables, [criterionKey, 'Output bytes', 'Raw time, µs']);
 
   const stdRows = std.objs.map((o) => {
     const [lo, v, hi] = slashTriple(o['Raw time, µs/10 renders']);
-    return { label: clean(o['Standard-page row']), lo, v, hi, bytes: num(o['Output bytes/render']) };
+    return { label: clean(o[standardKey]), lo, v, hi, bytes: num(o['Output bytes/render']) };
   });
 
   // Split each Criterion id into family / fixture / engine so the head-to-head
@@ -125,7 +128,7 @@ export function criterion(tables) {
   const ENGINE = /(proa|sailfish|askama|topcoat|leptos|dioxus|yew)/;
   const all = cri.objs.map((o) => {
     const [lo, v, hi] = slashTriple(o['Raw time, µs']);
-    const id = clean(o['Criterion row']);
+    const id = clean(o[criterionKey]);
     const [fam, variant = ''] = id.split('/');
     const m = ENGINE.exec(variant);
     const fixture = m ? variant.slice(0, m.index).replace(/_$/, '') : '';
@@ -141,7 +144,7 @@ export function criterion(tables) {
     .filter((g) => all.some((r) => r.group === g && !r.proa));
   const head = all.filter((r) => groups.includes(r.group));
   const hdr = header(PAD, 44, 'Criterion microbenchmarks',
-    `${HIST} · point estimates with 95% slope intervals · log scales`, COL);
+    `${refreshed ? "Proa refreshed " + meta.engineeringRefreshDate + " · peers Aug 30–31" : HIST} · 95% intervals · log scales`, COL);
   let b = hdr.svg;
 
   const LX = PAD + 214, PX0 = PAD + 224, PX1 = PAD + COL - 196;
@@ -240,7 +243,7 @@ export function cardScaling(tables, meta) {
   const allV = rows.flatMap((r) => r.values.map((v) => v.v));
 
   const hdr = header(PAD, 44, 'Product-card render scaling',
-    `Engineering capture · ${meta.scalingDate} UTC · fresh full responses · five processes per cell`, COL);
+    `Engineering capture · ${meta.scalingDate} UTC${meta.refreshSuffix ?? ""} · fresh full responses · five processes per cell`, COL);
   let b = hdr.svg;
 
   const marker = (x, y, shape, color) => {

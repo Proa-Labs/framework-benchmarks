@@ -1,0 +1,18 @@
+{
+  "framework": "Proa",
+  "language": "Rust",
+  "benchmark": "ebay_srp",
+  "listings": 60,
+  "iterations": 500,
+  "warmup": 50,
+  "output_bytes": 97823,
+  "latency_us": 25.07,
+  "min_us": 19.00,
+  "mean_us": 25.07,
+  "p50_us": 26.92,
+  "p95_us": 30.54,
+  "p99_us": 30.81,
+  "max_us": 33.25,
+  "renders_per_sec": 39829,
+  "timestamp": "2026-11-11T05:52:11Z"
+}

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import {verifyProaRefresh} from './refresh-proa.mjs';
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
@@ -103,7 +104,7 @@ function figure(result) {
       body += `<text x="30" y="${rowY+12}" class="label">${names[s.engine]}</text><rect x="250" y="${rowY}" width="${x(s.allPanelsMs.p50)-250}" height="18" rx="3" fill="${j===0?C.proa:C.kit}"/><path d="M${x(s.allPanelsMs.p95)} ${rowY-3}v24" stroke="#29332d" stroke-width="2"/><circle cx="${x(s.firstPanelMs.p50)}" cy="${rowY+9}" r="3.5" fill="#faf9f6" stroke="#29332d" stroke-width="1.5"/><text x="${x(s.allPanelsMs.p95)+9}" y="${rowY+13}" class="value">${f(s.allPanelsMs.p50)} / ${f(s.allPanelsMs.p95)} ms</text>`;
     }
   }
-  return body+`<text x="30" y="329" class="muted">Eight delayed panels (5–90 ms), 12 cards each. HTTP response end excludes SvelteKit browser rendering; see methodology.</text></svg>\n`;
+  return body+`<text x="30" y="329" class="muted">${result.refresh ? `Proa refreshed ${result.capturedAt.slice(0,10)}; SvelteKit retained ${result.refresh.baseline_captured_at.slice(0,10)}. Same completed DOM; see methodology.` : "Eight delayed panels (5–90 ms), 12 cards each. HTTP response end excludes SvelteKit browser rendering; see methodology."}</text></svg>\n`;
 }
 
 export function render(result, canonical, scaling, pages, cold) {
@@ -122,7 +123,7 @@ export function render(result, canonical, scaling, pages, cold) {
   const coldRows = cold.engines.filter(e=>['proa','sveltekit'].includes(e.id)).map(e=>`| ${e.label} | ${ms(e.summary.firstResponseMs.p50)} | ${ms(e.summary.firstResponseMs.p95)} | ${mib(e.summary.rssAfterFirstResponseBytes.p50)} |`).join('\n');
   return `# Proa versus SvelteKit
 
-Generated from fresh captures on **${result.host.cpuModel}**, ${result.capturedAt.slice(0,10)} UTC. Proa revision **${result.source.proaRevision.slice(0,8)}**, **${framework}**, Node **${result.host.node}**. Full production builds, no development server, proxy, response cache, or compression.
+${result.refresh ? "> **PROA-only refresh.** " + result.refresh.note + "\n\n" : ""}Generated from captures on **${result.host.cpuModel}**, ${result.capturedAt.slice(0,10)} UTC. Proa revision **${result.source.proaRevision.slice(0,8)}**, **${framework}**, Node **${result.host.node}**. Full production builds, no development server, proxy, response cache, or compression.
 
 The static 96-card HTML page sustained **${n(capacity('proa'))} responses/s for Proa** and **${n(capacity('sveltekit'))} for SvelteKit**. In the native streaming browser tests, all 96 cards reached the DOM at median **${ms(browserReady('desktop','proa'))} / ${ms(browserReady('desktop','sveltekit-data'))} on desktop** and **${ms(browserReady('mobile4x','proa'))} / ${ms(browserReady('mobile4x','sveltekit-data'))} on mobile4x** (Proa / SvelteKit). Proa’s first mobile panel arrived at **${ms(browserFirst('mobile4x','proa'))}**, versus **${ms(browserFirst('mobile4x','sveltekit-data'))}** for SvelteKit. The complete tables below retain first-panel timing, transfer size, CPU, overload failures, and every rate in the sweep.
 
@@ -224,6 +225,7 @@ The Proa-only writer/memcpy and allocation microbenchmarks, linked showcase corp
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const read = async path=>JSON.parse(await readFile(join(root,path),'utf8'));
   const [stream, canonical, scaling, pages, cold] = await Promise.all(['sveltekit/results/latest.json','rendering/results/latest.json','rendering/results/product-scaling.json','page-load/results/latest.json','cold-start/results/latest.json'].map(read));
+  verifyProaRefresh(stream);
   if (stream.source?.sourceSha256 !== await sourceSha256(root,sourceFiles)) throw new Error('SvelteKit measured sources changed; rerun the comparison');
   for (const capture of [canonical,scaling,pages,cold]) {
     const host = capture.host;

@@ -6,12 +6,14 @@ import { join } from "node:path";
 const sourcePaths = [
   ".nvmrc",
   "Cargo.lock",
+  "scripts/proa-refresh-evidence.mjs",
   "Cargo.toml",
   "package.json",
   "pnpm-lock.yaml",
   "rendering/Cargo.toml",
   "rendering/canonical",
   "rendering/src",
+  "fixtures/legacy-ebay-chrome",
   "rendering/templates",
   "rendering/external",
 ];

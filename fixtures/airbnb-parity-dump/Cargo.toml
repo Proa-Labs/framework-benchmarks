@@ -5,6 +5,7 @@ edition = "2024"
 publish = false
 
 [dependencies]
+proa_macros = { git = "https://github.com/Proa-Labs/proa", branch = "main" }
 proa_core = { git = "https://github.com/Proa-Labs/proa", branch = "main" }
 proa_showcase = { git = "https://github.com/Proa-Labs/proa", branch = "main", default-features = false, features = ["rsjs-pages"] }
 rsjs = { git = "https://github.com/Proa-Labs/proa", branch = "main" }

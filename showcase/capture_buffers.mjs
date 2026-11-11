@@ -17,6 +17,9 @@ const INPUTS = [
   'fixtures/airbnb-parity-dump/src/main.rs', 'fixtures/airbnb-parity-dump/src/memcpy.rs',
   'showcase/build_buffer_bench.mjs', 'showcase/capture_buffers.mjs',
   'showcase/capture_memcpy.mjs', 'showcase/client_js_stats.mjs',
+  "fixtures/legacy-ebay-chrome/mod.rs",
+  "fixtures/legacy-ebay-chrome/data/srp_chrome_style.css",
+  "fixtures/legacy-ebay-chrome/data/shell_pre.html",
 ];
 export const PAGES = {
   'core-cards': 'Cards', 'core-products': '96-product grid', 'core-table': '1,000-row table',

@@ -1,0 +1,18 @@
+{
+  "framework": "Proa",
+  "language": "Rust",
+  "benchmark": "data_table",
+  "rows": 1000,
+  "iterations": 500,
+  "warmup": 50,
+  "output_bytes": 988509,
+  "latency_us": 205.17,
+  "min_us": 181.50,
+  "mean_us": 205.17,
+  "p50_us": 192.73,
+  "p95_us": 259.14,
+  "p99_us": 315.33,
+  "max_us": 316.04,
+  "renders_per_sec": 4873,
+  "timestamp": "2026-11-11T05:52:10Z"
+}

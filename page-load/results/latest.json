@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "status": "pass",
   "captureKind": "publication",
-  "capturedAt": "2026-10-21T01:25:20.806Z",
+  "capturedAt": "2026-11-11T05:27:38.976Z",
   "scenario": {
     "id": "canonical_pages_v1",
     "workloads": [
@@ -53,634 +53,724 @@
     "processLifecycle": "fresh production server process for every engine/workload/phase/repeat",
     "executionSequence": [
       {
-        "engine": "proa",
-        "workload": "cards",
-        "kind": "closed",
-        "repeat": 1,
-        "port": 15720
-      },
-      {
         "engine": "react",
         "workload": "cards",
         "kind": "closed",
         "repeat": 1,
-        "port": 15731
+        "port": 15731,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "cards",
         "kind": "closed",
         "repeat": 1,
-        "port": 15742
+        "port": 15742,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "cards",
         "kind": "closed",
         "repeat": 1,
-        "port": 15753
+        "port": 15753,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "cards",
         "kind": "closed",
         "repeat": 1,
-        "port": 15764
+        "port": 15764,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "cards",
         "kind": "closed",
         "repeat": 2,
-        "port": 15771
+        "port": 15771,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "cards",
         "kind": "closed",
         "repeat": 2,
-        "port": 15782
+        "port": 15782,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "cards",
         "kind": "closed",
         "repeat": 2,
-        "port": 15793
+        "port": 15793,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "cards",
         "kind": "closed",
         "repeat": 2,
-        "port": 15804
-      },
-      {
-        "engine": "proa",
-        "workload": "cards",
-        "kind": "closed",
-        "repeat": 2,
-        "port": 15810
+        "port": 15804,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "cards",
         "kind": "closed",
         "repeat": 3,
-        "port": 15822
+        "port": 15822,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "cards",
         "kind": "closed",
         "repeat": 3,
-        "port": 15833
+        "port": 15833,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "cards",
         "kind": "closed",
         "repeat": 3,
-        "port": 15844
-      },
-      {
-        "engine": "proa",
-        "workload": "cards",
-        "kind": "closed",
-        "repeat": 3,
-        "port": 15850
+        "port": 15844,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "cards",
         "kind": "closed",
         "repeat": 3,
-        "port": 15861
-      },
-      {
-        "engine": "proa",
-        "workload": "cards",
-        "kind": "open",
-        "repeat": 1,
-        "port": 15870
+        "port": 15861,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "cards",
         "kind": "open",
         "repeat": 1,
-        "port": 15881
+        "port": 15881,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "cards",
         "kind": "open",
         "repeat": 1,
-        "port": 15892
+        "port": 15892,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "cards",
         "kind": "open",
         "repeat": 1,
-        "port": 15903
+        "port": 15903,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "cards",
         "kind": "open",
         "repeat": 1,
-        "port": 15914
+        "port": 15914,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "cards",
         "kind": "open",
         "repeat": 2,
-        "port": 15921
+        "port": 15921,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "cards",
         "kind": "open",
         "repeat": 2,
-        "port": 15932
+        "port": 15932,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "cards",
         "kind": "open",
         "repeat": 2,
-        "port": 15943
+        "port": 15943,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "cards",
         "kind": "open",
         "repeat": 2,
-        "port": 15954
-      },
-      {
-        "engine": "proa",
-        "workload": "cards",
-        "kind": "open",
-        "repeat": 2,
-        "port": 15960
+        "port": 15954,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "cards",
         "kind": "open",
         "repeat": 3,
-        "port": 15972
+        "port": 15972,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "cards",
         "kind": "open",
         "repeat": 3,
-        "port": 15983
+        "port": 15983,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "cards",
         "kind": "open",
         "repeat": 3,
-        "port": 15994
-      },
-      {
-        "engine": "proa",
-        "workload": "cards",
-        "kind": "open",
-        "repeat": 3,
-        "port": 16000
+        "port": 15994,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "cards",
         "kind": "open",
         "repeat": 3,
-        "port": 16011
-      },
-      {
-        "engine": "proa",
-        "workload": "products",
-        "kind": "closed",
-        "repeat": 1,
-        "port": 16020
+        "port": 16011,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "products",
         "kind": "closed",
         "repeat": 1,
-        "port": 16031
+        "port": 16031,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "products",
         "kind": "closed",
         "repeat": 1,
-        "port": 16042
+        "port": 16042,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "products",
         "kind": "closed",
         "repeat": 1,
-        "port": 16053
+        "port": 16053,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "products",
         "kind": "closed",
         "repeat": 1,
-        "port": 16064
+        "port": 16064,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "products",
         "kind": "closed",
         "repeat": 2,
-        "port": 16071
+        "port": 16071,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "products",
         "kind": "closed",
         "repeat": 2,
-        "port": 16082
+        "port": 16082,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "products",
         "kind": "closed",
         "repeat": 2,
-        "port": 16093
+        "port": 16093,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "products",
         "kind": "closed",
         "repeat": 2,
-        "port": 16104
-      },
-      {
-        "engine": "proa",
-        "workload": "products",
-        "kind": "closed",
-        "repeat": 2,
-        "port": 16110
+        "port": 16104,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "products",
         "kind": "closed",
         "repeat": 3,
-        "port": 16122
+        "port": 16122,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "products",
         "kind": "closed",
         "repeat": 3,
-        "port": 16133
+        "port": 16133,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "products",
         "kind": "closed",
         "repeat": 3,
-        "port": 16144
-      },
-      {
-        "engine": "proa",
-        "workload": "products",
-        "kind": "closed",
-        "repeat": 3,
-        "port": 16150
+        "port": 16144,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "products",
         "kind": "closed",
         "repeat": 3,
-        "port": 16161
-      },
-      {
-        "engine": "proa",
-        "workload": "products",
-        "kind": "open",
-        "repeat": 1,
-        "port": 16170
+        "port": 16161,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "products",
         "kind": "open",
         "repeat": 1,
-        "port": 16181
+        "port": 16181,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "products",
         "kind": "open",
         "repeat": 1,
-        "port": 16192
+        "port": 16192,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "products",
         "kind": "open",
         "repeat": 1,
-        "port": 16203
+        "port": 16203,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "products",
         "kind": "open",
         "repeat": 1,
-        "port": 16214
+        "port": 16214,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "products",
         "kind": "open",
         "repeat": 2,
-        "port": 16221
+        "port": 16221,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "products",
         "kind": "open",
         "repeat": 2,
-        "port": 16232
+        "port": 16232,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "products",
         "kind": "open",
         "repeat": 2,
-        "port": 16243
+        "port": 16243,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "products",
         "kind": "open",
         "repeat": 2,
-        "port": 16254
-      },
-      {
-        "engine": "proa",
-        "workload": "products",
-        "kind": "open",
-        "repeat": 2,
-        "port": 16260
+        "port": 16254,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "products",
         "kind": "open",
         "repeat": 3,
-        "port": 16272
+        "port": 16272,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "products",
         "kind": "open",
         "repeat": 3,
-        "port": 16283
+        "port": 16283,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "products",
         "kind": "open",
         "repeat": 3,
-        "port": 16294
-      },
-      {
-        "engine": "proa",
-        "workload": "products",
-        "kind": "open",
-        "repeat": 3,
-        "port": 16300
+        "port": 16294,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "products",
         "kind": "open",
         "repeat": 3,
-        "port": 16311
-      },
-      {
-        "engine": "proa",
-        "workload": "table",
-        "kind": "closed",
-        "repeat": 1,
-        "port": 16320
+        "port": 16311,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "table",
         "kind": "closed",
         "repeat": 1,
-        "port": 16331
+        "port": 16331,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "table",
         "kind": "closed",
         "repeat": 1,
-        "port": 16342
+        "port": 16342,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "table",
         "kind": "closed",
         "repeat": 1,
-        "port": 16353
+        "port": 16353,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "table",
         "kind": "closed",
         "repeat": 1,
-        "port": 16364
+        "port": 16364,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "table",
         "kind": "closed",
         "repeat": 2,
-        "port": 16371
+        "port": 16371,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "table",
         "kind": "closed",
         "repeat": 2,
-        "port": 16382
+        "port": 16382,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "table",
         "kind": "closed",
         "repeat": 2,
-        "port": 16393
+        "port": 16393,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "table",
         "kind": "closed",
         "repeat": 2,
-        "port": 16404
-      },
-      {
-        "engine": "proa",
-        "workload": "table",
-        "kind": "closed",
-        "repeat": 2,
-        "port": 16410
+        "port": 16404,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "table",
         "kind": "closed",
         "repeat": 3,
-        "port": 16422
+        "port": 16422,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "table",
         "kind": "closed",
         "repeat": 3,
-        "port": 16433
+        "port": 16433,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "table",
         "kind": "closed",
         "repeat": 3,
-        "port": 16444
-      },
-      {
-        "engine": "proa",
-        "workload": "table",
-        "kind": "closed",
-        "repeat": 3,
-        "port": 16450
+        "port": 16444,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "table",
         "kind": "closed",
         "repeat": 3,
-        "port": 16461
-      },
-      {
-        "engine": "proa",
-        "workload": "table",
-        "kind": "open",
-        "repeat": 1,
-        "port": 16470
+        "port": 16461,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "table",
         "kind": "open",
         "repeat": 1,
-        "port": 16481
+        "port": 16481,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "table",
         "kind": "open",
         "repeat": 1,
-        "port": 16492
+        "port": 16492,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "table",
         "kind": "open",
         "repeat": 1,
-        "port": 16503
+        "port": 16503,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "table",
         "kind": "open",
         "repeat": 1,
-        "port": 16514
+        "port": 16514,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "table",
         "kind": "open",
         "repeat": 2,
-        "port": 16521
+        "port": 16521,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "table",
         "kind": "open",
         "repeat": 2,
-        "port": 16532
+        "port": 16532,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "table",
         "kind": "open",
         "repeat": 2,
-        "port": 16543
+        "port": 16543,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "table",
         "kind": "open",
         "repeat": 2,
-        "port": 16554
-      },
-      {
-        "engine": "proa",
-        "workload": "table",
-        "kind": "open",
-        "repeat": 2,
-        "port": 16560
+        "port": 16554,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "marko",
         "workload": "table",
         "kind": "open",
         "repeat": 3,
-        "port": 16572
+        "port": 16572,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "go-html-template",
         "workload": "table",
         "kind": "open",
         "repeat": 3,
-        "port": 16583
+        "port": 16583,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "sveltekit",
         "workload": "table",
         "kind": "open",
         "repeat": 3,
-        "port": 16594
-      },
-      {
-        "engine": "proa",
-        "workload": "table",
-        "kind": "open",
-        "repeat": 3,
-        "port": 16600
+        "port": 16594,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
       },
       {
         "engine": "react",
         "workload": "table",
         "kind": "open",
         "repeat": 3,
-        "port": 16611
+        "port": 16611,
+        "sourceCapturedAt": "2026-10-21T01:25:20.806Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "cards",
+        "kind": "closed",
+        "repeat": 1,
+        "port": 15720,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "cards",
+        "kind": "closed",
+        "repeat": 2,
+        "port": 15730,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "cards",
+        "kind": "closed",
+        "repeat": 3,
+        "port": 15740,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "cards",
+        "kind": "open",
+        "repeat": 1,
+        "port": 15750,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "cards",
+        "kind": "open",
+        "repeat": 2,
+        "port": 15760,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "cards",
+        "kind": "open",
+        "repeat": 3,
+        "port": 15770,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "products",
+        "kind": "closed",
+        "repeat": 1,
+        "port": 15780,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "products",
+        "kind": "closed",
+        "repeat": 2,
+        "port": 15790,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "products",
+        "kind": "closed",
+        "repeat": 3,
+        "port": 15800,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "products",
+        "kind": "open",
+        "repeat": 1,
+        "port": 15810,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "products",
+        "kind": "open",
+        "repeat": 2,
+        "port": 15820,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "products",
+        "kind": "open",
+        "repeat": 3,
+        "port": 15830,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "table",
+        "kind": "closed",
+        "repeat": 1,
+        "port": 15840,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "table",
+        "kind": "closed",
+        "repeat": 2,
+        "port": 15850,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "table",
+        "kind": "closed",
+        "repeat": 3,
+        "port": 15860,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "table",
+        "kind": "open",
+        "repeat": 1,
+        "port": 15870,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "table",
+        "kind": "open",
+        "repeat": 2,
+        "port": 15880,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
+      },
+      {
+        "engine": "proa",
+        "workload": "table",
+        "kind": "open",
+        "repeat": 3,
+        "port": 15890,
+        "sourceCapturedAt": "2026-11-11T05:27:38.976Z"
       }
     ]
   },
@@ -694,11 +784,11 @@
     "node": "v24.20.0"
   },
   "source": {
-    "repositoryCommit": "82f32206ec5c87449e1dfb8ceff9a0e977d883d8",
+    "repositoryCommit": "92aab464b8718e4eca06f34f522b18decc8364cf",
     "dirty": true,
-    "proaRevision": "7ffb8a19ecfa601fb496d825e0677dce29ea3af4",
+    "proaRevision": "78f9c0edd00e934978f2c7e1fa6a0d06af491407",
     "proaBranch": "main",
-    "sourceSha256": "f740f68266e1b704d2aaee4dbedbd1d017aad6d7f1cbf585fd14b84528bd2cc6"
+    "sourceSha256": "24edac9a04ef94da10ef88cfef4c381d05b6872adb449c941e39ef2ab61374a5"
   },
   "engines": [
     {
@@ -748,65 +838,65 @@
               "preRollSeconds": 1,
               "durationSeconds": 5,
               "arrivalWindowSeconds": 6,
-              "totalSentRequests": 514286,
-              "sentRequests": 431037,
-              "successfulRequests": 431037,
+              "totalSentRequests": 517807,
+              "sentRequests": 437217,
+              "successfulRequests": 437217,
               "errorCount": 0,
               "errorSamples": [],
-              "achievedGoodputRps": 86207.4,
-              "steadyStateCompletedResponses": 431036,
-              "completionThroughputRps": 86207.2,
-              "phaseWallMs": 6000.77587890625,
+              "achievedGoodputRps": 87443.4,
+              "steadyStateCompletedResponses": 437216,
+              "completionThroughputRps": 87443.2,
+              "phaseWallMs": 6000.728759765625,
               "maxObservedInFlight": 64,
               "latencyMs": {
                 "firstByte": {
-                  "count": 431037,
-                  "min": 0.0283203125,
-                  "mean": 0.726571134812854,
-                  "p50": 0.7529296875,
-                  "p95": 0.832275390625,
-                  "p99": 1.141357421875,
-                  "max": 8.547119140625
+                  "count": 437217,
+                  "min": 0.029052734375,
+                  "mean": 0.7156201802528478,
+                  "p50": 0.722900390625,
+                  "p95": 0.8388671875,
+                  "p99": 1.189697265625,
+                  "max": 4.03857421875
                 },
                 "complete": {
-                  "count": 431037,
-                  "min": 0.02880859375,
-                  "mean": 0.7274250070723337,
-                  "p50": 0.75390625,
-                  "p95": 0.833251953125,
-                  "p99": 1.142822265625,
-                  "max": 8.552978515625
+                  "count": 437217,
+                  "min": 0.029541015625,
+                  "mean": 0.7164588806963276,
+                  "p50": 0.7236328125,
+                  "p95": 0.83984375,
+                  "p99": 1.190673828125,
+                  "max": 4.039306640625
                 },
                 "scheduledFirstByte": {
-                  "count": 431037,
-                  "min": 0.0283203125,
-                  "mean": 0.7266339494655476,
-                  "p50": 0.753173828125,
-                  "p95": 0.832275390625,
-                  "p99": 1.141357421875,
-                  "max": 8.547119140625
+                  "count": 437217,
+                  "min": 0.029052734375,
+                  "mean": 0.7156808830233328,
+                  "p50": 0.722900390625,
+                  "p95": 0.8388671875,
+                  "p99": 1.189902343749992,
+                  "max": 4.03857421875
                 },
                 "scheduledComplete": {
-                  "count": 431037,
-                  "min": 0.02880859375,
-                  "mean": 0.7274878217250274,
-                  "p50": 0.75390625,
-                  "p95": 0.833251953125,
-                  "p99": 1.142822265625,
-                  "max": 8.552978515625
+                  "count": 437217,
+                  "min": 0.029541015625,
+                  "mean": 0.7165195834668125,
+                  "p50": 0.7236328125,
+                  "p95": 0.83984375,
+                  "p99": 1.190673828125,
+                  "max": 4.039306640625
                 },
                 "schedulerLag": {
-                  "count": 431037,
+                  "count": 437217,
                   "min": 0,
-                  "mean": 0.00006281465269367826,
+                  "mean": 0.00006070277048496513,
                   "p50": 0,
                   "p95": 0.000244140625,
                   "p99": 0.000244140625,
-                  "max": 0.045166015625
+                  "max": 0.177978515625
                 }
               },
               "responseBytes": {
-                "count": 431037,
+                "count": 437217,
                 "min": 25108,
                 "mean": 25108,
                 "p50": 25108,
@@ -815,41 +905,41 @@
                 "max": 25108
               },
               "cpu": {
-                "processCpuTimeMs": 5935.806,
-                "averageCpuPercent": 98.9173086911206,
-                "averageCpuCores": 0.989173086911206,
-                "cpuMsPerSuccessfulRequest": 0.01154183858786745,
+                "processCpuTimeMs": 5859.223,
+                "averageCpuPercent": 97.64185709051858,
+                "averageCpuCores": 0.9764185709051858,
+                "cpuMsPerSuccessfulRequest": 0.011315457303589948,
                 "sampledCpuPercent": {
                   "count": 62,
-                  "min": 0.6,
-                  "mean": 91.97096774193548,
-                  "p50": 98.8,
-                  "p95": 100,
+                  "min": 0.4,
+                  "mean": 90.5225806451613,
+                  "p50": 98.55,
+                  "p95": 99.875,
                   "p99": 100,
                   "max": 100
                 }
               },
               "memory": {
-                "baselineRssBytes": 5160960,
-                "averageRssBytes": 8465771.35483871,
-                "peakSampledRssBytes": 8552448,
-                "peakRssGrowthBytes": 3391488,
+                "baselineRssBytes": 5324800,
+                "averageRssBytes": 8757512.258064516,
+                "peakSampledRssBytes": 8863744,
+                "peakRssGrowthBytes": 3538944,
                 "sampleCount": 62
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 28191998,
-                "wallMs": 6049.466167,
-                "averageCores": 4.660245585600281,
-                "busiestWorkerUtilization": 0.6405961249432028,
+                "cpuMicros": 28863246,
+                "wallMs": 6049.815167,
+                "averageCores": 4.7709302190653196,
+                "busiestWorkerUtilization": 0.6177895034181179,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 20,
-                "timeWaitAtStart": 20,
-                "waitedMs": 3.0496670000011363
+                "timeWaitBefore": 59,
+                "timeWaitAtStart": 59,
+                "waitedMs": 4.9591250000000855
               },
               "repeat": 1
             },
@@ -860,65 +950,65 @@
               "preRollSeconds": 1,
               "durationSeconds": 5,
               "arrivalWindowSeconds": 6,
-              "totalSentRequests": 521179,
-              "sentRequests": 437130,
-              "successfulRequests": 437130,
+              "totalSentRequests": 529662,
+              "sentRequests": 442265,
+              "successfulRequests": 442265,
               "errorCount": 0,
               "errorSamples": [],
-              "achievedGoodputRps": 87426,
-              "steadyStateCompletedResponses": 437130,
-              "completionThroughputRps": 87426,
-              "phaseWallMs": 6000.769287109375,
+              "achievedGoodputRps": 88453,
+              "steadyStateCompletedResponses": 442263,
+              "completionThroughputRps": 88452.6,
+              "phaseWallMs": 6000.68115234375,
               "maxObservedInFlight": 64,
               "latencyMs": {
                 "firstByte": {
-                  "count": 437130,
-                  "min": 0.028564453125,
-                  "mean": 0.7174245950459174,
-                  "p50": 0.750244140625,
-                  "p95": 0.828125,
-                  "p99": 1.0693359375,
-                  "max": 4.1943359375
+                  "count": 442265,
+                  "min": 0.027099609375,
+                  "mean": 0.7083711029577502,
+                  "p50": 0.716796875,
+                  "p95": 0.83056640625,
+                  "p99": 1.120361328125,
+                  "max": 5.31201171875
                 },
                 "complete": {
-                  "count": 437130,
-                  "min": 0.029052734375,
-                  "mean": 0.718173281792423,
-                  "p50": 0.7509765625,
-                  "p95": 0.8291015625,
-                  "p99": 1.0703125,
-                  "max": 4.195068359375
+                  "count": 442265,
+                  "min": 0.027587890625,
+                  "mean": 0.7092078605657807,
+                  "p50": 0.717529296875,
+                  "p95": 0.83154296875,
+                  "p99": 1.121337890625,
+                  "max": 5.312744140625
                 },
                 "scheduledFirstByte": {
-                  "count": 437130,
-                  "min": 0.028564453125,
-                  "mean": 0.7174663340282067,
-                  "p50": 0.750244140625,
-                  "p95": 0.828369140625,
-                  "p99": 1.069580078125,
-                  "max": 4.1943359375
+                  "count": 442265,
+                  "min": 0.027099609375,
+                  "mean": 0.7084187756977929,
+                  "p50": 0.716796875,
+                  "p95": 0.83056640625,
+                  "p99": 1.120361328125,
+                  "max": 5.31201171875
                 },
                 "scheduledComplete": {
-                  "count": 437130,
-                  "min": 0.029052734375,
-                  "mean": 0.7182150207747123,
-                  "p50": 0.7509765625,
-                  "p95": 0.8291015625,
-                  "p99": 1.0704858398437551,
-                  "max": 4.195068359375
+                  "count": 442265,
+                  "min": 0.027587890625,
+                  "mean": 0.7092555333058235,
+                  "p50": 0.7177734375,
+                  "p95": 0.831787109375,
+                  "p99": 1.121337890625,
+                  "max": 5.312744140625
                 },
                 "schedulerLag": {
-                  "count": 437130,
+                  "count": 442265,
                   "min": 0,
-                  "mean": 0.00004173898228930753,
+                  "mean": 0.00004767274004273456,
                   "p50": 0,
                   "p95": 0.000244140625,
                   "p99": 0.000244140625,
-                  "max": 0.31201171875
+                  "max": 0.146728515625
                 }
               },
               "responseBytes": {
-                "count": 437130,
+                "count": 442265,
                 "min": 25108,
                 "mean": 25108,
                 "p50": 25108,
@@ -927,41 +1017,41 @@
                 "max": 25108
               },
               "cpu": {
-                "processCpuTimeMs": 5956.994,
-                "averageCpuPercent": 99.2705054133074,
-                "averageCpuCores": 0.9927050541330741,
-                "cpuMsPerSuccessfulRequest": 0.011429842721982273,
+                "processCpuTimeMs": 5929.338,
+                "averageCpuPercent": 98.81108243326868,
+                "averageCpuCores": 0.9881108243326868,
+                "cpuMsPerSuccessfulRequest": 0.011194569366879254,
                 "sampledCpuPercent": {
-                  "count": 61,
-                  "min": 0.6,
-                  "mean": 92.18360655737702,
-                  "p50": 98.9,
-                  "p95": 100,
+                  "count": 62,
+                  "min": 0.7,
+                  "mean": 91.70645161290322,
+                  "p50": 98.6,
+                  "p95": 99.68,
                   "p99": 100,
                   "max": 100
                 }
               },
               "memory": {
-                "baselineRssBytes": 5193728,
-                "averageRssBytes": 8400963.147540983,
-                "peakSampledRssBytes": 8470528,
-                "peakRssGrowthBytes": 3276800,
-                "sampleCount": 61
+                "baselineRssBytes": 5406720,
+                "averageRssBytes": 8775481.806451613,
+                "peakSampledRssBytes": 8880128,
+                "peakRssGrowthBytes": 3473408,
+                "sampleCount": 62
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 24730643,
-                "wallMs": 6049.169625000002,
-                "averageCores": 4.088270710378698,
-                "busiestWorkerUtilization": 0.5150620359019303,
+                "cpuMicros": 27230970,
+                "wallMs": 6050.764042000001,
+                "averageCores": 4.500418428314577,
+                "busiestWorkerUtilization": 0.5713831784725683,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 458,
-                "timeWaitAtStart": 458,
-                "waitedMs": 3.7750420000083977
+                "timeWaitBefore": 159,
+                "timeWaitAtStart": 159,
+                "waitedMs": 3.198667000000569
               },
               "repeat": 2
             },
@@ -972,65 +1062,65 @@
               "preRollSeconds": 1,
               "durationSeconds": 5,
               "arrivalWindowSeconds": 6,
-              "totalSentRequests": 528365,
-              "sentRequests": 441423,
-              "successfulRequests": 441423,
+              "totalSentRequests": 525285,
+              "sentRequests": 439621,
+              "successfulRequests": 439621,
               "errorCount": 0,
               "errorSamples": [],
-              "achievedGoodputRps": 88284.6,
-              "steadyStateCompletedResponses": 441424,
-              "completionThroughputRps": 88284.8,
-              "phaseWallMs": 6000.722412109375,
+              "achievedGoodputRps": 87924.2,
+              "steadyStateCompletedResponses": 439621,
+              "completionThroughputRps": 87924.2,
+              "phaseWallMs": 6000.688720703125,
               "maxObservedInFlight": 64,
               "latencyMs": {
                 "firstByte": {
-                  "count": 441423,
-                  "min": 0.028076171875,
-                  "mean": 0.7103684568810344,
-                  "p50": 0.741943359375,
-                  "p95": 0.818115234375,
-                  "p99": 1.080078125,
-                  "max": 4.732421875
+                  "count": 439621,
+                  "min": 0.027587890625,
+                  "mean": 0.7129622620784437,
+                  "p50": 0.724853515625,
+                  "p95": 0.82666015625,
+                  "p99": 1.11474609375,
+                  "max": 4.734375
                 },
                 "complete": {
-                  "count": 441423,
-                  "min": 0.028564453125,
-                  "mean": 0.7111016525098588,
-                  "p50": 0.74267578125,
-                  "p95": 0.81884765625,
-                  "p99": 1.0807568359374926,
-                  "max": 4.734375
+                  "count": 439621,
+                  "min": 0.028076171875,
+                  "mean": 0.7137639552689632,
+                  "p50": 0.725830078125,
+                  "p95": 0.82763671875,
+                  "p99": 1.11572265625,
+                  "max": 4.736572265625
                 },
                 "scheduledFirstByte": {
-                  "count": 441423,
-                  "min": 0.028076171875,
-                  "mean": 0.7104112738403343,
-                  "p50": 0.7421875,
-                  "p95": 0.818115234375,
-                  "p99": 1.080078125,
-                  "max": 4.732421875
+                  "count": 439621,
+                  "min": 0.027587890625,
+                  "mean": 0.7130076075338544,
+                  "p50": 0.72509765625,
+                  "p95": 0.82666015625,
+                  "p99": 1.11474609375,
+                  "max": 4.734619140625
                 },
                 "scheduledComplete": {
-                  "count": 441423,
-                  "min": 0.028564453125,
-                  "mean": 0.7111444694691585,
-                  "p50": 0.742919921875,
-                  "p95": 0.819091796875,
-                  "p99": 1.080810546875,
-                  "max": 4.734375
+                  "count": 439621,
+                  "min": 0.028076171875,
+                  "mean": 0.713809300724374,
+                  "p50": 0.725830078125,
+                  "p95": 0.82763671875,
+                  "p99": 1.11572265625,
+                  "max": 4.73681640625
                 },
                 "schedulerLag": {
-                  "count": 441423,
+                  "count": 439621,
                   "min": 0,
-                  "mean": 0.000042816959299809935,
+                  "mean": 0.00004534545541074016,
                   "p50": 0,
                   "p95": 0.000244140625,
                   "p99": 0.000244140625,
-                  "max": 0.0224609375
+                  "max": 0.285888671875
                 }
               },
               "responseBytes": {
-                "count": 441423,
+                "count": 439621,
                 "min": 25108,
                 "mean": 25108,
                 "p50": 25108,
@@ -1039,41 +1129,41 @@
                 "max": 25108
               },
               "cpu": {
-                "processCpuTimeMs": 5949.927,
-                "averageCpuPercent": 99.15351171707475,
-                "averageCpuCores": 0.9915351171707475,
-                "cpuMsPerSuccessfulRequest": 0.011261016532132143,
+                "processCpuTimeMs": 5937.555,
+                "averageCpuPercent": 98.94789208969787,
+                "averageCpuCores": 0.9894789208969788,
+                "cpuMsPerSuccessfulRequest": 0.011303492389845514,
                 "sampledCpuPercent": {
                   "count": 62,
-                  "min": 0.2,
-                  "mean": 91.73548387096774,
-                  "p50": 98.65,
-                  "p95": 100,
+                  "min": 0.5,
+                  "mean": 91.89032258064518,
+                  "p50": 98.55,
+                  "p95": 99.99,
                   "p99": 100,
                   "max": 100
                 }
               },
               "memory": {
-                "baselineRssBytes": 5177344,
-                "averageRssBytes": 8386229.677419355,
-                "peakSampledRssBytes": 8470528,
-                "peakRssGrowthBytes": 3293184,
+                "baselineRssBytes": 5357568,
+                "averageRssBytes": 8726065.548387097,
+                "peakSampledRssBytes": 8830976,
+                "peakRssGrowthBytes": 3473408,
                 "sampleCount": 62
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 24865293,
-                "wallMs": 6050.405624999999,
-                "averageCores": 4.109690249073178,
-                "busiestWorkerUtilization": 0.5168309537836532,
+                "cpuMicros": 26299876,
+                "wallMs": 6050.4102920000005,
+                "averageCores": 4.346792156355799,
+                "busiestWorkerUtilization": 0.5713238564689868,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 467,
-                "timeWaitAtStart": 467,
-                "waitedMs": 3.6659159999981057
+                "timeWaitBefore": 252,
+                "timeWaitAtStart": 252,
+                "waitedMs": 4.013958000001367
               },
               "repeat": 3
             },
@@ -1092,53 +1182,53 @@
               "achievedGoodputRps": 2000,
               "steadyStateCompletedResponses": 10000,
               "completionThroughputRps": 2000,
-              "phaseWallMs": 5999.687744140625,
-              "maxObservedInFlight": 3,
+              "phaseWallMs": 5999.984130859375,
+              "maxObservedInFlight": 18,
               "latencyMs": {
                 "firstByte": {
                   "count": 10000,
-                  "min": 0.074951171875,
-                  "mean": 0.109515625,
-                  "p50": 0.107666015625,
-                  "p95": 0.1318359375,
-                  "p99": 0.1543017578125001,
-                  "max": 0.4892578125
+                  "min": 0.075439453125,
+                  "mean": 0.152762451171875,
+                  "p50": 0.138671875,
+                  "p95": 0.2099609375,
+                  "p99": 0.34968505859375165,
+                  "max": 9.539306640625
                 },
                 "complete": {
                   "count": 10000,
-                  "min": 0.076416015625,
-                  "mean": 0.111379638671875,
-                  "p50": 0.109375,
-                  "p95": 0.134521484375,
-                  "p99": 0.1572265625,
-                  "max": 0.492431640625
+                  "min": 0.07666015625,
+                  "mean": 0.156520068359375,
+                  "p50": 0.14208984375,
+                  "p95": 0.2158203125,
+                  "p99": 0.3650170898437506,
+                  "max": 9.54345703125
                 },
                 "scheduledFirstByte": {
                   "count": 10000,
-                  "min": 0.07763671875,
-                  "mean": 0.117156494140625,
-                  "p50": 0.115234375,
-                  "p95": 0.141357421875,
-                  "p99": 0.16430908203125005,
-                  "max": 0.56591796875
+                  "min": 0.079833984375,
+                  "mean": 0.172751953125,
+                  "p50": 0.146728515625,
+                  "p95": 0.22120361328124982,
+                  "p99": 0.44483154296875016,
+                  "max": 9.58935546875
                 },
                 "scheduledComplete": {
                   "count": 10000,
-                  "min": 0.07861328125,
-                  "mean": 0.1190205078125,
-                  "p50": 0.1171875,
-                  "p95": 0.1435546875,
-                  "p99": 0.16650634765625005,
-                  "max": 0.56982421875
+                  "min": 0.0810546875,
+                  "mean": 0.1765095703125,
+                  "p50": 0.150634765625,
+                  "p95": 0.22705078125,
+                  "p99": 0.44924804687500064,
+                  "max": 9.593505859375
                 },
                 "schedulerLag": {
                   "count": 10000,
-                  "min": 0,
-                  "mean": 0.007640869140625,
-                  "p50": 0.007568359375,
-                  "p95": 0.01416015625,
-                  "p99": 0.016845703125,
-                  "max": 0.280029296875
+                  "min": 0.000244140625,
+                  "mean": 0.019989501953125,
+                  "p50": 0.008056640625,
+                  "p95": 0.01611328125,
+                  "p99": 0.04640380859375037,
+                  "max": 6.842041015625
                 }
               },
               "responseBytes": {
@@ -1151,41 +1241,41 @@
                 "max": 25108
               },
               "cpu": {
-                "processCpuTimeMs": 334.678,
-                "averageCpuPercent": 5.5782569739042005,
-                "averageCpuCores": 0.055782569739042005,
-                "cpuMsPerSuccessfulRequest": 0.027889833333333332,
+                "processCpuTimeMs": 389.478,
+                "averageCpuPercent": 6.491317168604165,
+                "averageCpuCores": 0.06491317168604165,
+                "cpuMsPerSuccessfulRequest": 0.0324565,
                 "sampledCpuPercent": {
-                  "count": 60,
+                  "count": 61,
                   "min": 0.3,
-                  "mean": 5.110000000000002,
-                  "p50": 5.45,
-                  "p95": 5.6,
-                  "p99": 5.6,
-                  "max": 5.6
+                  "mean": 5.931147540983608,
+                  "p50": 5.8,
+                  "p95": 7.9,
+                  "p99": 8,
+                  "max": 8
                 }
               },
               "memory": {
-                "baselineRssBytes": 5193728,
-                "averageRssBytes": 5624627.2,
-                "peakSampledRssBytes": 5636096,
-                "peakRssGrowthBytes": 442368,
-                "sampleCount": 60
+                "baselineRssBytes": 5324800,
+                "averageRssBytes": 6025820.327868853,
+                "peakSampledRssBytes": 6176768,
+                "peakRssGrowthBytes": 851968,
+                "sampleCount": 61
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 5604089,
-                "wallMs": 6049.147040999989,
-                "averageCores": 0.9264263146550301,
-                "busiestWorkerUtilization": 0.12071643376895728,
+                "cpuMicros": 6797009,
+                "wallMs": 6049.078167,
+                "averageCores": 1.1236437705632976,
+                "busiestWorkerUtilization": 0.15321680034656468,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 455,
-                "timeWaitAtStart": 455,
-                "waitedMs": 3.8117910000000848
+                "timeWaitBefore": 331,
+                "timeWaitAtStart": 331,
+                "waitedMs": 6.423709000002418
               },
               "repeat": 1
             },
@@ -1204,53 +1294,53 @@
               "achievedGoodputRps": 2000,
               "steadyStateCompletedResponses": 10000,
               "completionThroughputRps": 2000,
-              "phaseWallMs": 5999.650146484375,
-              "maxObservedInFlight": 9,
+              "phaseWallMs": 5999.673828125,
+              "maxObservedInFlight": 10,
               "latencyMs": {
                 "firstByte": {
                   "count": 10000,
-                  "min": 0.064697265625,
-                  "mean": 0.1063330078125,
-                  "p50": 0.098876953125,
-                  "p95": 0.13623046875,
-                  "p99": 0.17700439453125005,
-                  "max": 8.062744140625
+                  "min": 0.0830078125,
+                  "mean": 0.1423552001953125,
+                  "p50": 0.130126953125,
+                  "p95": 0.182373046875,
+                  "p99": 0.29126220703125005,
+                  "max": 3.896484375
                 },
                 "complete": {
                   "count": 10000,
-                  "min": 0.065673828125,
-                  "mean": 0.108258251953125,
-                  "p50": 0.1005859375,
-                  "p95": 0.13916015625,
-                  "p99": 0.1804248046875001,
-                  "max": 8.06884765625
+                  "min": 0.08447265625,
+                  "mean": 0.1454756591796875,
+                  "p50": 0.133056640625,
+                  "p95": 0.1865234375,
+                  "p99": 0.29639892578125027,
+                  "max": 3.900634765625
                 },
                 "scheduledFirstByte": {
                   "count": 10000,
-                  "min": 0.066650390625,
-                  "mean": 0.1166564697265625,
-                  "p50": 0.106201171875,
-                  "p95": 0.14501953125,
-                  "p99": 0.1884863281250002,
-                  "max": 8.784912109375
+                  "min": 0.0859375,
+                  "mean": 0.159465185546875,
+                  "p50": 0.13818359375,
+                  "p95": 0.193359375,
+                  "p99": 0.5749609375000002,
+                  "max": 4.94384765625
                 },
                 "scheduledComplete": {
                   "count": 10000,
-                  "min": 0.0673828125,
-                  "mean": 0.1185817138671875,
-                  "p50": 0.108154296875,
-                  "p95": 0.14794921875,
-                  "p99": 0.1926318359375001,
-                  "max": 8.7900390625
+                  "min": 0.087890625,
+                  "mean": 0.16258564453125,
+                  "p50": 0.14111328125,
+                  "p95": 0.197509765625,
+                  "p99": 0.5778955078125003,
+                  "max": 4.94873046875
                 },
                 "schedulerLag": {
                   "count": 10000,
                   "min": 0,
-                  "mean": 0.0103234619140625,
-                  "p50": 0.00732421875,
-                  "p95": 0.013916015625,
-                  "p99": 0.0166015625,
-                  "max": 4.387939453125
+                  "mean": 0.0171099853515625,
+                  "p50": 0.008056640625,
+                  "p95": 0.015625,
+                  "p99": 0.11943603515625112,
+                  "max": 4.191162109375
                 }
               },
               "responseBytes": {
@@ -1263,41 +1353,41 @@
                 "max": 25108
               },
               "cpu": {
-                "processCpuTimeMs": 325.996,
-                "averageCpuPercent": 5.433583493047914,
-                "averageCpuCores": 0.05433583493047914,
-                "cpuMsPerSuccessfulRequest": 0.02716633333333333,
+                "processCpuTimeMs": 386.054,
+                "averageCpuPercent": 6.434583130007393,
+                "averageCpuCores": 0.06434583130007393,
+                "cpuMsPerSuccessfulRequest": 0.03217116666666667,
                 "sampledCpuPercent": {
-                  "count": 60,
-                  "min": 0.8,
-                  "mean": 4.976666666666666,
-                  "p50": 5.1,
-                  "p95": 5.8,
-                  "p99": 5.8,
-                  "max": 5.8
+                  "count": 61,
+                  "min": 0.3,
+                  "mean": 5.940983606557376,
+                  "p50": 6.2,
+                  "p95": 6.9,
+                  "p99": 7,
+                  "max": 7
                 }
               },
               "memory": {
-                "baselineRssBytes": 5177344,
-                "averageRssBytes": 5734946.133333334,
+                "baselineRssBytes": 5292032,
+                "averageRssBytes": 5819274.491803279,
                 "peakSampledRssBytes": 5865472,
-                "peakRssGrowthBytes": 688128,
-                "sampleCount": 60
+                "peakRssGrowthBytes": 573440,
+                "sampleCount": 61
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 5507937,
-                "wallMs": 6049.387166999979,
-                "averageCores": 0.9104950382488917,
-                "busiestWorkerUtilization": 0.1192995309609155,
+                "cpuMicros": 6489139,
+                "wallMs": 6048.6363340000025,
+                "averageCores": 1.0728267731230405,
+                "busiestWorkerUtilization": 0.1406564399154368,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 216,
-                "timeWaitAtStart": 216,
-                "waitedMs": 5.0017079999961425
+                "timeWaitBefore": 381,
+                "timeWaitAtStart": 381,
+                "waitedMs": 3.8251670000026934
               },
               "repeat": 2
             },
@@ -1316,53 +1406,53 @@
               "achievedGoodputRps": 2000,
               "steadyStateCompletedResponses": 10000,
               "completionThroughputRps": 2000,
-              "phaseWallMs": 5999.65478515625,
-              "maxObservedInFlight": 2,
+              "phaseWallMs": 5999.697998046875,
+              "maxObservedInFlight": 12,
               "latencyMs": {
                 "firstByte": {
                   "count": 10000,
-                  "min": 0.070556640625,
-                  "mean": 0.100263232421875,
-                  "p50": 0.098388671875,
-                  "p95": 0.121337890625,
-                  "p99": 0.1484423828125001,
-                  "max": 0.78955078125
+                  "min": 0.078857421875,
+                  "mean": 0.1484948486328125,
+                  "p50": 0.1396484375,
+                  "p95": 0.1982421875,
+                  "p99": 0.26832275390625027,
+                  "max": 3.24609375
                 },
                 "complete": {
                   "count": 10000,
-                  "min": 0.0712890625,
-                  "mean": 0.10174775390625,
-                  "p50": 0.099853515625,
-                  "p95": 0.12305908203124982,
-                  "p99": 0.15063720703125005,
-                  "max": 0.793701171875
+                  "min": 0.0810546875,
+                  "mean": 0.1519404541015625,
+                  "p50": 0.14306640625,
+                  "p95": 0.203125,
+                  "p99": 0.27612548828125005,
+                  "max": 3.2470703125
                 },
                 "scheduledFirstByte": {
                   "count": 10000,
-                  "min": 0.072509765625,
-                  "mean": 0.1077794189453125,
-                  "p50": 0.10546875,
-                  "p95": 0.130126953125,
-                  "p99": 0.15820556640625005,
-                  "max": 0.903076171875
+                  "min": 0.083740234375,
+                  "mean": 0.163361962890625,
+                  "p50": 0.1474609375,
+                  "p95": 0.209716796875,
+                  "p99": 0.3078833007812505,
+                  "max": 8.086181640625
                 },
                 "scheduledComplete": {
                   "count": 10000,
-                  "min": 0.073486328125,
-                  "mean": 0.1092639404296875,
-                  "p50": 0.10693359375,
-                  "p95": 0.1318359375,
-                  "p99": 0.1611328125,
-                  "max": 0.906494140625
+                  "min": 0.08544921875,
+                  "mean": 0.166807568359375,
+                  "p50": 0.15087890625,
+                  "p95": 0.21436767578124982,
+                  "p99": 0.31519775390625027,
+                  "max": 8.091796875
                 },
                 "schedulerLag": {
                   "count": 10000,
                   "min": 0,
-                  "mean": 0.0075161865234375,
-                  "p50": 0.007080078125,
-                  "p95": 0.013671875,
-                  "p99": 0.015625,
-                  "max": 0.512939453125
+                  "mean": 0.0148671142578125,
+                  "p50": 0.008056640625,
+                  "p95": 0.015625,
+                  "p99": 0.031008300781250053,
+                  "max": 5.27197265625
                 }
               },
               "responseBytes": {
@@ -1375,41 +1465,41 @@
                 "max": 25108
               },
               "cpu": {
-                "processCpuTimeMs": 319.791,
-                "averageCpuPercent": 5.33015667486728,
-                "averageCpuCores": 0.0533015667486728,
-                "cpuMsPerSuccessfulRequest": 0.02664925,
+                "processCpuTimeMs": 394.053,
+                "averageCpuPercent": 6.567880585460784,
+                "averageCpuCores": 0.06567880585460784,
+                "cpuMsPerSuccessfulRequest": 0.03283775,
                 "sampledCpuPercent": {
                   "count": 61,
-                  "min": 0.1,
-                  "mean": 4.904918032786882,
-                  "p50": 5.2,
-                  "p95": 5.4,
-                  "p99": 5.44,
-                  "max": 5.5
+                  "min": 0.3,
+                  "mean": 5.998360655737705,
+                  "p50": 6.3,
+                  "p95": 7.5,
+                  "p99": 7.6,
+                  "max": 7.6
                 }
               },
               "memory": {
-                "baselineRssBytes": 5177344,
-                "averageRssBytes": 5611117.1147540985,
-                "peakSampledRssBytes": 5652480,
-                "peakRssGrowthBytes": 475136,
+                "baselineRssBytes": 5390336,
+                "averageRssBytes": 6033340.852459016,
+                "peakSampledRssBytes": 6176768,
+                "peakRssGrowthBytes": 786432,
                 "sampleCount": 61
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 5301024,
-                "wallMs": 6047.538166000013,
-                "averageCores": 0.8765589988010318,
-                "busiestWorkerUtilization": 0.11687573995276596,
+                "cpuMicros": 6504221,
+                "wallMs": 6049.501333,
+                "averageCores": 1.075166471080766,
+                "busiestWorkerUtilization": 0.14047581992079586,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 264,
-                "timeWaitAtStart": 264,
-                "waitedMs": 3.3847919999971054
+                "timeWaitBefore": 412,
+                "timeWaitAtStart": 412,
+                "waitedMs": 4.366000000001804
               },
               "repeat": 3
             }
@@ -1433,65 +1523,65 @@
               "preRollSeconds": 1,
               "durationSeconds": 5,
               "arrivalWindowSeconds": 6,
-              "totalSentRequests": 107407,
-              "sentRequests": 89716,
-              "successfulRequests": 89716,
+              "totalSentRequests": 105572,
+              "sentRequests": 89229,
+              "successfulRequests": 89229,
               "errorCount": 0,
               "errorSamples": [],
-              "achievedGoodputRps": 17943.2,
-              "steadyStateCompletedResponses": 89717,
-              "completionThroughputRps": 17943.4,
-              "phaseWallMs": 6003.42578125,
+              "achievedGoodputRps": 17845.8,
+              "steadyStateCompletedResponses": 89229,
+              "completionThroughputRps": 17845.8,
+              "phaseWallMs": 6003.483642578125,
               "maxObservedInFlight": 64,
               "latencyMs": {
                 "firstByte": {
-                  "count": 89716,
-                  "min": 0.070556640625,
-                  "mean": 3.421123864015163,
-                  "p50": 3.51611328125,
-                  "p95": 3.72802734375,
-                  "p99": 4.014123535156251,
-                  "max": 5.026611328125
+                  "count": 89229,
+                  "min": 0.057861328125,
+                  "mean": 3.384094727361445,
+                  "p50": 3.23046875,
+                  "p95": 5.30517578125,
+                  "p99": 8.361894531250002,
+                  "max": 28.04443359375
                 },
                 "complete": {
-                  "count": 89716,
-                  "min": 0.095703125,
-                  "mean": 3.453282381391349,
-                  "p50": 3.547119140625,
-                  "p95": 3.778076171875,
-                  "p99": 4.066162109375,
-                  "max": 5.057373046875
+                  "count": 89229,
+                  "min": 0.0830078125,
+                  "mean": 3.441904031034263,
+                  "p50": 3.2783203125,
+                  "p95": 5.407373046874998,
+                  "p99": 8.474199218750002,
+                  "max": 28.679443359375
                 },
                 "scheduledFirstByte": {
-                  "count": 89716,
-                  "min": 0.070556640625,
-                  "mean": 3.4212090666876938,
-                  "p50": 3.51611328125,
-                  "p95": 3.728271484375,
-                  "p99": 4.014123535156251,
-                  "max": 5.02685546875
+                  "count": 89229,
+                  "min": 0.057861328125,
+                  "mean": 3.3843105464809997,
+                  "p50": 3.230712890625,
+                  "p95": 5.305566406249998,
+                  "p99": 8.361962890625001,
+                  "max": 28.044921875
                 },
                 "scheduledComplete": {
-                  "count": 89716,
-                  "min": 0.095703125,
-                  "mean": 3.4533675840638796,
-                  "p50": 3.547119140625,
-                  "p95": 3.778076171875,
-                  "p99": 4.066162109375,
-                  "max": 5.0576171875
+                  "count": 89229,
+                  "min": 0.0830078125,
+                  "mean": 3.4421198501538175,
+                  "p50": 3.278564453125,
+                  "p95": 5.407861328124998,
+                  "p99": 8.474199218750002,
+                  "max": 28.679931640625
                 },
                 "schedulerLag": {
-                  "count": 89716,
+                  "count": 89229,
                   "min": 0,
-                  "mean": 0.00008520267253054082,
-                  "p50": 0,
-                  "p95": 0.000244140625,
-                  "p99": 0.000244140625,
-                  "max": 0.0166015625
+                  "mean": 0.00021581911955474118,
+                  "p50": 0.000244140625,
+                  "p95": 0.00048828125,
+                  "p99": 0.000732421875,
+                  "max": 0.815673828125
                 }
               },
               "responseBytes": {
-                "count": 89716,
+                "count": 89229,
                 "min": 284908,
                 "mean": 284908,
                 "p50": 284908,
@@ -1500,41 +1590,41 @@
                 "max": 284908
               },
               "cpu": {
-                "processCpuTimeMs": 5980.727,
-                "averageCpuPercent": 99.62190285884947,
-                "averageCpuCores": 0.9962190285884946,
-                "cpuMsPerSuccessfulRequest": 0.05568284190043479,
+                "processCpuTimeMs": 5567.664,
+                "averageCpuPercent": 92.74055417612553,
+                "averageCpuCores": 0.9274055417612552,
+                "cpuMsPerSuccessfulRequest": 0.05273807448944796,
                 "sampledCpuPercent": {
                   "count": 61,
-                  "min": 0.7,
-                  "mean": 92.50655737704916,
-                  "p50": 99.2,
-                  "p95": 100,
-                  "p99": 100,
-                  "max": 100
+                  "min": 0.5,
+                  "mean": 86.13770491803275,
+                  "p50": 93.5,
+                  "p95": 97.9,
+                  "p99": 98.74,
+                  "max": 99.1
                 }
               },
               "memory": {
-                "baselineRssBytes": 6160384,
-                "averageRssBytes": 9603709.901639344,
-                "peakSampledRssBytes": 9732096,
-                "peakRssGrowthBytes": 3571712,
+                "baselineRssBytes": 6012928,
+                "averageRssBytes": 9926018.098360656,
+                "peakSampledRssBytes": 10125312,
+                "peakRssGrowthBytes": 4112384,
                 "sampleCount": 61
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 26672236,
-                "wallMs": 6053.250832999998,
-                "averageCores": 4.406266440272591,
-                "busiestWorkerUtilization": 0.5546832596687888,
+                "cpuMicros": 32172986,
+                "wallMs": 6053.524124999996,
+                "averageCores": 5.314753081949602,
+                "busiestWorkerUtilization": 0.6721248537564946,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 251,
-                "timeWaitAtStart": 251,
-                "waitedMs": 9.468208000005689
+                "timeWaitBefore": 353,
+                "timeWaitAtStart": 353,
+                "waitedMs": 3.8594579999989946
               },
               "repeat": 1
             },
@@ -1545,65 +1635,65 @@
               "preRollSeconds": 1,
               "durationSeconds": 5,
               "arrivalWindowSeconds": 6,
-              "totalSentRequests": 106301,
-              "sentRequests": 88408,
-              "successfulRequests": 88408,
+              "totalSentRequests": 87590,
+              "sentRequests": 71063,
+              "successfulRequests": 71063,
               "errorCount": 0,
               "errorSamples": [],
-              "achievedGoodputRps": 17681.6,
-              "steadyStateCompletedResponses": 88409,
-              "completionThroughputRps": 17681.8,
-              "phaseWallMs": 6003.544677734375,
+              "achievedGoodputRps": 14212.6,
+              "steadyStateCompletedResponses": 71064,
+              "completionThroughputRps": 14212.8,
+              "phaseWallMs": 6007.616943359375,
               "maxObservedInFlight": 64,
               "latencyMs": {
                 "firstByte": {
-                  "count": 88408,
-                  "min": 0.07275390625,
-                  "mean": 3.4730301766295897,
-                  "p50": 3.572265625,
-                  "p95": 3.7998046875,
-                  "p99": 4.114013671875,
-                  "max": 8.00830078125
+                  "count": 71063,
+                  "min": 0.069091796875,
+                  "mean": 4.250089571709258,
+                  "p50": 3.53759765625,
+                  "p95": 8.443457031249991,
+                  "p99": 24.287753906250032,
+                  "max": 80.45458984375
                 },
                 "complete": {
-                  "count": 88408,
-                  "min": 0.096923828125,
-                  "mean": 3.505970777553537,
-                  "p50": 3.60205078125,
-                  "p95": 3.853759765625,
-                  "p99": 4.166748046875,
-                  "max": 8.044677734375
+                  "count": 71063,
+                  "min": 0.094970703125,
+                  "mean": 4.330731044768375,
+                  "p50": 3.60009765625,
+                  "p95": 8.607128906249997,
+                  "p99": 24.970625000000155,
+                  "max": 80.49658203125
                 },
                 "scheduledFirstByte": {
-                  "count": 88408,
-                  "min": 0.07275390625,
-                  "mean": 3.4731124561735434,
-                  "p50": 3.572265625,
-                  "p95": 3.800048828125,
-                  "p99": 4.114013671875,
-                  "max": 8.00830078125
+                  "count": 71063,
+                  "min": 0.0693359375,
+                  "mean": 4.250327810056086,
+                  "p50": 3.537841796875,
+                  "p95": 8.443481445312493,
+                  "p99": 24.28790527343753,
+                  "max": 80.45458984375
                 },
                 "scheduledComplete": {
-                  "count": 88408,
-                  "min": 0.096923828125,
-                  "mean": 3.5060530570974913,
-                  "p50": 3.602294921875,
-                  "p95": 3.85400390625,
-                  "p99": 4.166748046875,
-                  "max": 8.044677734375
+                  "count": 71063,
+                  "min": 0.09521484375,
+                  "mean": 4.330969283115202,
+                  "p50": 3.6005859375,
+                  "p95": 8.607348632812496,
+                  "p99": 24.97132324218765,
+                  "max": 80.49658203125
                 },
                 "schedulerLag": {
-                  "count": 88408,
+                  "count": 71063,
                   "min": 0,
-                  "mean": 0.00008227954395388426,
-                  "p50": 0,
-                  "p95": 0.000244140625,
-                  "p99": 0.00048828125,
-                  "max": 0.014404296875
+                  "mean": 0.00023823834682781475,
+                  "p50": 0.000244140625,
+                  "p95": 0.000732421875,
+                  "p99": 0.0009765625,
+                  "max": 0.98876953125
                 }
               },
               "responseBytes": {
-                "count": 88408,
+                "count": 71063,
                 "min": 284908,
                 "mean": 284908,
                 "p50": 284908,
@@ -1612,41 +1702,41 @@
                 "max": 284908
               },
               "cpu": {
-                "processCpuTimeMs": 5977.435,
-                "averageCpuPercent": 99.5650956370624,
-                "averageCpuCores": 0.995650956370624,
-                "cpuMsPerSuccessfulRequest": 0.0562312207787321,
+                "processCpuTimeMs": 4961.365,
+                "averageCpuPercent": 82.58457632662702,
+                "averageCpuCores": 0.8258457632662701,
+                "cpuMsPerSuccessfulRequest": 0.05664305285991551,
                 "sampledCpuPercent": {
-                  "count": 61,
-                  "min": 0.3,
-                  "mean": 92.35573770491801,
-                  "p50": 99.1,
-                  "p95": 100,
-                  "p99": 100,
-                  "max": 100
+                  "count": 60,
+                  "min": 0.5,
+                  "mean": 76.705,
+                  "p50": 80.75,
+                  "p95": 88.265,
+                  "p99": 90.482,
+                  "max": 90.6
                 }
               },
               "memory": {
-                "baselineRssBytes": 5832704,
-                "averageRssBytes": 9544620.06557377,
-                "peakSampledRssBytes": 9699328,
-                "peakRssGrowthBytes": 3866624,
-                "sampleCount": 61
+                "baselineRssBytes": 6356992,
+                "averageRssBytes": 9867537.066666666,
+                "peakSampledRssBytes": 9961472,
+                "peakRssGrowthBytes": 3604480,
+                "sampleCount": 60
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 26393806,
-                "wallMs": 6053.487708000001,
-                "averageCores": 4.360099049200877,
-                "busiestWorkerUtilization": 0.5513981885624257,
+                "cpuMicros": 27091766,
+                "wallMs": 6057.660583000004,
+                "averageCores": 4.472314952083868,
+                "busiestWorkerUtilization": 0.5721956520087028,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 477,
-                "timeWaitAtStart": 477,
-                "waitedMs": 3.792333999997936
+                "timeWaitBefore": 368,
+                "timeWaitAtStart": 368,
+                "waitedMs": 3.538833999999042
               },
               "repeat": 2
             },
@@ -1657,65 +1747,65 @@
               "preRollSeconds": 1,
               "durationSeconds": 5,
               "arrivalWindowSeconds": 6,
-              "totalSentRequests": 106951,
-              "sentRequests": 89189,
-              "successfulRequests": 89189,
+              "totalSentRequests": 92685,
+              "sentRequests": 77781,
+              "successfulRequests": 77781,
               "errorCount": 0,
               "errorSamples": [],
-              "achievedGoodputRps": 17837.8,
-              "steadyStateCompletedResponses": 89189,
-              "completionThroughputRps": 17837.8,
-              "phaseWallMs": 6003.212646484375,
+              "achievedGoodputRps": 15556.2,
+              "steadyStateCompletedResponses": 77785,
+              "completionThroughputRps": 15557,
+              "phaseWallMs": 6004.08544921875,
               "maxObservedInFlight": 64,
               "latencyMs": {
                 "firstByte": {
-                  "count": 89189,
-                  "min": 0.071044921875,
-                  "mean": 3.443237968492471,
-                  "p50": 3.5419921875,
-                  "p95": 3.72705078125,
-                  "p99": 3.999785156249999,
-                  "max": 5.38525390625
+                  "count": 77781,
+                  "min": 0.07470703125,
+                  "mean": 3.8879034790991693,
+                  "p50": 3.518798828125,
+                  "p95": 6.311767578125,
+                  "p99": 13.51884765625,
+                  "max": 46.62158203125
                 },
                 "complete": {
-                  "count": 89189,
-                  "min": 0.09423828125,
-                  "mean": 3.475064654877914,
-                  "p50": 3.5712890625,
-                  "p95": 3.7783203125,
-                  "p99": 4.0478515625,
-                  "max": 5.49462890625
+                  "count": 77781,
+                  "min": 0.101318359375,
+                  "mean": 3.957794030550319,
+                  "p50": 3.576904296875,
+                  "p95": 6.408447265625,
+                  "p99": 13.807177734374985,
+                  "max": 46.65625
                 },
                 "scheduledFirstByte": {
-                  "count": 89189,
-                  "min": 0.071044921875,
-                  "mean": 3.443314367654293,
-                  "p50": 3.5419921875,
-                  "p95": 3.72705078125,
-                  "p99": 4,
-                  "max": 5.385498046875
+                  "count": 77781,
+                  "min": 0.07470703125,
+                  "mean": 3.8881098094881383,
+                  "p50": 3.51904296875,
+                  "p95": 6.311767578125,
+                  "p99": 13.519091796875,
+                  "max": 46.62158203125
                 },
                 "scheduledComplete": {
-                  "count": 89189,
-                  "min": 0.09423828125,
-                  "mean": 3.475141054039736,
-                  "p50": 3.5712890625,
-                  "p95": 3.778564453125,
-                  "p99": 4.047880859374999,
-                  "max": 5.494873046875
+                  "count": 77781,
+                  "min": 0.101318359375,
+                  "mean": 3.958000360939288,
+                  "p50": 3.5771484375,
+                  "p95": 6.408447265625,
+                  "p99": 13.807373046874986,
+                  "max": 46.65625
                 },
                 "schedulerLag": {
-                  "count": 89189,
+                  "count": 77781,
                   "min": 0,
-                  "mean": 0.00007639916182208568,
-                  "p50": 0,
-                  "p95": 0.000244140625,
-                  "p99": 0.000244140625,
-                  "max": 0.0107421875
+                  "mean": 0.000206330388968707,
+                  "p50": 0.000244140625,
+                  "p95": 0.00048828125,
+                  "p99": 0.000732421875,
+                  "max": 0.228271484375
                 }
               },
               "responseBytes": {
-                "count": 89189,
+                "count": 77781,
                 "min": 284908,
                 "mean": 284908,
                 "p50": 284908,
@@ -1724,41 +1814,41 @@
                 "max": 284908
               },
               "cpu": {
-                "processCpuTimeMs": 5982.7,
-                "averageCpuPercent": 99.65830551585762,
-                "averageCpuCores": 0.9965830551585761,
-                "cpuMsPerSuccessfulRequest": 0.055938700900412336,
+                "processCpuTimeMs": 5214.047,
+                "averageCpuPercent": 86.84165214001827,
+                "averageCpuCores": 0.8684165214001827,
+                "cpuMsPerSuccessfulRequest": 0.05625556454658251,
                 "sampledCpuPercent": {
                   "count": 61,
-                  "min": 1.6,
-                  "mean": 92.4639344262295,
-                  "p50": 99.2,
-                  "p95": 100,
-                  "p99": 100,
-                  "max": 100
+                  "min": 0.3,
+                  "mean": 80.57540983606556,
+                  "p50": 85.8,
+                  "p95": 92.7,
+                  "p99": 94.3,
+                  "max": 95.5
                 }
               },
               "memory": {
-                "baselineRssBytes": 6127616,
-                "averageRssBytes": 9738542.163934426,
-                "peakSampledRssBytes": 9879552,
-                "peakRssGrowthBytes": 3751936,
+                "baselineRssBytes": 6356992,
+                "averageRssBytes": 9860750.68852459,
+                "peakSampledRssBytes": 9994240,
+                "peakRssGrowthBytes": 3637248,
                 "sampleCount": 61
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 26225108,
-                "wallMs": 6053.13833300001,
-                "averageCores": 4.332481195255043,
-                "busiestWorkerUtilization": 0.5437997314640248,
+                "cpuMicros": 28511800,
+                "wallMs": 6054.017749999999,
+                "averageCores": 4.709566634488312,
+                "busiestWorkerUtilization": 0.6009865101568295,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 464,
-                "timeWaitAtStart": 464,
-                "waitedMs": 4.104124999954365
+                "timeWaitBefore": 361,
+                "timeWaitAtStart": 361,
+                "waitedMs": 3.4479170000049635
               },
               "repeat": 3
             },
@@ -1777,53 +1867,53 @@
               "achievedGoodputRps": 500,
               "steadyStateCompletedResponses": 2500,
               "completionThroughputRps": 500,
-              "phaseWallMs": 5998.388916015625,
-              "maxObservedInFlight": 2,
+              "phaseWallMs": 5998.23828125,
+              "maxObservedInFlight": 4,
               "latencyMs": {
                 "firstByte": {
                   "count": 2500,
-                  "min": 0.122314453125,
-                  "mean": 0.21676083984375,
-                  "p50": 0.21240234375,
-                  "p95": 0.27685546875,
-                  "p99": 0.33523193359374936,
-                  "max": 2.857666015625
+                  "min": 0.124755859375,
+                  "mean": 0.28727080078125,
+                  "p50": 0.203857421875,
+                  "p95": 0.7156249999999997,
+                  "p99": 1.7309741210937437,
+                  "max": 4.6650390625
                 },
                 "complete": {
                   "count": 2500,
-                  "min": 0.154541015625,
-                  "mean": 0.27061748046875,
-                  "p50": 0.26611328125,
-                  "p95": 0.3436157226562494,
-                  "p99": 0.4612988281249857,
-                  "max": 2.9462890625
+                  "min": 0.1533203125,
+                  "mean": 0.33950947265625,
+                  "p50": 0.24365234375,
+                  "p95": 0.8164794921874996,
+                  "p99": 1.803549804687475,
+                  "max": 5.116943359375
                 },
                 "scheduledFirstByte": {
                   "count": 2500,
-                  "min": 0.130615234375,
-                  "mean": 0.22951904296875,
-                  "p50": 0.220703125,
-                  "p95": 0.30739746093749987,
-                  "p99": 0.47730468749999977,
-                  "max": 2.866455078125
+                  "min": 0.131591796875,
+                  "mean": 0.3286734375,
+                  "p50": 0.2119140625,
+                  "p95": 0.9262329101562422,
+                  "p99": 2.481740722656249,
+                  "max": 6.44775390625
                 },
                 "scheduledComplete": {
                   "count": 2500,
-                  "min": 0.16552734375,
-                  "mean": 0.28337568359375,
-                  "p50": 0.27490234375,
-                  "p95": 0.3791870117187498,
-                  "p99": 0.5803686523437489,
-                  "max": 2.955078125
+                  "min": 0.159912109375,
+                  "mean": 0.380912109375,
+                  "p50": 0.25146484375,
+                  "p95": 1.0499755859374977,
+                  "p99": 2.578898925781249,
+                  "max": 6.899658203125
                 },
                 "schedulerLag": {
                   "count": 2500,
-                  "min": 0,
-                  "mean": 0.012758203125,
-                  "p50": 0.0078125,
-                  "p95": 0.018310546875,
-                  "p99": 0.1777465820312497,
-                  "max": 0.560791015625
+                  "min": 0.000244140625,
+                  "mean": 0.04140263671875,
+                  "p50": 0.00830078125,
+                  "p95": 0.14681396484374953,
+                  "p99": 0.8711010742187498,
+                  "max": 3.473388671875
                 }
               },
               "responseBytes": {
@@ -1836,41 +1926,41 @@
                 "max": 284908
               },
               "cpu": {
-                "processCpuTimeMs": 306.722,
-                "averageCpuPercent": 5.113406354513893,
-                "averageCpuCores": 0.051134063545138934,
-                "cpuMsPerSuccessfulRequest": 0.10224066666666666,
+                "processCpuTimeMs": 287.857,
+                "averageCpuPercent": 4.7990257556092315,
+                "averageCpuCores": 0.04799025755609231,
+                "cpuMsPerSuccessfulRequest": 0.09595233333333335,
                 "sampledCpuPercent": {
-                  "count": 60,
-                  "min": 0.6,
-                  "mean": 4.751666666666665,
-                  "p50": 5,
-                  "p95": 5.3,
-                  "p99": 5.340999999999999,
-                  "max": 5.4
+                  "count": 61,
+                  "min": 0.4,
+                  "mean": 4.444262295081967,
+                  "p50": 4.3,
+                  "p95": 6.9,
+                  "p99": 6.94,
+                  "max": 7
                 }
               },
               "memory": {
-                "baselineRssBytes": 5767168,
-                "averageRssBytes": 6491067.733333333,
-                "peakSampledRssBytes": 6553600,
-                "peakRssGrowthBytes": 786432,
-                "sampleCount": 60
+                "baselineRssBytes": 5947392,
+                "averageRssBytes": 7038942.426229509,
+                "peakSampledRssBytes": 7110656,
+                "peakRssGrowthBytes": 1163264,
+                "sampleCount": 61
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 1694274,
-                "wallMs": 6047.992457999964,
-                "averageCores": 0.2801382461644614,
-                "busiestWorkerUtilization": 0.045334719488905585,
+                "cpuMicros": 1873788,
+                "wallMs": 6047.878083999996,
+                "averageCores": 0.30982568993201304,
+                "busiestWorkerUtilization": 0.03951962727663662,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 460,
-                "timeWaitAtStart": 460,
-                "waitedMs": 8.016500000027008
+                "timeWaitBefore": 402,
+                "timeWaitAtStart": 402,
+                "waitedMs": 3.5823329999984708
               },
               "repeat": 1
             },
@@ -1889,53 +1979,53 @@
               "achievedGoodputRps": 500,
               "steadyStateCompletedResponses": 2500,
               "completionThroughputRps": 500,
-              "phaseWallMs": 5998.275146484375,
-              "maxObservedInFlight": 4,
+              "phaseWallMs": 5998.33349609375,
+              "maxObservedInFlight": 7,
               "latencyMs": {
                 "firstByte": {
                   "count": 2500,
-                  "min": 0.130615234375,
-                  "mean": 0.22765166015625,
-                  "p50": 0.18408203125,
-                  "p95": 0.32813720703124993,
-                  "p99": 0.9210156249999972,
-                  "max": 8.03369140625
+                  "min": 0.14599609375,
+                  "mean": 0.22992978515625,
+                  "p50": 0.204345703125,
+                  "p95": 0.2763671875,
+                  "p99": 0.3774926757812488,
+                  "max": 12.3857421875
                 },
                 "complete": {
                   "count": 2500,
-                  "min": 0.161865234375,
-                  "mean": 0.26908408203125,
-                  "p50": 0.2216796875,
-                  "p95": 0.410888671875,
-                  "p99": 1.0247729492187472,
-                  "max": 8.07666015625
+                  "min": 0.1787109375,
+                  "mean": 0.27138876953125,
+                  "p50": 0.243408203125,
+                  "p95": 0.328857421875,
+                  "p99": 0.4983032226562497,
+                  "max": 12.427490234375
                 },
                 "scheduledFirstByte": {
                   "count": 2500,
-                  "min": 0.13232421875,
-                  "mean": 0.2609361328125,
-                  "p50": 0.19384765625,
-                  "p95": 0.36121826171874927,
-                  "p99": 1.5403271484374759,
-                  "max": 9.7685546875
+                  "min": 0.153076171875,
+                  "mean": 0.2482005859375,
+                  "p50": 0.212158203125,
+                  "p95": 0.2903198242187498,
+                  "p99": 0.6038354492187482,
+                  "max": 14.632568359375
                 },
                 "scheduledComplete": {
                   "count": 2500,
-                  "min": 0.164306640625,
-                  "mean": 0.3023685546875,
-                  "p50": 0.2308349609375,
-                  "p95": 0.44849853515624993,
-                  "p99": 1.599550781249961,
-                  "max": 9.884765625
+                  "min": 0.185791015625,
+                  "mean": 0.2896595703125,
+                  "p50": 0.251220703125,
+                  "p95": 0.3447265625,
+                  "p99": 0.6438378906249991,
+                  "max": 14.67431640625
                 },
                 "schedulerLag": {
                   "count": 2500,
                   "min": 0.000244140625,
-                  "mean": 0.03328447265625,
-                  "p50": 0.008056640625,
-                  "p95": 0.04736328125,
-                  "p99": 0.4918823242187399,
-                  "max": 4.599365234375
+                  "mean": 0.01827080078125,
+                  "p50": 0.007568359375,
+                  "p95": 0.014404296875,
+                  "p99": 0.1388159179687466,
+                  "max": 5.89599609375
                 }
               },
               "responseBytes": {
@@ -1948,41 +2038,41 @@
                 "max": 284908
               },
               "cpu": {
-                "processCpuTimeMs": 271.685,
-                "averageCpuPercent": 4.52938542106119,
-                "averageCpuCores": 0.0452938542106119,
-                "cpuMsPerSuccessfulRequest": 0.09056166666666667,
+                "processCpuTimeMs": 266.501,
+                "averageCpuPercent": 4.442917356521631,
+                "averageCpuCores": 0.044429173565216314,
+                "cpuMsPerSuccessfulRequest": 0.08883366666666666,
                 "sampledCpuPercent": {
-                  "count": 60,
+                  "count": 61,
                   "min": 0.5,
-                  "mean": 4.076666666666668,
-                  "p50": 4.15,
-                  "p95": 5.8,
-                  "p99": 6.281999999999999,
-                  "max": 6.4
+                  "mean": 4.065573770491803,
+                  "p50": 4.2,
+                  "p95": 4.8,
+                  "p99": 4.9,
+                  "max": 4.9
                 }
               },
               "memory": {
-                "baselineRssBytes": 5767168,
-                "averageRssBytes": 6620228.266666667,
-                "peakSampledRssBytes": 6864896,
-                "peakRssGrowthBytes": 1097728,
-                "sampleCount": 60
+                "baselineRssBytes": 6356992,
+                "averageRssBytes": 7076007.868852459,
+                "peakSampledRssBytes": 7143424,
+                "peakRssGrowthBytes": 786432,
+                "sampleCount": 61
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 1430631,
-                "wallMs": 6048.173666999966,
-                "averageCores": 0.23653933877689495,
-                "busiestWorkerUtilization": 0.03437691011460924,
+                "cpuMicros": 1759132,
+                "wallMs": 6048.34375,
+                "averageCores": 0.2908452417242324,
+                "busiestWorkerUtilization": 0.037971237129140016,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 186,
-                "timeWaitAtStart": 186,
-                "waitedMs": 3.2815839999821037
+                "timeWaitBefore": 390,
+                "timeWaitAtStart": 390,
+                "waitedMs": 3.620959000007133
               },
               "repeat": 2
             },
@@ -2001,53 +2091,53 @@
               "achievedGoodputRps": 500,
               "steadyStateCompletedResponses": 2500,
               "completionThroughputRps": 500,
-              "phaseWallMs": 5998.22705078125,
-              "maxObservedInFlight": 1,
+              "phaseWallMs": 5998.269775390625,
+              "maxObservedInFlight": 3,
               "latencyMs": {
                 "firstByte": {
                   "count": 2500,
-                  "min": 0.114501953125,
-                  "mean": 0.1641341796875,
-                  "p50": 0.1591796875,
-                  "p95": 0.20924072265624993,
-                  "p99": 0.2353637695312497,
-                  "max": 0.451904296875
+                  "min": 0.162353515625,
+                  "mean": 0.2569412109375,
+                  "p50": 0.233154296875,
+                  "p95": 0.31837158203124993,
+                  "p99": 1.0940014648437382,
+                  "max": 4.096435546875
                 },
                 "complete": {
                   "count": 2500,
-                  "min": 0.146728515625,
-                  "mean": 0.20291298828125,
-                  "p50": 0.197265625,
-                  "p95": 0.25439453125,
-                  "p99": 0.2893115234374999,
-                  "max": 0.498291015625
+                  "min": 0.1962890625,
+                  "mean": 0.304462109375,
+                  "p50": 0.2763671875,
+                  "p95": 0.3773437499999992,
+                  "p99": 1.1485107421874867,
+                  "max": 4.298828125
                 },
                 "scheduledFirstByte": {
                   "count": 2500,
-                  "min": 0.117919921875,
-                  "mean": 0.17214931640625,
-                  "p50": 0.16748046875,
-                  "p95": 0.21802978515624993,
-                  "p99": 0.24731933593749988,
-                  "max": 0.6396484375
+                  "min": 0.169921875,
+                  "mean": 0.28056796875,
+                  "p50": 0.240966796875,
+                  "p95": 0.33795166015624967,
+                  "p99": 1.311914062499985,
+                  "max": 7.07666015625
                 },
                 "scheduledComplete": {
                   "count": 2500,
-                  "min": 0.150634765625,
-                  "mean": 0.210928125,
-                  "p50": 0.205078125,
-                  "p95": 0.262939453125,
-                  "p99": 0.30006347656249965,
-                  "max": 0.68212890625
+                  "min": 0.2021484375,
+                  "mean": 0.3280888671875,
+                  "p50": 0.284423828125,
+                  "p95": 0.40903320312499947,
+                  "p99": 1.3647021484374895,
+                  "max": 7.179443359375
                 },
                 "schedulerLag": {
                   "count": 2500,
-                  "min": 0,
-                  "mean": 0.00801513671875,
+                  "min": 0.000244140625,
+                  "mean": 0.0236267578125,
                   "p50": 0.0078125,
-                  "p95": 0.01416015625,
-                  "p99": 0.015869140625,
-                  "max": 0.422119140625
+                  "p95": 0.01708984375,
+                  "p99": 0.5163818359374936,
+                  "max": 3.56689453125
                 }
               },
               "responseBytes": {
@@ -2060,41 +2150,41 @@
                 "max": 284908
               },
               "cpu": {
-                "processCpuTimeMs": 258.69,
-                "averageCpuPercent": 4.312774388330406,
-                "averageCpuCores": 0.043127743883304065,
-                "cpuMsPerSuccessfulRequest": 0.08623,
+                "processCpuTimeMs": 303.203,
+                "averageCpuPercent": 5.054841001716275,
+                "averageCpuCores": 0.050548410017162745,
+                "cpuMsPerSuccessfulRequest": 0.10106766666666665,
                 "sampledCpuPercent": {
-                  "count": 60,
-                  "min": 1,
-                  "mean": 4.018333333333332,
-                  "p50": 4.1,
-                  "p95": 4.4,
-                  "p99": 4.5409999999999995,
-                  "max": 4.6
+                  "count": 61,
+                  "min": 0.7,
+                  "mean": 4.636065573770493,
+                  "p50": 4.9,
+                  "p95": 5.1,
+                  "p99": 5.4,
+                  "max": 5.4
                 }
               },
               "memory": {
-                "baselineRssBytes": 5799936,
-                "averageRssBytes": 6595925.333333333,
-                "peakSampledRssBytes": 6881280,
-                "peakRssGrowthBytes": 1081344,
-                "sampleCount": 60
+                "baselineRssBytes": 6045696,
+                "averageRssBytes": 6989790.426229509,
+                "peakSampledRssBytes": 7094272,
+                "peakRssGrowthBytes": 1048576,
+                "sampleCount": 61
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 1496728,
-                "wallMs": 6048.1499579999945,
-                "averageCores": 0.24746873182604398,
-                "busiestWorkerUtilization": 0.03475763292578722,
+                "cpuMicros": 1842823,
+                "wallMs": 6048.258082999993,
+                "averageCores": 0.30468656838233704,
+                "busiestWorkerUtilization": 0.039502652210258775,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 184,
-                "timeWaitAtStart": 184,
-                "waitedMs": 3.320332999981474
+                "timeWaitBefore": 372,
+                "timeWaitAtStart": 372,
+                "waitedMs": 3.77058300000499
               },
               "repeat": 3
             }
@@ -2118,65 +2208,65 @@
               "preRollSeconds": 1,
               "durationSeconds": 5,
               "arrivalWindowSeconds": 6,
-              "totalSentRequests": 18654,
-              "sentRequests": 15534,
-              "successfulRequests": 15534,
+              "totalSentRequests": 17925,
+              "sentRequests": 14896,
+              "successfulRequests": 14896,
               "errorCount": 0,
               "errorSamples": [],
-              "achievedGoodputRps": 3106.8,
-              "steadyStateCompletedResponses": 15534,
-              "completionThroughputRps": 3106.8,
-              "phaseWallMs": 6019.720947265625,
+              "achievedGoodputRps": 2979.2,
+              "steadyStateCompletedResponses": 14896,
+              "completionThroughputRps": 2979.2,
+              "phaseWallMs": 6020.504150390625,
               "maxObservedInFlight": 64,
               "latencyMs": {
                 "firstByte": {
-                  "count": 15534,
-                  "min": 0.347900390625,
-                  "mean": 20.137601201899866,
-                  "p50": 20.4053955078125,
-                  "p95": 21.27034912109375,
-                  "p99": 21.6272021484375,
-                  "max": 22.60693359375
+                  "count": 14896,
+                  "min": 0.34228515625,
+                  "mean": 20.948408280484273,
+                  "p50": 21.079833984375,
+                  "p95": 22.59381103515625,
+                  "p99": 27.332763671874968,
+                  "max": 30.290283203125
                 },
                 "complete": {
-                  "count": 15534,
-                  "min": 0.4248046875,
-                  "mean": 20.235804292952153,
-                  "p50": 20.506591796875,
-                  "p95": 21.3741943359375,
-                  "p99": 21.72672607421875,
-                  "max": 22.70556640625
+                  "count": 14896,
+                  "min": 0.433837890625,
+                  "mean": 21.082181002476545,
+                  "p50": 21.20654296875,
+                  "p95": 22.75146484375,
+                  "p99": 27.64300537109373,
+                  "max": 30.918212890625
                 },
                 "scheduledFirstByte": {
-                  "count": 15534,
-                  "min": 0.34814453125,
-                  "mean": 20.137747790003985,
-                  "p50": 20.405517578125,
-                  "p95": 21.27059326171875,
-                  "p99": 21.6272021484375,
-                  "max": 22.60693359375
+                  "count": 14896,
+                  "min": 0.342529296875,
+                  "mean": 20.948710571682415,
+                  "p50": 21.0802001953125,
+                  "p95": 22.59405517578125,
+                  "p99": 27.333496093749968,
+                  "max": 30.290771484375
                 },
                 "scheduledComplete": {
-                  "count": 15534,
-                  "min": 0.425048828125,
-                  "mean": 20.235950881056272,
-                  "p50": 20.506591796875,
-                  "p95": 21.374279785156247,
-                  "p99": 21.72672607421875,
-                  "max": 22.70556640625
+                  "count": 14896,
+                  "min": 0.43408203125,
+                  "mean": 21.082483293674684,
+                  "p50": 21.206787109375,
+                  "p95": 22.751708984375,
+                  "p99": 27.64371337890623,
+                  "max": 30.918701171875
                 },
                 "schedulerLag": {
-                  "count": 15534,
+                  "count": 14896,
                   "min": 0,
-                  "mean": 0.00014658810411838548,
+                  "mean": 0.0003022911981404404,
                   "p50": 0.000244140625,
-                  "p95": 0.000244140625,
-                  "p99": 0.00048828125,
-                  "max": 0.00146484375
+                  "p95": 0.00048828125,
+                  "p99": 0.000732421875,
+                  "max": 0.04296875
                 }
               },
               "responseBytes": {
-                "count": 15534,
+                "count": 14896,
                 "min": 988509,
                 "mean": 988509,
                 "p50": 988509,
@@ -2185,41 +2275,41 @@
                 "max": 988509
               },
               "cpu": {
-                "processCpuTimeMs": 6008.886,
-                "averageCpuPercent": 99.82000914393637,
-                "averageCpuCores": 0.9982000914393637,
-                "cpuMsPerSuccessfulRequest": 0.32212319073657125,
+                "processCpuTimeMs": 5927.961,
+                "averageCpuPercent": 98.4628670942014,
+                "averageCpuCores": 0.984628670942014,
+                "cpuMsPerSuccessfulRequest": 0.33070912133891217,
                 "sampledCpuPercent": {
                   "count": 61,
-                  "min": 2.5,
-                  "mean": 92.90163934426229,
-                  "p50": 99.4,
-                  "p95": 100,
-                  "p99": 100,
+                  "min": 2.1,
+                  "mean": 91.50983606557377,
+                  "p50": 98,
+                  "p95": 99.6,
+                  "p99": 99.88,
                   "max": 100
                 }
               },
               "memory": {
-                "baselineRssBytes": 29376512,
-                "averageRssBytes": 50054194.36065574,
-                "peakSampledRssBytes": 50577408,
-                "peakRssGrowthBytes": 21200896,
+                "baselineRssBytes": 26542080,
+                "averageRssBytes": 81796985.70491803,
+                "peakSampledRssBytes": 82903040,
+                "peakRssGrowthBytes": 56360960,
                 "sampleCount": 61
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 13728820,
-                "wallMs": 6069.875375000003,
-                "averageCores": 2.261796025754481,
-                "busiestWorkerUtilization": 0.28588968553451005,
+                "cpuMicros": 15552747,
+                "wallMs": 6070.852041999999,
+                "averageCores": 2.561872187363713,
+                "busiestWorkerUtilization": 0.32224900305123516,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 183,
-                "timeWaitAtStart": 183,
-                "waitedMs": 4.978874999971595
+                "timeWaitBefore": 325,
+                "timeWaitAtStart": 325,
+                "waitedMs": 3.87804199999664
               },
               "repeat": 1
             },
@@ -2230,65 +2320,65 @@
               "preRollSeconds": 1,
               "durationSeconds": 5,
               "arrivalWindowSeconds": 6,
-              "totalSentRequests": 16193,
-              "sentRequests": 13216,
-              "successfulRequests": 13216,
+              "totalSentRequests": 15643,
+              "sentRequests": 12636,
+              "successfulRequests": 12636,
               "errorCount": 0,
               "errorSamples": [],
-              "achievedGoodputRps": 2643.2,
-              "steadyStateCompletedResponses": 13215,
-              "completionThroughputRps": 2643,
-              "phaseWallMs": 6032.505615234375,
+              "achievedGoodputRps": 2527.2,
+              "steadyStateCompletedResponses": 12636,
+              "completionThroughputRps": 2527.2,
+              "phaseWallMs": 6021.888671875,
               "maxObservedInFlight": 64,
               "latencyMs": {
                 "firstByte": {
-                  "count": 13216,
-                  "min": 0.336181640625,
-                  "mean": 23.707560707812736,
-                  "p50": 22.2275390625,
-                  "p95": 34.5074462890625,
-                  "p99": 58.9683837890625,
-                  "max": 96.997802734375
+                  "count": 12636,
+                  "min": 0.32763671875,
+                  "mean": 24.705522141753967,
+                  "p50": 21.959228515625,
+                  "p95": 46.80419921875,
+                  "p99": 73.34874267578122,
+                  "max": 116.78369140625
                 },
                 "complete": {
-                  "count": 13216,
-                  "min": 0.430908203125,
-                  "mean": 23.854825479355043,
-                  "p50": 22.34765625,
-                  "p95": 34.719482421875,
-                  "p99": 59.08940429687502,
-                  "max": 97.6083984375
+                  "count": 12636,
+                  "min": 0.421630859375,
+                  "mean": 24.883119124859032,
+                  "p50": 22.1181640625,
+                  "p95": 47.074951171875,
+                  "p99": 74.06320800781246,
+                  "max": 117.095947265625
                 },
                 "scheduledFirstByte": {
-                  "count": 13216,
-                  "min": 0.33642578125,
-                  "mean": 23.70787964606112,
-                  "p50": 22.227783203125,
-                  "p95": 34.5198974609375,
-                  "p99": 58.968420410156256,
-                  "max": 96.997802734375
+                  "count": 12636,
+                  "min": 0.327880859375,
+                  "mean": 24.70590850453318,
+                  "p50": 21.9593505859375,
+                  "p95": 46.8046875,
+                  "p99": 73.34940185546871,
+                  "max": 116.783935546875
                 },
                 "scheduledComplete": {
-                  "count": 13216,
-                  "min": 0.43115234375,
-                  "mean": 23.855144417603427,
-                  "p50": 22.34765625,
-                  "p95": 34.727783203125,
-                  "p99": 59.08985595703126,
-                  "max": 97.6083984375
+                  "count": 12636,
+                  "min": 0.421875,
+                  "mean": 24.883505487638246,
+                  "p50": 22.11865234375,
+                  "p95": 47.07550048828125,
+                  "p99": 74.06353759765622,
+                  "max": 117.09619140625
                 },
                 "schedulerLag": {
-                  "count": 13216,
+                  "count": 12636,
                   "min": 0,
-                  "mean": 0.00031893824838264225,
+                  "mean": 0.0003863627792121716,
                   "p50": 0.000244140625,
-                  "p95": 0.00048828125,
-                  "p99": 0.000732421875,
-                  "max": 0.54296875
+                  "p95": 0.000732421875,
+                  "p99": 0.0009765625,
+                  "max": 0.367431640625
                 }
               },
               "responseBytes": {
-                "count": 13216,
+                "count": 12636,
                 "min": 988509,
                 "mean": 988509,
                 "p50": 988509,
@@ -2297,41 +2387,41 @@
                 "max": 988509
               },
               "cpu": {
-                "processCpuTimeMs": 5665.423,
-                "averageCpuPercent": 93.91492294168195,
-                "averageCpuCores": 0.9391492294168196,
-                "cpuMsPerSuccessfulRequest": 0.34986864694621134,
+                "processCpuTimeMs": 5360.598,
+                "averageCpuPercent": 89.0185503600634,
+                "averageCpuCores": 0.890185503600634,
+                "cpuMsPerSuccessfulRequest": 0.3426835006073004,
                 "sampledCpuPercent": {
                   "count": 61,
-                  "min": 1.8,
-                  "mean": 88.1114754098361,
-                  "p50": 95.1,
-                  "p95": 100,
-                  "p99": 100,
-                  "max": 100
+                  "min": 1.4,
+                  "mean": 82.42622950819673,
+                  "p50": 93.9,
+                  "p95": 97.9,
+                  "p99": 98.2,
+                  "max": 98.2
                 }
               },
               "memory": {
-                "baselineRssBytes": 28459008,
-                "averageRssBytes": 73456455.3442623,
-                "peakSampledRssBytes": 74661888,
-                "peakRssGrowthBytes": 46202880,
+                "baselineRssBytes": 26476544,
+                "averageRssBytes": 80823346.36065574,
+                "peakSampledRssBytes": 81903616,
+                "peakRssGrowthBytes": 55427072,
                 "sampleCount": 61
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 13420259,
-                "wallMs": 6082.786583999987,
-                "averageCores": 2.2062682644990903,
-                "busiestWorkerUtilization": 0.2814529323463918,
+                "cpuMicros": 14551446,
+                "wallMs": 6072.047374999995,
+                "averageCores": 2.396464503869259,
+                "busiestWorkerUtilization": 0.3045287631145652,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 373,
-                "timeWaitAtStart": 373,
-                "waitedMs": 3.5570409999927506
+                "timeWaitBefore": 329,
+                "timeWaitAtStart": 329,
+                "waitedMs": 3.781875000000582
               },
               "repeat": 2
             },
@@ -2342,65 +2432,65 @@
               "preRollSeconds": 1,
               "durationSeconds": 5,
               "arrivalWindowSeconds": 6,
-              "totalSentRequests": 17760,
-              "sentRequests": 14783,
-              "successfulRequests": 14783,
+              "totalSentRequests": 17041,
+              "sentRequests": 14411,
+              "successfulRequests": 14411,
               "errorCount": 0,
               "errorSamples": [],
-              "achievedGoodputRps": 2956.6,
-              "steadyStateCompletedResponses": 14783,
-              "completionThroughputRps": 2956.6,
-              "phaseWallMs": 6021.142333984375,
+              "achievedGoodputRps": 2882.2,
+              "steadyStateCompletedResponses": 14409,
+              "completionThroughputRps": 2881.8,
+              "phaseWallMs": 6021.7724609375,
               "maxObservedInFlight": 64,
               "latencyMs": {
                 "firstByte": {
-                  "count": 14783,
-                  "min": 0.370361328125,
-                  "mean": 21.16634752611213,
-                  "p50": 21.48828125,
-                  "p95": 22.2275146484375,
-                  "p99": 23.470249023437503,
-                  "max": 25.61328125
+                  "count": 14411,
+                  "min": 0.322509765625,
+                  "mean": 21.643177591797283,
+                  "p50": 21.573486328125,
+                  "p95": 24.6636962890625,
+                  "p99": 31.36774902343749,
+                  "max": 36.4375
                 },
                 "complete": {
-                  "count": 14783,
-                  "min": 0.45654296875,
-                  "mean": 21.270689790822864,
-                  "p50": 21.590576171875,
-                  "p95": 22.3444580078125,
-                  "p99": 23.568881835937503,
-                  "max": 25.698974609375
+                  "count": 14411,
+                  "min": 0.4228515625,
+                  "mean": 21.7951201556103,
+                  "p50": 21.718994140625,
+                  "p95": 24.8814697265625,
+                  "p99": 31.635131835937468,
+                  "max": 37.8818359375
                 },
                 "scheduledFirstByte": {
-                  "count": 14783,
-                  "min": 0.370361328125,
-                  "mean": 21.166520206513606,
-                  "p50": 21.488525390625,
-                  "p95": 22.2275390625,
-                  "p99": 23.4703369140625,
-                  "max": 25.613525390625
+                  "count": 14411,
+                  "min": 0.322998046875,
+                  "mean": 21.643531088312532,
+                  "p50": 21.57373046875,
+                  "p95": 24.6641845703125,
+                  "p99": 31.36799316406249,
+                  "max": 36.43798828125
                 },
                 "scheduledComplete": {
-                  "count": 14783,
-                  "min": 0.45654296875,
-                  "mean": 21.270862471224337,
-                  "p50": 21.590576171875,
-                  "p95": 22.3444580078125,
-                  "p99": 23.569125976562503,
-                  "max": 25.69921875
+                  "count": 14411,
+                  "min": 0.42333984375,
+                  "mean": 21.795473652125548,
+                  "p50": 21.71923828125,
+                  "p95": 24.882080078125,
+                  "p99": 31.635400390624966,
+                  "max": 37.88232421875
                 },
                 "schedulerLag": {
-                  "count": 14783,
+                  "count": 14411,
                   "min": 0,
-                  "mean": 0.00017268040147466686,
+                  "mean": 0.0003534965152487683,
                   "p50": 0.000244140625,
-                  "p95": 0.00048828125,
-                  "p99": 0.00048828125,
-                  "max": 0.001953125
+                  "p95": 0.000732421875,
+                  "p99": 0.0009765625,
+                  "max": 0.148193359375
                 }
               },
               "responseBytes": {
-                "count": 14783,
+                "count": 14411,
                 "min": 988509,
                 "mean": 988509,
                 "p50": 988509,
@@ -2409,41 +2499,41 @@
                 "max": 988509
               },
               "cpu": {
-                "processCpuTimeMs": 5998.264,
-                "averageCpuPercent": 99.62003333063154,
-                "averageCpuCores": 0.9962003333063154,
-                "cpuMsPerSuccessfulRequest": 0.3377400900900901,
+                "processCpuTimeMs": 5834.606,
+                "averageCpuPercent": 96.89183770805646,
+                "averageCpuCores": 0.9689183770805646,
+                "cpuMsPerSuccessfulRequest": 0.34238636230268177,
                 "sampledCpuPercent": {
-                  "count": 60,
-                  "min": 1.3,
-                  "mean": 92.48833333333332,
-                  "p50": 99.3,
-                  "p95": 100,
-                  "p99": 100,
+                  "count": 61,
+                  "min": 2.2,
+                  "mean": 90.1114754098361,
+                  "p50": 97.3,
+                  "p95": 99.3,
+                  "p99": 99.82000000000001,
                   "max": 100
                 }
               },
               "memory": {
-                "baselineRssBytes": 28475392,
-                "averageRssBytes": 74526446.93333334,
-                "peakSampledRssBytes": 75612160,
-                "peakRssGrowthBytes": 47136768,
-                "sampleCount": 60
+                "baselineRssBytes": 29507584,
+                "averageRssBytes": 77803855.73770492,
+                "peakSampledRssBytes": 78790656,
+                "peakRssGrowthBytes": 49283072,
+                "sampleCount": 61
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 13650790,
-                "wallMs": 6071.383082999964,
-                "averageCores": 2.2483822571207175,
-                "busiestWorkerUtilization": 0.28397517630665825,
+                "cpuMicros": 15726145,
+                "wallMs": 6071.863916999995,
+                "averageCores": 2.590002874730108,
+                "busiestWorkerUtilization": 0.32758035462149254,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 446,
-                "timeWaitAtStart": 446,
-                "waitedMs": 3.8979579999577254
+                "timeWaitBefore": 334,
+                "timeWaitAtStart": 334,
+                "waitedMs": 3.813750000001164
               },
               "repeat": 3
             },
@@ -2462,53 +2552,53 @@
               "achievedGoodputRps": 50,
               "steadyStateCompletedResponses": 250,
               "completionThroughputRps": 50,
-              "phaseWallMs": 5980.637939453125,
+              "phaseWallMs": 5980.98828125,
               "maxObservedInFlight": 1,
               "latencyMs": {
                 "firstByte": {
                   "count": 250,
-                  "min": 0.392333984375,
-                  "mean": 0.4686240234375,
-                  "p50": 0.46435546875,
-                  "p95": 0.52823486328125,
-                  "p99": 0.54447265625,
-                  "max": 0.64697265625
+                  "min": 0.4794921875,
+                  "mean": 0.5696962890625,
+                  "p50": 0.534423828125,
+                  "p95": 0.7475830078124984,
+                  "p99": 1.27502685546875,
+                  "max": 2.400634765625
                 },
                 "complete": {
                   "count": 250,
-                  "min": 0.49951171875,
-                  "mean": 0.585212890625,
-                  "p50": 0.5789794921875,
-                  "p95": 0.6561279296875,
-                  "p99": 0.72303466796875,
-                  "max": 0.84619140625
+                  "min": 0.593505859375,
+                  "mean": 0.7180458984375,
+                  "p50": 0.6756591796875,
+                  "p95": 0.9284667968749983,
+                  "p99": 1.4199023437499996,
+                  "max": 2.71875
                 },
                 "scheduledFirstByte": {
                   "count": 250,
-                  "min": 0.405029296875,
-                  "mean": 0.6366591796875,
-                  "p50": 0.5089111328125,
-                  "p95": 1.34697265625,
-                  "p99": 1.4395654296874998,
-                  "max": 1.46484375
+                  "min": 0.487060546875,
+                  "mean": 0.5897470703125,
+                  "p50": 0.5428466796875,
+                  "p95": 0.8303222656249999,
+                  "p99": 1.3229760742187493,
+                  "max": 4.36572265625
                 },
                 "scheduledComplete": {
                   "count": 250,
-                  "min": 0.51220703125,
-                  "mean": 0.753248046875,
-                  "p50": 0.6256103515625,
-                  "p95": 1.4652954101562496,
-                  "p99": 1.57708740234375,
-                  "max": 1.6572265625
+                  "min": 0.5986328125,
+                  "mean": 0.7380966796875,
+                  "p50": 0.68603515625,
+                  "p95": 1.0003662109374996,
+                  "p99": 1.4747583007812495,
+                  "max": 4.683837890625
                 },
                 "schedulerLag": {
                   "count": 250,
-                  "min": 0.001220703125,
-                  "mean": 0.16803515625,
-                  "p50": 0.01171875,
-                  "p95": 0.8899780273437499,
-                  "p99": 0.9655004882812499,
-                  "max": 0.984619140625
+                  "min": 0.0009765625,
+                  "mean": 0.02005078125,
+                  "p50": 0.0078125,
+                  "p95": 0.022314453124999967,
+                  "p99": 0.15739013671874819,
+                  "max": 1.965087890625
                 }
               },
               "responseBytes": {
@@ -2521,41 +2611,41 @@
                 "max": 988509
               },
               "cpu": {
-                "processCpuTimeMs": 118.374,
-                "averageCpuPercent": 1.9792871797021745,
-                "averageCpuCores": 0.019792871797021744,
-                "cpuMsPerSuccessfulRequest": 0.39458,
+                "processCpuTimeMs": 131.343,
+                "averageCpuPercent": 2.1960083154108756,
+                "averageCpuCores": 0.021960083154108755,
+                "cpuMsPerSuccessfulRequest": 0.43781,
                 "sampledCpuPercent": {
                   "count": 60,
-                  "min": 1.2,
-                  "mean": 1.8216666666666677,
-                  "p50": 1.8,
-                  "p95": 2,
-                  "p99": 2.1,
-                  "max": 2.1
+                  "min": 1.3,
+                  "mean": 2.091666666666666,
+                  "p50": 2.1,
+                  "p95": 2.2,
+                  "p99": 2.2,
+                  "max": 2.2
                 }
               },
               "memory": {
-                "baselineRssBytes": 27361280,
-                "averageRssBytes": 28284245.333333332,
-                "peakSampledRssBytes": 28819456,
-                "peakRssGrowthBytes": 1458176,
+                "baselineRssBytes": 25477120,
+                "averageRssBytes": 27673941.333333332,
+                "peakSampledRssBytes": 27901952,
+                "peakRssGrowthBytes": 2424832,
                 "sampleCount": 60
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 320932,
-                "wallMs": 6030.801250000019,
-                "averageCores": 0.053215482768562306,
-                "busiestWorkerUtilization": 0.007423391709352031,
+                "cpuMicros": 477401,
+                "wallMs": 6030.9702499999985,
+                "averageCores": 0.07915824157812752,
+                "busiestWorkerUtilization": 0.010224829859324299,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 373,
-                "timeWaitAtStart": 373,
-                "waitedMs": 3.529666000045836
+                "timeWaitBefore": 389,
+                "timeWaitAtStart": 389,
+                "waitedMs": 3.755749999996624
               },
               "repeat": 1
             },
@@ -2574,53 +2664,53 @@
               "achievedGoodputRps": 50,
               "steadyStateCompletedResponses": 250,
               "completionThroughputRps": 50,
-              "phaseWallMs": 5981.32568359375,
+              "phaseWallMs": 5982.258056640625,
               "maxObservedInFlight": 1,
               "latencyMs": {
                 "firstByte": {
                   "count": 250,
-                  "min": 0.427490234375,
-                  "mean": 0.5920048828125,
-                  "p50": 0.4964599609375,
-                  "p95": 0.9985961914062499,
-                  "p99": 1.0966430664062496,
-                  "max": 1.473876953125
+                  "min": 0.489501953125,
+                  "mean": 0.6842568359375,
+                  "p50": 0.560791015625,
+                  "p95": 1.1099487304687499,
+                  "p99": 3.565888671874993,
+                  "max": 5.443115234375
                 },
                 "complete": {
                   "count": 250,
-                  "min": 0.538330078125,
-                  "mean": 0.7508564453125,
-                  "p50": 0.608642578125,
-                  "p95": 1.34471435546875,
-                  "p99": 1.4827368164062495,
-                  "max": 2.23486328125
+                  "min": 0.610107421875,
+                  "mean": 0.839556640625,
+                  "p50": 0.715576171875,
+                  "p95": 1.3125976562499992,
+                  "p99": 3.7358569335937424,
+                  "max": 5.587646484375
                 },
                 "scheduledFirstByte": {
                   "count": 250,
-                  "min": 0.43603515625,
-                  "mean": 0.7802294921875,
-                  "p50": 0.6151123046875,
-                  "p95": 1.4347167968749999,
-                  "p99": 1.6007763671874984,
-                  "max": 1.705810546875
+                  "min": 0.4921875,
+                  "mean": 0.7371748046875,
+                  "p50": 0.57275390625,
+                  "p95": 1.1970214843749998,
+                  "p99": 4.866052246093737,
+                  "max": 7.936279296875
                 },
                 "scheduledComplete": {
                   "count": 250,
-                  "min": 0.547119140625,
-                  "mean": 0.9390810546875,
-                  "p50": 0.72412109375,
-                  "p95": 1.5882568359375,
-                  "p99": 1.84245849609375,
-                  "max": 2.249267578125
+                  "min": 0.613525390625,
+                  "mean": 0.892474609375,
+                  "p50": 0.7232666015625,
+                  "p95": 1.438720703125,
+                  "p99": 5.006635742187488,
+                  "max": 8.080078125
                 },
                 "schedulerLag": {
                   "count": 250,
-                  "min": 0.00048828125,
-                  "mean": 0.188224609375,
-                  "p50": 0.0118408203125,
-                  "p95": 0.93714599609375,
-                  "p99": 0.9893261718749999,
-                  "max": 1.02587890625
+                  "min": 0.001220703125,
+                  "mean": 0.05291796875,
+                  "p50": 0.009521484375,
+                  "p95": 0.09804687499999978,
+                  "p99": 0.9038525390624982,
+                  "max": 3.105712890625
                 }
               },
               "responseBytes": {
@@ -2633,41 +2723,41 @@
                 "max": 988509
               },
               "cpu": {
-                "processCpuTimeMs": 159.286,
-                "averageCpuPercent": 2.6630551223269365,
-                "averageCpuCores": 0.026630551223269364,
-                "cpuMsPerSuccessfulRequest": 0.5309533333333334,
+                "processCpuTimeMs": 144.844,
+                "averageCpuPercent": 2.4212262097121577,
+                "averageCpuCores": 0.024212262097121576,
+                "cpuMsPerSuccessfulRequest": 0.4828133333333333,
                 "sampledCpuPercent": {
                   "count": 60,
-                  "min": 1.9,
-                  "mean": 2.555,
-                  "p50": 2.4,
-                  "p95": 3.5,
-                  "p99": 3.6409999999999996,
-                  "max": 3.7
+                  "min": 1.4,
+                  "mean": 2.2666666666666675,
+                  "p50": 2.2,
+                  "p95": 2.7,
+                  "p99": 2.7,
+                  "max": 2.7
                 }
               },
               "memory": {
-                "baselineRssBytes": 28377088,
-                "averageRssBytes": 30114884.266666666,
-                "peakSampledRssBytes": 30801920,
-                "peakRssGrowthBytes": 2424832,
+                "baselineRssBytes": 29491200,
+                "averageRssBytes": 30674670.933333334,
+                "peakSampledRssBytes": 30851072,
+                "peakRssGrowthBytes": 1359872,
                 "sampleCount": 60
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 343163,
-                "wallMs": 6031.476290999912,
-                "averageCores": 0.05689535752831579,
-                "busiestWorkerUtilization": 0.007621141420591543,
+                "cpuMicros": 448204,
+                "wallMs": 6032.364792000008,
+                "averageCores": 0.07429988328862314,
+                "busiestWorkerUtilization": 0.009566163666166626,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 178,
-                "timeWaitAtStart": 178,
-                "waitedMs": 13.15120800002478
+                "timeWaitBefore": 395,
+                "timeWaitAtStart": 395,
+                "waitedMs": 6.412624999997206
               },
               "repeat": 2
             },
@@ -2686,53 +2776,53 @@
               "achievedGoodputRps": 50,
               "steadyStateCompletedResponses": 250,
               "completionThroughputRps": 50,
-              "phaseWallMs": 5980.570556640625,
+              "phaseWallMs": 5980.739501953125,
               "maxObservedInFlight": 1,
               "latencyMs": {
                 "firstByte": {
                   "count": 250,
-                  "min": 0.4189453125,
-                  "mean": 0.593982421875,
-                  "p50": 0.4981689453125,
-                  "p95": 1.0002685546875,
-                  "p99": 1.08840576171875,
-                  "max": 1.491455078125
+                  "min": 0.4814453125,
+                  "mean": 0.5680732421875,
+                  "p50": 0.544677734375,
+                  "p95": 0.6358154296874999,
+                  "p99": 1.2555639648437495,
+                  "max": 1.886474609375
                 },
                 "complete": {
                   "count": 250,
-                  "min": 0.523681640625,
-                  "mean": 0.7596220703125,
-                  "p50": 0.6212158203125,
-                  "p95": 1.331884765625,
-                  "p99": 1.4577587890625,
-                  "max": 1.976318359375
+                  "min": 0.58056640625,
+                  "mean": 0.7202041015625,
+                  "p50": 0.6937255859375,
+                  "p95": 0.81236572265625,
+                  "p99": 1.460546875,
+                  "max": 2.0107421875
                 },
                 "scheduledFirstByte": {
                   "count": 250,
-                  "min": 0.424560546875,
-                  "mean": 0.7612021484375,
-                  "p50": 0.547607421875,
-                  "p95": 1.4548828124999997,
-                  "p99": 1.5839257812499996,
-                  "max": 2.015869140625
+                  "min": 0.4873046875,
+                  "mean": 0.581607421875,
+                  "p50": 0.552490234375,
+                  "p95": 0.6515869140624997,
+                  "p99": 1.2744262695312496,
+                  "max": 2.26806640625
                 },
                 "scheduledComplete": {
                   "count": 250,
-                  "min": 0.529296875,
-                  "mean": 0.926841796875,
-                  "p50": 0.6851806640625,
-                  "p95": 1.62811279296875,
-                  "p99": 1.9277685546874999,
-                  "max": 2.336181640625
+                  "min": 0.5869140625,
+                  "mean": 0.73373828125,
+                  "p50": 0.701171875,
+                  "p95": 0.8297241210937497,
+                  "p99": 1.470556640625,
+                  "max": 2.392333984375
                 },
                 "schedulerLag": {
                   "count": 250,
-                  "min": 0.00048828125,
-                  "mean": 0.1672197265625,
-                  "p50": 0.01123046875,
-                  "p95": 0.92545166015625,
-                  "p99": 0.97475341796875,
-                  "max": 1.028076171875
+                  "min": 0.001220703125,
+                  "mean": 0.0135341796875,
+                  "p50": 0.00732421875,
+                  "p95": 0.022106933593749996,
+                  "p99": 0.09697998046874984,
+                  "max": 0.730712890625
                 }
               },
               "responseBytes": {
@@ -2745,41 +2835,41 @@
                 "max": 988509
               },
               "cpu": {
-                "processCpuTimeMs": 152.689,
-                "averageCpuPercent": 2.553084167370273,
-                "averageCpuCores": 0.025530841673702728,
-                "cpuMsPerSuccessfulRequest": 0.5089633333333333,
+                "processCpuTimeMs": 132.745,
+                "averageCpuPercent": 2.219541579375754,
+                "averageCpuCores": 0.022195415793757542,
+                "cpuMsPerSuccessfulRequest": 0.44248333333333334,
                 "sampledCpuPercent": {
                   "count": 60,
-                  "min": 1.3,
-                  "mean": 2.406666666666667,
-                  "p50": 2.2,
-                  "p95": 3.4,
-                  "p99": 3.6409999999999996,
-                  "max": 3.7
+                  "min": 1.4,
+                  "mean": 2.1049999999999995,
+                  "p50": 2.1,
+                  "p95": 2.2,
+                  "p99": 2.2,
+                  "max": 2.2
                 }
               },
               "memory": {
-                "baselineRssBytes": 28377088,
-                "averageRssBytes": 29673881.6,
-                "peakSampledRssBytes": 30801920,
-                "peakRssGrowthBytes": 2424832,
+                "baselineRssBytes": 28524544,
+                "averageRssBytes": 28844305.066666666,
+                "peakSampledRssBytes": 28884992,
+                "peakRssGrowthBytes": 360448,
                 "sampleCount": 60
               },
               "generator": {
                 "workerCount": 8,
-                "cpuMicros": 334034,
-                "wallMs": 6030.733041999978,
-                "averageCores": 0.05538862318621618,
-                "busiestWorkerUtilization": 0.007541779070914283,
+                "cpuMicros": 463405,
+                "wallMs": 6030.991875000007,
+                "averageCores": 0.07683727811356061,
+                "busiestWorkerUtilization": 0.01018463406561838,
                 "cpuLimit": 0.8,
                 "lagP95LimitMs": 25
               },
               "loadGeneratorValid": true,
               "socketDrain": {
-                "timeWaitBefore": 173,
-                "timeWaitAtStart": 173,
-                "waitedMs": 2.624792000046
+                "timeWaitBefore": 396,
+                "timeWaitAtStart": 396,
+                "waitedMs": 3.7634590000088792
               },
               "repeat": 3
             }
@@ -11156,5 +11246,14 @@
     }
   ],
   "generatorLimitedPhases": [],
-  "completedAt": "2026-10-21T01:35:56.641Z"
+  "completedAt": "2026-11-11T05:29:46.102Z",
+  "refresh": {
+    "renderer": "proa",
+    "baseline_captured_at": "2026-10-21T01:25:20.806Z",
+    "baseline_path": "raw/proa-2026-11-11T05-27-38-976Z/baseline.json",
+    "baseline_sha256": "f855261c78f7c61c6ec3a7a5e6e190385d89d351b33c57037a414646b2601b07",
+    "proa_path": "raw/proa-2026-11-11T05-27-38-976Z/proa.json",
+    "proa_sha256": "9d7705ed180869aa52736ea6ee2ef8a849195cb9641daab5c53d243c1046eddc",
+    "note": "Only Proa was rerun on 2026-11-11; peer rows retain their 2026-10-21 capture. Both runs used the same machine and suite protocol; they were not measured together."
+  }
 }

@@ -48,7 +48,7 @@ function barRow({ y, title, engines, cells, value, format, showShape = false, ro
   return { svg, h: 24 + labelH + engines.length * rowH + 22 };
 }
 
-export function pageLoad(tables) {
+export function pageLoad(tables, meta) {
   const t = pick(tables, ['Workload', 'Engine', 'Sustained responses/s', 'Proa ÷ engine', 'CPU per response'], {
     heading: 'Canonical pages over HTTP',
   });
@@ -63,7 +63,7 @@ export function pageLoad(tables) {
     };
   }
   const hdr = header(PAD, 44, 'HTTP capacity on one core',
-    'Loopback HTTP/1.1 · uncompressed · medians of 3 server processes', COL);
+    `Loopback HTTP/1.1 · uncompressed · medians of 3 server processes${meta.loadRefreshSuffix ?? ''}`, COL);
   let body = hdr.svg;
   let y = 44 + hdr.h + 40;
 
@@ -90,7 +90,7 @@ export function pageLoad(tables) {
 // ---------------------------------------------------------------------------
 // 22 · Cold start to first response
 // ---------------------------------------------------------------------------
-export function coldStart(tables) {
+export function coldStart(tables, meta) {
   const t = pick(tables, ['Engine', 'First response P50', 'P95', 'Max', 'First byte P50'], {
     heading: 'Cold start to first response',
   });
@@ -102,7 +102,7 @@ export function coldStart(tables) {
     rssMiB: num(o['RSS after first response']),
   }));
   const hdr = header(PAD, 44, 'Cold start to first response',
-    'Spawn to complete product-grid response · 15 fresh processes per engine', COL);
+    `Spawn to complete product-grid response · 15 fresh processes per engine${meta.loadRefreshSuffix ?? ''}`, COL);
   let body = hdr.svg;
   body += legend(PAD, 44 + hdr.h + 26, [
     { color: C.peer, label: 'P50' },

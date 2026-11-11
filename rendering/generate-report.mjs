@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { verifyRefresh } from "../scripts/proa-refresh-evidence.mjs";
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -93,7 +93,7 @@ function renderProductScaling(capture) {
   return `${productScalingStart}
 ## Product-grid scaling capture
 
-This ${capturedDate} UTC engineering capture repeats the canonical product-grid
+${capture.refresh ? capture.refresh.note + "\n\n" : ""}This ${capturedDate} UTC engineering capture repeats the canonical product-grid
 contract at ${counts.slice(0, -1).join(", ")}, and ${counts.at(-1)} cards. Every value includes component/template
 execution and a fresh independently owned response; deterministic input
 construction remains outside timing. All ${capture.renderers.length * counts.length} renderer/size cells passed the same
@@ -133,8 +133,10 @@ function updateProductScaling(readme, capture) {
   return `${readme.slice(0, start)}${block}\n\n${readme.slice(end)}`;
 }
 
+verifyRefresh(result, join(renderingDirectory, "results"));
+verifyRefresh(productScaling, join(renderingDirectory, "results"));
 validateCanonicalResult(result, roster, workloads);
-if (result.capture_kind === "canonical") {
+if (["canonical", "proa_refresh"].includes(result.capture_kind)) {
   const archivePath = join(
     renderingDirectory,
     "results",

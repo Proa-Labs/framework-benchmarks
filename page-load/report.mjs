@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+import { verifyRefresh } from "../scripts/proa-refresh-evidence.mjs";
 // Renders the canonical-pages HTTP capture into its README section. The
 // section is regenerated from results/latest.json; nothing here is typed by
 // hand, and the generator refuses a capture whose measured sources changed.
@@ -235,6 +235,7 @@ export function render(result) {
   return `${startMarker}
 ## Canonical pages over HTTP, one core each
 
+${result.refresh ? "> **PROA-only refresh.** " + result.refresh.note + "\n" : ""}
 **${date} · ${host} · ${result.engines.length} production servers · every response byte-identical to its parity-gated dump**
 
 This is the capacity question behind the scoreboard: the same three parity-gated pages, served over real loopback HTTP/1.1 by each framework's ordinary production server, with every engine limited to one core of work. Proa runs one Tokio worker thread on Axum, React, Marko, and SvelteKit run one Node process, and Go runs \`GOMAXPROCS=1\` on \`net/http\`. On the product grid, one Proa core sustained ${integer(proaProducts.sustainedRps)} complete responses per second against ${integer(reactProducts.sustainedRps)} for React, and spent ${fixed(proaProducts.cpuMsPerResponse, 3)} ms of CPU per response against React's ${fixed(reactProducts.cpuMsPerResponse, 3)} ms.
@@ -278,6 +279,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     currentSourceSha256(),
   ]);
   const result = JSON.parse(resultText);
+  verifyRefresh(result, join(here, "results"));
   if (result.source?.sourceSha256 !== sourceSha256) {
     throw new Error(
       `page-load publication source mismatch: captured ${result.source?.sourceSha256 ?? "missing"}, current ${sourceSha256}`,

@@ -2,47 +2,49 @@
 
 > Current canonical capture.
 
-- Capture: `canonical-ssr-v1-2026-10-21-77c5c5fce085`
-- Captured: 2026-10-21T01:22:11.093Z
-- Completed: 2026-10-21T01:23:59.776Z
+- Capture: `canonical-ssr-v1-proa-2026-11-11T05-38-15-421Z`
+- Captured: 2026-11-11T05:38:15.421Z
+- Completed: 2026-11-11T05:38:17.199Z
 - Host: Apple M4 Max, 16 logical CPUs, 137438953472 bytes RAM
 - OS: macOS (Darwin) (25.5.0), arm64
-- Harness commit: `82f32206ec5c87449e1dfb8ceff9a0e977d883d8` (dirty; source digest retained)
-- Canonical source SHA-256: `77c5c5fce085f658cebcadc649c908b13243b0590cfe0ab214db365bcc70dd2d`
+- Harness commit: `92aab464b8718e4eca06f34f522b18decc8364cf` (dirty; source digest retained)
+- Canonical source SHA-256: `361074ab55cddaed70a4eafa909852f7afdb7f1d41cf29357a4bae103ff3201e`
 
 ## Public scoreboard
 
-On these workloads, the October 21, 2026 capture on Apple M4 Max measured Proa rendering the component page 36.3× faster than React, the 1,000-row table 14.3× faster than React, and the product grid 15.4× faster than React. These ratios describe this capture, not every application.
+On these workloads, the November 11, 2026 capture on Apple M4 Max measured Proa rendering the component page 54.5× faster than React, the 1,000-row table 16.5× faster than React, and the product grid 22.5× faster than React. These ratios describe this capture, not every application.
 
 > Lower is better. Every listed renderer produced an equivalent page and passed the parity gate.
 
+> **PROA-only refresh.** Only Proa was rerun on 2026-11-11; every peer retains its 2026-10-21 measurement and version. These are different capture dates on the same machine.
+
 | Renderer | Component page | 1,000-row table | Product grid |
 | --- | ---: | ---: | ---: |
-| Proa | 2.00 µs · 1.00× | 0.25 ms · 1.00× | 0.026 ms · 1.00× |
-| Marko | 7.67 µs · 3.83× | 0.95 ms · 3.73× | 0.088 ms · 3.35× |
-| React | 72.7 µs · 36.3× | 3.64 ms · 14.3× | 0.40 ms · 15.4× |
-| Vue | 7.08 µs · 3.54× | 1.15 ms · 4.51× | 0.083 ms · 3.17× |
-| Svelte | 8.21 µs · 4.10× | 0.95 ms · 3.71× | 0.070 ms · 2.68× |
-| Rails | 59.0 µs · 29.5× | 6.09 ms · 23.9× | 0.41 ms · 15.4× |
-| jte | 8.46 µs · 4.23× | 1.98 ms · 7.76× | 0.23 ms · 8.73× |
-| Rocker | 16.0 µs · 7.98× | 2.59 ms · 10.2× | 0.36 ms · 13.8× |
-| Handlebars | 19.3 µs · 9.67× | 2.31 ms · 9.08× | 0.20 ms · 7.75× |
-| Go html/template | 86.3 µs · 43.1× | 8.61 ms · 33.8× | 0.67 ms · 25.4× |
-| Jinja2 | 94.8 µs · 47.4× | 15.2 ms · 59.6× | 1.30 ms · 49.6× |
-| PHP | 34.0 µs · 17.0× | 1.39 ms · 5.47× | 0.085 ms · 3.22× |
-| Askama | 1.54 µs · 0.77× | 0.60 ms · 2.34× | 0.022 ms · 0.85× |
-| Sailfish | 2.33 µs · 1.17× | 0.54 ms · 2.12× | 0.025 ms · 0.94× |
-| Leptos | 21.5 µs · 10.8× | 1.84 ms · 7.24× | 0.22 ms · 8.21× |
-| Dioxus | 105 µs · 52.6× | 2.27 ms · 8.91× | 0.31 ms · 11.7× |
-| Topcoat | 12.1 µs · 6.06× | 1.06 ms · 4.15× | 0.15 ms · 5.74× |
+| Proa | 1.33 µs · 1.00× | 0.22 ms · 1.00× | 0.018 ms · 1.00× |
+| Marko | 7.67 µs · 5.75× | 0.95 ms · 4.31× | 0.088 ms · 4.90× |
+| React | 72.7 µs · 54.5× | 3.64 ms · 16.5× | 0.40 ms · 22.5× |
+| Vue | 7.08 µs · 5.31× | 1.15 ms · 5.20× | 0.083 ms · 4.64× |
+| Svelte | 8.21 µs · 6.16× | 0.95 ms · 4.28× | 0.070 ms · 3.92× |
+| Rails | 59.0 µs · 44.3× | 6.09 ms · 27.6× | 0.41 ms · 22.6× |
+| jte | 8.46 µs · 6.35× | 1.98 ms · 8.95× | 0.23 ms · 12.8× |
+| Rocker | 16.0 µs · 12.0× | 2.59 ms · 11.7× | 0.36 ms · 20.2× |
+| Handlebars | 19.3 µs · 14.5× | 2.31 ms · 10.5× | 0.20 ms · 11.3× |
+| Go html/template | 86.3 µs · 64.7× | 8.61 ms · 39.0× | 0.67 ms · 37.1× |
+| Jinja2 | 94.8 µs · 71.1× | 15.2 ms · 68.7× | 1.30 ms · 72.6× |
+| PHP | 34.0 µs · 25.5× | 1.39 ms · 6.32× | 0.085 ms · 4.71× |
+| Askama | 1.54 µs · 1.16× | 0.60 ms · 2.70× | 0.022 ms · 1.25× |
+| Sailfish | 2.33 µs · 1.75× | 0.54 ms · 2.44× | 0.025 ms · 1.37× |
+| Leptos | 21.5 µs · 16.2× | 1.84 ms · 8.36× | 0.22 ms · 12.0× |
+| Dioxus | 105 µs · 78.9× | 2.27 ms · 10.3× | 0.31 ms · 17.1× |
+| Topcoat | 12.1 µs · 9.10× | 1.06 ms · 4.78× | 0.15 ms · 8.40× |
 
 ## Detailed measurements
 
 | Renderer | Workload | P50 | P95 | P99 | Mean | Process P50 range | Processes | Samples/process | Warmups/process | Payload bytes | Payload Δ vs Proa | Parity |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Proa | Component page | 2.000 µs | 2.125 µs | 2.542 µs | 2.046 µs | 2.000 µs–2.083 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
-| Proa | 1,000-row table | 254.667 µs | 266.716 µs | 275.850 µs | 256.483 µs | 253.041 µs–258.125 µs | 5 | 200 | 20 | 988,509 | +0 | semantic DOM pass |
-| Proa | Product grid | 26.292 µs | 28.168 µs | 32.755 µs | 26.619 µs | 26.125 µs–26.916 µs | 5 | 500 | 50 | 284,908 | +0 | semantic DOM pass |
+| Proa | Component page | 1.333 µs | 1.500 µs | 1.709 µs | 1.354 µs | 1.292 µs–1.375 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
+| Proa | 1,000-row table | 220.709 µs | 237.914 µs | 249.447 µs | 223.996 µs | 217.875 µs–221.980 µs | 5 | 200 | 20 | 988,509 | +0 | semantic DOM pass |
+| Proa | Product grid | 17.958 µs | 19.836 µs | 22.713 µs | 18.175 µs | 17.792 µs–18.167 µs | 5 | 500 | 50 | 284,908 | +0 | semantic DOM pass |
 | Marko | Component page | 7.667 µs | 19.559 µs | 42.218 µs | 14.328 µs | 7.583 µs–8.625 µs | 5 | 2000 | 200 | 24,038 | -1,070 | semantic DOM pass |
 | Marko | 1,000-row table | 950.500 µs | 13.576 ms | 21.168 ms | 2.081 ms | 931.854 µs–977.833 µs | 5 | 200 | 20 | 983,187 | -5,322 | semantic DOM pass |
 | Marko | Product grid | 87.980 µs | 163.502 µs | 217.315 µs | 148.303 µs | 87.501 µs–94.666 µs | 5 | 500 | 50 | 282,604 | -2,304 | semantic DOM pass |
@@ -112,7 +114,7 @@ Chromium parses every untimed dump. The gate requires identical elements, non-cl
 
 | Renderer/runtime | Version |
 | --- | --- |
-| Proa | 0.3.0 @ 7ffb8a19ecfa601fb496d825e0677dce29ea3af4 / rustc 1.95.0 (59807616e 2026-04-14) |
+| Proa | 0.4.0 @ 78f9c0edd00e934978f2c7e1fa6a0d06af491407 / rustc 1.95.0 (59807616e 2026-04-14) |
 | Marko | 6.0.150 / Node v24.20.0 |
 | React | 19.2.4 / Node v24.20.0 |
 | Vue | 3.5.42 / Node v24.20.0 |
@@ -142,24 +144,18 @@ The runner builds every fixed-roster adapter, runs the complete parity matrix, s
 
 Full commands recorded by the capture:
 
-- `npm ci (React, Marko, and Handlebars adapter directories)`
-- `bundle check || bundle install (Rails adapter directory)`
-- `cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench`
-- `go build -trimpath -o rendering/external/go/build/canonical_suite rendering/external/go/suite_bench.go`
-- `python3 -m venv rendering/external/jinja/.venv && pip install -r rendering/external/jinja/requirements.txt`
-- `gradle --no-daemon --quiet installDist copyJteBinaryStaticContent (jte adapter directory)`
-- `gradle --no-daemon --quiet installDist (Rocker adapter directory)`
-- `./rendering/run-all`
+- `./rendering/run-all --refresh-proa`
 
 ## Known limitations
 
 - Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.
 - Semantic DOM parity permits documented serializer metadata and whitespace differences; payload deltas remain visible.
 - This capture describes one machine and these three workloads; it is not a universal application ranking.
+- Only Proa was rerun on 2026-11-11; every peer retains its 2026-10-21 measurement and version. These are different capture dates on the same machine.
 
 ## Raw and related evidence
 
-- [Per-process summaries](raw/canonical-ssr-v1-2026-10-21-77c5c5fce085/process-summaries.json)
-- [Result-table migration map](../MIGRATION.md)
+- [Proa refresh process summaries](raw/canonical-ssr-v1-proa-2026-11-11T05-38-15-421Z/process-summaries.json)
+- [Original peer capture](raw/canonical-ssr-v1-proa-2026-11-11T05-38-15-421Z/baseline.json)
 
 Allocation measurements and construction-path controls remain separate from this renderer scoreboard. They are embedded below the scoreboard in the root README and retained in the [engineering reports](../engineering/README.md).

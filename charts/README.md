@@ -85,9 +85,7 @@ figure on its evidence page is the table view.
 - **Two measures never share one axis.** Where a figure shows both time and
   response size, they are two aligned panels.
 - **Superseded captures say so in the deck**, in the same words the evidence page uses.
-- **Contrary cells are kept.** Askama and Sailfish beating Proa, Askama's faster
-  large-page estimate, and Sailfish's lower reused times are all plotted rather
-  than omitted.
+- **Contrary cells are kept.** Every peer value remains plotted even when it beats Proa. PROA-only refreshes disclose both capture dates; historical engineering rows keep their original evidence.
 
 The palette is checked against the light chart surface for lightness band, chroma,
 colour-vision separation and contrast; the pairings in use are recorded at the top

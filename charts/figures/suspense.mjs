@@ -156,7 +156,7 @@ export function suspenseLoad(tables, meta) {
 
   const notesY = latTop + latH + 26;
   const notes = footnotes(PAD, notesY, [
-    `Proa/SvelteKit: ${meta.sveltekitDate} UTC. Marko/React: ${meta.suspenseDate}. Same host, fixture and offered rates.`,
+    `Proa: ${meta.sveltekitDate} UTC. SvelteKit: ${meta.sveltekitPeerDate}. Marko/React: ${meta.streamPeerDate ?? meta.suspenseDate}. Same host and offered rates.`,
     'SvelteKit response end delivers data; the others deliver resolved HTML. Browser completion: sveltekit/browser.svg.',
     'Successful-response latency includes scheduled queueing. Failures by rate remain in the source tables.',
   ], COL);
@@ -165,7 +165,7 @@ export function suspenseLoad(tables, meta) {
     w: WIDTH,
     h: notesY + notes.h + 12,
     title: 'Proa, Marko, React and SvelteKit streaming the product grid under HTTP load',
-    desc: `Proa and SvelteKit captured ${meta.sveltekitDate} UTC; Marko and React captured ${meta.suspenseDate}. One worker thread or process per engine. SvelteKit response end delivers promised data and excludes browser rendering; the other streams deliver resolved HTML. ` + rows.map((row) => `${row.engine} at ${row.rate} req/s target: ${row.throughput} response ends per second, response-end P50 ${row.p50Ms}, P95 ${row.p95Ms} and P99 ${row.p99Ms} milliseconds, ${row.rssMiB} MiB peak RSS, ${row.errors} failures across three repeats`).join('. ') + '.',
+    desc: `Proa refreshed ${meta.sveltekitDate} UTC; SvelteKit retained ${meta.sveltekitPeerDate}; Marko and React retained ${meta.streamPeerDate ?? meta.suspenseDate}. One worker thread or process per engine. SvelteKit response end delivers promised data and excludes browser rendering; the other streams deliver resolved HTML. ` + rows.map((row) => `${row.engine} at ${row.rate} req/s target: ${row.throughput} response ends per second, response-end P50 ${row.p50Ms}, P95 ${row.p95Ms} and P99 ${row.p99Ms} milliseconds, ${row.rssMiB} MiB peak RSS, ${row.errors} failures across three repeats`).join('. ') + '.',
     body: body + notes.svg,
   });
 }

@@ -3,6 +3,7 @@
 //   node charts/verify.mjs
 // Exits non-zero on the first failure, so this is safe to wire into CI.
 
+import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -340,7 +341,7 @@ console.log('\nSource fidelity');
 // 7b · figure 21 is exactly reproducible from the generated page-load table,
 //      and the table's own derived column reproduces from its throughput cells.
 {
-  const expected = pageLoad(tables);
+  const expected = pageLoad(tables, readMeta(md));
   const path = join(SVG, '08-canonical-pages-http.svg');
   let actual = null;
   try {
@@ -371,7 +372,7 @@ console.log('\nSource fidelity');
 
 // 7c · figure 22 is exactly reproducible from the generated cold-start table
 {
-  const expected = coldStart(tables);
+  const expected = coldStart(tables, readMeta(md));
   const path = join(SVG, '09-cold-start.svg');
   let actual = null;
   try {
@@ -413,6 +414,12 @@ console.log('\nSource fidelity');
     bad('Proa allocation capture', error.message);
   }
 }
+
+// New PROA tables must reproduce from retained Criterion and linked-page evidence.
+try {
+  execFileSync(process.execPath, ['scripts/report-proa-engineering.mjs', '--check'], {cwd: join(HERE, '..'), stdio: 'pipe'});
+  ok('PROA engineering tables reproduce from retained estimates and linked-page summaries');
+} catch (error) { bad('PROA engineering table fidelity', error.stderr?.toString() ?? error.message); }
 
 console.log('\nOutput integrity');
 

@@ -34,13 +34,20 @@ export function readMeta(md) {
     if (!m) throw new Error(`evidence pages: could not read ${what} inside the ${section} section`);
     return m[1];
   };
-  const kitDate = /Generated from fresh captures on \*\*[^\n]+?\*\*, (\d{4}-\d{2}-\d{2}) UTC\./.exec(md)?.[1];
+  const kitDate = /Generated from (?:fresh )?captures on \*\*[^\n]+?\*\*, (\d{4}-\d{2}-\d{2}) UTC\./.exec(md)?.[1];
   if (!kitDate) throw new Error('evidence pages: could not read the SvelteKit capture date');
+  const refreshDates = [...md.matchAll(/Only Proa was rerun on ([0-9-]+); every peer retains its ([0-9-]+) measurement/g)];
+  const refreshSuffix = refreshDates.length ? ` · Proa refresh; peers ${refreshDates[0][2]}` : '';
   return {
+    refreshSuffix,
+    engineeringRefreshDate: /<!-- proa-engineering:start -->[\s\S]*?\*\*([0-9-]+) UTC/.exec(md)?.[1],
     date: within('canonical-scoreboard', /\*\*(\w+ \d+, \d{4}) · /, 'the canonical capture date'),
     scalingDate: within('product-scaling', /This (\w+ \d+, \d{4}) UTC engineering capture/, 'the product-scaling capture date'),
     suspenseDate: within('suspense-load', /\*\*(\w+ \d+, \d{4}) · /, 'the resolved-HTML streaming capture date'),
     sveltekitDate: kitDate,
+    sveltekitPeerDate: /SvelteKit retains its ([0-9-]+) measurements/.exec(md)?.[1] ?? kitDate,
+    streamPeerDate: /peer rows retain their ([0-9-]+) capture/.exec(md.slice(md.indexOf('<!-- suspense-load:start -->'), md.indexOf('<!-- suspense-load:end -->')))?.[1],
+    loadRefreshSuffix: /PROA-only refresh/.test(md) ? ' · Proa refreshed; peers retained' : '',
     host: (/- Host: (.+)/.exec(md) || [, ''])[1],
     capture: (/- Capture: `(.+?)`/.exec(md) || [, ''])[1],
   };
