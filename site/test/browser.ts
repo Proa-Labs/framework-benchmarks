@@ -4,6 +4,9 @@ import type { FeatureRow } from "../feature-schema.ts";
 import { required } from "../required.ts";
 
 interface TestExport {
+  experiment: string;
+  captures?: Record<string, unknown>;
+  unmeasured?: { id: string }[];
   workload: string;
   rows: {
     id: string;
@@ -329,7 +332,16 @@ try {
     ),
   );
   assert.equal(comparisonExport.workload, "all");
-  assert.equal(comparisonExport.rows.length, 66);
+  assert.equal(comparisonExport.rows.length, 51);
+  assert.equal(comparisonExport.experiment, "rendering");
+  assert.deepEqual(Object.keys(comparisonExport.captures || {}), ["rendering"]);
+  assert.ok(
+    comparisonExport.rows.every(
+      (row) => row.suite === "rendering" && row.unit === "µs",
+    ),
+  );
+  for (const id of ["astro", "exact", "nextjs", "sveltekit"])
+    assert.ok(comparisonExport.unmeasured?.some((row) => row.id === id));
   assert.deepEqual(
     new Set(comparisonExport.rows.map((r) => r.workload)),
     new Set(["cards", "products", "table"]),
@@ -345,29 +357,25 @@ try {
     .getByRole("button", { name: "All workloads", exact: true })
     .click();
   assert.equal(await page.locator(".fw-uncaptured").count(), 0);
-  const related = page.locator("[data-framework-comparison]");
+  assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
   assert.equal(
-    await related.locator("tbody tr[data-framework-row]").count(),
-    5,
+    await page.locator("[data-renderer-comparison] thead th").count(),
+    4,
   );
+  assert.equal(await page.locator("[data-renderer-pending]").count(), 4);
   const relatedData: BenchmarkData = await (
     await context.request.get(`${server.url}/data/results.json`)
   ).json();
+  await page.getByRole("tab", { name: "Framework SSR", exact: true }).click();
+  await page.locator("[data-framework-view]").selectOption("p50");
   for (const workload of relatedData.framework.workloadDefinitions) {
-    assert.match(
-      required(await related.locator("thead").textContent()),
-      new RegExp(`${workload.fixedRateRps} req/s`),
-    );
+    await page.locator(`[data-workload="${workload.id}"]`).click();
+    assert.equal(await page.locator(".fw-row").count(), 5);
     for (const row of relatedData.framework.workloads[workload.id]) {
-      const cell = related.locator(
-        `td [data-stat-suite="framework"][data-focus="${row.id}"][data-stat-workload="${workload.id}"]`,
-      );
-      const expected = Number(row.p50).toLocaleString("en-US", {
-        maximumFractionDigits: Number(row.p50) < 10 ? 2 : 1,
-      });
+      const cell = page.locator(`.fw-row[data-focus="${row.id}"]`);
       assert.equal(
-        await cell.locator(".fw-comparison-value").textContent(),
-        expected,
+        await cell.locator(".fw-number").textContent(),
+        `${Number(row.p50).toLocaleString("en-US", { maximumFractionDigits: Number(row.p50) < 10 ? 2 : 1 })}ms`,
       );
       await cell.hover();
       await page
@@ -379,16 +387,16 @@ try {
       );
       assert.deepEqual(
         await page.locator(".fw-percentile-number strong").allTextContents(),
-        (["p50", "p95", "p99"] as const).map((q) => {
-          const value = row.percentiles.equalLoad[q];
-          return value.toLocaleString("en-US", {
-            maximumFractionDigits: value >= 1000 ? 0 : value < 10 ? 3 : 2,
-          });
-        }),
-      );
-      assert.match(
-        required(await page.locator(".fw-popover-scope").textContent()),
-        /Full-framework HTTP request/,
+        (["p50", "p95", "p99"] as const).map((q) =>
+          row.percentiles.equalLoad[q].toLocaleString("en-US", {
+            maximumFractionDigits:
+              row.percentiles.equalLoad[q] >= 1000
+                ? 0
+                : row.percentiles.equalLoad[q] < 10
+                  ? 3
+                  : 2,
+          }),
+        ),
       );
       assert.match(
         required(await page.locator(".fw-popover-scope").textContent()),
@@ -396,60 +404,19 @@ try {
       );
     }
   }
-  await related.locator('[data-sort-framework-workload="table"]').click();
-  const frameworkOrder = relatedData.framework.workloads.table
-    .toSorted((a, b) => Number(a.p50) - Number(b.p50))
-    .map((r) => r.id);
-  assert.deepEqual(
-    await related
-      .locator("tbody tr[data-framework-row] th button")
-      .evaluateAll((buttons) =>
-        buttons.map((b) => (b as HTMLElement).dataset.focus),
-      ),
-    frameworkOrder,
-  );
-  await related.getByRole("button", { name: "Astro", exact: true }).hover();
-  assert.equal(
-    await related.getByRole("button", { name: "Astro", exact: true }).count(),
-    1,
-  );
   const raw = await context.request.get(
-    new URL(
-      required(
-        await page
-          .getByRole("link", { name: "Raw framework capture ↗", exact: true })
-          .getAttribute("href"),
-      ),
-      server.url,
-    ).href,
+    new URL(relatedData.framework.download, server.url).href,
   );
   assert.equal(raw.status(), 200);
   assert.equal((await raw.json()).captureKind, "publication");
-  await page
-    .getByRole("link", { name: "Detailed framework results ↗", exact: true })
-    .click();
-  await ready();
-  assert.equal(
-    await page
-      .getByRole("tab", { name: "Framework SSR", exact: true })
-      .getAttribute("aria-selected"),
-    "true",
-  );
-  assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
-  assert.equal(await page.locator(".fw-row").count(), 5);
   await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
-  await page
-    .getByRole("button", { name: "All workloads", exact: true })
-    .click();
-  assert.equal(
-    await related.locator("tbody tr[data-framework-row]").count(),
-    5,
-  );
+  assert.equal(await page.locator("[data-renderer-comparison]").count(), 1);
+  assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
   await page.locator('[data-type="frameworks"]').click();
   assert.equal(await page.locator('[data-type="baselines"]').count(), 0);
-  assert.equal(await related.locator("[data-stat-suite=framework]").count(), 0);
+  assert.equal(await page.locator('[data-stat-suite="framework"]').count(), 0);
   checks.push(
-    "default page shows all 15 framework values from the capture, correct millisecond hover percentiles, sorting, raw data and filters",
+    "SSR Rendering keeps render-only columns and exports; all 15 HTTP values and millisecond hover percentiles stay in Framework SSR",
   );
   const filtered: TestExport = JSON.parse(
     decodeURIComponent(
@@ -1221,7 +1188,7 @@ try {
   const initial = await noJS.newPage();
   for (const [path, selector, count] of [
     ["/", "[data-renderer-comparison] tbody tr[data-renderer-row]", 17],
-    ["/", "[data-framework-comparison] tbody tr[data-framework-row]", 5],
+    ["/", "[data-framework-comparison] tbody tr[data-framework-row]", 0],
     ["/?chart=bars&workload=products&selected=proa,react", ".fw-row", 2],
     ["/?view=framework&workload=cards", ".fw-row", 5],
     ["/?view=framework&workload=products", ".fw-row", 5],
@@ -1333,10 +1300,11 @@ try {
     methodology,
     /Exact uses its production JavaScript SSR backend on Bun/,
   );
+  await initial.goto(`${server.url}/?view=framework&framework=p50`);
   await initial.waitForLoadState("load");
   assert.match(
     required(
-      await initial.locator("[data-framework-comparison] tbody").textContent(),
+      await initial.locator('.fw-row[data-focus="exact"]').textContent(),
     ),
     /Exact \(JS SSR\)/,
   );

@@ -114,7 +114,6 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       "rate",
       "http",
       "framework",
-      "comparison",
       "stream",
     ] as const)
       params.set(key, String(state[key]));
@@ -809,7 +808,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     const exportData = {
       measurementStatus:
         metric() === "breakdown" ? "not instrumented" : "measured",
-      experiment: state.chart === "compare" ? "SSR comparison" : state.view,
+      experiment: state.view,
       captures:
         state.chart === "compare"
           ? {
@@ -818,20 +817,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
                 hash: data.rendering.hash,
                 capturedAt: data.rendering.capturedAt,
               },
-              framework: {
-                source: data.framework.source,
-                hash: data.framework.hash,
-                capturedAt: data.framework.capturedAt,
-              },
             }
           : undefined,
       toolTypes: state.types,
       unmeasured: (state.view === "rendering"
-        ? uncaptured().filter(
-            (r) =>
-              state.chart !== "compare" ||
-              !data.framework.rows.some((v) => v.id === r.id),
-          )
+        ? uncaptured()
         : data.renderers.filter(
             (r) => isVisible(r) && !all.some((v) => v.id === r.id),
           )
@@ -1056,10 +1046,6 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       state.focus = null;
     } else if (el.dataset.sortWorkload) {
       state.workload = el.dataset.sortWorkload;
-      state.comparison = "rendering";
-    } else if (el.dataset.sortFrameworkWorkload) {
-      state.workload = el.dataset.sortFrameworkWorkload;
-      state.comparison = "framework";
     } else if (el.dataset.workload) {
       state.workload = el.dataset.workload;
       if (state.chart === "compare") state.chart = "bars";
@@ -1102,9 +1088,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         ? `[data-workload="${el.dataset.workload}"]`
         : el.dataset.sortWorkload
           ? `[data-sort-workload="${el.dataset.sortWorkload}"]`
-          : el.dataset.sortFrameworkWorkload
-            ? `[data-sort-framework-workload="${el.dataset.sortFrameworkWorkload}"]`
-            : null;
+          : null;
     if (focusSelector) $(focusSelector)?.focus({ preventScroll: true });
   });
   listen(root, "change", (e) => {

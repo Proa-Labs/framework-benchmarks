@@ -4,39 +4,36 @@ import { loadInputs, normalize } from "../data.ts";
 import { createChartMarkup } from "../src/charts/chart-markup.ts";
 import { createDashboardModel } from "../src/charts/dashboard-model.ts";
 
-test("one comparison table preserves both boundaries, one tool row, and every measured export cell", async () => {
+test("SSR comparison uses one render-only column per workload and exports only that experiment", async () => {
   const data = normalize((await loadInputs()).input);
   const model = createDashboardModel(data);
-  const measurements = model.comparisonMeasurements();
+  const rows = model.comparisonMeasurements();
   const chart = createChartMarkup(model).draw(model.visibleRows());
   assert.equal((chart.html.match(/<table /g) || []).length, 1);
-  const ids = new Set(measurements.map((r) => r.id));
-  assert.equal((chart.html.match(/scope="row"/g) || []).length, ids.size);
+  assert.equal(
+    (chart.html.match(/scope="col"/g) || []).length,
+    1 + data.workloads.length,
+  );
   assert.equal(
     (chart.html.match(/class="fw-comparison-value"/g) || []).length,
-    measurements.length,
+    rows.length,
   );
-  for (const suite of ["rendering", "framework"] as const) {
-    const rows = measurements.filter((r) => r.suite === suite);
-    const expected =
-      suite === "rendering" ? data.rendering.rows : data.framework.workloads;
-    assert.equal(rows.length, Object.values(expected).flat().length);
-    for (const row of rows) {
-      const source = expected[row.workload].find((r) => r.id === row.id);
-      assert.equal(row.p50, source?.p50);
-      assert.equal(row.unit, suite === "rendering" ? "µs" : "ms");
-      assert.equal(
-        row.capturedAt,
-        source && "capturedAt" in source
-          ? source.capturedAt
-          : data[suite].capturedAt,
-      );
-      assert.equal(row.latency.values.p50, row.p50);
-    }
+  assert.equal(rows.length, Object.values(data.rendering.rows).flat().length);
+  assert.ok(!chart.html.includes('data-stat-suite="framework"'));
+  assert.ok(!chart.html.includes("data-framework-comparison"));
+  for (const row of rows) {
+    const source = data.rendering.rows[row.workload].find(
+      (r) => r.id === row.id,
+    );
+    assert.equal(row.p50, source?.p50);
+    assert.equal(row.suite, "rendering");
+    assert.equal(row.unit, "µs");
+    assert.equal(row.capturedAt, source?.capturedAt);
+    assert.equal(row.latency.values.p50, row.p50);
   }
 });
 
-test("framework-only selections render without invented render timings and sorting survives a shared URL", async () => {
+test("missing render-only coverage stays explicit and a legacy URL cannot substitute HTTP timings", async () => {
   const data = normalize((await loadInputs()).input);
   const id = data.framework.rows.find(
     (r) => !data.rendering.rows.cards.some((v) => v.id === r.id),
@@ -47,18 +44,16 @@ test("framework-only selections render without invented render timings and sorti
     `?selected=${id}&comparison=framework&workload=table`,
   );
   assert.equal(model.visibleRows().length, 0);
-  assert.equal(model.state.comparison, "framework");
-  const html = createChartMarkup(model).draw(model.visibleRows()).html;
-  assert.equal((html.match(/scope="row"/g) || []).length, 1);
+  assert.equal(model.comparisonMeasurements().length, 0);
+  const html = createChartMarkup(model).draw([]).html;
+  assert.equal((html.match(/data-renderer-pending/g) || []).length, 1);
   assert.equal(
-    (html.match(/class="fw-comparison-value"/g) || []).length,
-    data.framework.workloadDefinitions.length,
+    (html.match(/Render-only measurement pending/g) || []).length,
+    data.workloads.length,
   );
-  assert.ok(!html.includes('data-stat-suite="rendering"'));
-  assert.equal(
-    model.comparisonMeasurements().every((r) => r.suite === "framework"),
-    true,
-  );
+  assert.ok(!html.includes("fw-comparison-value"));
+  assert.ok(!html.includes('data-stat-suite="framework"'));
+  assert.ok(html.includes("render-only measurements pending"));
   const empty = createDashboardModel(data, "?selected=");
   assert.equal(empty.comparisonMeasurements().length, 0);
   assert.ok(!createChartMarkup(empty).draw([]).html.includes("<table"));

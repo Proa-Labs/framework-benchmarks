@@ -65,30 +65,14 @@ export function createChartMarkup(model: DashboardModel) {
       : `${esc(r.coverageReason || "Renderer-only timing not recorded.")} <a href="${esc(r.coverageSource || r.homepage)}" target="_blank" rel="noreferrer">Details ↗</a>`;
   }
   function drawComparison(_rows: ChartRow[]) {
-    const definitions = model.frameworkWorkloads();
-    const workloads = [
-      ...orderedWorkloads(),
-      ...definitions.filter(
-        (w) => !orderedWorkloads().some((v) => v.id === w.id),
-      ),
-    ];
-    const suites = ["rendering", "framework"] as const;
-    const rowsFor = (suite: (typeof suites)[number], workload: string) =>
-      suite === "rendering"
-        ? data.rendering.rows[workload] || []
-        : data.framework.workloads[workload] || [];
+    const workloads = orderedWorkloads();
+    const rowsFor = (workload: string) => data.rendering.rows[workload] || [];
+    const measuredIds = new Set(
+      workloads.flatMap((w) => rowsFor(w.id).map((r) => r.id)),
+    );
     const ids = [
-      ...new Set(
-        suites.flatMap((suite) =>
-          workloads.flatMap((w) =>
-            rowsFor(suite, w.id)
-              .filter(isVisible)
-              .map((r) => r.id),
-          ),
-        ),
-      ),
-    ];
-    const selectedRows = rowsFor(state.comparison, state.workload);
+      ...new Set([...measuredIds, ...data.framework.rows.map((r) => r.id)]),
+    ].filter((id) => isVisible({ id }));
     if (!ids.length) {
       output.html =
         '<div class="fw-empty">No measurements for this selection.</div>';
@@ -96,56 +80,34 @@ export function createChartMarkup(model: DashboardModel) {
     }
     ids.sort((a, b) => {
       const value = (id: string) =>
-        selectedRows.find((r) => r.id === id)?.p50 ?? Infinity;
+        rowsFor(state.workload).find((r) => r.id === id)?.p50 ?? Infinity;
       return value(a) - value(b) || name(a).localeCompare(name(b));
     });
-    const maximum = (suite: (typeof suites)[number], workload: string) =>
+    const maximum = (workload: string) =>
       Math.max(
         1,
-        ...rowsFor(suite, workload)
+        ...rowsFor(workload)
           .filter(isVisible)
           .map((r) => required(r.p50)),
       ) * 1.04;
-    output.html = `<div class="fw-table-scroll" tabindex="0" role="region" aria-label="SSR latency comparison"><table class="fw-comparison fw-comparison-unified" data-renderer-comparison data-framework-comparison><caption class="sr-only">SSR latency across workloads. Each tool appears once. Render-only timings are in microseconds; full HTTP request timings are in milliseconds. Select a measurement heading to sort within that boundary.</caption><thead><tr><th scope="col" rowspan="2">Framework / renderer</th>${workloads.map((w) => `<th scope="colgroup" colspan="2">${esc(w.label)}</th>`).join("")}</tr><tr>${workloads
-      .map((w) =>
-        suites
-          .map((suite) => {
-            const framework = suite === "framework";
-            const active =
-              state.comparison === suite && state.workload === w.id;
-            const rate = definitions.find(
-              (definition) => definition.id === w.id,
-            )?.fixedRateRps;
-            return `<th scope="col" aria-sort="${active ? "ascending" : "none"}"><button type="button" ${framework ? "data-sort-framework-workload" : "data-sort-workload"}="${w.id}" aria-label="Sort ${esc(w.label)} by ${framework ? "full request" : "render"} latency">${framework ? "Full request" : "Render"}${active ? " ↓" : ""}<small>${framework ? `ms · ${rate ?? "—"} req/s` : "µs"}</small></button></th>`;
-          })
-          .join(""),
+    output.html = `<div class="fw-table-scroll" tabindex="0" role="region" aria-label="SSR render latency comparison"><table class="fw-comparison" data-renderer-comparison><caption class="sr-only">Prepared data to freshly owned HTML. Every measured cell reports median render latency in microseconds. HTTP request timings are in the Framework SSR experiment.</caption><thead><tr><th scope="col">Framework / renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" aria-label="Sort ${esc(w.label)} by render latency">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>µs</small></button></th>`).join("")}</tr></thead><tbody>${ids
+      .map(
+        (id) =>
+          `<tr ${measuredIds.has(id) ? "data-renderer-row" : "data-renderer-pending"} style="--brand:${required(renderer(id)).color}" class="${state.focus === id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" data-focus="${id}" aria-pressed="${state.focus === id}">${label(id, false)}</button></th>${workloads
+            .map((w) => {
+              const cell = rowsFor(w.id).find((r) => r.id === id);
+              if (!cell)
+                return '<td><span class="text-muted" aria-label="Render-only measurement pending">Not measured</span></td>';
+              return `<td class="fw-comparison-cell"><button type="button" data-focus="${id}" data-stat-suite="rendering" data-stat-workload="${w.id}" aria-pressed="${state.focus === id}" aria-label="${esc(name(id))}, ${esc(w.label)}, render, ${fmt(required(cell.p50))} µs"><span class="fw-comparison-value">${fmt(required(cell.p50))}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${(100 * required(cell.p50)) / maximum(w.id)}%"></span></span></button></td>`;
+            })
+            .join("")}</tr>`,
       )
-      .join("")}</tr></thead><tbody>${ids
-      .map((id) => {
-        const hasRender = workloads.some((w) =>
-          rowsFor("rendering", w.id).some((r) => r.id === id),
-        );
-        const hasFramework = workloads.some((w) =>
-          rowsFor("framework", w.id).some((r) => r.id === id),
-        );
-        return `<tr ${hasRender ? "data-renderer-row" : ""} ${hasFramework ? "data-framework-row" : ""} style="--brand:${required(renderer(id)).color}" class="${state.focus === id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" data-focus="${id}" aria-pressed="${state.focus === id}" ${hasRender ? "" : `data-stat-suite="framework" data-stat-workload="${state.workload}"`}>${label(id, hasFramework)}</button></th>${workloads
-          .map((w) =>
-            suites
-              .map((suite) => {
-                const cell = rowsFor(suite, w.id).find((r) => r.id === id);
-                if (!cell)
-                  return '<td><span aria-label="Not measured">—</span></td>';
-                const unit = suite === "framework" ? "ms" : "µs";
-                return `<td class="fw-comparison-cell"><button type="button" data-focus="${id}" data-stat-suite="${suite}" data-stat-workload="${w.id}" aria-pressed="${state.focus === id}" aria-label="${esc(name(id))}, ${esc(w.label)}, ${suite === "framework" ? "full request" : "render"}, ${fmt(required(cell.p50))} ${unit}"><span class="fw-comparison-value">${fmt(required(cell.p50))}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${(100 * required(cell.p50)) / maximum(suite, w.id)}%"></span></span></button></td>`;
-              })
-              .join(""),
-          )
-          .join("")}</tr>`;
-      })
-      .join("")}</tbody></table></div>
-    <p class="mt-4 text-[11px] leading-relaxed text-muted" data-comparison-provenance>Render: ${esc(data.rendering.host?.cloud || data.rendering.host?.cpu_model || "Recorded host")} · ${esc(data.rendering.date)}. Full request: ${esc(data.framework.host?.cloud || data.framework.host?.cpuModel || "Recorded host")} · ${esc(data.framework.date)}. <a href="/${esc(data.framework.download)}" class="underline underline-offset-2">Raw framework capture ↗</a> · <a href="?view=framework&framework=p50" class="underline underline-offset-2">Detailed framework results ↗</a>. ${model.frameworkUsesJsSsr() ? "Exact uses its production JavaScript SSR backend on Bun." : ""}</p>`;
+      .join("")}</tbody></table></div>`;
+    const missing = ids.filter((id) => !measuredIds.has(id));
+    if (missing.length)
+      output.html += `<p class="mt-4 text-[11px] leading-relaxed text-muted" data-renderer-coverage>${missing.map((id) => esc(name(id))).join(", ")}: render-only measurements pending. Their HTTP request results are available in <a href="?view=framework" class="underline underline-offset-2">Framework SSR ↗</a>.</p>`;
     output.note =
-      "Median P50 · lower is better · Render: prepared data → owned HTML (µs); Full request: HTTP routing → complete HTML (ms). Sort and bars apply within each measurement boundary. — means not measured.";
+      "Median SSR render latency · µs · lower is better · prepared data → freshly owned HTML · sort by any workload heading · bars scale within each column";
   }
   function renderCatalog() {
     const groups = [

@@ -51,27 +51,48 @@ export async function verifyPreview(url: string, expectedEntryScript?: string) {
     const data: BenchmarkData = await (
       await initial.request.get(new URL("/data/results.json", url).href)
     ).json();
-    const table = initial.locator("[data-framework-comparison]");
-    assert.equal(await initial.locator(".fw-uncaptured").count(), 0);
+    const table = initial.locator("[data-renderer-comparison]");
     assert.equal(
-      await table.locator("tbody tr[data-framework-row]").count(),
-      data.framework.rows.length,
+      await table.locator("thead th").count(),
+      data.workloads.length + 1,
     );
-    for (const workload of data.framework.workloadDefinitions)
-      for (const row of data.framework.workloads[workload.id]) {
+    assert.equal(
+      await initial.locator("[data-framework-comparison]").count(),
+      0,
+    );
+    for (const workload of data.workloads)
+      for (const row of data.rendering.rows[workload.id]) {
         const expected = Number(row.p50).toLocaleString("en-US", {
           maximumFractionDigits: Number(row.p50) < 10 ? 2 : 1,
         });
         assert.equal(
           await table
             .locator(
-              `td [data-stat-suite="framework"][data-focus="${row.id}"][data-stat-workload="${workload.id}"] .fw-comparison-value`,
+              `td [data-stat-suite="rendering"][data-focus="${row.id}"][data-stat-workload="${workload.id}"] .fw-comparison-value`,
             )
             .textContent(),
           expected,
-          `${row.id}/${workload.id} must be in the server HTML`,
+          `${row.id}/${workload.id} must be a render-only value in server HTML`,
         );
       }
+    for (const workload of data.framework.workloadDefinitions) {
+      await initial.goto(
+        new URL(`/?view=framework&framework=p50&workload=${workload.id}`, url)
+          .href,
+        { waitUntil: "load" },
+      );
+      for (const row of data.framework.workloads[workload.id]) {
+        const expected = Number(row.p50).toLocaleString("en-US", {
+          maximumFractionDigits: Number(row.p50) < 10 ? 2 : 1,
+        });
+        assert.equal(
+          await initial
+            .locator(`.fw-row[data-focus="${row.id}"] .fw-number`)
+            .textContent(),
+          `${expected}ms`,
+        );
+      }
+    }
     await initial.goto(
       new URL("/features?group=server&display=matrix&tools=astro,nextjs", url)
         .href,
@@ -103,11 +124,12 @@ export async function verifyPreview(url: string, expectedEntryScript?: string) {
     await page.locator('[data-app-ready="true"]').waitFor();
     await page.locator("[data-stat-workload]").first().hover();
     await page.locator("[data-percentile-popup]").waitFor({ state: "visible" });
-    for (const workload of data.framework.workloadDefinitions)
+    await page.getByRole("tab", { name: "Framework SSR", exact: true }).click();
+    await page.locator("[data-framework-view]").selectOption("p50");
+    for (const workload of data.framework.workloadDefinitions) {
+      await page.locator(`[data-workload="${workload.id}"]`).click();
       for (const row of data.framework.workloads[workload.id]) {
-        const cell = page.locator(
-          `[data-framework-comparison] td [data-stat-suite="framework"][data-focus="${row.id}"][data-stat-workload="${workload.id}"]`,
-        );
+        const cell = page.locator(`.fw-row[data-focus="${row.id}"]`);
         await cell.hover();
         const popup = page.locator("[data-percentile-popup]");
         await popup.waitFor({ state: "visible" });
@@ -117,7 +139,7 @@ export async function verifyPreview(url: string, expectedEntryScript?: string) {
         );
         assert.match(
           required(await popup.locator(".fw-popover-scope").textContent()),
-          /Full-framework HTTP request/,
+          /Scheduled response/,
         );
         const expectedPercentiles = (["p50", "p95", "p99"] as const).map(
           (q) => {
@@ -132,6 +154,7 @@ export async function verifyPreview(url: string, expectedEntryScript?: string) {
           expectedPercentiles,
         );
       }
+    }
     assert.deepEqual(errors, [], "Deployed preview has browser errors");
     console.log(
       `Verified preview routes, feature views, all framework cells without JavaScript and their hover percentiles: ${url}`,
