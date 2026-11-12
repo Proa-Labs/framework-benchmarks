@@ -130,6 +130,8 @@ pnpm run refresh               # regenerate every evidence page and figure from 
   - Sustained responses per second, CPU per response, latency at equal load, and cold start for five production servers.
 - [Canonical scoreboard evidence](scoreboard.md)
   - The seventeen-renderer table, parity coverage, every retained percentile, and the adapters side by side.
+- [GitHub, Sentry, and Airbnb paired renders](showcase/README.md#landing-page-paired-comparisons)
+  - Fresh String output from current Proa and production React on the same host, with full DOM parity and retained samples.
 - [Engineering, application and agent captures](engineering.md)
   - Product-grid scaling, the memcpy floor, Proa's buffer allocation, client JavaScript, and the archived August report.
 - [Benchmark figures](charts/)

@@ -235,8 +235,8 @@ inputs, are prepared before warmup. Sentry's Rust benchmark renders its default
 
 The runner checks the full browser DOM before timing, including preformatted
 text, application attributes, and script/style contents. Only comments,
-preload hints, class ordering, and equivalent inline-style serialization are
-normalized. Adjacent text is merged before whitespace normalization so React's
+preload hints, head-child ordering, ordinary collapsed whitespace, class
+ordering, and equivalent inline-style serialization are normalized. Adjacent text is merged before whitespace normalization so React's
 text-slot comments cannot remove visible spaces. A changed-body-attribute
 negative control must fail for every page.
 
@@ -259,3 +259,25 @@ The summary is `showcase/results/landing-hero.json`, with complete samples in
 `showcase/results/landing-hero-raw.json.gz`. These paired measurements are
 separate from the Proa-only linked-page corpus and the canonical three-page
 scoreboard; they should not borrow peer results from those captures.
+
+### November 12, 2026 UTC paired capture
+
+Apple M4 Max, Darwin 25.5.0, Rust 1.95.0, production React 19.2.4 on Node
+26.13.0. All three complete-page DOMs passed parity and changed-output negative
+controls. Each value is the median of five independent process P50s; times are
+microseconds. These are renderer-only String API measurements, not HTTP or
+browser timings.
+
+| Page | Proa P50 µs | React P50 µs | React / Proa | Proa process P50 range µs | React process P50 range µs |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GitHub PR diff | 35.125 | 1785.416 | 50.8× | 35.000–36.209 | 1695.166–1833.125 |
+| Sentry OTel, 400 rows | 97.541 | 6690.500 | 68.6× | 96.667–98.375 | 6499.792–7002.125 |
+| Airbnb home | 10.875 | 315.042 | 29.0× | 10.750–10.875 | 303.584–320.792 |
+
+Retained [summary and provenance](results/landing-hero.json) and
+[all 30 process records with individual samples](results/landing-hero-raw.json.gz).
+Both engines were rerun in this capture. Raw payload byte counts differ while
+the canonical DOMs match. The host's starting load average was 4.69 on 16
+logical CPUs; the table reports this shared development-machine capture rather
+than a universal application speedup. No timed processes ran concurrently in
+the harness.
