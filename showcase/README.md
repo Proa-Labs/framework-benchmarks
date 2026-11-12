@@ -230,8 +230,8 @@ home against their production React ports from Proa revision
 `6952e336b338181a7bd4118756977608f7f36dc9`. GitHub regenerates and syntax-
 highlights every diff row on every iteration in both engines. The Proa-only
 runtime HTML cache and leaked pre-rendered rows have been removed, including
-the default-fixture fallback. Root dependencies pin React 19.2.4. The native program is built in
-release mode (opt-level 3, ThinLTO, one codegen unit). Each timed native process
+the default-fixture fallback. Root dependencies pin React 19.2.4. The native
+program is built in release mode (opt-level 3, ThinLTO, one codegen unit). Each timed native process
 reports its output contract and compile-time debug-assertion mode; the runner
 rejects a stale String-producing binary or an assertion-enabled build.
 
@@ -274,6 +274,57 @@ PROA_PRIME_ALLOCATOR=1 node showcase/landing-hero/run.mjs --proa /path/to/proa -
 For CI captures, prefix the runner with `taskset -c 0`. M4 captures use the macOS
 scheduler and must disclose desktop activity. `--out` selects the summary; its
 matching `-raw.json.gz` contains every process record.
+
+### Live-row GCP CI capture, November 12, 2026 UTC
+
+Both engines render and syntax-highlight GitHub diff rows inside every timed
+iteration. Proa has no runtime row-HTML cache, fixture-matching shortcut, or
+pre-rendered row strings. Native output remains a fresh owned `RenderBuffer`;
+no String flattening is added to its timer. Compile-time template consolidation
+is retained. The React worker and timing protocol are unchanged from the
+preceding capture, isolating the removal of application-level caching.
+
+The selected landing-page figures preserve the preceding CI capture's explicit
+allocator seed. This policy was chosen before the rerun and is disclosed in the
+landing-page caption. Both peers were rerun on the same `c4-standard-16-lssd`
+(Intel Xeon 6985P-C, Granite Rapids), using CI runner image
+`proa-runner:1.95.0-v6`, CPU affinity 0, Rust 1.95.0, production React 19.2.4
+and Node 26.13.0. Each figure is the median of five independent process P50s.
+
+| Page | Proa P50 µs | React P50 µs | React / Proa | Proa process P50 range µs | React process P50 range µs |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GitHub PR diff | 205.138 | 2914.682 | 14.2× | 203.798–206.205 | 2765.756–2941.838 |
+| Sentry OTel, 400 rows | 139.108 | 10646.744 | 76.5× | 135.555–142.243 | 10112.539–10803.780 |
+| Airbnb home | 9.231 | 463.080 | 50.2× | 9.164–10.339 | 449.950–476.076 |
+
+Retained [selected summary](results/landing-hero-live-rows/ci-c4.json),
+[every selected sample](results/landing-hero-live-rows/ci-c4-raw.json.gz),
+[host and CPU affinity](results/landing-hero-live-rows/ci-host.json), and
+[actual Pod allocation and image digest](results/landing-hero-live-rows/ci-allocation.json).
+
+A separate complete paired capture on that host uses ordinary render warmups
+with **no explicit allocator seed**. React is independently rerun for this
+condition; its baseline is not borrowed from the selected capture:
+
+| Page | Proa P50 µs | React P50 µs | React / Proa | Proa process P50 range µs | React process P50 range µs |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GitHub PR diff | 277.025 | 2785.548 | 10.1× | 274.649–280.158 | 2755.696–2790.762 |
+| Sentry OTel, 400 rows | 245.720 | 10394.429 | 42.3× | 245.329–255.290 | 10188.455–10471.808 |
+| Airbnb home | 9.155 | 453.173 | 49.5× | 9.010–9.280 | 448.566–456.353 |
+
+Retained [no-seed summary](results/landing-hero-live-rows/ci-c4-default.json)
+and [every no-seed sample](results/landing-hero-live-rows/ci-c4-default-raw.json.gz).
+Both conditions allocate a fresh owned buffer every iteration. The selected
+figures must retain the explicit allocator disclosure when reused.
+
+The two captures use frozen harness `2a8f0cee072bf397952496bf3e52c4caa2d3c2e3`
+and Proa `6952e336b338181a7bd4118756977608f7f36dc9`, retaining all 60 process
+records and ordered timing samples. Every native process reports disabled debug
+assertions. Each fixture passes complete DOM parity and changed-output negative
+controls before timing. Source fingerprints, native/React bundle hashes,
+fixture bytes, process ranges, runtime versions and raw checksums are retained.
+The new Proa output is byte-identical to the preceding capture for all three
+pages; the computation performed for GitHub has changed.
 
 ### Superseded captures with cached GitHub rows
 
