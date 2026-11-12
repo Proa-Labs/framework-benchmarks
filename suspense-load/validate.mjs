@@ -15,7 +15,7 @@ function decodeProaBoundaryTemplates(html) {
     .join("");
 }
 
-export function validateBody(html, boundaries, cardsPerPanel) {
+export function validateBody(html, boundaries, cardsPerPanel, { requireFallbacks = false } = {}) {
   // Proa transports resolved boundary HTML as base64 inside inert templates;
   // React and Marko keep it as literal template content. Validate the browser-
   // consumable payload in either representation without running client code.
@@ -27,7 +27,9 @@ export function validateBody(html, boundaries, cardsPerPanel) {
   const expected = buildPanels(boundaries, cardsPerPanel).map((panel) => panel.key);
   const expectedSet = new Set(expected);
   const missingReady = expected.filter((key) => !ready.has(key));
-  const missingFallback = expected.filter((key) => !fallback.has(key));
+  // A boundary may resolve before its placeholder is flushed. Final responses
+  // must contain every resolved panel, but need not contain loading UI.
+  const missingFallback = requireFallbacks ? expected.filter((key) => !fallback.has(key)) : [];
   const unexpectedReady = [...ready].filter((key) => !expectedSet.has(key));
   const unexpectedFallback = [...fallback].filter((key) => !expectedSet.has(key));
   const duplicateReady = readyKeys.length - ready.size;

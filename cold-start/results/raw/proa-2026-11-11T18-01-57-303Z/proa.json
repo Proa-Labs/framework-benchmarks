@@ -1,0 +1,189 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "captureKind": "engineering",
+  "capturedAt": "2026-11-11T18:01:57.303Z",
+  "scenario": {
+    "id": "cold_start_products_v1",
+    "workload": {
+      "id": "products",
+      "path": "/products",
+      "label": "Product grid"
+    },
+    "definition": "wall time from process spawn to the end of the first complete product-grid response, polling the port every millisecond; the response must be byte-identical to the engine's canonical dump",
+    "concurrencyModel": "same per-core server configuration as page-load: Proa one Tokio worker thread, Node single process, Go GOMAXPROCS=1"
+  },
+  "methodology": {
+    "starts": 15,
+    "warmupStarts": 2,
+    "order": "engines rotate every start so no engine always follows a cold disk cache",
+    "rss": "server RSS sampled with ps immediately after the first response",
+    "javascriptMode": "production: NODE_ENV=production is set for every spawn and confirmed by each Node server's health endpoint after its first response"
+  },
+  "host": {
+    "platform": "darwin",
+    "release": "25.5.0",
+    "arch": "arm64",
+    "cpuModel": "Apple M4 Max",
+    "logicalCpuCount": 16,
+    "totalMemoryBytes": 137438953472,
+    "node": "v24.20.0",
+    "loadAverage1m": 6.60498046875
+  },
+  "source": {
+    "repositoryCommit": "5ddbbafac452906d92f72db57a44235c4c3a391f",
+    "dirty": true,
+    "proaRevision": "bbbc9684335109949257eea8b4c98bb7bc8572ae",
+    "proaBranch": "main",
+    "sourceSha256": "7c5b244257f9b24bc008b97f016fc63b2408601967a717951c58e6e93e3a05a7"
+  },
+  "engines": [
+    {
+      "id": "proa",
+      "label": "Proa",
+      "language": "Rust",
+      "artifactBytes": 4670736,
+      "canonicalDump": {
+        "bytes": 284908,
+        "sha256": "3fdf2c75f3ba484c266876bfa61832276a42af72b96a310213a3cb02c920b32c"
+      },
+      "starts": [
+        {
+          "firstResponseMs": 4.61850000000004,
+          "firstByteMs": 4.4015000000000555,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.09424999999998818,
+          "rssAfterFirstResponseBytes": 4882432
+        },
+        {
+          "firstResponseMs": 4.441707999999949,
+          "firstByteMs": 4.31579099999999,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.11312499999996817,
+          "rssAfterFirstResponseBytes": 4849664
+        },
+        {
+          "firstResponseMs": 4.424291999999923,
+          "firstByteMs": 4.219667000000072,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.16895799999997507,
+          "rssAfterFirstResponseBytes": 4931584
+        },
+        {
+          "firstResponseMs": 5.110125000000153,
+          "firstByteMs": 4.922790999999961,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.1641669999999067,
+          "rssAfterFirstResponseBytes": 4866048
+        },
+        {
+          "firstResponseMs": 4.682207999999946,
+          "firstByteMs": 4.530166999999892,
+          "attempts": 4,
+          "warmSecondResponseMs": 0.1358749999999418,
+          "rssAfterFirstResponseBytes": 4882432
+        },
+        {
+          "firstResponseMs": 4.304583999999977,
+          "firstByteMs": 4.177833999999848,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.15383399999996072,
+          "rssAfterFirstResponseBytes": 4866048
+        },
+        {
+          "firstResponseMs": 4.38308300000017,
+          "firstByteMs": 4.202208000000155,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.11558300000001509,
+          "rssAfterFirstResponseBytes": 4915200
+        },
+        {
+          "firstResponseMs": 4.548624999999902,
+          "firstByteMs": 4.416374999999789,
+          "attempts": 4,
+          "warmSecondResponseMs": 0.11025000000017826,
+          "rssAfterFirstResponseBytes": 4833280
+        },
+        {
+          "firstResponseMs": 7.69925000000012,
+          "firstByteMs": 7.599458000000141,
+          "attempts": 4,
+          "warmSecondResponseMs": 0.0840000000002874,
+          "rssAfterFirstResponseBytes": 4849664
+        },
+        {
+          "firstResponseMs": 9.890707999999904,
+          "firstByteMs": 9.736041999999998,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.21095800000011877,
+          "rssAfterFirstResponseBytes": 5160960
+        },
+        {
+          "firstResponseMs": 8.127791000000343,
+          "firstByteMs": 7.899583000000348,
+          "attempts": 4,
+          "warmSecondResponseMs": 0.17687500000010914,
+          "rssAfterFirstResponseBytes": 4866048
+        },
+        {
+          "firstResponseMs": 6.339249999999993,
+          "firstByteMs": 6.172415999999885,
+          "attempts": 4,
+          "warmSecondResponseMs": 0.1347499999997126,
+          "rssAfterFirstResponseBytes": 4833280
+        },
+        {
+          "firstResponseMs": 9.956292000000303,
+          "firstByteMs": 9.761375000000044,
+          "attempts": 6,
+          "warmSecondResponseMs": 0.16333399999984977,
+          "rssAfterFirstResponseBytes": 5193728
+        },
+        {
+          "firstResponseMs": 9.441542000000027,
+          "firstByteMs": 9.204541999999947,
+          "attempts": 4,
+          "warmSecondResponseMs": 0.18095799999991868,
+          "rssAfterFirstResponseBytes": 4849664
+        },
+        {
+          "firstResponseMs": 14.639165999999932,
+          "firstByteMs": 14.523874999999862,
+          "attempts": 5,
+          "warmSecondResponseMs": 0.11666700000023411,
+          "rssAfterFirstResponseBytes": 4800512
+        }
+      ],
+      "summary": {
+        "firstResponseMs": {
+          "count": 15,
+          "min": 4.304583999999977,
+          "mean": 6.840474933333379,
+          "p50": 5.110125000000153,
+          "p95": 11.361154200000186,
+          "p99": 13.983563639999982,
+          "max": 14.639165999999932
+        },
+        "firstByteMs": {
+          "count": 15,
+          "min": 4.177833999999848,
+          "mean": 6.672241599999999,
+          "p50": 4.922790999999961,
+          "p95": 11.190124999999984,
+          "p99": 13.857124999999884,
+          "max": 14.523874999999862
+        },
+        "rssAfterFirstResponseBytes": {
+          "count": 15,
+          "min": 4800512,
+          "mean": 4905369.6,
+          "p50": 4866048,
+          "p95": 5170790.4,
+          "p99": 5189140.48,
+          "max": 5193728
+        }
+      }
+    }
+  ],
+  "completedAt": "2026-11-11T18:02:00.945Z"
+}

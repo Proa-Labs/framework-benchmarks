@@ -3,3 +3,7 @@
 *.json
 *.partial
 !latest.json
+
+# Completed publication archives are immutable evidence, not local smoke files.
+!archive/
+!archive/*.json

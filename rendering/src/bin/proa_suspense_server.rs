@@ -1,5 +1,5 @@
 use std::future::Future;
-use std::sync::{Arc, OnceLock};
+use std::sync::OnceLock;
 use std::time::Duration;
 
 use axum::{routing::get, Json};
@@ -9,7 +9,6 @@ use proa_core::{
     render_send_child, to_async, to_send, to_send_static, DataLoader, RenderBuffer, RenderOutcome,
     SendWebContext, WebContext, WebRender, WebRenderSend, WebRenderSync, WriteBuf, WriteError,
 };
-use proa_framework_axum::manifest::IslandManifest;
 use proa_framework_axum::{
     router_from_spec, LocalStreamExecutorConfig, Route, RouteContextLayer, RouteResponse,
 };
@@ -287,15 +286,6 @@ fn longest_delay_ms(boundaries: usize) -> u64 {
     (0..boundaries).map(panel_delay_ms).max().unwrap_or(0)
 }
 
-fn empty_manifest() -> Arc<IslandManifest> {
-    Arc::new(IslandManifest {
-        islands: Default::default(),
-        assets: Default::default(),
-        import_map: Default::default(),
-        ssr_bundle: Default::default(),
-    })
-}
-
 fn cards_per_panel() -> Result<usize, String> {
     let value = std::env::var("SUSPENSE_CARDS_PER_PANEL")
         .ok()
@@ -388,11 +378,12 @@ async fn serve(worker_threads: usize) -> Result<(), Box<dyn std::error::Error>> 
 
     let (router, computed_metadata) = router_from_spec(routes);
     let app = router.layer(
-        RouteContextLayer::new(empty_manifest(), computed_metadata)
-            .with_local_stream_executor_config(LocalStreamExecutorConfig {
+        RouteContextLayer::new(computed_metadata).with_local_stream_executor_config(
+            LocalStreamExecutorConfig {
                 worker_threads,
                 ..LocalStreamExecutorConfig::default()
-            }),
+            },
+        ),
     );
     let listener = tokio::net::TcpListener::bind((host.as_str(), port)).await?;
     println!("Proa Suspense server listening on http://{host}:{port}");

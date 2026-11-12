@@ -7,7 +7,7 @@
 //! All Proa "reuse" benchmarks use `RenderBuffer` for consistency.
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use proa_bench::targeted_bench;
+use proa_bench::{native_output::render_buffer, targeted_bench};
 use proa_core::{RenderBuffer, WebContext, WebRenderSync, WriteBuf};
 
 fn bench_escape_heavy(c: &mut Criterion) {
@@ -20,6 +20,11 @@ fn bench_escape_heavy(c: &mut Criterion) {
         "Escape benchmark output sizes — Proa: {} bytes, Askama: {} bytes",
         proa_html.len(),
         askama_html.len()
+    );
+
+    assert_eq!(
+        render_buffer(targeted_bench::ProaEscapePage).to_vec(),
+        proa_html.as_bytes()
     );
 
     // Proa: RenderBuffer reuse (production path)
@@ -38,9 +43,13 @@ fn bench_escape_heavy(c: &mut Criterion) {
     // Proa: fresh alloc (fair comparison)
     group.bench_function("proa_fresh", |b| {
         b.iter(|| {
-            let html = targeted_bench::proa_escape_render();
-            black_box(html.len())
+            let output = render_buffer(targeted_bench::ProaEscapePage);
+            black_box(output)
         });
+    });
+
+    group.bench_function("proa_fresh_string", |b| {
+        b.iter(|| black_box(targeted_bench::proa_escape_render()));
     });
 
     // Askama: always fresh String
@@ -66,6 +75,11 @@ fn bench_large_page(c: &mut Criterion) {
         askama_html.len()
     );
 
+    assert_eq!(
+        render_buffer(targeted_bench::ProaLargePage).to_vec(),
+        proa_html.as_bytes()
+    );
+
     // Proa: RenderBuffer reuse (production path)
     group.bench_function("proa_reuse", |b| {
         let mut buf = RenderBuffer::new();
@@ -82,9 +96,13 @@ fn bench_large_page(c: &mut Criterion) {
     // Proa: fresh alloc
     group.bench_function("proa_fresh", |b| {
         b.iter(|| {
-            let html = targeted_bench::proa_large_render();
-            black_box(html.len())
+            let output = render_buffer(targeted_bench::ProaLargePage);
+            black_box(output)
         });
+    });
+
+    group.bench_function("proa_fresh_string", |b| {
+        b.iter(|| black_box(targeted_bench::proa_large_render()));
     });
 
     // Askama: always fresh String

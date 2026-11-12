@@ -10,6 +10,8 @@ use serde::Serialize;
 use sha2::{Digest, Sha256};
 
 mod memcpy;
+#[path = "../../legacy-ebay-chrome/mod.rs"]
+mod legacy_ebay_chrome;
 
 const PAGE_NAMES: &[&str] = &[
     "airbnb-parity",
@@ -101,8 +103,8 @@ fn render_page(page: &str) -> String {
         }
         "ebay-chrome" => {
             let listings = proa_showcase::ebay::srp::default_listings(60);
-            proa_showcase::ebay::srp_chrome::render_document(
-                proa_showcase::ebay::srp_chrome::DEFAULT_QUERY,
+            legacy_ebay_chrome::render_document(
+                legacy_ebay_chrome::DEFAULT_QUERY,
                 listings,
                 proa_showcase::ebay::srp::ListingsList { listings },
                 (),

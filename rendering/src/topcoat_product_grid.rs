@@ -241,7 +241,7 @@ impl<B: WriteBuf, L: proa_core::DataLoader> WebRenderSync<L, B> for ProaRatingSt
     #[inline]
     fn render(self, cx: &mut WebContext<L, B>) -> Result<(), WriteError> {
         let filled = (self.0 + 5) / 10;
-        cx.out.extend(b"<div class=\"flex\">")?;
+        cx.out.extend_str("<div class=\"flex\">")?;
         for index in 0..5u32 {
             let class = if index < filled {
                 "h-4 w-4 text-amber-400"
@@ -254,12 +254,12 @@ impl<B: WriteBuf, L: proa_core::DataLoader> WebRenderSync<L, B> for ProaRatingSt
             cx.out.extend(
                 b"<svg viewBox=\"0 0 20 20\" fill=\"currentColor\" aria-hidden=\"true\" class=\"",
             )?;
-            cx.out.extend(class.as_bytes())?;
-            cx.out.extend(b"\"><path d=\"")?;
-            cx.out.extend(STAR_PATH.as_bytes())?;
-            cx.out.extend(b"\"></path></svg>")?;
+            cx.out.extend_str(class)?;
+            cx.out.extend_str("\"><path d=\"")?;
+            cx.out.extend_str(STAR_PATH)?;
+            cx.out.extend_str("\"></path></svg>")?;
         }
-        cx.out.extend(b"</div>")
+        cx.out.extend_str("</div>")
     }
 }
 
@@ -276,7 +276,7 @@ impl AttrValue for ProductUrl {
         &self,
         cx: &mut WebContext<L, B>,
     ) -> Result<(), WriteError> {
-        cx.out.extend(b"/products/")?;
+        cx.out.extend_str("/products/")?;
         self.0.render(cx)
     }
 }
@@ -287,7 +287,7 @@ impl<B: WriteBuf, L: proa_core::DataLoader> WebRenderSync<L, B> for Rating {
     #[inline]
     fn render(self, cx: &mut WebContext<L, B>) -> Result<(), WriteError> {
         (self.0 / 10).render(cx)?;
-        cx.out.extend(b".")?;
+        cx.out.extend_str(".")?;
         (self.0 % 10).render(cx)
     }
 }
@@ -297,9 +297,9 @@ struct Price(u32);
 impl<B: WriteBuf, L: proa_core::DataLoader> WebRenderSync<L, B> for Price {
     #[inline]
     fn render(self, cx: &mut WebContext<L, B>) -> Result<(), WriteError> {
-        cx.out.extend(b"$")?;
+        cx.out.extend_str("$")?;
         (self.0 / 100).render(cx)?;
-        cx.out.extend(b".")?;
+        cx.out.extend_str(".")?;
         let cents = self.0 % 100;
         cx.out
             .extend(&[b'0' + (cents / 10) as u8, b'0' + (cents % 10) as u8])

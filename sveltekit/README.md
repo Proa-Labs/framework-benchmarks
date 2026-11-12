@@ -41,3 +41,5 @@ and source hashes for all five underlying suites.
 It also verifies the generated SVG. Raw samples and phase summaries are kept in
 `results/latest.json`; no selected “best run” is substituted for the protocol.
 The raw capture includes a buffered validation control that is not plotted.
+
+For a PROA-only refresh, first complete and merge the normal PROA Suspense capture, then run `node sveltekit/refresh-proa.mjs` and `node sveltekit/report.mjs`. This reuses that identical 24-phase HTTP sweep and measures 30 new PROA browser navigations per profile across three browser launches. All SvelteKit HTTP phases, browser samples, controls and summaries remain byte-for-byte unchanged, with a retained baseline and explicit dates. The refresh refuses another refresh as its baseline.

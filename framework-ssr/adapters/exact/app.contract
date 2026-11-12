@@ -1,0 +1,35 @@
+routes nav
+  catalog "/catalog" render=request
+  notfound render=request
+
+shape Card
+  id: string
+  title: string
+  category: string
+  description: string
+  priceCents: number
+  inStock: bool
+  tags: string[]
+
+component App
+  resource cards = loadCards() as shape Card[] else empty()
+  derive request = searchParam(top(nav), "request")
+  view
+    main navigationKey=`${top(nav).id}` data-bench-page="catalog"
+      h1
+        text "Product catalog"
+      text request data-bench-request="true"
+      for card in cards key=card.id
+        article data-bench-card=card.id
+          h2 data-bench-title=card.id
+            text card.title
+          text card.category data-bench-category=card.id
+          text card.description data-bench-description=card.id
+          text `$${(card.priceCents / 100).toFixed(2)}` data-bench-price=card.id
+          if card.inStock
+            text "In stock" data-bench-stock=card.id
+          else
+            text "Out of stock" data-bench-stock=card.id
+          view role="list" aria-label="Tags" data-bench-tags=card.id
+            for tag in card.tags key=tag
+              text tag role="listitem"

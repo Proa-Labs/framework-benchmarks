@@ -14,6 +14,7 @@
 //! - Various HTML elements and attributes
 
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
+use proa_bench::native_output::render_buffer;
 #[cfg(feature = "topcoat")]
 use proa_bench::topcoat_page;
 use proa_bench::{askama_page, dioxus_page, leptos_page, proa_page, sailfish_page, yew_page};
@@ -30,8 +31,16 @@ fn bench_ssr_comparison(c: &mut Criterion) {
     group.bench_function(BenchmarkId::new("proa", "fresh_owned_full"), |b| {
         b.iter(|| {
             for _ in 0..RENDERS_PER_ITER {
-                let html = proa_page::render_safetext_owned();
-                black_box(html.as_bytes());
+                let output = render_buffer(proa_page::SafeTextBenchmarkPage);
+                black_box(output);
+            }
+        });
+    });
+
+    group.bench_function(BenchmarkId::new("proa", "fresh_owned_string"), |b| {
+        b.iter(|| {
+            for _ in 0..RENDERS_PER_ITER {
+                black_box(proa_page::render_safetext_owned());
             }
         });
     });

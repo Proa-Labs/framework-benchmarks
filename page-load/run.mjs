@@ -1,4 +1,6 @@
-#!/usr/bin/env node
+import { validateResult } from "./report.mjs";
+import { readMeasuredSources } from "../tooling/measured-sources.mjs";
+import { atomicWrite, captureId, retainCapture } from "../tooling/captures.mjs";
 // Canonical pages over HTTP: the same parity-gated pages the scoreboard times,
 // served by each framework's ordinary production server and driven with real
 // loopback HTTP. Two phase kinds per engine/workload:
@@ -14,7 +16,7 @@
 import { execFile as execFileCallback } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
-import { mkdir, rename, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import http from "node:http";
 import os from "node:os";
 import { dirname, isAbsolute, join } from "node:path";
@@ -39,7 +41,9 @@ import {
   waitForHealth,
 } from "../load/driver.mjs";
 import { ENGINES, PUBLICATION, SCENARIO_ID, WORKLOADS, scenarioContract } from "./scenario.mjs";
-import { sourceFiles as sveltekitSourceFiles, build as buildSvelteKit, directory as sveltekitDirectory, serverSpec as sveltekitServerSpec, validateDump as validateSvelteKitDump } from "../rendering/external/sveltekit/benchmark.mjs";
+import { build as buildSvelteKit, directory as sveltekitDirectory, serverSpec as sveltekitServerSpec, validateDump as validateSvelteKitDump } from "../rendering/external/sveltekit/benchmark.mjs";
+
+if (process.versions.bun !== "1.4.2") throw new Error("Use pinned Bun 1.4.2");
 
 const execFile = promisify(execFileCallback);
 const here = dirname(fileURLToPath(import.meta.url));
@@ -50,41 +54,8 @@ const engineIds = ENGINES.map(({ id }) => id);
 const workloadIds = WORKLOADS.map(({ id }) => id);
 const basePorts = { proa: 15720, react: 15721, marko: 15722, "go-html-template": 15723, sveltekit: 15724 };
 
-// Keep this list synchronized with report.mjs. The report gate must reject a
-// retained capture after any measured implementation changes.
-export const benchmarkSourceFiles = [
-  ...sveltekitSourceFiles,
-  ".nvmrc",
-  "Cargo.lock",
-  "Cargo.toml",
-  "package.json",
-  "pnpm-lock.yaml",
-  "load/driver.mjs",
-  "load/worker.mjs",
-  "page-load/react_server.mjs",
-  "page-load/run.mjs",
-  "page-load/scenario.mjs",
-  "page-load/validate.mjs",
-  "rendering/Cargo.toml",
-  "rendering/external/go/suite_bench.go",
-  "rendering/external/marko/compile_suite.mjs",
-  "rendering/external/marko/package-lock.json",
-  "rendering/external/marko/package.json",
-  "rendering/external/marko/page_server.mjs",
-  "rendering/external/marko/page_table.marko",
-  "rendering/external/marko/suite_cards.marko",
-  "rendering/external/marko/suite_products.marko",
-  "rendering/external/react/package-lock.json",
-  "rendering/external/react/package.json",
-  "rendering/external/react/suite_components.mjs",
-  "rendering/external/shared/suite_data.mjs",
-  "rendering/src/bin/proa_page_server.rs",
-  "rendering/src/data_table_page.rs",
-  "rendering/src/http_load.rs",
-  "rendering/src/proa_page.rs",
-  "rendering/src/representative_suite.rs",
-  "rendering/src/topcoat_product_grid.rs",
-];
+// Runner and report consume the same data-only measured-source manifest.
+export const benchmarkSourceFiles = await readMeasuredSources(import.meta.url);
 
 function option(name, fallback) {
   const index = process.argv.indexOf(name);
@@ -177,7 +148,7 @@ async function build() {
   for (const [engine, sentinel] of [["react", "react"], ["marko", "marko"]]) {
     if (!config.engines.includes(engine)) continue;
     if (!existsSync(join(external, engine, "node_modules", sentinel, "package.json"))) {
-      throw new Error(`run npm ci in rendering/external/${engine} first`);
+      throw new Error(`run bun install --frozen-lockfile in rendering/external/${engine} first`);
     }
   }
 }
@@ -297,15 +268,16 @@ async function main() {
     schemaVersion: 1,
     status: "incomplete",
     captureKind: config.outputPath === defaultOutput ? "publication" : "engineering",
+    captureId: captureId("page-load"),
     capturedAt: new Date().toISOString(),
     scenario: scenarioContract(),
     methodology: {
       protocol: "HTTP/1.1 loopback with keep-alive and compression disabled",
-      javascriptMode: "production: NODE_ENV=production is set by the driver and confirmed by each Node server's health endpoint; React also reports which react-dom server build it loaded",
+      javascriptMode: "production: NODE_ENV=production is set by the driver and confirmed by each JavaScript server's health endpoint; React also reports which react-dom server build it loaded",
       concurrencyModel: scenarioContract().concurrencyModel,
       closedLoop: `${config.concurrency} concurrent connections issue requests back to back; throughput is completions inside the observation window`,
       openLoop: "fixed-rate arrivals at each workload's fixed rate; latency is measured from scheduled arrival",
-      loadGenerator: `${config.workers} forked Node worker processes share the schedule and hash every response`,
+      loadGenerator: `${config.workers} forked Bun worker processes share the schedule and hash every response`,
       cpu: "server process CPU-time delta across all threads divided by successful responses",
       memory: "server RSS sampled with ps every 100 ms; peak is the largest sample",
       validation: "every measured response is byte-identical to the engine's canonical adapter dump",
@@ -405,7 +377,10 @@ async function main() {
     );
   }
   await writeFile(partialOutputPath, `${JSON.stringify(result, null, 2)}\n`);
-  await rename(partialOutputPath, config.outputPath);
+  if (result.captureKind === "publication") validateResult(result);
+  retainCapture(root, join(here, "results", result.captureKind === "publication" ? "." : "local"), result, benchmarkSourceFiles);
+  atomicWrite(config.outputPath, `${JSON.stringify(result, null, 2)}\n`);
+  await rm(partialOutputPath, { force: true });
   console.log(`\nResult written to ${config.outputPath}`);
 }
 

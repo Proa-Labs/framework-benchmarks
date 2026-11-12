@@ -18,8 +18,8 @@ fn bench_showcase(c: &mut Criterion) {
     let nike_product = proa_showcase::nike::product::render();
     let ebay_listings = proa_showcase::ebay::srp::default_listings(60);
     let ebay_cards = proa_showcase::ebay::srp::render_listings_to_string(ebay_listings);
-    let ebay_chrome = proa_showcase::ebay::srp_chrome::render_document(
-        proa_showcase::ebay::srp_chrome::DEFAULT_QUERY,
+    let ebay_chrome = proa_bench::legacy_ebay_chrome::render_document(
+        proa_bench::legacy_ebay_chrome::DEFAULT_QUERY,
         ebay_listings,
         proa_showcase::ebay::srp::ListingsList {
             listings: ebay_listings,
@@ -180,8 +180,8 @@ fn bench_showcase(c: &mut Criterion) {
 
     group.bench_function("ebay_chrome_60_proa_fresh", |b| {
         b.iter(|| {
-            black_box(proa_showcase::ebay::srp_chrome::render_document(
-                proa_showcase::ebay::srp_chrome::DEFAULT_QUERY,
+            black_box(proa_bench::legacy_ebay_chrome::render_document(
+                proa_bench::legacy_ebay_chrome::DEFAULT_QUERY,
                 ebay_listings,
                 proa_showcase::ebay::srp::ListingsList {
                     listings: ebay_listings,

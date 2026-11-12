@@ -15,10 +15,10 @@ export function bufferComparisonPanel(tables, sectionY) {
   }));
   const col = WIDTH - PAD * 2;
   let b = eyebrow(PAD, sectionY, `Proa output allocation · ${clean(capture['Date (UTC)'])}`);
-  b += txt(PAD + col, sectionY, 'Fresh buffers · allocation included', 'note end');
+  b += txt(PAD + col, sectionY, 'String controls · allocation included', 'note end');
   const legendY = sectionY + 26;
   b += legend(PAD, legendY, [
-    { shape: 'dot', color: C.proa, label: 'Default · 4 KiB chunks' },
+    { shape: 'dot', color: C.proa, label: 'String API · pages then flatten' },
     { shape: 'hollow', color: C.alt, label: 'Full-size · one output buffer' },
   ]);
   const x0 = PAD + 214, x1 = PAD + 554, top = legendY + 44, rowH = 28;
@@ -52,7 +52,7 @@ export function bufferComparisonPanel(tables, sectionY) {
   b += rule(x0, bottom, x1, bottom, C.axis);
   return {
     body: b, bottom, pageCount: rows.length - 3,
-    desc: 'Both Proa variants include allocation, page construction and runtime tags. Full-size rendering uses an exact-size contiguous Vec writer; the default uses 4 KiB chunks. ' +
+    desc: 'Both variants return String and include allocation, page construction and runtime tags; these are String controls, not the native RenderBuffer scoreboard lane. Full-size rendering uses an exact-size contiguous Vec writer; the default uses 4 KiB chunks. ' +
       rows.map((r) => `${r.name}: default ${dur(r.standard.v)} (${ratio(r.standardRatio)} memcpy), full-size ${dur(r.full.v)} (${ratio(r.fullRatio)} memcpy), copy ${dur(r.copy.v)}, speedup ${ratio(r.speedup)}`).join('. ') + '.',
   };
 }

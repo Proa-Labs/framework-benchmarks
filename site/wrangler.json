@@ -1,0 +1,19 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "frameworks-run",
+  "account_id": "7abe97a65e9407c5d007217a40c270e3",
+  "compatibility_date": "2026-11-11",
+  "workers_dev": true,
+  "preview_urls": true,
+  "assets": {
+    "binding": "ASSETS"
+  },
+  "routes": [
+    {
+      "pattern": "frameworks.run",
+      "custom_domain": true
+    }
+  ],
+  "main": "@tanstack/react-start/server-entry",
+  "compatibility_flags": ["nodejs_compat"]
+}

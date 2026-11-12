@@ -3,7 +3,8 @@
 import { createServer } from "node:http";
 import { createRequire } from "node:module";
 import { Suspense, createElement as h, use } from "react";
-import { renderToPipeableStream } from "react-dom/server";
+import { renderToReadableStream } from "react-dom/server";
+import { Readable } from "node:stream";
 
 import { ProductCard } from "../rendering/external/react/suite_components.mjs";
 import {
@@ -26,7 +27,7 @@ const { version: reactVersion } = require("react/package.json");
 // Which react-dom server build actually loaded: React chooses at require
 // time from NODE_ENV, so this is the ground truth the artifact records.
 function reactDomBuild() {
-  const loaded = Object.keys(require.cache).filter((path) => /react-dom-server\.node\.(production|development)\.js$/.test(path));
+  const loaded = Object.keys(require.cache).filter((path) => /react-dom-server\.(node|bun)\.(production|development)\.js$/.test(path));
   if (loaded.some((path) => path.endsWith("development.js"))) return "development";
   return loaded.length ? "production" : "unknown";
 }
@@ -127,7 +128,7 @@ function processMetrics() {
   };
 }
 
-const server = createServer((request, response) => {
+const server = createServer(async (request, response) => {
   if (request.url === "/health") {
     json(response, {
       status: "ok",
@@ -135,6 +136,7 @@ const server = createServer((request, response) => {
       framework: `React ${reactVersion}`,
       nodeEnv: process.env.NODE_ENV,
       reactDomBuild: reactDomBuild(),
+      renderPath: "Bun renderToReadableStream → Node-compatible HTTP response; shell streams immediately",
       ...scenarioContract(boundaryCount, cardsPerPanel),
     });
     return;
@@ -154,34 +156,26 @@ const server = createServer((request, response) => {
     ...panel,
     promise: delayedPanel(panel),
   }));
-  let started = false;
-  let finished = false;
-  const { pipe, abort } = renderToPipeableStream(h(App, { panels }), {
-    onShellReady() {
-      started = true;
-      response.writeHead(200, {
-        "content-type": "text/html; charset=utf-8",
-        "cache-control": "no-store",
-        "x-benchmark-engine": "react",
-      });
-      pipe(response);
-    },
-    onAllReady() {
-      finished = true;
-    },
-    onShellError(error) {
-      console.error(error);
-      if (!response.headersSent) response.writeHead(500);
-      response.end("render error\n");
-    },
-    onError(error) {
-      if (!started) console.error(error);
-    },
-  });
-
-  response.once("close", () => {
-    if (!finished) abort();
-  });
+  // Bun's normal React server export exposes a Web ReadableStream. Start
+  // piping as soon as the shell resolves; never await stream.allReady.
+  const controller = new AbortController();
+  response.once("close", () => controller.abort());
+  try {
+    const stream = await renderToReadableStream(h(App, { panels }), {
+      signal: controller.signal,
+      onError(error) { if (!controller.signal.aborted) console.error(error); },
+    });
+    response.writeHead(200, {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "no-store",
+      "x-benchmark-engine": "react",
+    });
+    Readable.fromWeb(stream).on("error", (error) => response.destroy(error)).pipe(response);
+  } catch (error) {
+    if (!controller.signal.aborted) console.error(error);
+    if (!response.headersSent) response.writeHead(500);
+    if (!response.destroyed) response.end("render error\n");
+  }
 });
 
 server.listen(port, host, () => {

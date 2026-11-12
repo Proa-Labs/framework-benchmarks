@@ -55,6 +55,13 @@ test("the response contract counts panels and product cards", () => {
     `<section data-panel-ready="${panel.key}">${panel.products.map((product) => `<a href="/products/${product.id}"></a>`).join("")}</section>`
   ).join("");
   assert.deepEqual(validateBody(shell + resolved, 2, 2), { readyPanels: 2, fallbackPanels: 2, productCards: 4 });
+  const resolvedOnly = '<main data-benchmark-shell="suspense-load">' + resolved + '</main>';
+  assert.deepEqual(validateBody(resolvedOnly, 2, 2), { readyPanels: 2, fallbackPanels: 0, productCards: 4 });
+  assert.throws(() => validateBody(resolvedOnly, 2, 2, { requireFallbacks: true }), /missing 2 fallbacks/);
+  assert.throws(() => validateBody(shell + resolved + '<section data-panel-ready="unexpected"></section>', 2, 2), /unexpected/);
+  assert.throws(() => validateBody(shell + resolved + `<section data-panel-ready="${panels[0].key}"></section>`, 2, 2), /duplicate/);
+  assert.throws(() => validateBody(resolvedOnly + '<section data-panel-fallback="unexpected"></section>', 2, 2), /unexpected/);
+  assert.throws(() => validateBody(shell + resolved + `<section data-panel-fallback="${panels[0].key}"></section>`, 2, 2), /duplicate/);
   assert.throws(() => validateBody(shell + resolved.replace('href="/products/1000"', 'href="/x"'), 2, 2), /product cards/);
   const unquoted = resolved.replace(/href="(\/products\/\d+)"/g, "href=$1");
   assert.equal(validateBody(shell + unquoted, 2, 2).productCards, 4);

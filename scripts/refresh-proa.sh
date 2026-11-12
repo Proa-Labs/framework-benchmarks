@@ -16,4 +16,9 @@ cargo update \
   --package proa_core \
   --precise "$revision"
 
+cargo update \
+  --manifest-path fixtures/proa-buffer-comparison/Cargo.toml \
+  --package proa_core \
+  --precise "$revision"
+
 echo "Proa dependencies refreshed to $revision"
