@@ -215,3 +215,47 @@ experiment, and its exact-size hint is not assumed available in production.
 
 The [eBay optimization experiment](experiments/README.md) retains a tested
 source patch and an identical-output comparison against this pinned version.
+
+## Landing-page paired comparisons
+
+`landing-hero/run.mjs` compares the actual GitHub PR diff, 400-row Sentry OTel,
+and Airbnb home fixtures from Proa revision
+`bbbc9684335109949257eea8b4c98bb7bc8572ae` with their React ports from that same
+checkout. The Rust fixture pins its dependencies to that revision; the runner
+rejects changes to the measured Proa/React fixture sources. Root dependencies
+pin production React 19.2.4. Node and Rust versions are recorded per capture.
+
+Both sides return a fresh complete HTML String. Allocation and document
+assembly are timed; filesystem reads, initial input setup, HTTP, browser work,
+and output destruction are outside the render timer. React uses its native
+String representation; no extra UTF-8 Buffer conversion is charged to either
+render timer. The Rust Airbnb data and GitHub props, and React elements/log
+inputs, are prepared before warmup. Sentry's Rust benchmark renders its default
+400 synthetic rows through the existing showcase API.
+
+The runner checks the full browser DOM before timing, including preformatted
+text, application attributes, and script/style contents. Only comments,
+preload hints, class ordering, and equivalent inline-style serialization are
+normalized. Adjacent text is merged before whitespace normalization so React's
+text-slot comments cannot remove visible spaces. A changed-body-attribute
+negative control must fail for every page.
+
+There are five independent processes per engine/page. Engine order alternates
+and page order rotates between repeats. GitHub and Airbnb use 1,000 warmups and
+2,000 samples per process; Sentry uses 100 and 300. The reported P50 is the
+median of the five process P50s; their full range and every raw sample are
+retained. Run capture commands sequentially on an otherwise idle host.
+
+```sh
+bun install --frozen-lockfile
+/path/to/proa/target/debug/proa build --root fixtures/landing-hero --locked \
+  --no-check --no-assets -p landing-hero-bench \
+  --artifact-out "$PWD/showcase/landing-hero/out/landing-hero-bench"
+node showcase/landing-hero/run.mjs --proa /path/to/proa --parity-only
+node showcase/landing-hero/run.mjs --proa /path/to/proa
+```
+
+The summary is `showcase/results/landing-hero.json`, with complete samples in
+`showcase/results/landing-hero-raw.json.gz`. These paired measurements are
+separate from the Proa-only linked-page corpus and the canonical three-page
+scoreboard; they should not borrow peer results from those captures.
