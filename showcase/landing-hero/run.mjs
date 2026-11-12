@@ -20,11 +20,11 @@ if (proaArg < 0)
 const proa = resolve(process.argv[proaArg + 1]);
 const resultArg = process.argv.indexOf("--out");
 const resultFile = resultArg < 0
-  ? join(root, "showcase/results/landing-hero-buffer.json")
+  ? join(root, "showcase/results/landing-hero-live-rows.json")
   : resolve(process.argv[resultArg + 1]);
 if (!resultFile.endsWith(".json")) throw new Error("--out must end in .json");
 const rawFile = resultFile.slice(0, -5) + "-raw.json.gz";
-const revision = "2c9033fac6424564a59fbd5854953e86c26df477";
+const revision = "6952e336b338181a7bd4118756977608f7f36dc9";
 const paths = [
   "proa_demo/react-ssr-shared",
   "proa_demo/src/github_pr_diff.rs",
@@ -216,8 +216,9 @@ const result = {
   completed_at: new Date().toISOString(),
   host,
   method:
-    "Same-host production render-only; Proa allocates and returns a fresh owned RenderBuffer, React returns its native String. Allocation and rendering included. Flattening, encoding, output destruction, prepared inputs, parity checks and I/O outside timer. Allocator policy recorded separately. Median of five independent process P50s per engine/page; process order alternates and page order rotates.",
+    "Same-host production render-only; Proa allocates and returns a fresh owned RenderBuffer, React returns its native String. Allocation and rendering included. Flattening, encoding, output destruction, prepared inputs, parity checks and I/O outside timer. GitHub rows and syntax highlighting regenerated every iteration in both engines; no runtime row-HTML cache. Allocator policy recorded separately. Median of five independent process P50s per engine/page; process order alternates and page order rotates.",
   output_contract: "fresh-owned-render-buffer",
+  github_row_policy: "render-and-highlight-each-iteration",
   allocator_policy: allocatorPrimed ? "explicit-warm-seed" : "render-warmups-only",
   native_source_sha256: sha(readFileSync(join(root, "fixtures/landing-hero/src/main.rs"))),
   proa_revision: revision,
