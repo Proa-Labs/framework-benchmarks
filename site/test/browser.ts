@@ -300,13 +300,13 @@ try {
   await navigate(server.url);
   assert.equal(
     await page
-      .locator("[data-renderer-comparison] tbody tr:not(.fw-uncaptured)")
+      .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
       .count(),
     17,
   );
   assert.equal(
     await page
-      .locator("[data-renderer-comparison] tbody tr:not(.fw-uncaptured) td")
+      .locator("[data-renderer-comparison] tbody [data-stat-suite=rendering]")
       .count(),
     51,
   );
@@ -329,7 +329,7 @@ try {
     ),
   );
   assert.equal(comparisonExport.workload, "all");
-  assert.equal(comparisonExport.rows.length, 51);
+  assert.equal(comparisonExport.rows.length, 66);
   assert.deepEqual(
     new Set(comparisonExport.rows.map((r) => r.workload)),
     new Set(["cards", "products", "table"]),
@@ -346,7 +346,10 @@ try {
     .click();
   assert.equal(await page.locator(".fw-uncaptured").count(), 0);
   const related = page.locator("[data-framework-comparison]");
-  assert.equal(await related.locator("tbody tr").count(), 5);
+  assert.equal(
+    await related.locator("tbody tr[data-framework-row]").count(),
+    5,
+  );
   const relatedData: BenchmarkData = await (
     await context.request.get(`${server.url}/data/results.json`)
   ).json();
@@ -357,7 +360,7 @@ try {
     );
     for (const row of relatedData.framework.workloads[workload.id]) {
       const cell = related.locator(
-        `td [data-focus="${row.id}"][data-stat-workload="${workload.id}"]`,
+        `td [data-stat-suite="framework"][data-focus="${row.id}"][data-stat-workload="${workload.id}"]`,
       );
       const expected = Number(row.p50).toLocaleString("en-US", {
         maximumFractionDigits: Number(row.p50) < 10 ? 2 : 1,
@@ -399,7 +402,7 @@ try {
     .map((r) => r.id);
   assert.deepEqual(
     await related
-      .locator("tbody th button")
+      .locator("tbody tr[data-framework-row] th button")
       .evaluateAll((buttons) =>
         buttons.map((b) => (b as HTMLElement).dataset.focus),
       ),
@@ -414,7 +417,7 @@ try {
     new URL(
       required(
         await page
-          .getByRole("link", { name: "Raw capture ↗", exact: true })
+          .getByRole("link", { name: "Raw framework capture ↗", exact: true })
           .getAttribute("href"),
       ),
       server.url,
@@ -423,7 +426,7 @@ try {
   assert.equal(raw.status(), 200);
   assert.equal((await raw.json()).captureKind, "publication");
   await page
-    .getByRole("link", { name: "Detailed results ↗", exact: true })
+    .getByRole("link", { name: "Detailed framework results ↗", exact: true })
     .click();
   await ready();
   assert.equal(
@@ -438,10 +441,13 @@ try {
   await page
     .getByRole("button", { name: "All workloads", exact: true })
     .click();
-  assert.equal(await related.locator("tbody tr").count(), 5);
+  assert.equal(
+    await related.locator("tbody tr[data-framework-row]").count(),
+    5,
+  );
   await page.locator('[data-type="frameworks"]').click();
   assert.equal(await page.locator('[data-type="baselines"]').count(), 0);
-  assert.equal(await related.count(), 0);
+  assert.equal(await related.locator("[data-stat-suite=framework]").count(), 0);
   checks.push(
     "default page shows all 15 framework values from the capture, correct millisecond hover percentiles, sorting, raw data and filters",
   );
@@ -1174,10 +1180,15 @@ try {
     await page.locator("#experiment-rendering").waitFor();
     await ready();
     assert.equal(
-      await page.locator("[data-renderer-comparison] tbody tr").count(),
+      await page
+        .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
+        .count(),
       17,
     );
-    await page.locator("[data-renderer-comparison] tbody tr").first().hover();
+    await page
+      .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
+      .first()
+      .hover();
     await page.locator("[data-percentile-popup]").waitFor({ state: "visible" });
     await page.getByRole("link", { name: "Features", exact: true }).click();
     await page.locator("#feature-comparison").waitFor();
@@ -1209,8 +1220,8 @@ try {
   });
   const initial = await noJS.newPage();
   for (const [path, selector, count] of [
-    ["/", "[data-renderer-comparison] tbody tr", 17],
-    ["/", "[data-framework-comparison] tbody tr", 5],
+    ["/", "[data-renderer-comparison] tbody tr[data-renderer-row]", 17],
+    ["/", "[data-framework-comparison] tbody tr[data-framework-row]", 5],
     ["/?chart=bars&workload=products&selected=proa,react", ".fw-row", 2],
     ["/?view=framework&workload=cards", ".fw-row", 5],
     ["/?view=framework&workload=products", ".fw-row", 5],
@@ -1313,13 +1324,16 @@ try {
   assert.equal(await initial.locator("h1").textContent(), "The ecosystem");
   await initial.getByRole("link", { name: "Performance", exact: true }).click();
   assert.equal(
-    await initial.locator("[data-renderer-comparison] tbody tr").count(),
+    await initial
+      .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
+      .count(),
     17,
   );
   assert.match(
     methodology,
     /Exact uses its production JavaScript SSR backend on Bun/,
   );
+  await initial.waitForLoadState("load");
   assert.match(
     required(
       await initial.locator("[data-framework-comparison] tbody").textContent(),

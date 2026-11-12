@@ -2275,3 +2275,24 @@
     @apply [padding:0] [font-weight:inherit] [text-align:inherit];
   }
 }
+
+/* Keep both measurement boundaries in one roster, with local scrolling on phones. */
+@layer components {
+  #frameworks-explorer .fw-comparison-unified {
+    @apply [min-width:740px];
+  }
+  #frameworks-explorer .fw-comparison-unified th:first-child {
+    @apply [width:auto];
+  }
+  #frameworks-explorer .fw-comparison-unified tr:first-child > th:first-child,
+  #frameworks-explorer .fw-comparison-unified tbody th {
+    @apply [width:160px];
+  }
+  #frameworks-explorer .fw-comparison-unified [scope="colgroup"] {
+    @apply text-center;
+  }
+  #frameworks-explorer .fw-comparison-unified [scope="col"],
+  #frameworks-explorer .fw-comparison-unified .fw-comparison-cell > button {
+    @apply [padding-left:6px] [padding-right:6px];
+  }
+}

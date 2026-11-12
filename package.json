@@ -49,7 +49,8 @@
     "test:bun": "bun test rendering/canonical/report.test.mjs showcase/client_js_stats.test.mjs suspense-load/scenario.test.mjs suspense-load/stats.test.mjs",
     "bench": "bun tooling/bench.mjs",
     "test:contracts": "bun test tooling framework-ssr/test rendering/canonical/report.test.mjs suspense-load/scenario.test.mjs suspense-load/stats.test.mjs",
-    "check": "bun tooling/bench.mjs check"
+    "check": "bun tooling/bench.mjs check",
+    "check:publication": "bun tooling/publication.mjs"
   },
   "dependencies": {
     "esbuild": "^0.25.0",

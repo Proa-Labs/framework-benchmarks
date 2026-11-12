@@ -338,7 +338,11 @@ export function PerformancePage({
                       const missing = data.renderers.filter(
                         (r) =>
                           model.isVisible(r) &&
-                          !model.getRows().some((v) => v.id === r.id),
+                          !(
+                            state.chart === "compare"
+                              ? model.comparisonMeasurements()
+                              : model.getRows()
+                          ).some((v) => v.id === r.id),
                       );
                       return missing.length
                         ? `${missing.length} roster entries not measured here`
@@ -421,13 +425,6 @@ export function PerformancePage({
                 </div>
               </details>
             </footer>
-            <div
-              data-framework-results
-              // biome-ignore lint/security/noDangerouslySetInnerHtml: shared chart renderer escapes capture text and owns this measured table.
-              dangerouslySetInnerHTML={{
-                __html: createChartMarkup(model).frameworkComparison(),
-              }}
-            />
           </section>
         </div>
       </main>

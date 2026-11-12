@@ -8,6 +8,7 @@
 
 import { execFile as execFileCallback, fork, spawn } from "node:child_process";
 import { createHash } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { open, readFile, unlink } from "node:fs/promises";
 import http from "node:http";
 import os from "node:os";
@@ -538,6 +539,11 @@ export async function gitMetadata(root, sourceFiles) {
 
 export function hostMetadata() {
   return {
+    // A boot identity distinguishes separate VMs with identical hardware.
+    machineId: process.platform === "linux"
+      ? createHash("sha256").update(readFileSync("/proc/sys/kernel/random/boot_id", "utf8").trim()).digest("hex")
+      : null,
+    campaignId: process.env.BENCH_CAMPAIGN_ID || null,
     platform: os.platform(),
     release: os.release(),
     arch: os.arch(),

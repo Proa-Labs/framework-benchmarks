@@ -201,3 +201,23 @@ Keep capture JSON, its archive, referenced raw runs and verified source snapshot
 On the original capture machine, rerun only Proa with `bun run bench run rendering --publish --refresh-proa` (add `--product-scaling` for the engineering grid). This also works after an earlier Proa refresh: the original peer capture remains the baseline. Use `bun run refresh` to regenerate reports and figures, then `bun run check` before submitting the evidence.
 
 Same-repository PRs publish a non-production Cloudflare version after website validation. The workflow updates one preview comment and a GitHub deployment link on each successful push; forks run checks without the deploy secret. TanStack Start routes, React pages and shared components live in `site/src/`; `bun run --cwd site dev` uses Vite Fast Refresh and Tailwind. The Cloudflare adapter builds a request-time SSR Worker in `site/dist/server/` with matching assets in `site/dist/client/`. Bun runs scripts and builds; Cloudflare local emulation uses the supported Node host (26.13.0 in CI).
+
+## Merge and launch gate
+
+PR #9 stays draft until every public suite has been rerun on the same machine.
+`bun run check:publication` and CI's **Publication readiness** check require full
+renderer, framework SSR, HTTP, streaming and cold-start publication captures.
+They must share a runner-recorded machine identity, `BENCH_CAMPAIGN_ID`, and
+single-CPU server affinity. Proa-only refreshes, smoke results, mixed campaigns,
+and snapshots of measured sources that differ from the checkout are rejected.
+
+Use a fresh `BENCH_CAMPAIGN_ID=publication-<unique-id>` for a complete campaign.
+On the isolated C4 host, `framework-ssr/cloud/capture.sh` sets one for all five
+suites and validates the result. Verify the actual CPU/SMT topology first. Keep
+the measured source archives and raw captures together when downloading results.
+Portable contributor checks and PR previews remain available while publication
+is blocked. Both production deployment entry points enforce this gate.
+
+**Publication readiness** is a required status check in the existing main-branch
+ruleset. Keep this requirement when editing repository rules. Do not mark the PR
+ready or deploy until the complete campaign passes.

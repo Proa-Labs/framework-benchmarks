@@ -14,7 +14,7 @@ import { cpus, release as osRelease, tmpdir, totalmem } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
-import { acquireRunLock } from "../../load/driver.mjs";
+import { acquireRunLock, hostMetadata } from "../../load/driver.mjs";
 import {
   adapterInvocation,
   readAdapters,
@@ -773,6 +773,8 @@ function metadata(capturedAt, fingerprint, browserVersion) {
   return {
     captured_at: capturedAt,
     host: {
+      machineId: hostMetadata().machineId,
+      campaignId: hostMetadata().campaignId,
       cpu_model: firstCpu?.model ?? "unknown CPU",
       cloud: process.env.BENCH_HOST_LABEL || null,
       server_cpu_affinity: process.env.BENCH_SERVER_CPU || null,

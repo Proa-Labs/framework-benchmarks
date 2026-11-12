@@ -17,6 +17,7 @@ export interface DashboardState {
   workload: string;
   rate: number;
   chart: ChartMode;
+  comparison: "rendering" | "framework";
   flowPlaying: boolean;
   http: Metric;
   framework: Metric;
@@ -75,6 +76,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     workload: "cards",
     rate: 1000,
     chart: "compare",
+    comparison: "rendering",
     flowPlaying: true,
     http: "throughput",
     framework: "throughput",
@@ -151,6 +153,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     "rate",
     "http",
     "framework",
+    "comparison",
     "stream",
   ] as const;
   const rememberedViews = new Map<View, Partial<DashboardState>>();
@@ -186,6 +189,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
         "catalog",
       ],
       framework: ["throughput", "p50", "p99", "cpu", "rss"],
+      comparison: ["rendering", "framework"],
       chart: ["compare", "bars", "lines", "balls", "table"],
       http: [
         "throughput",
@@ -354,6 +358,41 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   function samples(r: ChartRow) {
     return "samples" in r ? r.samples : r.seriesSamples[metric()] || [];
   }
+  function comparisonMeasurements() {
+    return (["rendering", "framework"] as const).flatMap((suite) =>
+      (suite === "rendering"
+        ? orderedWorkloads()
+        : frameworkWorkloads()
+      ).flatMap((w) => {
+        const rows =
+          suite === "rendering"
+            ? data.rendering.rows[w.id] || []
+            : data.framework.workloads[w.id] || [];
+        return rows.filter(isVisible).map((row) => ({
+          ...row,
+          workload: w.id,
+          suite,
+          rate:
+            suite === "framework" ? (row as HttpRow).equalLoadRps : undefined,
+          unit: suite === "rendering" ? "µs" : "ms",
+          capturedAt: data[suite].capturedAt,
+          source: suites[suite].path,
+          latency:
+            suite === "rendering"
+              ? {
+                  values: row as RenderRow,
+                  unit: "µs",
+                  scope: "Render duration · median of 5 run percentiles",
+                }
+              : {
+                  values: (row as HttpRow).percentiles.equalLoad,
+                  unit: "ms",
+                  scope: `Full-framework HTTP request → complete HTML · equal load ${(row as HttpRow).equalLoadRps} requests/s · median of three run percentiles`,
+                },
+        }));
+      }),
+    );
+  }
   function value(r: ChartRow): number {
     const key = metric();
     if (key === "breakdown") return 0;
@@ -502,6 +541,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     metric,
     getRows,
     samples,
+    comparisonMeasurements,
     value,
     unit,
     summary,

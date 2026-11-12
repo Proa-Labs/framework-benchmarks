@@ -30,6 +30,7 @@ import {
   renderReport,
   validateResult,
 } from "./report.ts";
+import { frameworkSourceFiles } from "./sources.ts";
 import { negativeControls } from "./workload-parity.ts";
 import type { Workload } from "./workloads.ts";
 
@@ -69,36 +70,7 @@ const headers = {
   "accept-encoding": "identity",
   "cache-control": "no-store",
 };
-const sourceFiles = Bun.spawnSync(
-  [
-    "git",
-    "ls-files",
-    "-z",
-    "--cached",
-    "--others",
-    "--exclude-standard",
-    "--",
-    "framework-ssr",
-    "tooling/captures.mjs",
-    "tooling/verify-source.mjs",
-    "load/driver.mjs",
-    "load/worker.mjs",
-    "suspense-load/stats.mjs",
-    "Cargo.lock",
-    "Cargo.toml",
-    "package.json",
-    "bun.lock",
-    "rendering/src",
-    "rendering/Cargo.toml",
-    "rendering/external/shared/suite_data.mjs",
-    "rendering/external/shared/suite_data.d.mts",
-  ],
-  { cwd: root },
-)
-  .stdout.toString()
-  .split("\0")
-  .filter((p) => p && !p.startsWith("framework-ssr/results/"))
-  .sort();
+const sourceFiles = frameworkSourceFiles(root);
 const release = await acquireRunLock(root, "framework-ssr");
 let workers: Awaited<ReturnType<typeof spawnWorkers>> | undefined;
 const agent = new http.Agent({ keepAlive: true, maxSockets: 16 });

@@ -42,7 +42,7 @@ export async function verifyPreview(url: string) {
     const table = initial.locator("[data-framework-comparison]");
     assert.equal(await initial.locator(".fw-uncaptured").count(), 0);
     assert.equal(
-      await table.locator("tbody tr").count(),
+      await table.locator("tbody tr[data-framework-row]").count(),
       data.framework.rows.length,
     );
     for (const workload of data.framework.workloadDefinitions)
@@ -53,7 +53,7 @@ export async function verifyPreview(url: string) {
         assert.equal(
           await table
             .locator(
-              `td [data-focus="${row.id}"][data-stat-workload="${workload.id}"] .fw-comparison-value`,
+              `td [data-stat-suite="framework"][data-focus="${row.id}"][data-stat-workload="${workload.id}"] .fw-comparison-value`,
             )
             .textContent(),
           expected,
@@ -94,7 +94,7 @@ export async function verifyPreview(url: string) {
     for (const workload of data.framework.workloadDefinitions)
       for (const row of data.framework.workloads[workload.id]) {
         const cell = page.locator(
-          `[data-framework-comparison] td [data-focus="${row.id}"][data-stat-workload="${workload.id}"]`,
+          `[data-framework-comparison] td [data-stat-suite="framework"][data-focus="${row.id}"][data-stat-workload="${workload.id}"]`,
         );
         await cell.hover();
         const popup = page.locator("[data-percentile-popup]");

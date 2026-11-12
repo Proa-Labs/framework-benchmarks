@@ -18,6 +18,11 @@ type ExportRow = ChartRow & {
   exportMetric?: string;
   exportValue?: number;
   exportSamples?: number[];
+  suite?: "rendering" | "framework";
+  unit?: string;
+  capturedAt?: string;
+  source?: string;
+  latency?: Latency;
 };
 interface FlowRuntime {
   paired: boolean;
@@ -109,6 +114,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       "rate",
       "http",
       "framework",
+      "comparison",
       "stream",
     ] as const)
       params.set(key, String(state[key]));
@@ -681,15 +687,20 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         .sort((a, b) =>
           metric() === "throughput" ? value(b) - value(a) : value(a) - value(b),
         );
-    if (state.focus && !rows.some((row) => row.id === state.focus))
+    if (
+      state.focus &&
+      !(state.chart === "compare" ? model.comparisonMeasurements() : rows).some(
+        (row) => row.id === state.focus,
+      )
+    )
       state.focus = null;
     $("[data-heading]").textContent = model.heading();
-    if (!rows.length) {
+    if (state.chart === "compare") drawComparison(rows);
+    else if (!rows.length) {
       $("[data-results]").innerHTML =
         '<div class="fw-empty">No measurements for this selection.</div>';
       $("[data-chart-note]").textContent = "";
-    } else if (state.chart === "compare") drawComparison(rows);
-    else if (
+    } else if (
       state.chart === "lines" &&
       state.view === "streaming" &&
       state.stream === "completion"
@@ -699,7 +710,6 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     else if (state.chart === "balls") drawBalls(rows);
     else if (state.chart === "table") drawTable(rows);
     else drawBars(rows);
-    $("[data-framework-results]").innerHTML = markup.frameworkComparison();
     if (
       state.view === "rendering" &&
       (state.chart !== "compare" || !rows.length) &&
@@ -745,7 +755,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     $("[data-capture]").textContent =
       `${s.host?.cloud || s.host?.cpu_model || s.host?.cpuModel || "Recorded host"} · ${s.date}`;
     const missing = data.renderers.filter(
-      (r) => isVisible(r) && !all.some((v) => v.id === r.id),
+      (r) =>
+        isVisible(r) &&
+        !(
+          state.chart === "compare" ? model.comparisonMeasurements() : all
+        ).some((v) => v.id === r.id),
     );
     $("[data-coverage]").textContent = missing.length
       ? `${missing.length} roster entries not measured here`
@@ -790,22 +804,34 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
                 ),
             )
           : state.chart === "compare"
-            ? rows.flatMap((row) =>
-                data.workloads.map((w) => ({
-                  ...required(
-                    data.rendering.rows[w.id].find((r) => r.id === row.id),
-                  ),
-                  workload: w.id,
-                })),
-              )
+            ? model.comparisonMeasurements()
             : rows;
     const exportData = {
       measurementStatus:
         metric() === "breakdown" ? "not instrumented" : "measured",
-      experiment: state.view,
+      experiment: state.chart === "compare" ? "SSR comparison" : state.view,
+      captures:
+        state.chart === "compare"
+          ? {
+              rendering: {
+                source: data.rendering.source,
+                hash: data.rendering.hash,
+                capturedAt: data.rendering.capturedAt,
+              },
+              framework: {
+                source: data.framework.source,
+                hash: data.framework.hash,
+                capturedAt: data.framework.capturedAt,
+              },
+            }
+          : undefined,
       toolTypes: state.types,
       unmeasured: (state.view === "rendering"
-        ? uncaptured()
+        ? uncaptured().filter(
+            (r) =>
+              state.chart !== "compare" ||
+              !data.framework.rows.some((v) => v.id === r.id),
+          )
         : data.renderers.filter(
             (r) => isVisible(r) && !all.some((v) => v.id === r.id),
           )
@@ -841,7 +867,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         state.view === "streaming" && state.chart !== "lines"
           ? state.rate
           : null,
-      unit: unit(),
+      unit: state.chart === "compare" ? "per row" : unit(),
       capturedAt: s.capturedAt,
       source: suites[state.view].path,
       hash: s.hash,
@@ -850,13 +876,18 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       rows: exportRows.map((r) => ({
         id: r.id,
         workload: r.workload ?? state.workload,
+        suite: r.suite ?? state.view,
+        unit: r.unit ?? unit(),
+        capturedAt: r.capturedAt ?? s.capturedAt,
+        source: r.source ?? suites[state.view].path,
         metric: r.exportMetric || metric(),
         rate: r.rate ?? (state.view === "streaming" ? state.rate : null),
         value: r.exportValue ?? value(r),
         samples: r.exportSamples ?? samples(r),
         detail: r.detail,
         errors: r.errors ?? null,
-        latencyPercentiles: latencyStats(r, { rate: r.rate ?? null }),
+        latencyPercentiles:
+          r.latency ?? latencyStats(r, { rate: r.rate ?? null }),
         ...(state.chart === "balls" && "flow" in r && r.flow
           ? { pairedFlowMeasurement: r.flow }
           : {}),
@@ -870,6 +901,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         [
           [
             "renderer",
+            "suite",
             "value",
             "unit",
             "metric",
@@ -883,15 +915,17 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
             "errors",
           ],
           ...exportRows.map((r) => {
-            const latency = latencyStats(r, { rate: r.rate ?? null });
+            const latency =
+              r.latency ?? latencyStats(r, { rate: r.rate ?? null });
             return [
               name(r.id),
+              r.suite ?? state.view,
               r.exportValue ?? value(r),
-              unit(),
+              r.unit ?? unit(),
               r.exportMetric || metric(),
               r.workload ?? state.workload,
               r.rate ?? (state.view === "streaming" ? state.rate : ""),
-              s.capturedAt,
+              r.capturedAt ?? s.capturedAt,
               latency?.values.p50 ?? "",
               latency?.values.p95 ?? "",
               latency?.values.p99 ?? "",
@@ -1021,8 +1055,10 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       state.focus = null;
     } else if (el.dataset.sortWorkload) {
       state.workload = el.dataset.sortWorkload;
+      state.comparison = "rendering";
     } else if (el.dataset.sortFrameworkWorkload) {
       state.workload = el.dataset.sortFrameworkWorkload;
+      state.comparison = "framework";
     } else if (el.dataset.workload) {
       state.workload = el.dataset.workload;
       if (state.chart === "compare") state.chart = "bars";

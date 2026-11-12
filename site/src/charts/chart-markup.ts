@@ -54,7 +54,6 @@ export function createChartMarkup(model: DashboardModel) {
     value,
     unit,
     summary,
-    uncaptured,
     latencyStats,
     heading,
   } = model;
@@ -65,79 +64,88 @@ export function createChartMarkup(model: DashboardModel) {
       ? `Renderer-only timing not recorded. View ${links.map((link) => `<a href="${esc(link.href)}">${esc(link.label)} results ↗</a>`).join(" · ")}`
       : `${esc(r.coverageReason || "Renderer-only timing not recorded.")} <a href="${esc(r.coverageSource || r.homepage)}" target="_blank" rel="noreferrer">Details ↗</a>`;
   }
-  function drawComparison(rows: ChartRow[]) {
-    const workloads = orderedWorkloads(),
-      scales = Object.fromEntries(
-        workloads.map((w) => {
-          const values = data.rendering.rows[w.id]
-              .filter((r) => isVisible(r))
-              .map((r) => r.p50),
-            max = Math.max(...values, 1) * 1.04;
-          return [w.id, (v: number) => (100 * v) / max];
-        }),
-      );
-    output.html = `<table class="fw-comparison" data-renderer-comparison><caption class="sr-only">Renderer-only SSR latency in microseconds across workloads. Select a column heading to sort.</caption><thead><tr><th scope="col">Renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" title="Sort by ${esc(w.label)}">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>µs</small></button></th>`).join("")}</tr></thead><tbody>${rows
-      .map(
-        (r) =>
-          `<tr style="--brand:${required(renderer(r.id)).color}" class="${state.focus === r.id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" data-focus="${r.id}" aria-pressed="${state.focus === r.id}">${label(r.id)}</button></th>${workloads
-            .map((w) => {
-              const cell = data.rendering.rows[w.id].find((v) => v.id === r.id);
-              return cell
-                ? `<td class="fw-comparison-cell"><button type="button" data-focus="${r.id}" data-stat-workload="${w.id}" aria-pressed="${state.focus === r.id}" aria-label="${esc(name(r.id))}, ${esc(w.label)}, ${fmt(cell.p50)} µs"><span class="fw-comparison-value">${fmt(cell.p50)}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${scales[w.id](cell.p50)}%"></span></span></button></td>`
-                : "<td>—</td>";
-            })
-            .join("")}</tr>`,
+  function drawComparison(_rows: ChartRow[]) {
+    const definitions = model.frameworkWorkloads();
+    const workloads = [
+      ...orderedWorkloads(),
+      ...definitions.filter(
+        (w) => !orderedWorkloads().some((v) => v.id === w.id),
+      ),
+    ];
+    const suites = ["rendering", "framework"] as const;
+    const rowsFor = (suite: (typeof suites)[number], workload: string) =>
+      suite === "rendering"
+        ? data.rendering.rows[workload] || []
+        : data.framework.workloads[workload] || [];
+    const ids = [
+      ...new Set(
+        suites.flatMap((suite) =>
+          workloads.flatMap((w) =>
+            rowsFor(suite, w.id)
+              .filter(isVisible)
+              .map((r) => r.id),
+          ),
+        ),
+      ),
+    ];
+    const selectedRows = rowsFor(state.comparison, state.workload);
+    if (!ids.length) {
+      output.html =
+        '<div class="fw-empty">No measurements for this selection.</div>';
+      return;
+    }
+    ids.sort((a, b) => {
+      const value = (id: string) =>
+        selectedRows.find((r) => r.id === id)?.p50 ?? Infinity;
+      return value(a) - value(b) || name(a).localeCompare(name(b));
+    });
+    const maximum = (suite: (typeof suites)[number], workload: string) =>
+      Math.max(
+        1,
+        ...rowsFor(suite, workload)
+          .filter(isVisible)
+          .map((r) => required(r.p50)),
+      ) * 1.04;
+    output.html = `<div class="fw-table-scroll" tabindex="0" role="region" aria-label="SSR latency comparison"><table class="fw-comparison fw-comparison-unified" data-renderer-comparison data-framework-comparison><caption class="sr-only">SSR latency across workloads. Each tool appears once. Render-only timings are in microseconds; full HTTP request timings are in milliseconds. Select a measurement heading to sort within that boundary.</caption><thead><tr><th scope="col" rowspan="2">Framework / renderer</th>${workloads.map((w) => `<th scope="colgroup" colspan="2">${esc(w.label)}</th>`).join("")}</tr><tr>${workloads
+      .map((w) =>
+        suites
+          .map((suite) => {
+            const framework = suite === "framework";
+            const active =
+              state.comparison === suite && state.workload === w.id;
+            const rate = definitions.find(
+              (definition) => definition.id === w.id,
+            )?.fixedRateRps;
+            return `<th scope="col" aria-sort="${active ? "ascending" : "none"}"><button type="button" ${framework ? "data-sort-framework-workload" : "data-sort-workload"}="${w.id}" aria-label="Sort ${esc(w.label)} by ${framework ? "full request" : "render"} latency">${framework ? "Full request" : "Render"}${active ? " ↓" : ""}<small>${framework ? `ms · ${rate ?? "—"} req/s` : "µs"}</small></button></th>`;
+          })
+          .join(""),
       )
-      .join("")}${uncaptured()
-      .filter((r) => !data.framework.rows.some((v) => v.id === r.id))
-      .map(
-        (r) =>
-          `<tr class="fw-uncaptured"><th scope="row">${label(r.id)}<small>${model.measurementLinks(r.id).length ? "Measured separately" : "Not measured here"}</small></th><td colspan="3">${coverage(r)}</td></tr>`,
-      )
-      .join("")}</tbody></table>`;
-    output.note =
-      "Median SSR render latency · µs · lower is better · sort by any workload heading · bars scale linearly within each column";
-  }
-  function frameworkComparison() {
-    if (state.view !== "rendering") return "";
-    const workloads = model.frameworkWorkloads();
-    const sortWorkload =
-      workloads.find((w) => w.id === state.workload) || workloads[0];
-    const rows = data.framework.workloads[sortWorkload.id]
-      .filter(isVisible)
-      .toSorted((a, b) => required(a.p50) - required(b.p50));
-    if (!rows.length) return "";
-    const max = Object.fromEntries(
-      workloads.map((w) => [
-        w.id,
-        Math.max(
-          1,
-          ...data.framework.workloads[w.id]
-            .filter(isVisible)
-            .map((r) => required(r.p50)),
-        ) * 1.04,
-      ]),
-    );
-    const host = data.framework.host;
-    const provenance = `${host?.cloud || host?.cpu_model || host?.cpuModel || "Recorded host"} · ${data.framework.date}${/^\d+$/.test(host?.serverCpuAffinity || "") ? " · 1 logical CPU per server" : ""}`;
-    return `<section aria-labelledby="framework-comparison-title" class="mt-9 border-t border-line pt-7" data-framework-comparison-section>
-      <div class="mb-3 flex flex-wrap items-baseline justify-between gap-3"><h2 id="framework-comparison-title" class="text-xl font-medium tracking-tight">Framework SSR latency</h2><a href="?view=framework&framework=p50" class="text-xs text-muted underline underline-offset-4">Detailed results ↗</a></div>
-      <p class="mb-4 text-xs leading-relaxed text-muted">HTTP request → complete HTML response, including routing and rendering. Median P50 in milliseconds; lower is better. This is a separate measurement from the renderer-only timings above.</p>
-      <table class="fw-comparison" data-framework-comparison><caption class="sr-only">Full-framework HTTP SSR latency in milliseconds across workloads. Select a column heading to sort.</caption><thead><tr><th scope="col">Framework</th>${workloads.map((w) => `<th scope="col" aria-sort="${w.id === sortWorkload.id ? "ascending" : "none"}"><button type="button" data-sort-framework-workload="${w.id}">${esc(w.label)}${w.id === sortWorkload.id ? " ↓" : ""}<small>ms · ${w.fixedRateRps} req/s</small></button></th>`).join("")}</tr></thead><tbody>${rows
-        .map(
-          (row) =>
-            `<tr style="--brand:${required(renderer(row.id)).color}" class="${state.focus === row.id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" data-focus="${row.id}" data-stat-suite="framework" data-stat-workload="${sortWorkload.id}" aria-pressed="${state.focus === row.id}">${label(row.id, true)}</button></th>${workloads
-              .map((w) => {
-                const cell = required(
-                  data.framework.workloads[w.id].find((r) => r.id === row.id),
-                );
-                return `<td class="fw-comparison-cell"><button type="button" data-focus="${row.id}" data-stat-suite="framework" data-stat-workload="${w.id}" aria-pressed="${state.focus === row.id}" aria-label="${esc(name(row.id))}, ${esc(w.label)}, ${fmt(required(cell.p50))} ms"><span class="fw-comparison-value">${fmt(required(cell.p50))}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${(100 * required(cell.p50)) / max[w.id]}%"></span></span></button></td>`;
+      .join("")}</tr></thead><tbody>${ids
+      .map((id) => {
+        const hasRender = workloads.some((w) =>
+          rowsFor("rendering", w.id).some((r) => r.id === id),
+        );
+        const hasFramework = workloads.some((w) =>
+          rowsFor("framework", w.id).some((r) => r.id === id),
+        );
+        return `<tr ${hasRender ? "data-renderer-row" : ""} ${hasFramework ? "data-framework-row" : ""} style="--brand:${required(renderer(id)).color}" class="${state.focus === id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" data-focus="${id}" aria-pressed="${state.focus === id}" ${hasRender ? "" : `data-stat-suite="framework" data-stat-workload="${state.workload}"`}>${label(id, hasFramework)}</button></th>${workloads
+          .map((w) =>
+            suites
+              .map((suite) => {
+                const cell = rowsFor(suite, w.id).find((r) => r.id === id);
+                if (!cell)
+                  return '<td><span aria-label="Not measured">—</span></td>';
+                const unit = suite === "framework" ? "ms" : "µs";
+                return `<td class="fw-comparison-cell"><button type="button" data-focus="${id}" data-stat-suite="${suite}" data-stat-workload="${w.id}" aria-pressed="${state.focus === id}" aria-label="${esc(name(id))}, ${esc(w.label)}, ${suite === "framework" ? "full request" : "render"}, ${fmt(required(cell.p50))} ${unit}"><span class="fw-comparison-value">${fmt(required(cell.p50))}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${(100 * required(cell.p50)) / maximum(suite, w.id)}%"></span></span></button></td>`;
               })
-              .join("")}</tr>`,
-        )
-        .join("")}</tbody></table>
-      <p class="mt-4 text-[11px] leading-relaxed text-muted">${esc(provenance)}. ${data.framework.methodology.repeats} independent server starts per workload. Each column uses the same offered load for all frameworks. ${model.frameworkUsesJsSsr() ? "Exact uses its production JavaScript SSR backend; its native Rust host is not measured here. " : ""}<a href="/${esc(data.framework.download)}" class="underline underline-offset-2">Raw capture ↗</a></p>
-    </section>`;
+              .join(""),
+          )
+          .join("")}</tr>`;
+      })
+      .join("")}</tbody></table></div>
+    <p class="mt-4 text-[11px] leading-relaxed text-muted" data-comparison-provenance>Render: ${esc(data.rendering.host?.cloud || data.rendering.host?.cpu_model || "Recorded host")} · ${esc(data.rendering.date)}. Full request: ${esc(data.framework.host?.cloud || data.framework.host?.cpuModel || "Recorded host")} · ${esc(data.framework.date)}. <a href="/${esc(data.framework.download)}" class="underline underline-offset-2">Raw framework capture ↗</a> · <a href="?view=framework&framework=p50" class="underline underline-offset-2">Detailed framework results ↗</a>. ${model.frameworkUsesJsSsr() ? "Exact uses its production JavaScript SSR backend on Bun." : ""}</p>`;
+    output.note =
+      "Median P50 · lower is better · Render: prepared data → owned HTML (µs); Full request: HTTP routing → complete HTML (ms). Sort and bars apply within each measurement boundary. — means not measured.";
   }
   function renderCatalog() {
     const groups = [
@@ -484,10 +492,10 @@ export function createChartMarkup(model: DashboardModel) {
   }
   function draw(rows: ChartRow[], mode: ChartMode = state.chart, width = 720) {
     output = { html: "", note: "", heading: heading() };
-    if (!rows.length)
+    if (mode === "compare") drawComparison(rows);
+    else if (!rows.length)
       output.html =
         '<div class="fw-empty">No measurements for this selection.</div>';
-    else if (mode === "compare") drawComparison(rows);
     else if (
       mode === "lines" &&
       state.view === "streaming" &&
@@ -502,7 +510,6 @@ export function createChartMarkup(model: DashboardModel) {
   }
   return {
     draw,
-    frameworkComparison,
     line: lineMarkup,
     lineKey,
     pointMarker,
