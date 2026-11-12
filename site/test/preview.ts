@@ -20,9 +20,11 @@ export async function verifyPreview(url: string) {
       "object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
     );
     if (new URL(url).hostname.endsWith(".workers.dev"))
-      assert.equal(
-        initialResponse.headers()["x-robots-tag"],
-        "noindex, nofollow",
+      // Cloudflare's version-preview layer may replace this header with
+      // its own noindex value. Test the required directive, not formatting.
+      assert.match(
+        initialResponse.headers()["x-robots-tag"] || "",
+        /(?:^|,\s*)noindex(?:,|$)/i,
       );
     assert.equal(await initial.locator('meta[name="description"]').count(), 1);
     assert.equal(
