@@ -129,13 +129,13 @@ jobs:
           PROA_FRAMEWORK_TOKEN: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
         run: |
           set -euo pipefail
-          if [[ -z "${PROA_FRAMEWORK_TOKEN:-}" ]]; then
-            echo "PROA_FRAMEWORK_TOKEN must provide read-only access to Proa-Labs/proa" >&2
-            exit 1
+          # Fork PRs do not receive repository secrets. Proa is public, so
+          # anonymous fetches must work too; retain optional authenticated access.
+          if [[ -n "${PROA_FRAMEWORK_TOKEN:-}" ]]; then
+            git config --global \
+              url."https://x-access-token:${PROA_FRAMEWORK_TOKEN}@github.com/Proa-Labs/proa".insteadOf \
+              "https://github.com/Proa-Labs/proa"
           fi
-          git config --global \
-            url."https://x-access-token:${PROA_FRAMEWORK_TOKEN}@github.com/Proa-Labs/proa".insteadOf \
-            "https://github.com/Proa-Labs/proa"
 
       - name: Fetch pinned benchmark dependencies
         if: matrix.suite == 'rendering'
