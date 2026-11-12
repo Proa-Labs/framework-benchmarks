@@ -3,6 +3,7 @@ import type {
   ChartRow,
   HttpRow,
   Metric,
+  Renderer,
 } from "../../benchmark-types.ts";
 import { required } from "../../required.ts";
 import type { DashboardModel } from "./dashboard-model.ts";
@@ -58,6 +59,12 @@ export function createChartMarkup(model: DashboardModel) {
     heading,
   } = model;
   let output: ChartOutput = { html: "", note: "" };
+  function coverage(r: Renderer) {
+    const links = model.measurementLinks(r.id);
+    return links.length
+      ? `Renderer-only timing not recorded. View ${links.map((link) => `<a href="${esc(link.href)}">${esc(link.label)} results ↗</a>`).join(" · ")}`
+      : `${esc(r.coverageReason || "Renderer-only timing not recorded.")} <a href="${esc(r.coverageSource || r.homepage)}" target="_blank" rel="noreferrer">Details ↗</a>`;
+  }
   function drawComparison(rows: ChartRow[]) {
     const workloads = orderedWorkloads(),
       scales = Object.fromEntries(
@@ -84,7 +91,7 @@ export function createChartMarkup(model: DashboardModel) {
       .join("")}${uncaptured()
       .map(
         (r) =>
-          `<tr class="fw-uncaptured"><th scope="row">${label(r.id)}<small>Not measured</small></th><td colspan="3"><span>—</span> ${esc(r.coverageReason)} <a href="${esc(r.coverageSource)}" target="_blank" rel="noreferrer">Details ↗</a>${data.framework?.rows.some((v) => v.id === r.id) ? ' · <a href="?view=framework">Measured in Framework SSR ↗</a>' : ""}</td></tr>`,
+          `<tr class="fw-uncaptured"><th scope="row">${label(r.id)}<small>${model.measurementLinks(r.id).length ? "Measured separately" : "Not measured here"}</small></th><td colspan="3">${coverage(r)}</td></tr>`,
       )
       .join("")}</tbody></table>`;
     output.note =
@@ -107,7 +114,20 @@ export function createChartMarkup(model: DashboardModel) {
             .filter((r) => (kinds as string[]).includes(r.kind))
             .map(
               (r) =>
-                `<div class="fw-catalog-row">${label(r.id)}<small>${esc(r.kind)}${r.status === "feature-only" ? '<br><span class="fw-coverage-status">Features reviewed · not benchmarked</span>' : r.status === "unmeasured" ? `<br><span class="fw-coverage-status">${data.framework?.rows.some((v) => v.id === r.id) ? "Measured in Framework SSR" : "Not measured"}</span>` : ""}</small><small>${esc(r.language)}</small><a href="${esc(r.homepage)}" target="_blank" rel="noreferrer" aria-label="${esc(r.label)} project website">Project ↗</a></div>`,
+                `<div class="fw-catalog-row">${label(r.id)}<small>${esc(r.kind)}${
+                  r.status === "feature-only"
+                    ? '<br><span class="fw-coverage-status">Features reviewed · not benchmarked</span>'
+                    : r.status === "unmeasured"
+                      ? `<br><span class="fw-coverage-status">${
+                          model.measurementLinks(r.id).length
+                            ? `Measured in ${model
+                                .measurementLinks(r.id)
+                                .map((l) => l.label)
+                                .join(" / ")}`
+                            : "Not measured"
+                        }</span>`
+                      : ""
+                }</small><small>${esc(r.language)}</small><a href="${esc(r.homepage)}" target="_blank" rel="noreferrer" aria-label="${esc(r.label)} project website">Project ↗</a></div>`,
             )
             .join("")}`,
       )
@@ -443,6 +463,7 @@ export function createChartMarkup(model: DashboardModel) {
     line: lineMarkup,
     lineKey,
     pointMarker,
+    coverage,
     catalog: () => {
       output = { html: "", note: "" };
       renderCatalog();

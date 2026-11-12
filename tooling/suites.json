@@ -32,7 +32,8 @@
     "options": {
       "out": "value",
       "workers": "value",
-      "no-build": "flag"
+      "no-build": "flag",
+      "parity-only": "flag"
     }
   },
   "http": {

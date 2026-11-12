@@ -75,6 +75,30 @@
           }
         }
       }
+    },
+    {
+      "includes": ["framework-ssr/adapters/next/app/**/*.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useSemanticElements": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "framework-ssr/adapters/astro/src/pages/*.astro",
+        "framework-ssr/adapters/sveltekit/src/routes/**/*.svelte"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
+          }
+        }
+      }
     }
   ],
   "css": {

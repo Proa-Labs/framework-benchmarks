@@ -12,6 +12,7 @@ import {
   ToolTypes,
   WorkloadChoices,
 } from "../charts/InitialDashboard.tsx";
+import { Footer } from "../components/Footer.tsx";
 import { Header } from "../components/Header.tsx";
 export function PerformancePage({
   data = benchmarkData as BenchmarkData,
@@ -31,6 +32,9 @@ export function PerformancePage({
     [model],
   );
   const capture = data[state.view];
+  const validationNote = model.validationNote();
+  const captureNote = model.captureNote();
+  const experimentDescription = model.experimentDescription();
   const root = useRef<HTMLElement>(null);
   const controller = useRef<ReturnType<typeof mountDashboard> | null>(null);
   useLayoutEffect(() => {
@@ -152,7 +156,7 @@ export function PerformancePage({
             aria-current={state.view === "startup" ? "page" : undefined}
             data-view="startup"
           >
-            Startup
+            Cold Start
           </button>
         </div>
         <div
@@ -189,11 +193,20 @@ export function PerformancePage({
               </div>
             </div>
             <p
+              className="mb-4 text-xs leading-relaxed text-muted"
+              data-experiment-description
+              hidden={!experimentDescription}
+            >
+              {experimentDescription}
+            </p>
+            <p
               className="fw-validation-note"
               data-validation-note
               role="status"
-              hidden
-            ></p>
+              hidden={!validationNote}
+            >
+              {validationNote}
+            </p>
             <div className="fw-toolbar">
               <fieldset
                 className="fw-view-switch"
@@ -290,40 +303,56 @@ export function PerformancePage({
             <div className="fw-chart-note" data-chart-note="">
               {initialChart.note}
             </div>
-            <footer className="fw-footer">
-              <div className="fw-capture-metadata">
-                <span data-capture="">{`${capture.host?.cloud || capture.host?.cpu_model || capture.host?.cpuModel || "Recorded host"} · ${capture.date}`}</span>
-                <span
-                  data-cpu-context
-                  hidden={
-                    state.view !== "streaming" ||
-                    !/^\d+$/.test(capture.host?.serverCpuAffinity ?? "")
-                  }
-                >
-                  1 logical CPU per server
-                </span>
-              </div>
-              <span data-coverage="">
-                {(() => {
-                  const missing = data.renderers.filter(
-                    (r) =>
-                      model.isVisible(r) &&
-                      !model.getRows().some((v) => v.id === r.id),
-                  );
-                  return missing.length
-                    ? `${missing.length} roster entries not measured here`
-                    : "";
-                })()}
-              </span>
-              <details>
-                <summary className="cursor-interaction">
-                  Method &amp; data
+            <footer className="fw-footer block">
+              <details className="group">
+                <summary className="cursor-interaction m-0 flex w-full flex-col gap-3 text-left text-xs sm:flex-row sm:items-center sm:justify-between [&::-webkit-details-marker]:hidden">
+                  <span className="inline-flex shrink-0 items-center gap-2">
+                    <svg
+                      viewBox="0 0 20 20"
+                      width="14"
+                      height="14"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      className="transition-transform group-open:rotate-90"
+                      aria-hidden="true"
+                    >
+                      <path d="m7 4 6 6-6 6" />
+                    </svg>
+                    <span>Method &amp; data</span>
+                  </span>
+                  <span className="fw-capture-metadata flex-none justify-start text-left font-mono text-[11px] text-muted sm:flex-1 sm:justify-end sm:text-right">
+                    <span data-capture="">{`${capture.host?.cloud || capture.host?.cpu_model || capture.host?.cpuModel || "Recorded host"} · ${capture.date}`}</span>
+                    <span
+                      data-cpu-context
+                      hidden={
+                        !/^\d+$/.test(capture.host?.serverCpuAffinity ?? "")
+                      }
+                    >
+                      1 logical CPU per server
+                    </span>
+                  </span>
                 </summary>
                 <div className="fw-evidence">
+                  <span data-coverage="">
+                    {(() => {
+                      const missing = data.renderers.filter(
+                        (r) =>
+                          model.isVisible(r) &&
+                          !model.getRows().some((v) => v.id === r.id),
+                      );
+                      return missing.length
+                        ? `${missing.length} roster entries not measured here`
+                        : "";
+                    })()}
+                  </span>
+                  <p data-capture-note hidden={!captureNote}>
+                    {captureNote}
+                  </p>
                   <p data-scope="">{model.suites[state.view].scope}</p>
                   <p data-method="">{model.suites[state.view].method}</p>
                   <details className="fw-recorded-versions">
-                    <summary>Recorded versions</summary>
+                    <summary className="m-0">Recorded versions</summary>
                     <dl data-versions="">
                       {Object.entries(capture.versions).map(([id, version]) => (
                         <Fragment key={id}>
@@ -405,28 +434,8 @@ export function PerformancePage({
         <p className="fw-chart-note">
           <Link to="/features">Compare documented features ↗</Link>
         </p>
-        <div className="fw-footer">
-          <span>Frameworks.run</span>
-          <span>Open research · affiliation disclosed</span>
-        </div>
       </section>
-      <div className="fw-site-footer">
-        <span>Frameworks / 2026</span>
-        <div>
-          <Link to="/about">Ownership &amp; disclosure</Link>
-          <a
-            href="https://github.com/Proa-Labs/framework-benchmarks/issues"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Challenge a result ↗
-          </a>
-          <button type="button" data-share="">
-            Copy comparison link ↗
-          </button>
-        </div>
-        <span data-share-status="" role="status" aria-live="polite"></span>
-      </div>
+      <Footer comparisonActions />
       <dialog className="fw-fixture-dialog" aria-labelledby="fixture-title">
         <div className="fw-fixture-toolbar">
           <h2 id="fixture-title">Workload preview</h2>

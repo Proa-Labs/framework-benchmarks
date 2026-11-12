@@ -345,6 +345,42 @@ try {
     .getByRole("button", { name: "All workloads", exact: true })
     .click();
   assert.equal(await page.locator(".fw-uncaptured").count(), 4);
+  for (const tool of ["Astro", "Exact", "Next.js"]) {
+    const row = page.locator(".fw-uncaptured").filter({ hasText: tool });
+    const link = row.getByRole("link", { name: "Framework SSR results ↗" });
+    assert.equal(await link.getAttribute("href"), "?view=framework");
+    assert.doesNotMatch(
+      required(await row.textContent()),
+      /No canonical capture/,
+    );
+  }
+  const svelteKitCoverage = page
+    .locator(".fw-uncaptured")
+    .filter({ hasText: "SvelteKit" });
+  assert.equal(
+    await svelteKitCoverage
+      .getByRole("link", { name: "HTTP results ↗" })
+      .count(),
+    1,
+  );
+  await svelteKitCoverage
+    .getByRole("link", { name: "Cold Start results ↗" })
+    .click();
+  await ready();
+  assert.equal(
+    await page
+      .getByRole("tab", { name: "Cold Start", exact: true })
+      .getAttribute("aria-selected"),
+    "true",
+  );
+  assert.equal(
+    await page.locator('.fw-row[data-focus="sveltekit"]').count(),
+    1,
+  );
+  await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
+  await page
+    .getByRole("button", { name: "All workloads", exact: true })
+    .click();
   assert.match(
     await page
       .locator(".fw-uncaptured")
@@ -556,8 +592,9 @@ try {
     "comparison cells show their own workload percentiles on hover and keyboard focus without click shifts",
   );
   await page.locator('[data-view="framework"]').click();
+  await page.locator('[data-workload="cards"]').click();
   await page.locator('[data-chart="bars"]').click();
-  assert.equal(await page.locator(".fw-row").count(), 4);
+  assert.equal(await page.locator(".fw-row").count(), 5);
   assert.equal(
     await page.locator("[data-framework-view]").inputValue(),
     "throughput",
@@ -577,7 +614,7 @@ try {
     );
   }
   await page
-    .getByRole("button", { name: "Preview 32-card catalog", exact: true })
+    .getByRole("button", { name: "Preview Component page", exact: true })
     .click();
   await page
     .frameLocator("[data-fixture-frame]")
@@ -594,8 +631,53 @@ try {
   await page
     .getByRole("button", { name: "Close workload preview", exact: true })
     .click();
+  const frameworkData: BenchmarkData = await (
+    await context.request.get(`${server.url}/data/results.json`)
+  ).json();
+  await page.locator('[data-chart="bars"]').click();
+  for (const workload of ["products", "table", "cards"]) {
+    await page.locator(`[data-workload="${workload}"]`).click();
+    assert.equal(await page.locator(".fw-row").count(), 5);
+    assert.equal(new URL(page.url()).searchParams.get("workload"), workload);
+    await page.locator("[data-framework-view]").selectOption("p50");
+    await page.locator('.fw-row[data-focus="sveltekit"]').hover();
+    await page.locator("[data-percentile-popup]").waitFor({ state: "visible" });
+    const definition = required(
+      frameworkData.framework.workloadDefinitions.find(
+        (w) => w.id === workload,
+      ),
+    );
+    assert.ok(
+      required(await page.locator(".fw-popover-scope").textContent()).includes(
+        `${definition.fixedRateRps} requests/s`,
+      ),
+    );
+    await page
+      .getByRole("button", { name: `Preview ${definition.label}`, exact: true })
+      .click();
+    const selector =
+      workload === "cards"
+        ? "[data-bench-card]"
+        : workload === "products"
+          ? "[data-bench-product]"
+          : "[data-bench-row]";
+    const count =
+      workload === "cards" ? 32 : workload === "products" ? 96 : 1000;
+    await page
+      .frameLocator("[data-fixture-frame]")
+      .locator(selector)
+      .nth(count - 1)
+      .waitFor();
+    assert.equal(
+      await page.frameLocator("[data-fixture-frame]").locator(selector).count(),
+      count,
+    );
+    await page
+      .getByRole("button", { name: "Close workload preview", exact: true })
+      .click();
+  }
   checks.push(
-    "separate full-framework suite with measured rows, metrics and admitted catalog preview",
+    "all three full-framework workloads have five measured rows, persisted selections, admitted previews and workload-specific hover",
   );
   await navigate(`${server.url}/features`);
   const featureData: { rows: FeatureRow[] } = await page.evaluate(async () =>
@@ -1056,12 +1138,17 @@ try {
     required(await page.locator("#site-title").textContent()),
     "Web framework benchmarks",
   );
-  const noJS = await browser.newContext({ javaScriptEnabled: false });
+  const noJS = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 1440, height: 1100 },
+  });
   const initial = await noJS.newPage();
   for (const [path, selector, count] of [
     ["/", ".fw-comparison tbody tr", 21],
     ["/?chart=bars&workload=products&selected=proa,react", ".fw-row", 2],
-    ["/?view=framework", ".fw-row", 4],
+    ["/?view=framework&workload=cards", ".fw-row", 5],
+    ["/?view=framework&workload=products", ".fw-row", 5],
+    ["/?view=framework&workload=table", ".fw-row", 5],
     ["/?view=streaming", ".fw-stream-panel svg", 2],
     [
       "/features?group=server&display=matrix&tools=astro,nextjs",
@@ -1079,6 +1166,82 @@ try {
     const html = await response.text();
     assert.doesNotMatch(html, /This explorer needs JavaScript/);
   }
+  await initial.goto(`${server.url}/?chart=compare`);
+  const captures: BenchmarkData = await (
+    await context.request.get(`${server.url}/data/results.json`)
+  ).json();
+  const expectedNote = captures.rendering.refresh?.note || "";
+  const serverNote = initial.locator("[data-capture-note]");
+  assert.equal(await serverNote.isVisible(), false);
+  assert.equal(await serverNote.textContent(), expectedNote);
+  await initial.evaluate(() => document.fonts.ready);
+  const serverTable = required(
+    await initial.locator(".fw-comparison").boundingBox(),
+  );
+  await navigate(`${server.url}/?chart=compare`);
+  await page.evaluate(() => document.fonts.ready);
+  assert.equal(await page.locator("[data-capture-note]").isVisible(), false);
+  assert.equal(
+    await page.locator("[data-capture-note]").textContent(),
+    expectedNote,
+  );
+  const hydratedTable = required(
+    await page.locator(".fw-comparison").boundingBox(),
+  );
+  assert.ok(Math.abs(serverTable.y - hydratedTable.y) < 1);
+  await initial.getByText("Method & data", { exact: true }).click();
+  assert.equal(await serverNote.isVisible(), Boolean(expectedNote));
+  await page.getByText("Method & data", { exact: true }).click();
+  assert.equal(
+    await page.locator("[data-capture-note]").isVisible(),
+    Boolean(expectedNote),
+  );
+  checks.push(
+    "capture disclosure is server-rendered inside Method & data without shifting the hydrated table",
+  );
+  await initial.goto(`${server.url}/?view=startup`);
+  const serverDescription = initial.locator("[data-experiment-description]");
+  assert.equal(await serverDescription.isVisible(), true);
+  const coldStartDefinition = await serverDescription.textContent();
+  await page.getByRole("tab", { name: "Cold Start", exact: true }).click();
+  assert.equal(
+    await page.locator("[data-experiment-description]").isVisible(),
+    true,
+  );
+  assert.equal(
+    await page.locator("[data-experiment-description]").textContent(),
+    coldStartDefinition,
+  );
+  assert.equal(await page.locator("[data-capture-note]").isVisible(), false);
+  await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
+  assert.equal(
+    await page.locator("[data-experiment-description]").isVisible(),
+    false,
+  );
+  assert.equal(
+    await page.locator("[data-capture-note]").textContent(),
+    expectedNote,
+  );
+  checks.push(
+    "Cold Start definition renders on the server and follows experiment tab selection",
+  );
+  await initial.goto(`${server.url}/methodology`);
+  const methodology = required(await initial.locator("main").textContent());
+  for (const workload of captures.framework.workloadDefinitions) {
+    assert.ok(
+      methodology.includes(
+        `${workload.label}: ${workload.fixedRateRps} requests/s`,
+      ),
+    );
+    assert.ok(
+      methodology.includes(
+        `${workload.label}: ${workload.capacityDurationSeconds} seconds`,
+      ),
+    );
+  }
+  checks.push(
+    "server-rendered methodology follows each workload's captured load rate",
+  );
   await noJS.close();
   checks.push(
     "Cloudflare request-time SSR sends selected benchmark tables, bars, streaming panels and feature filters with JavaScript disabled",

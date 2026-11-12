@@ -82,14 +82,21 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   const isVisible = (r: { id: string }) =>
     state.selected.includes(r.id) &&
     matchesGroups(required(renderer(r.id)), state.types);
-  const frameworkWorkload = { id: "catalog", label: "32-card catalog" };
+  const frameworkWorkloads = () => data.framework.workloadDefinitions;
   const suites = {
     framework: {
       title: "Framework SSR",
       path: "framework-ssr/results/latest.json",
-      method: `${data.framework.methodology.repeats} rotated independent production server processes per phase kind. Capacity: ${data.framework.methodology.concurrency} connections. Equal-load latency: ${data.framework.methodology.fixedRateRps} scheduled requests/s. Every response is validated; generator-limited phases are rejected.`,
+      method: `${data.framework.methodology.repeats} rotated independent production server processes per phase kind. Capacity: ${data.framework.methodology.concurrency} connections. ${frameworkWorkloads()
+        .map(
+          (w) =>
+            `${w.label}: ${w.capacityDurationSeconds}s capacity window; latency at ${w.fixedRateRps} scheduled requests/s for ${w.latencyDurationSeconds}s`,
+        )
+        .join(
+          ". ",
+        )}. Every response is validated; generator-limited phases are rejected.`,
       scope:
-        "Production HTTP routing → complete SSR HTML. Shared 32-card catalog with escaping, branches, lists and a request-specific value. Framework shells may differ. No full-document cache, database, network I/O or hydration timing.",
+        "Production HTTP routing → complete SSR HTML. Shared component page, product grid and table workloads with escaping, branches, lists and a request-specific value. Framework shells may differ. No full-document cache, database, external I/O or browser hydration timing.",
     },
     rendering: {
       title: "SSR render latency",
@@ -129,7 +136,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     Pick<DashboardState, "chart" | "workload">
   > = {
     rendering: { chart: "compare", workload: "cards" },
-    framework: { chart: "bars", workload: "catalog" },
+    framework: { chart: "bars", workload: frameworkWorkloads()[0].id },
     http: { chart: "bars", workload: "cards" },
     streaming: { chart: "lines", workload: "products" },
     startup: { chart: "bars", workload: "products" },
@@ -169,7 +176,11 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     const allowed = {
       section: ["performance", "ecosystem"],
       view: Object.keys(suites),
-      workload: [...data.workloads.map((w) => w.id), "catalog"],
+      workload: [
+        ...data.workloads.map((w) => w.id),
+        ...frameworkWorkloads().map((w) => w.id),
+        "catalog",
+      ],
       framework: ["throughput", "p50", "p99", "cpu", "rss"],
       chart: ["compare", "bars", "lines", "balls", "table"],
       http: [
@@ -331,7 +342,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       case "streaming":
         return data.streaming.rows[String(state.rate)];
       case "framework":
-        return data.framework.rows;
+        return data.framework.workloads[state.workload];
       case "startup":
         return data.startup.rows;
     }
@@ -381,11 +392,26 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     );
   }
 
+  function measurementLinks(id: string) {
+    const links: { label: string; href: string }[] = [];
+    if (data.framework.rows.some((r) => r.id === id))
+      links.push({ label: "Framework SSR", href: "?view=framework" });
+    const workload = orderedWorkloads().find((w) =>
+      data.http.rows[w.id]?.some((r) => r.id === id),
+    );
+    if (workload)
+      links.push({ label: "HTTP", href: `?view=http&workload=${workload.id}` });
+    if (data.startup.rows.some((r) => r.id === id))
+      links.push({ label: "Cold Start", href: "?view=startup" });
+    return links;
+  }
+
   function normalizeState() {
     if (state.view === "streaming") state.chart = "lines";
     if (state.view === "framework" && !data.framework) state.view = "rendering";
     if (state.view === "framework") {
-      state.workload = "catalog";
+      if (!data.framework.workloads[state.workload])
+        state.workload = frameworkWorkloads()[0].id;
       if (state.chart === "balls") state.chart = "bars";
     } else if (state.workload === "catalog") state.workload = "cards";
     if (state.chart === "compare" && state.view !== "rendering")
@@ -402,6 +428,23 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       .sort((a, b) =>
         metric() === "throughput" ? value(b) - value(a) : value(a) - value(b),
       );
+  function validationNote() {
+    const exclusions =
+      state.view === "streaming" ? data.streaming.excluded || [] : [];
+    if (exclusions.length)
+      return `${exclusions.map((entry) => name(entry.id)).join(", ")} streaming results withheld: placeholder validation was incorrect. Corrected rerun pending.`;
+    return "";
+  }
+  function captureNote() {
+    return state.view === "rendering" ? data.rendering.refresh?.note || "" : "";
+  }
+
+  function experimentDescription() {
+    return state.view === "startup"
+      ? "Time from launching a fresh server process to receiving its first complete product-grid response. Includes runtime startup and rendering; builds run beforehand and the disk cache is warm."
+      : "";
+  }
+
   function heading() {
     if (state.view === "framework")
       return {
@@ -443,7 +486,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     logo,
     label,
     isVisible,
-    frameworkWorkload,
+    frameworkWorkloads,
     suites,
     viewDefaults,
     viewStateKeys,
@@ -458,9 +501,13 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     unit,
     summary,
     uncaptured,
+    measurementLinks,
     latencyStats,
     normalizeState,
     visibleRows,
+    validationNote,
+    captureNote,
+    experimentDescription,
     heading,
   };
 }

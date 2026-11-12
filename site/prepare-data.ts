@@ -87,6 +87,7 @@ export async function prepareData() {
     framework: {
       scenario: input.framework.scenario,
       methodology: input.framework.methodology,
+      workloads: data.framework.workloadDefinitions,
     },
     captures: captureIds.map((id) => {
       const { download, date, capture } = data[id];

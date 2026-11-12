@@ -947,16 +947,6 @@
   #frameworks-explorer .fw-source-hash {
     @apply [overflow-wrap:anywhere] [font-size:10px];
   }
-  #frameworks-explorer .fw-site-footer {
-    @apply flex flex-wrap [gap:20px] items-center justify-between text-muted [border-top:1px_solid_var(--fw-line)] [margin-top:38px] [padding:24px_0_32px] [font-size:10px];
-  }
-  #frameworks-explorer .fw-site-footer > div {
-    @apply flex flex-wrap [gap:22px];
-  }
-  #frameworks-explorer .fw-site-footer a,
-  #frameworks-explorer .fw-site-footer button {
-    @apply no-underline text-muted [font-size:10px];
-  }
   #frameworks-explorer .fw-table-scroll {
     @apply overflow-x-auto;
   }
@@ -1006,9 +996,6 @@
   .document .disclosure {
     @apply [border-left:2px_solid_var(--fw-border)] [padding:12px_20px] [background:var(--fw-surface)];
   }
-  .document footer {
-    @apply [font-size:12px] [margin-top:45px] [padding-top:20px] [border-top:1px_solid_var(--fw-line)];
-  }
   @media (max-width: 800px) {
     #frameworks-explorer {
       @apply [padding:24px_22px_0];
@@ -1053,12 +1040,6 @@
     }
     #frameworks-explorer .fw-catalog-row a {
       @apply [grid-column:2_/_-1] text-left;
-    }
-    #frameworks-explorer .fw-site-footer {
-      @apply [gap:17px] [margin-top:25px];
-    }
-    #frameworks-explorer .fw-site-footer > div {
-      @apply [gap:18px];
     }
   }
 

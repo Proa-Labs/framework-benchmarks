@@ -30,7 +30,7 @@ export function ChartMarkup({
   );
 }
 export function WorkloadChoices({ model }: { model: DashboardModel }) {
-  const { state, orderedWorkloads, frameworkWorkload } = model;
+  const { state, orderedWorkloads, frameworkWorkloads } = model;
   const fixed = ["streaming", "startup"].includes(state.view),
     compare = state.chart === "compare";
   return (
@@ -43,18 +43,25 @@ export function WorkloadChoices({ model }: { model: DashboardModel }) {
       >
         All workloads
       </button>
-      {[...orderedWorkloads(), frameworkWorkload].map((w) => (
+      {[
+        ...orderedWorkloads(),
+        ...frameworkWorkloads().filter(
+          (w) => !orderedWorkloads().some((v) => v.id === w.id),
+        ),
+      ].map((w) => (
         <div
           key={w.id}
           className="fw-workload-choice"
           data-active={!compare && state.workload === w.id}
           hidden={
-            state.view === "framework" ? w.id !== "catalog" : w.id === "catalog"
+            state.view === "framework"
+              ? !frameworkWorkloads().some((v) => v.id === w.id)
+              : w.id === "catalog"
           }
         >
           <span className="fw-workload-thumb" aria-hidden="true">
             <iframe
-              src={`/previews/${w.id}.html`}
+              src={`/previews/${state.view === "framework" && frameworkWorkloads().some((v) => v.id === w.id) ? "framework-" : ""}${w.id}.html`}
               sandbox=""
               loading="lazy"
               tabIndex={-1}

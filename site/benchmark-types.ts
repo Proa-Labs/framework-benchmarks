@@ -149,15 +149,33 @@ export interface BenchmarkData {
   startup: CaptureMeta & { rows: StartupRow[] };
   framework: CaptureMeta & {
     rows: HttpRow[];
+    workloads: Record<string, HttpRow[]>;
+    workloadDefinitions: {
+      id: string;
+      label: string;
+      fixedRateRps: number;
+      capacityDurationSeconds: number;
+      latencyDurationSeconds: number;
+    }[];
     sourceSnapshot: string;
     methodology: FrameworkCapture["methodology"];
   };
 }
-type RenderingCapture = Omit<typeof rendering, "measurements"> & {
-  measurements: Record<
-    string,
-    Record<string, typeof rendering.measurements.proa.cards>
-  >;
+type RenderMeasurement = Omit<
+  typeof rendering.measurements.proa.cards,
+  "capture_id"
+> & { capture_id?: string };
+type RenderingCapture = Omit<
+  typeof rendering,
+  "measurements" | "refresh" | "proa_output"
+> & {
+  refresh?: {
+    renderer: string;
+    baseline_captured_at: string;
+    note?: string;
+  } | null;
+  proa_output?: string;
+  measurements: Record<string, Record<string, RenderMeasurement>>;
 };
 type HttpCapture = Omit<typeof http, "engines" | "generatorLimitedPhases"> & {
   generatorLimitedPhases?: unknown[];

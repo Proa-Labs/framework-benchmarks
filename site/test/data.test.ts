@@ -4,6 +4,7 @@ import { summarize } from "../../suspense-load/stats.mjs";
 import type { Inputs } from "../benchmark-types.ts";
 import { loadInputs, normalize } from "../data.ts";
 import { required } from "../required.ts";
+import { createDashboardModel } from "../src/charts/dashboard-model.ts";
 
 test("site measurements come from the canonical capture and raw process runs", async () => {
   const { input } = await loadInputs();
@@ -63,7 +64,11 @@ test("renderer refreshes preserve native output and peer dates, and reject stale
     );
     assert.equal(proa.captureId, input.rendering.capture_id);
     assert.equal(proa.capturedAt, input.rendering.captured_at);
-    assert.equal(peer.capturedAt, input.rendering.refresh.baseline_captured_at);
+    assert.equal(
+      peer.capturedAt,
+      input.rendering.refresh?.baseline_captured_at ||
+        input.rendering.captured_at,
+    );
     assert.match(proa.outputBoundary, /RenderBuffer/);
     assert.equal(
       proa.p50,
@@ -220,23 +225,62 @@ test("requested roster entries never acquire invented measurements", async () =>
   }
 });
 
+test("coverage links follow recorded suites without substituting renderer timings", async () => {
+  const { input } = await loadInputs();
+  const data = normalize(input);
+  const model = createDashboardModel(data);
+  for (const id of ["astro", "exact", "nextjs"])
+    assert.deepEqual(model.measurementLinks(id), [
+      { label: "Framework SSR", href: "?view=framework" },
+    ]);
+  assert.deepEqual(
+    model.measurementLinks("sveltekit").map((link) => link.label),
+    ["Framework SSR", "HTTP", "Cold Start"],
+  );
+  data.framework.rows = data.framework.rows.filter((r) => r.id !== "astro");
+  assert.deepEqual(model.measurementLinks("astro"), []);
+  for (const rows of Object.values(data.rendering.rows))
+    assert.equal(
+      rows.some((r) => r.id === "sveltekit"),
+      false,
+    );
+});
+
 test("full-framework measurements stay separate and reject invalid publication captures", async () => {
   const { input } = await loadInputs();
   const data = normalize(input);
   assert.deepEqual(
     new Set(data.framework.rows.map((r) => r.id)),
-    new Set(["proa", "exact", "nextjs", "astro"]),
+    new Set(["proa", "exact", "nextjs", "astro", "sveltekit"]),
   );
-  for (const engine of input.framework.engines) {
-    const row = required(data.framework.rows.find((r) => r.id === engine.id));
-    assert.equal(
-      row.throughput,
-      summarize(
-        engine.phases
-          .filter((p) => p.mode === "closed")
-          .map((p) => p.completionThroughputRps),
-      ).p50,
+  for (const workload of input.framework.scenario.workloads || []) {
+    const model = createDashboardModel(
+      data,
+      `?view=framework&workload=${workload.id}`,
     );
+    assert.equal(model.state.workload, workload.id);
+    assert.equal(model.getRows().length, 5);
+    for (const engine of input.framework.engines) {
+      const row = required(
+        data.framework.workloads[workload.id].find((r) => r.id === engine.id),
+      );
+      assert.equal(
+        row.throughput,
+        summarize(
+          engine.phases
+            .filter((p) => p.mode === "closed" && p.workload === workload.id)
+            .map((p) => p.completionThroughputRps),
+        ).p50,
+      );
+      assert.equal(row.equalLoadRps, workload.fixedRateRps);
+      assert.ok(
+        row.detail.includes(
+          String(
+            required(engine.parityByWorkload?.[workload.id]).responseBytes,
+          ),
+        ),
+      );
+    }
   }
   for (const change of [
     (c: Inputs["framework"]) => {

@@ -39,23 +39,48 @@ export async function buildPreviews(
     const { validateSemanticHtml } = await import(
       "../framework-ssr/parity.mjs"
     );
-    const body = await readFile(
-      new URL(
-        `../framework-ssr/results/raw/${frameworkCapture.captureId}/proa-parity.html`,
-        import.meta.url,
-      ),
-      "utf8",
-    );
-    const expected = required(
+    const proa = required(
       frameworkCapture.engines.find((e) => e.id === "proa"),
-    ).parity.semanticSha256;
-    if (validateSemanticHtml(body, "fresh-b") !== expected)
-      throw new Error("Catalog preview differs from admitted business content");
-    const catalogStyle = `${style}main[data-bench-page]{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}main[data-bench-page]>h1,main[data-bench-page]>[data-bench-request]{grid-column:1/-1}article[data-bench-card]{background:white;border:1px solid #dce1e8;border-radius:8px;padding:14px}article[data-bench-card] h2{font-size:16px}[data-bench-tags]{font-size:12px;color:#64748b}[data-bench-price]{font-weight:600;margin-top:12px}@media(max-width:650px){main[data-bench-page]{grid-template-columns:repeat(2,minmax(0,1fr))}}`;
-    await writeFile(
-      join(directory, "previews/catalog.html"),
-      body.replace("<head>", `<head><style>${catalogStyle}</style>`),
     );
+    const definitions = frameworkCapture.scenario.workloads || [
+      { id: "catalog" },
+    ];
+    for (const definition of definitions) {
+      const id = definition.id;
+      const filename =
+        frameworkCapture.schemaVersion === 2
+          ? `proa-${id}-parity.html`
+          : "proa-parity.html";
+      const body = await readFile(
+        new URL(
+          `../framework-ssr/results/raw/${frameworkCapture.captureId}/${filename}`,
+          import.meta.url,
+        ),
+        "utf8",
+      );
+      const expected = (proa.parityByWorkload?.[id] || proa.parity)
+        .semanticSha256;
+      if (
+        validateSemanticHtml(
+          body,
+          "fresh-b",
+          id as "cards" | "products" | "table" | "catalog",
+        ) !== expected
+      )
+        throw new Error(
+          `Framework ${id} preview differs from admitted business content`,
+        );
+      const frameworkStyle = `${style}main[data-bench-page=cards] section{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}main[data-bench-page=cards] section>h2{grid-column:1/-1}article{background:white;border:1px solid #dce1e8;border-radius:8px;padding:14px}main[data-bench-page=products],main[data-bench-page=catalog]{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}main[data-bench-page]>h1,main[data-bench-page]>[data-bench-request]{grid-column:1/-1}article h2,article h3{font-size:16px}[role=list]{font-size:12px;color:#64748b}@media(max-width:650px){main[data-bench-page=products],main[data-bench-page=catalog],main[data-bench-page=cards] section{grid-template-columns:repeat(2,minmax(0,1fr))}}`;
+      await writeFile(
+        join(directory, `previews/framework-${id}.html`),
+        body.replace("<head>", `<head><style>${frameworkStyle}</style>`),
+      );
+      if (id === "catalog")
+        await writeFile(
+          join(directory, "previews/catalog.html"),
+          body.replace("<head>", `<head><style>${frameworkStyle}</style>`),
+        );
+    }
   }
   for (const { id } of workloads) {
     if (!ROOTS[id])

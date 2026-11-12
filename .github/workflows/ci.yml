@@ -211,6 +211,13 @@ jobs:
             --tolerate-generator-limits --out page-load/results/smoke.json
           bun run bench:cold-start:smoke
 
+      - name: Build and gate all full-framework SSR workloads
+        if: matrix.suite == 'rendering'
+        run: |
+          bun install --cwd framework-ssr --frozen-lockfile
+          bun framework-ssr/build.ts
+          bun framework-ssr/run.ts --no-build --smoke --workers 2
+
       - name: Show compiler cache stats
         if: always() && matrix.suite == 'rendering'
         run: sccache --show-stats

@@ -20,7 +20,7 @@ export async function readMeasuredSources(runner) {
   assert.deepEqual(files, [...files].sort(), "Measured paths must be sorted");
   for (const file of files) {
     assert.equal(typeof file, "string");
-    assert.match(file, /^[a-zA-Z0-9_./+()-]+$/);
+    assert.match(file, /^[a-zA-Z0-9_./+()[\]-]+$/);
     assert.ok(!file.startsWith("/") && !file.split("/").includes(".."));
   }
   return files;

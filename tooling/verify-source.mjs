@@ -17,9 +17,13 @@ export function verifySourceSnapshot(
   if (sorted) assert.deepEqual(paths, [...paths].sort());
   const hash = createHash("sha256");
   for (const path of paths) {
-    assert.match(path, /^[a-zA-Z0-9_./+()-]+$/);
+    assert.match(path, /^[a-zA-Z0-9_./+()[\]-]+$/);
     assert.ok(!path.startsWith("/") && !path.split("/").includes(".."));
-    const body = execFileSync("tar", ["-xOzf", archive, path], {
+    // BSD tar treats member arguments as patterns even without a wildcard flag;
+    // GNU tar treats these arguments literally. Preserve route brackets on both.
+    const member =
+      process.platform === "linux" ? path : path.replace(/[[\]]/g, "\\$&");
+    const body = execFileSync("tar", ["-xOzf", archive, member], {
       maxBuffer: 8 * 1024 * 1024,
     });
     hash.update(`${prefix}${path}`);

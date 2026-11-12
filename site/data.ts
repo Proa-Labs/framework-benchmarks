@@ -4,6 +4,7 @@ import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { workloadDefinitions } from "../framework-ssr/report.ts";
 import { validateCanonicalResult } from "../rendering/canonical/report.mjs";
 import { summarize } from "../suspense-load/stats.mjs";
 import suites from "../tooling/suites.json" with { type: "json" };
@@ -198,7 +199,7 @@ export function normalize(input: Inputs): BenchmarkData {
     .sort((a, b) => a.label.localeCompare(b.label));
   // A project admitted to HTTP/startup need not be in the pure-renderer roster.
   const measuredIds = new Set(
-    [http, streaming, startup].flatMap((capture) =>
+    [http, streaming, startup, framework].flatMap((capture) =>
       capture.engines.map((e) => e.id),
     ),
   );
@@ -210,12 +211,12 @@ export function normalize(input: Inputs): BenchmarkData {
       ...project,
       status: "unmeasured",
       coverageReason:
-        "Measured in HTTP/startup; no capture in the pure-renderer contract.",
+        "Measured in application-server suites; no renderer-only capture.",
       coverageSource: project.homepage,
     });
   }
   renderers.sort((a, b) => a.label.localeCompare(b.label));
-  for (const capture of [http, streaming, startup]) {
+  for (const capture of [http, streaming, startup, framework]) {
     requireValue(capture.engines.length > 0, "capture has no engines");
     for (const engine of capture.engines)
       requireValue(
@@ -251,6 +252,13 @@ export function normalize(input: Inputs): BenchmarkData {
     framework: {
       ...meta(framework, digests.framework, "framework"),
       rows: frameworkRows(framework),
+      workloads: Object.fromEntries(
+        workloadDefinitions(framework).map((w) => [
+          w.id,
+          frameworkRows(framework, w.id),
+        ]),
+      ),
+      workloadDefinitions: workloadDefinitions(framework),
       methodology: framework.methodology,
       sourceSnapshot: "data/sources/framework.tar.gz",
     },

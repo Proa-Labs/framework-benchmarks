@@ -70,7 +70,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     logo,
     label,
     isVisible,
-    frameworkWorkload,
+    frameworkWorkloads,
     suites,
     rememberView,
     switchView,
@@ -268,12 +268,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   }
   function renderScenarios() {
     const fixed = ["streaming", "startup"].includes(state.view),
-      active =
-        state.view === "framework"
-          ? "catalog"
-          : fixed
-            ? "products"
-            : state.workload,
+      active = fixed ? "products" : state.workload,
       compare = state.chart === "compare";
     $('.fw-workload-tabs [data-chart="compare"]').hidden =
       state.view !== "rendering";
@@ -288,8 +283,12 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         selected = !compare && button.dataset.workload === active;
       choice.hidden =
         state.view === "framework"
-          ? button.dataset.workload !== "catalog"
+          ? !frameworkWorkloads().some((w) => w.id === button.dataset.workload)
           : button.dataset.workload === "catalog";
+      const miniature = choice.querySelector<HTMLIFrameElement>("iframe");
+      const src = `/previews/${state.view === "framework" && frameworkWorkloads().some((w) => w.id === button.dataset.workload) ? "framework-" : ""}${button.dataset.workload}.html`;
+      if (miniature && miniature.getAttribute("src") !== src)
+        miniature.src = src;
       choice.dataset.active = String(selected);
       button.setAttribute("aria-pressed", String(selected));
       button.disabled = fixed && button.dataset.workload !== "products";
@@ -589,17 +588,13 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     $("[data-performance]").hidden = state.section !== "performance";
     $("[data-ecosystem]").hidden = state.section !== "ecosystem";
     $("[data-results-title]").hidden = state.view === "rendering";
-    const exclusions =
-      state.view === "streaming" ? data.streaming.excluded || [] : [];
+    const description = $("[data-experiment-description]");
+    description.textContent = model.experimentDescription();
+    description.hidden = !description.textContent;
     const validationNote = $("[data-validation-note]");
-    if (validationNote) {
-      const refreshNote =
-        state.view === "rendering" ? data.rendering.refresh?.note : null;
-      validationNote.hidden = !exclusions.length && !refreshNote;
-      validationNote.textContent = exclusions.length
-        ? `${exclusions.map((entry) => name(entry.id)).join(", ")} streaming results withheld: placeholder validation was incorrect. Corrected rerun pending.`
-        : refreshNote || "";
-    }
+    const note = model.validationNote();
+    validationNote.hidden = !note;
+    validationNote.textContent = note;
     $("#site-title").textContent =
       state.section === "ecosystem"
         ? "The ecosystem"
@@ -687,10 +682,10 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     )
       $("[data-results]").insertAdjacentHTML(
         "beforeend",
-        `<div class="fw-unmeasured-list"><h3>Not measured</h3>${uncaptured()
+        `<div class="fw-unmeasured-list"><h3>Outside this experiment</h3>${uncaptured()
           .map(
             (r) =>
-              `<div>${label(r.id)}<span>${esc(r.coverageReason)} <a href="${esc(r.coverageSource)}" target="_blank" rel="noreferrer">Details ↗</a>${data.framework?.rows.some((v) => v.id === r.id) ? ' · <a href="?view=framework">Measured in Framework SSR ↗</a>' : ""}</span></div>`,
+              `<div>${label(r.id)}<span>${markup.coverage(r)}</span></div>`,
           )
           .join("")}</div>`,
       );
@@ -720,9 +715,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       .join("");
     const cpuContext = $("[data-cpu-context]");
     if (cpuContext)
-      cpuContext.hidden =
-        state.view !== "streaming" ||
-        !/^\d+$/.test(s.host?.serverCpuAffinity ?? "");
+      cpuContext.hidden = !/^\d+$/.test(s.host?.serverCpuAffinity ?? "");
     $("[data-capture]").textContent =
       `${s.host?.cloud || s.host?.cpu_model || s.host?.cpuModel || "Recorded host"} · ${s.date}`;
     const missing = data.renderers.filter(
@@ -733,6 +726,9 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       : "";
     $("[data-scope]").textContent = suites[state.view].scope;
     $("[data-method]").textContent = suites[state.view].method;
+    const captureNote = $("[data-capture-note]");
+    captureNote.textContent = model.captureNote();
+    captureNote.hidden = !captureNote.textContent;
     $("[data-source]").innerHTML =
       `<a href="${s.download}" download>Original capture ↗</a> · <a href="https://github.com/Proa-Labs/framework-benchmarks/blob/main/${s.source}" target="_blank" rel="noreferrer">View source ↗</a><br><span class="fw-source-hash">${s.sourceSnapshot ? `<a href="${s.sourceSnapshot}" download>Captured source snapshot ↗</a><br>` : ""}Source SHA-256 ${esc(s.hash)} · Artifact SHA-256 ${esc(s.artifactSha256)}</span>${s.note ? `<br>${esc(s.note)}` : ""}`;
     $$<HTMLInputElement>("[data-engine]").forEach((el) => {
@@ -950,14 +946,14 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       return;
     }
     if (el.dataset.preview) {
-      const w = [...data.workloads, frameworkWorkload].find(
+      const w = [...data.workloads, ...frameworkWorkloads()].find(
         (w) => w.id === el.dataset.preview,
       );
       $("#fixture-title").textContent = required(w).label;
       $<HTMLIFrameElement>("[data-fixture-frame]").src =
-        `previews/${required(w).id}.html`;
+        `previews/${state.view === "framework" ? "framework-" : ""}${required(w).id}.html`;
       $<HTMLAnchorElement>("[data-preview-link]").href =
-        `previews/${required(w).id}.html`;
+        `previews/${state.view === "framework" ? "framework-" : ""}${required(w).id}.html`;
       $<HTMLDialogElement>(".fw-fixture-dialog").showModal();
       return;
     }
