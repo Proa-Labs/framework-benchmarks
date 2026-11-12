@@ -8,6 +8,7 @@ use std::{
 };
 
 use proa_bench::representative_suite::{self, Workload, TABLE_ROW_COUNT};
+use proa_core::{RenderBuffer, WriteBuf};
 use serde::Serialize;
 use topcoat::context::Cx;
 
@@ -17,6 +18,7 @@ const MEMCPY_BYTES_PER_SAMPLE: usize = 16 * 1024 * 1024;
 enum Implementation {
     Memcpy,
     Proa,
+    ProaString,
     Leptos,
     Dioxus,
     Topcoat,
@@ -29,6 +31,7 @@ impl Implementation {
         match value {
             "memcpy" => Some(Self::Memcpy),
             "proa" => Some(Self::Proa),
+            "proa-string" => Some(Self::ProaString),
             "leptos" => Some(Self::Leptos),
             "dioxus" => Some(Self::Dioxus),
             "topcoat" => Some(Self::Topcoat),
@@ -42,6 +45,7 @@ impl Implementation {
         match self {
             Self::Memcpy => "memcpy",
             Self::Proa => "proa",
+            Self::ProaString => "proa-string",
             Self::Leptos => "leptos",
             Self::Dioxus => "dioxus",
             Self::Topcoat => "topcoat",
@@ -54,6 +58,7 @@ impl Implementation {
         match self {
             Self::Memcpy => "Memcpy control",
             Self::Proa => "Proa",
+            Self::ProaString => "Proa String control",
             Self::Leptos => "Leptos",
             Self::Dioxus => "Dioxus",
             Self::Topcoat => "Topcoat",
@@ -66,6 +71,7 @@ impl Implementation {
         match self {
             Self::Memcpy => "Rust intrinsic",
             Self::Proa
+            | Self::ProaString
             | Self::Leptos
             | Self::Dioxus
             | Self::Topcoat
@@ -80,7 +86,8 @@ impl Implementation {
                 "pre-rendered Proa bytes; copy_nonoverlapping into a warmed reused buffer; allocation excluded"
             }
             Self::Topcoat => "fresh View construction and serialization into a fresh owned String",
-            Self::Proa => "standard render_to_string; fresh owned String",
+            Self::Proa => "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
+            Self::ProaString => "render_to_string control; fresh owned String including page flattening",
             Self::Dioxus => "standard empty String with no caller capacity hint; fresh owned String",
             Self::Leptos => "fresh owned String",
             Self::Askama => "compiled Askama template; fresh owned String",
@@ -91,6 +98,7 @@ impl Implementation {
     const fn comparison_role(self) -> &'static str {
         match self {
             Self::Memcpy => "mechanism control",
+            Self::ProaString => "String conversion control",
             Self::Proa
             | Self::Leptos
             | Self::Dioxus
@@ -127,7 +135,7 @@ fn parse_args() -> Args {
                 let value = args.next().expect("--framework requires a value");
                 implementation = Some(Implementation::parse(&value).unwrap_or_else(|| {
                     panic!(
-                        "unknown framework `{value}`; expected memcpy|proa|leptos|dioxus|topcoat|askama|sailfish"
+                        "unknown framework `{value}`; expected memcpy|proa|proa-string|leptos|dioxus|topcoat|askama|sailfish"
                     )
                 }));
             }
@@ -184,17 +192,48 @@ fn parse_args() -> Args {
     }
 }
 
-fn render(implementation: Implementation, workload: Workload, cx: &Cx) -> String {
-    match implementation {
-        Implementation::Memcpy | Implementation::Proa => {
+enum RenderedOutput {
+    Pages(RenderBuffer),
+    Text(String),
+}
+
+impl RenderedOutput {
+    // Length and flattening are used only outside the measured render loop.
+    fn len(&self) -> usize {
+        match self {
+            Self::Pages(pages) => pages.len(),
+            Self::Text(text) => text.len(),
+        }
+    }
+    fn dump_bytes(&self) -> Vec<u8> {
+        match self {
+            Self::Pages(pages) => pages.to_vec(),
+            Self::Text(text) => text.as_bytes().to_vec(),
+        }
+    }
+    fn memcpy_source(&self) -> &[u8] {
+        match self {
+            Self::Text(text) => text.as_bytes(),
+            Self::Pages(_) => unreachable!("memcpy uses an untimed contiguous reference"),
+        }
+    }
+}
+
+fn render(implementation: Implementation, workload: Workload, cx: &Cx) -> RenderedOutput {
+    if matches!(implementation, Implementation::Proa) {
+        return RenderedOutput::Pages(proa_bench::native_output::render_canonical(workload));
+    }
+    RenderedOutput::Text(match implementation {
+        Implementation::Memcpy | Implementation::ProaString => {
             representative_suite::render_proa(workload)
         }
+        Implementation::Proa => unreachable!(),
         Implementation::Leptos => representative_suite::render_leptos(workload),
         Implementation::Dioxus => representative_suite::render_dioxus(workload),
         Implementation::Topcoat => representative_suite::render_topcoat(cx, workload),
         Implementation::Askama => representative_suite::render_askama(workload),
         Implementation::Sailfish => representative_suite::render_sailfish(workload),
-    }
+    })
 }
 
 fn memcpy_operations_per_sample(output_bytes: usize) -> usize {
@@ -265,7 +304,7 @@ fn main() {
         if let Some(parent) = path.parent() {
             fs::create_dir_all(parent).expect("create dump directory");
         }
-        fs::write(path, &html).expect("write HTML dump");
+        fs::write(path, html.dump_bytes()).expect("write HTML dump");
     }
     if args.dump_only {
         println!(
@@ -280,6 +319,7 @@ fn main() {
     let operations_per_sample = match args.implementation {
         Implementation::Memcpy => memcpy_operations_per_sample(html.len()),
         Implementation::Proa
+        | Implementation::ProaString
         | Implementation::Leptos
         | Implementation::Dioxus
         | Implementation::Topcoat
@@ -291,27 +331,31 @@ fn main() {
         let mut destination = vec![0_u8; html.len()];
         for _ in 0..args.warmup {
             for _ in 0..operations_per_sample {
-                memcpy_once(html.as_bytes(), &mut destination);
+                memcpy_once(html.memcpy_source(), &mut destination);
             }
         }
         for _ in 0..args.iterations {
             let started = Instant::now();
             for _ in 0..operations_per_sample {
-                memcpy_once(html.as_bytes(), &mut destination);
+                memcpy_once(html.memcpy_source(), &mut destination);
             }
             samples
                 .push(started.elapsed().as_secs_f64() * 1_000_000.0 / operations_per_sample as f64);
         }
-        assert_eq!(destination, html.as_bytes(), "memcpy output changed bytes");
+        assert_eq!(
+            destination,
+            html.memcpy_source(),
+            "memcpy output changed bytes"
+        );
     } else {
         for _ in 0..args.warmup {
             html = render(args.implementation, args.workload, &cx);
-            std::hint::black_box(html.as_bytes());
+            std::hint::black_box(&html);
         }
         for _ in 0..args.iterations {
             let started = Instant::now();
             html = render(args.implementation, args.workload, &cx);
-            std::hint::black_box(html.as_bytes());
+            std::hint::black_box(&html);
             samples.push(started.elapsed().as_secs_f64() * 1_000_000.0);
         }
     }
@@ -367,6 +411,17 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn proa_output_stays_paged_and_matches_the_contiguous_control() {
+        let cx = Cx::default();
+        for workload in [Workload::Cards, Workload::Table, Workload::Products] {
+            let native = render(Implementation::Proa, workload, &cx);
+            let string = render(Implementation::ProaString, workload, &cx);
+            assert!(matches!(native, RenderedOutput::Pages(_)));
+            assert_eq!(native.dump_bytes(), string.dump_bytes());
+        }
+    }
 
     #[test]
     fn memcpy_batch_covers_at_least_the_target_byte_count() {

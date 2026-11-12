@@ -224,12 +224,12 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for Currency {
     fn render(self, cx: &mut WebContext<L, B>) -> Result<(), WriteError> {
         let cents = self.0;
         if cents < 0 {
-            cx.out.extend(b"-")?;
+            cx.out.extend_str("-")?;
         }
         let abs = cents.unsigned_abs();
-        cx.out.extend(b"$")?;
+        cx.out.extend_str("$")?;
         write_with_commas(cx, abs / 100)?;
-        cx.out.extend(b".")?;
+        cx.out.extend_str(".")?;
         write_two_digits(cx, (abs % 100) as u32)
     }
 }
@@ -241,7 +241,7 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for Uint {
     fn render(self, cx: &mut WebContext<L, B>) -> Result<(), WriteError> {
         let mut buf = [0u8; 20];
         let s = format_u64(&mut buf, self.0);
-        cx.out.extend(s.as_bytes())
+        cx.out.extend_str(s)
     }
 }
 
@@ -265,10 +265,10 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for FeedbackPc
         let tenth = (v % 10) as u8;
         let mut buf = [0u8; 20];
         let s = format_u64(&mut buf, whole);
-        cx.out.extend(s.as_bytes())?;
-        cx.out.extend(b".")?;
+        cx.out.extend_str(s)?;
+        cx.out.extend_str(".")?;
         cx.out.extend(&[b'0' + tenth])?;
-        cx.out.extend(b"%")
+        cx.out.extend_str("%")
     }
 }
 
@@ -282,28 +282,28 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for AbbrevCoun
         let mut buf = [0u8; 20];
         if n < 1_000 {
             let s = format_u64(&mut buf, n as u64);
-            return cx.out.extend(s.as_bytes());
+            return cx.out.extend_str(s);
         }
         if n < 1_000_000 {
             let whole = n / 1_000;
             let tenth = (n % 1_000) / 100;
             let s = format_u64(&mut buf, whole as u64);
-            cx.out.extend(s.as_bytes())?;
+            cx.out.extend_str(s)?;
             if tenth > 0 {
-                cx.out.extend(b".")?;
+                cx.out.extend_str(".")?;
                 cx.out.extend(&[b'0' + tenth as u8])?;
             }
-            return cx.out.extend(b"K");
+            return cx.out.extend_str("K");
         }
         let whole = n / 1_000_000;
         let tenth = (n % 1_000_000) / 100_000;
         let s = format_u64(&mut buf, whole as u64);
-        cx.out.extend(s.as_bytes())?;
+        cx.out.extend_str(s)?;
         if tenth > 0 {
-            cx.out.extend(b".")?;
+            cx.out.extend_str(".")?;
             cx.out.extend(&[b'0' + tenth as u8])?;
         }
-        cx.out.extend(b"M")
+        cx.out.extend_str("M")
     }
 }
 
@@ -337,7 +337,7 @@ fn write_with_commas<B: WriteBuf, L: ::proa_core::DataLoader>(
     v: u64,
 ) -> Result<(), WriteError> {
     if v == 0 {
-        return cx.out.extend(b"0");
+        return cx.out.extend_str("0");
     }
     let mut digits = [0u8; 20];
     let s = format_u64(&mut digits, v);
@@ -347,7 +347,7 @@ fn write_with_commas<B: WriteBuf, L: ::proa_core::DataLoader>(
     cx.out.extend(&bytes[..first])?;
     let mut i = first;
     while i < len {
-        cx.out.extend(b",")?;
+        cx.out.extend_str(",")?;
         cx.out.extend(&bytes[i..i + 3])?;
         i += 3;
     }
@@ -381,170 +381,172 @@ impl<B: WriteBuf, L: ::proa_core::DataLoader> WebRenderSync<L, B> for Card {
     fn render(self, cx: &mut WebContext<L, B>) -> Result<(), WriteError> {
         let l = self.listing;
         // Open <li>...
-        cx.out.extend(b"<li id=\"item")?;
+        cx.out.extend_str("<li id=\"item")?;
         Uint(l.item_id).render(cx)?;
-        cx.out.extend(b"\" data-listingid=\"")?;
+        cx.out.extend_str("\" data-listingid=\"")?;
         Uint(l.item_id).render(cx)?;
-        cx.out.extend(b"\" class=\"s-card s-card--horizontal\">")?;
+        cx.out
+            .extend_str("\" class=\"s-card s-card--horizontal\">")?;
 
         cx.out
-            .extend(b"<div class=\"su-card-container su-card-container--horizontal\">")?;
+            .extend_str("<div class=\"su-card-container su-card-container--horizontal\">")?;
 
         // ---- media
-        cx.out.extend(b"<div class=\"su-card-container__media\"><div class=\"su-media-container s-card__media-wrapper\"><div class=\"su-media-multi-image\"><div class=\"su-media-multi-image__primary\"><div class=\"su-media-container\"><div class=\"su-image\">")?;
+        cx.out.extend_str("<div class=\"su-card-container__media\"><div class=\"su-media-container s-card__media-wrapper\"><div class=\"su-media-multi-image\"><div class=\"su-media-multi-image__primary\"><div class=\"su-media-container\"><div class=\"su-image\">")?;
         cx.out
-            .extend(b"<a class=\"s-card__link image-treatment\" href=\"")?;
+            .extend_str("<a class=\"s-card__link image-treatment\" href=\"")?;
         item_url(cx, l.item_id)?;
         cx.out
-            .extend(b"\" target=\"_blank\" style=\"--aspect-ratio: 1;\">")?;
-        cx.out.extend(b"<img class=\"s-card__image\" fetchpriority=\"high\" loading=\"eager\" src=\"/images/synthetic/field-recorder.svg#")?;
+            .extend_str("\" target=\"_blank\" style=\"--aspect-ratio: 1;\">")?;
+        cx.out.extend_str("<img class=\"s-card__image\" fetchpriority=\"high\" loading=\"eager\" src=\"/images/synthetic/field-recorder.svg#")?;
         cx.out.extend(l.image_hash.as_bytes())?;
-        cx.out.extend(b"\" alt=\"")?;
+        cx.out.extend_str("\" alt=\"")?;
         text(l.title).render(cx)?;
-        cx.out.extend(b"\" style=\"width:auto\">")?;
-        cx.out.extend(b"</a></div></div></div></div>")?;
+        cx.out.extend_str("\" style=\"width:auto\">")?;
+        cx.out.extend_str("</a></div></div></div></div>")?;
 
         // watch heart action
-        cx.out.extend(b"<div class=\"su-media__action su-media__action--top-right\"><span class=\"s-card__watchheart on-image s-card__watchheart--watch\"><a aria-label=\"watch ")?;
+        cx.out.extend_str("<div class=\"su-media__action su-media__action--top-right\"><span class=\"s-card__watchheart on-image s-card__watchheart--watch\"><a aria-label=\"watch ")?;
         text(l.title).render(cx)?;
-        cx.out.extend(b"\" class=\"s-card__watchheart-click\" href=\"#\"><span class=\"s-card__watchheart-icon\">")?;
-        cx.out.extend(b"<svg class=\"icon icon--16\" focusable=\"false\" aria-hidden=\"true\"><use href=\"#icon-heart-16\"></use></svg>")?;
-        cx.out.extend(b"<svg class=\"icon icon--16\" focusable=\"false\" aria-hidden=\"true\"><use href=\"#icon-heart-filled-16\"></use></svg>")?;
-        cx.out.extend(b"</span></a></span></div>")?;
-        cx.out.extend(b"</div></div>")?; // /media
+        cx.out.extend_str("\" class=\"s-card__watchheart-click\" href=\"#\"><span class=\"s-card__watchheart-icon\">")?;
+        cx.out.extend_str("<svg class=\"icon icon--16\" focusable=\"false\" aria-hidden=\"true\"><use href=\"#icon-heart-16\"></use></svg>")?;
+        cx.out.extend_str("<svg class=\"icon icon--16\" focusable=\"false\" aria-hidden=\"true\"><use href=\"#icon-heart-filled-16\"></use></svg>")?;
+        cx.out.extend_str("</span></a></span></div>")?;
+        cx.out.extend_str("</div></div>")?; // /media
 
         // ---- content
         cx.out
-            .extend(b"<div class=\"su-card-container__content\">")?;
+            .extend_str("<div class=\"su-card-container__content\">")?;
         cx.out
-            .extend(b"<div class=\"su-card-container__header\">")?;
+            .extend_str("<div class=\"su-card-container__header\">")?;
 
         // caption
-        cx.out.extend(b"<div class=\"s-card__caption\">")?;
+        cx.out.extend_str("<div class=\"s-card__caption\">")?;
         if l.caption != CaptionSignal::None {
-            cx.out.extend(b"<span class=\"")?;
+            cx.out.extend_str("<span class=\"")?;
             cx.out.extend(l.caption.classes().as_bytes())?;
-            cx.out.extend(b"\" aria-label=\"")?;
+            cx.out.extend_str("\" aria-label=\"")?;
             cx.out.extend(l.caption.label().as_bytes())?;
-            cx.out.extend(b"\">")?;
+            cx.out.extend_str("\">")?;
             cx.out.extend(l.caption.label().as_bytes())?;
-            cx.out.extend(b"</span>")?;
+            cx.out.extend_str("</span>")?;
         }
-        cx.out.extend(b"</div>")?;
+        cx.out.extend_str("</div>")?;
 
         // title link
         cx.out
-            .extend(b"<a class=\"s-card__link\" target=\"_blank\" tabindex=\"-1\" href=\"")?;
+            .extend_str("<a class=\"s-card__link\" target=\"_blank\" tabindex=\"-1\" href=\"")?;
         item_url(cx, l.item_id)?;
         cx.out.extend(
             b"\"><div role=\"heading\" aria-level=\"3\" class=\"s-card__title\"><span class=\"su-styled-text primary default\">",
         )?;
         text(l.title).render(cx)?;
-        cx.out.extend(b"</span></div></a>")?;
+        cx.out.extend_str("</span></div></a>")?;
 
         // subtitle
         cx.out
-            .extend(b"<div class=\"s-card__subtitle-row\"><div class=\"s-card__subtitle\">")?;
+            .extend_str("<div class=\"s-card__subtitle-row\"><div class=\"s-card__subtitle\">")?;
         let last = l.subtitle_parts.len().saturating_sub(1);
         for (idx, part) in l.subtitle_parts.iter().enumerate() {
             cx.out
-                .extend(b"<span class=\"su-styled-text secondary default\">")?;
+                .extend_str("<span class=\"su-styled-text secondary default\">")?;
             text(part).render(cx)?;
             if idx != last {
-                cx.out.extend(b" \xc2\xb7 ")?; // " · "
+                cx.out.extend_str(" · ")?; // " · "
             }
-            cx.out.extend(b"</span>")?;
+            cx.out.extend_str("</span>")?;
         }
-        cx.out.extend(b"</div></div>")?;
+        cx.out.extend_str("</div></div>")?;
 
         // reviews / stars
-        cx.out.extend(b"<div class=\"s-card__product-reviews\"><div class=\"s-card__reviews\"><a href=\"#UserReviews\"><div class=\"x-star-rating\">")?;
+        cx.out.extend_str("<div class=\"s-card__product-reviews\"><div class=\"s-card__reviews\"><a href=\"#UserReviews\"><div class=\"x-star-rating\">")?;
         for _ in 0..l.stars_full {
-            cx.out.extend(b"<svg class=\"icon icon--16\" focusable=\"false\" aria-hidden=\"true\"><use href=\"#icon-star-filled-16\"></use></svg>")?;
+            cx.out.extend_str("<svg class=\"icon icon--16\" focusable=\"false\" aria-hidden=\"true\"><use href=\"#icon-star-filled-16\"></use></svg>")?;
         }
         if l.has_half_star {
-            cx.out.extend(b"<svg class=\"icon icon--16-colored\" focusable=\"false\" aria-hidden=\"true\"><use href=\"#icon-star-half-16-colored\"></use></svg>")?;
+            cx.out.extend_str("<svg class=\"icon icon--16-colored\" focusable=\"false\" aria-hidden=\"true\"><use href=\"#icon-star-half-16-colored\"></use></svg>")?;
         }
         let empty = 5u8.saturating_sub(l.stars_full + l.has_half_star as u8);
         for _ in 0..empty {
-            cx.out.extend(b"<svg class=\"icon icon--16\" focusable=\"false\" aria-hidden=\"true\"><use href=\"#icon-star-empty-16\"></use></svg>")?;
+            cx.out.extend_str("<svg class=\"icon icon--16\" focusable=\"false\" aria-hidden=\"true\"><use href=\"#icon-star-empty-16\"></use></svg>")?;
         }
-        cx.out
-            .extend(b"</div><span class=\"s-card__reviews-count\"><span aria-hidden=\"false\">")?;
+        cx.out.extend_str(
+            "</div><span class=\"s-card__reviews-count\"><span aria-hidden=\"false\">",
+        )?;
         Commas(l.review_count as u64).render(cx)?;
         cx.out
-            .extend(b" product ratings</span></span></a></div></div>")?;
+            .extend_str(" product ratings</span></span></a></div></div>")?;
 
-        cx.out.extend(b"</div>")?; // /header
+        cx.out.extend_str("</div>")?; // /header
 
         // attributes
-        cx.out.extend(b"<div class=\"su-card-container__attributes su-card-container__attributes--has-secondary\"><div class=\"su-card-container__attributes__primary\">")?;
+        cx.out.extend_str("<div class=\"su-card-container__attributes su-card-container__attributes--has-secondary\"><div class=\"su-card-container__attributes__primary\">")?;
 
         // price row
-        cx.out.extend(b"<div class=\"s-card__attribute-row\"><span class=\"su-styled-text primary bold large-1 s-card__price\">")?;
+        cx.out.extend_str("<div class=\"s-card__attribute-row\"><span class=\"su-styled-text primary bold large-1 s-card__price\">")?;
         Currency(l.price_cents).render(cx)?;
-        cx.out.extend(b"</span>")?;
+        cx.out.extend_str("</span>")?;
         if let Some(orig) = l.original_price_cents {
-            cx.out.extend(b"<span class=\"su-spacer --spacing-100\"></span><span class=\"su-styled-text secondary strikethrough large\">")?;
+            cx.out.extend_str("<span class=\"su-spacer --spacing-100\"></span><span class=\"su-styled-text secondary strikethrough large\">")?;
             Currency(orig).render(cx)?;
-            cx.out.extend(b"</span>")?;
+            cx.out.extend_str("</span>")?;
         }
-        cx.out.extend(b"</div>")?;
+        cx.out.extend_str("</div>")?;
 
         // format row
         cx.out.extend(
             b"<div class=\"s-card__attribute-row\"><span class=\"su-styled-text secondary large\">",
         )?;
         cx.out.extend(l.format.label().as_bytes())?;
-        cx.out.extend(b"</span></div>")?;
+        cx.out.extend_str("</span></div>")?;
 
         // delivery row
         cx.out.extend(
             b"<div class=\"s-card__attribute-row\"><span class=\"su-styled-text secondary large\">",
         )?;
         if l.delivery_cents == 0 {
-            cx.out.extend(b"Free delivery")?;
+            cx.out.extend_str("Free delivery")?;
         } else {
-            cx.out.extend(b"+")?;
+            cx.out.extend_str("+")?;
             Currency(l.delivery_cents).render(cx)?;
-            cx.out.extend(b" delivery")?;
+            cx.out.extend_str(" delivery")?;
         }
-        cx.out.extend(b"</span></div>")?;
+        cx.out.extend_str("</span></div>")?;
 
         // location row
-        cx.out.extend(b"<div class=\"s-card__attribute-row\"><span class=\"su-styled-text secondary large\">Located in ")?;
+        cx.out.extend_str("<div class=\"s-card__attribute-row\"><span class=\"su-styled-text secondary large\">Located in ")?;
         text(l.location).render(cx)?;
-        cx.out.extend(b"</span></div>")?;
+        cx.out.extend_str("</span></div>")?;
 
         // watchers row
-        cx.out.extend(b"<div class=\"s-card__attribute-row\"><span class=\"su-styled-text primary bold large\">")?;
+        cx.out.extend_str("<div class=\"s-card__attribute-row\"><span class=\"su-styled-text primary bold large\">")?;
         Commas(l.watcher_count as u64).render(cx)?;
-        cx.out.extend(b" watchers</span></div>")?;
+        cx.out.extend_str(" watchers</span></div>")?;
 
         // coupon row (optional)
         if let Some(pct) = l.coupon_pct {
-            cx.out.extend(b"<div class=\"s-card__attribute-row\"><span class=\"su-styled-text negative bold large\">Extra ")?;
+            cx.out.extend_str("<div class=\"s-card__attribute-row\"><span class=\"su-styled-text negative bold large\">Extra ")?;
             Uint(pct as u64).render(cx)?;
-            cx.out.extend(b"% off with coupon</span></div>")?;
+            cx.out.extend_str("% off with coupon</span></div>")?;
         }
 
-        cx.out.extend(b"</div>")?; // /attributes_primary
+        cx.out.extend_str("</div>")?; // /attributes_primary
 
         // secondary (seller)
-        cx.out.extend(b"<div class=\"su-card-container__attributes__secondary\"><div class=\"s-card__attribute-row\"><span class=\"su-styled-text primary large\">")?;
+        cx.out.extend_str("<div class=\"su-card-container__attributes__secondary\"><div class=\"s-card__attribute-row\"><span class=\"su-styled-text primary large\">")?;
         text(l.seller_name).render(cx)?;
         cx.out
-            .extend(b" </span><span class=\"su-styled-text primary large\">")?;
+            .extend_str(" </span><span class=\"su-styled-text primary large\">")?;
         FeedbackPct(l.seller_feedback_pct_x10).render(cx)?;
-        cx.out.extend(b" positive (")?;
+        cx.out.extend_str(" positive (")?;
         AbbrevCount(l.seller_feedback_count).render(cx)?;
-        cx.out.extend(b")</span></div></div>")?;
+        cx.out.extend_str(")</span></div></div>")?;
 
-        cx.out.extend(b"</div>")?; // /attributes
-        cx.out.extend(b"</div>")?; // /content
+        cx.out.extend_str("</div>")?; // /attributes
+        cx.out.extend_str("</div>")?; // /content
 
-        cx.out.extend(b"</div>")?; // /su-card-container
-        cx.out.extend(b"</li>")?;
+        cx.out.extend_str("</div>")?; // /su-card-container
+        cx.out.extend_str("</li>")?;
         Ok(())
     }
 }
@@ -554,10 +556,10 @@ fn item_url<B: WriteBuf, L: ::proa_core::DataLoader>(
     cx: &mut WebContext<L, B>,
     id: u64,
 ) -> Result<(), WriteError> {
-    cx.out.extend(b"#listing-")?;
+    cx.out.extend_str("#listing-")?;
     let mut buf = [0u8; 20];
     let s = format_u64(&mut buf, id);
-    cx.out.extend(s.as_bytes())
+    cx.out.extend_str(s)
 }
 
 // ---------------------------------------------------------------------------

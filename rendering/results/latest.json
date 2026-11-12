@@ -1,11 +1,11 @@
 {
   "schema_version": 2,
   "benchmark_version": "canonical-ssr-v1",
-  "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085",
-  "capture_kind": "canonical",
+  "capture_id": "canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z",
+  "capture_kind": "proa_refresh",
   "status": "pass",
-  "captured_at": "2026-10-21T01:22:11.093Z",
-  "completed_at": "2026-10-21T01:23:59.776Z",
+  "captured_at": "2026-11-11T18:37:55.139Z",
+  "completed_at": "2026-11-11T18:37:57.005Z",
   "host": {
     "cpu_model": "Apple M4 Max",
     "logical_cpus": 16,
@@ -591,46 +591,46 @@
   "measurements": {
     "proa": {
       "cards": {
-        "p50_us": 2,
-        "p95_us": 2.125,
-        "p99_us": 2.5424099999999994,
-        "mean_us": 2.0458149999999997,
-        "process_p50_min_us": 2,
-        "process_p50_max_us": 2.0829999999999997,
+        "p50_us": 0.875,
+        "p95_us": 0.9169999999999999,
+        "p99_us": 1.0004099999999996,
+        "mean_us": 0.8739805000000002,
+        "process_p50_min_us": 0.834,
+        "process_p50_max_us": 0.875,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25108,
-        "allocation_policy": "standard render_to_string; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
+        "capture_id": "canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z"
       },
       "table": {
-        "p50_us": 254.66699999999997,
-        "p95_us": 266.71635,
-        "p99_us": 275.84967,
-        "mean_us": 256.48252000000014,
-        "process_p50_min_us": 253.041,
-        "process_p50_max_us": 258.125,
+        "p50_us": 189.375,
+        "p95_us": 198.06905,
+        "p99_us": 206.73940999999994,
+        "mean_us": 187.74523500000006,
+        "process_p50_min_us": 185.97899999999998,
+        "process_p50_max_us": 190.47899999999998,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 988509,
-        "allocation_policy": "standard render_to_string; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
+        "capture_id": "canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z"
       },
       "products": {
-        "p50_us": 26.291999999999998,
-        "p95_us": 28.168149999999997,
-        "p99_us": 32.754999999999995,
-        "mean_us": 26.618581999999975,
-        "process_p50_min_us": 26.125,
-        "process_p50_max_us": 26.916,
+        "p50_us": 10.5,
+        "p95_us": 12,
+        "p99_us": 13.709259999999999,
+        "mean_us": 10.920153999999982,
+        "process_p50_min_us": 10.333499999999999,
+        "process_p50_max_us": 11.708,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 284908,
-        "allocation_policy": "standard render_to_string; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
+        "capture_id": "canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z"
       }
     },
     "marko": {
@@ -1339,7 +1339,7 @@
     }
   },
   "versions": {
-    "Proa": "0.3.0 @ 7ffb8a19ecfa601fb496d825e0677dce29ea3af4 / rustc 1.95.0 (59807616e 2026-04-14)",
+    "Proa": "0.4.0 @ bbbc9684335109949257eea8b4c98bb7bc8572ae / rustc 1.95.0 (59807616e 2026-04-14)",
     "Marko": "6.0.150 / Node v24.20.0",
     "React": "19.2.4 / Node v24.20.0",
     "Vue": "3.5.42 / Node v24.20.0",
@@ -1360,33 +1360,38 @@
     "Chromium": "149.0.7827.55"
   },
   "provenance": {
-    "harness_commit": "82f32206ec5c87449e1dfb8ceff9a0e977d883d8",
+    "harness_commit": "461f84da7093d41f1e2332d1b3f8c3702ecafa4c",
     "dirty": true,
-    "source_sha256": "77c5c5fce085f658cebcadc649c908b13243b0590cfe0ab214db365bcc70dd2d"
+    "source_sha256": "75b6b3a8738007f53f34472b068aa20bcbcb7b79266063b0d52a5546a4eb5d56",
+    "os_release": "25.5.0"
   },
   "commands": [
-    "npm ci (React, Marko, and Handlebars adapter directories)",
-    "bundle check || bundle install (Rails adapter directory)",
-    "cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench",
-    "go build -trimpath -o rendering/external/go/build/canonical_suite rendering/external/go/suite_bench.go",
-    "python3 -m venv rendering/external/jinja/.venv && pip install -r rendering/external/jinja/requirements.txt",
-    "gradle --no-daemon --quiet installDist copyJteBinaryStaticContent (jte adapter directory)",
-    "gradle --no-daemon --quiet installDist (Rocker adapter directory)",
-    "./rendering/run-all"
+    "./rendering/run-all --refresh-proa"
   ],
   "limitations": [
     "Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.",
     "Semantic DOM parity permits documented serializer metadata and whitespace differences; payload deltas remain visible.",
-    "This capture describes one machine and these three workloads; it is not a universal application ranking."
+    "This capture describes one machine and these three workloads; it is not a universal application ranking.",
+    "Only Proa was rerun on 2026-11-11; every peer retains its 2026-10-21 measurement and version. These are different capture dates on the same machine. Proa returns a fresh owned RenderBuffer; its page-to-String conversion is excluded. Peer outputs and timings are unchanged."
   ],
   "raw_artifacts": [
     {
-      "label": "Per-process summaries",
-      "path": "raw/canonical-ssr-v1-2026-10-21-77c5c5fce085/process-summaries.json"
+      "label": "Proa refresh process summaries",
+      "path": "raw/canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z/process-summaries.json"
     },
     {
-      "label": "Result-table migration map",
-      "path": "../MIGRATION.md"
+      "label": "Original peer capture",
+      "path": "raw/canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z/baseline.json"
     }
-  ]
+  ],
+  "proa_output": "fresh owned RenderBuffer; no flattening or String conversion",
+  "refresh": {
+    "renderer": "proa",
+    "baseline_capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085",
+    "baseline_captured_at": "2026-10-21T01:22:11.093Z",
+    "baseline_path": "raw/canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z/baseline.json",
+    "baseline_sha256": "1d28e4f1207ee5f9b47ca0d9811febfbe1889189566b544077061945e84bdbab",
+    "note": "Only Proa was rerun on 2026-11-11; every peer retains its 2026-10-21 measurement and version. These are different capture dates on the same machine. Proa returns a fresh owned RenderBuffer; its page-to-String conversion is excluded. Peer outputs and timings are unchanged."
+  },
+  "command": "./rendering/run-all --refresh-proa"
 }

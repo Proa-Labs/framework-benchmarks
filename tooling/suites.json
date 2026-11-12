@@ -1,0 +1,118 @@
+{
+  "rendering": {
+    "entry": "rendering/canonical/run.mjs",
+    "directory": "rendering",
+    "view": "rendering",
+    "title": "Render to fresh owned native output",
+    "contract": "rendering/canonical/workloads.json",
+    "smoke": ["--smoke"],
+    "report": "rendering/generate-report.mjs",
+    "requires": ["git", "tar", "Chromium", "adapter toolchain"],
+    "options": {
+      "renderers": "value",
+      "workloads": "value",
+      "repeats": "value",
+      "out": "value",
+      "no-setup": "flag",
+      "setup-only": "flag",
+      "parity-only": "flag",
+      "product-scaling": "flag",
+      "refresh-proa": "flag"
+    }
+  },
+  "framework": {
+    "entry": "framework-ssr/run.ts",
+    "directory": "framework-ssr",
+    "view": "framework",
+    "title": "Full framework request pipeline",
+    "contract": "framework-ssr/contract.json",
+    "smoke": ["--smoke"],
+    "report": "framework-ssr/report.ts",
+    "requires": ["git", "tar", "cargo", "Bun", "Exact pinned source"],
+    "options": {
+      "out": "value",
+      "workers": "value",
+      "no-build": "flag"
+    }
+  },
+  "http": {
+    "entry": "page-load/run.mjs",
+    "directory": "page-load",
+    "view": "http",
+    "title": "HTTP capacity and fixed-load latency",
+    "contract": "page-load/scenario.mjs",
+    "smoke": [
+      "--duration",
+      "1",
+      "--repeats",
+      "1",
+      "--warmup-requests",
+      "4",
+      "--concurrency",
+      "8"
+    ],
+    "report": "page-load/report.mjs",
+    "requires": ["git", "tar", "cargo", "go", "Bun"],
+    "options": {
+      "out": "value",
+      "engines": "value",
+      "workloads": "value",
+      "duration": "value",
+      "repeats": "value",
+      "warmup-requests": "value",
+      "concurrency": "value",
+      "pre-roll": "value",
+      "workers": "value",
+      "no-build": "flag",
+      "tolerate-generator-limits": "flag"
+    }
+  },
+  "streaming": {
+    "entry": "suspense-load/run.mjs",
+    "directory": "suspense-load",
+    "view": "streaming",
+    "title": "Suspense streaming across offered loads",
+    "contract": "suspense-load/scenario.mjs",
+    "smoke": [
+      "--rates",
+      "20,50",
+      "--duration",
+      "1",
+      "--repeats",
+      "1",
+      "--warmup-requests",
+      "4"
+    ],
+    "report": "suspense-load/report.mjs",
+    "requires": ["git", "tar", "cargo", "Bun"],
+    "options": {
+      "out": "value",
+      "engines": "value",
+      "rates": "value",
+      "duration": "value",
+      "repeats": "value",
+      "warmup-requests": "value",
+      "boundaries": "value",
+      "cards-per-panel": "value",
+      "pre-roll": "value",
+      "workers": "value"
+    }
+  },
+  "startup": {
+    "entry": "cold-start/run.mjs",
+    "directory": "cold-start",
+    "view": "startup",
+    "title": "Process spawn to first complete response",
+    "contract": "cold-start/run.mjs",
+    "smoke": ["--starts", "2", "--warmup-starts", "1"],
+    "report": "cold-start/report.mjs",
+    "requires": ["git", "tar", "cargo", "go", "Bun"],
+    "options": {
+      "out": "value",
+      "engines": "value",
+      "starts": "value",
+      "warmup-starts": "value",
+      "no-build": "flag"
+    }
+  }
+}

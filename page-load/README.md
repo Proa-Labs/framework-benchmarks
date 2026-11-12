@@ -44,10 +44,10 @@ npm ci --prefix rendering/external/marko
 npm ci --prefix rendering/external/sveltekit
 npm ci --prefix rendering/external/svelte
 
-pnpm run bench:page-load          # full publication capture (~10 minutes)
-pnpm run bench:page-load:smoke    # wiring check, writes results/smoke.json
+bun run bench:page-load          # full publication capture (~10 minutes)
+bun run bench:page-load:smoke    # wiring check, writes results/smoke.json
 node page-load/report.mjs         # regenerate the README section
-pnpm run charts && pnpm run check:charts
+bun run charts && bun run check:charts
 ```
 
 `results/latest.json` is the public capture. The report generator refuses to

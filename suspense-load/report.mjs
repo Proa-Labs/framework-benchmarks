@@ -1,6 +1,8 @@
-#!/usr/bin/env node
+import { verifyRefresh } from "../scripts/proa-refresh-evidence.mjs";
 
+import { verifyRetainedSource } from "../tooling/retained-source.mjs";
 import { createHash } from "node:crypto";
+import { readMeasuredSources } from "../tooling/measured-sources.mjs";
 import { readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -24,32 +26,9 @@ const expectedCardsPerPanel = 12;
 const expectedGeneratorLagP95LimitMs = 25;
 const expectedGeneratorCpuLimit = 0.8;
 const expectedProaWorkerThreads = 1;
-// Keep this list synchronized with gitMetadata() in run.mjs. The report gate
+// The runner owns this manifest. The report gate
 // must reject a retained capture after any measured implementation changes.
-const benchmarkSourceFiles = [
-  ".nvmrc",
-  "Cargo.lock",
-  "Cargo.toml",
-  "package.json",
-  "pnpm-lock.yaml",
-  "load/driver.mjs",
-  "load/worker.mjs",
-  "rendering/Cargo.toml",
-  "rendering/external/marko/compile_suspense.mjs",
-  "rendering/external/marko/package-lock.json",
-  "rendering/external/marko/package.json",
-  "rendering/external/marko/suspense_app.marko",
-  "rendering/external/marko/suspense_server.mjs",
-  "rendering/external/react/suite_components.mjs",
-  "rendering/external/shared/suite_data.mjs",
-  "rendering/src/bin/proa_suspense_server.rs",
-  "rendering/src/topcoat_product_grid.rs",
-  "suspense-load/react_server.mjs",
-  "suspense-load/run.mjs",
-  "suspense-load/scenario.mjs",
-  "suspense-load/stats.mjs",
-  "suspense-load/validate.mjs",
-];
+const benchmarkSourceFiles = await readMeasuredSources(join(here, "run.mjs"));
 
 // This exact revision changes three strings in run.mjs: two console labels
 // and the confirmation-check description. Restoring those strings reproduces
@@ -79,7 +58,7 @@ async function currentSourceSha256() {
   return hash.digest("hex");
 }
 
-function validateResult(result) {
+export function validateResult(result) {
   const fail = (message) => {
     throw new Error(`invalid suspense publication artifact: ${message}`);
   };
@@ -110,6 +89,9 @@ function validateResult(result) {
     fail("pre-roll, duration, repeat, warmup, generator limits, or Proa thread count does not match the publication protocol");
   }
   const engineIds = result.engines?.map(({ id }) => id);
+  if (result.methodology.responseValidator !== "resolved-content-v2") {
+    fail("streaming results require a rerun with optional loading-placeholder validation");
+  }
   if (JSON.stringify(engineIds) !== JSON.stringify(expectedEngines)) {
     fail(`engine roster is ${JSON.stringify(engineIds)}`);
   }
@@ -280,7 +262,6 @@ function render(result) {
     peakRss: pickCheck((phase) => phase.memory.peakSampledRssBytes),
     errors: check.phases.reduce((sum, phase) => sum + phase.errorCount, 0),
   };
-  const oneThreadTop = rows.find((row) => row.engine === "Proa" && row.rate === check.offeredRps);
   const metricRows = rows
     .map(
       (row) =>
@@ -291,56 +272,57 @@ function render(result) {
   return `${startMarker}
 ## Suspense streaming over HTTP, one core each
 
+${result.refresh ? "> **PROA-only refresh.** " + result.refresh.note + "\n" : ""}
 **${date} · ${host} · ${boundaries} async boundaries × ${result.scenario.cardsPerPanel} product cards · one worker thread or process per engine**
 
-This is the product grid from the capacity section, streamed. Equivalent production-mode Proa, Marko, and React applications run over real loopback HTTP/1.1. Every request streams a shell with ${boundaries} fallback panels, starts ${boundaries} independent data operations across the ${result.scenario.delayTiersMs.join(", ")} ms delay tiers, and completes only after every panel has resolved to its ${result.scenario.cardsPerPanel} product cards on the wire, ${result.scenario.productCards} cards in all. Delayed values stay typed and in memory; there is no JSON serialization, deserialization, or external I/O in the measured request path. Rendering, boundary scheduling, replacement framing, and one flush per boundary are all inside the measurement.
+This is the product grid from the capacity section, streamed. Equivalent production-mode Proa, Marko, and React applications run over real loopback HTTP/1.1. Every request streams a shell, starts ${boundaries} independent data operations across the ${result.scenario.delayTiersMs.join(", ")} ms delay tiers, may stream loading placeholders while those operations are pending, and completes only after every panel has resolved to its ${result.scenario.cardsPerPanel} product cards on the wire, ${result.scenario.productCards} cards in all. Delayed values stay typed and in memory; there is no JSON serialization, deserialization, or external I/O in the measured request path. Rendering, boundary scheduling, replacement framing, and one flush per boundary are all inside the measurement.
 
-Every engine is limited to one unit of concurrency: Proa runs ${result.methodology.proaWorkerThreads} Tokio worker thread, and Marko and React each run one Node process. Proa serves this page through \`RouteResponse::ssr_stream_send\`, the compiler-proved \`Send\` streaming path introduced by [Proa PR #82](https://github.com/Proa-Labs/proa/pull/82): Axum polls the response stream directly, with no per-response bridge thread. The cores column shows what each process actually used, and CPU/request charges every thread of every engine the same way.
+Every engine is limited to one unit of concurrency: Proa runs ${result.methodology.proaWorkerThreads} Tokio worker thread, and Marko and React each run one Bun process. Proa serves this page through \`RouteResponse::ssr_stream_send\`, the compiler-proved \`Send\` streaming path introduced by [Proa PR #82](https://github.com/Proa-Labs/proa/pull/82): Axum polls the response stream directly, with no per-response bridge thread. The cores column shows what each process actually used, and CPU/request charges every thread of every engine the same way.
 
-Each row is the median of ${repeats} fresh-process phases under fixed-rate open-loop arrivals from ${result.methodology.generatorWorkers} separate load-generator processes, so saturation remains visible as in-flight work and scheduled-arrival latency instead of being suppressed by a client waiting for each prior response. A ${preRoll}-second pre-roll fills the async pipeline, then successful full responses completed inside a fixed ${duration}-second observation window determine steady-state throughput. Complete-response percentiles and shell P50 cover requests arriving during that observation window and include load-generator scheduling lag and server queueing. CPU/request is the server process's exact CPU-time delta divided by successful responses across the full phase. Errors are summed across the ${repeats} repeats. Publication aborts if scheduler-lag P95 exceeds ${result.methodology.generatorLagP95LimitMs} ms or any generator worker exceeds ${Math.round(result.methodology.generatorCpuLimit * 100)}% busy in any phase, and each phase waits for the previous phase's client sockets to leave TIME_WAIT before it starts.
+Each row is the median of ${repeats} fresh-process phases under fixed-rate open-loop arrivals from ${result.methodology.generatorWorkers} separate load-generator processes, so saturation remains visible as in-flight work and scheduled-arrival latency instead of being suppressed by a client waiting for each prior response. A ${preRoll}-second pre-roll fills the async pipeline, then successful full responses completed inside a fixed ${duration}-second observation window determine completion throughput. Complete-response percentiles and shell P50 cover requests arriving during that observation window and include load-generator scheduling lag and server queueing. CPU/request is the server process's exact CPU-time delta divided by successful responses across the full phase. Errors are summed across the ${repeats} repeats. Publication aborts if scheduler-lag P95 exceeds ${result.methodology.generatorLagP95LimitMs} ms or any generator worker exceeds ${Math.round(result.methodology.generatorCpuLimit * 100)}% busy in any phase, and each phase waits for the previous phase's client sockets to leave TIME_WAIT before it starts.
 
-| Engine | Request rate (rps) | Steady completion rps | Shell P50 | Complete P50 | Complete P95 | Complete P99 | CPU/request | Cores | Peak RSS | Max in-flight | Generator lag P95 | Errors |
+| Engine | Request rate (rps) | Window completions/s | Shell P50 | Complete P50 | Complete P95 | Complete P99 | CPU/request | Cores | Peak RSS | Max in-flight | Generator lag P95 | Errors |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 ${metricRows}
 
-**Every row above is one core.** Proa runs one Tokio worker thread and Marko and React each run one Node process, so the table compares what a single core delivers. Proa's knee near ${integer(Math.round(oneThreadTop.completionRps / 100) * 100)} responses per second is that one thread filling up at ${fixed(oneThreadTop.cpuMsPerRequest, 3)} ms of CPU per response; it is not a Proa limit, because a production server runs one worker thread per core.
+**Every comparative row uses one logical CPU.** Proa runs one Tokio worker thread, and Marko and React each run one Bun process. Server CPU affinity is ${result.host.serverCpuAffinity || "not recorded"}; the load generator runs separately. Above saturation, completed responses can plateau or decline while queueing and failures increase. This capture does not measure multicore capacity.
 
-**Reference point, outside the comparison.** To show the knee moves with the thread budget, Proa alone was rerun at the top rate with ${check.workerThreads} worker threads. Marko and React were not rerun with more processes, so this row is not comparable to theirs. With ${check.workerThreads} threads Proa completed ${integer(Math.round(checkRow.completionRps))} responses per second at a request-rate target of ${integer(checkRow.rate)} rps and a P99 of ${ms(checkRow.completeP99)}, using ${fixed(checkRow.cpuCores, 2)} cores.
+**Reference point, outside the comparison.** Proa alone was rerun at the top rate with ${check.workerThreads} worker threads. ${result.host.serverCpuAffinity ? `CPU affinity remains ${result.host.serverCpuAffinity}; this changes thread count within the same CPU budget and does not measure multi-core scaling.` : "This separate run expands the thread budget."} Marko and React were not rerun with more processes, so this row is not comparable to theirs. With ${check.workerThreads} threads Proa completed ${integer(Math.round(checkRow.completionRps))} responses per second at a request-rate target of ${integer(checkRow.rate)} rps and a P99 of ${ms(checkRow.completeP99)}, using ${fixed(checkRow.cpuCores, 2)} cores.
 
-| Proa worker threads | Request rate (rps) | Steady completion rps | Complete P50 | Complete P99 | CPU/request | Cores | Peak RSS | Errors |
+| Proa worker threads | Request rate (rps) | Window completions/s | Complete P50 | Complete P99 | CPU/request | Cores | Peak RSS | Errors |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | ${checkRow.threads} | ${integer(checkRow.rate)} | ${fixed(checkRow.completionRps, 0)} | ${ms(checkRow.completeP50)} | ${ms(checkRow.completeP99)} | ${fixed(checkRow.cpuMsPerRequest, 3)} ms | ${fixed(checkRow.cpuCores, 2)} | ${mib(checkRow.peakRss)} | ${integer(checkRow.errors)} |
 
-The parity gate checks the browser-consumable stream payload before load begins and validates every measured response: the shell, every fallback and resolved panel, and every product card. The cards are the same markup the scoreboard's product-grid parity gate accepted from each engine. Wire bytes legitimately differ because each framework carries its own boundary-replacement protocol.
+The unloaded preflight checks all loading placeholders and resolved panels. Every measured response must contain the shell, all resolved panels, and every product card. Loading placeholders are optional during load: a boundary can resolve before its placeholder is flushed. Any placeholders present must have valid, unique boundary keys. The cards are the same markup the scoreboard's product-grid parity gate accepted from each engine. Wire bytes legitimately differ because each framework carries its own boundary-replacement protocol.
 
 | Engine version | Fallback panels | Resolved panels | Product cards | Stream bytes |
 | --- | ---: | ---: | ---: | ---: |
 ${parityRows}
 
-- Capture: [suspense-load/results/latest.json](suspense-load/results/latest.json); reproduce with \`pnpm run bench:suspense-load\`.
-- The retained source hash predates three wording-only changes in the runner. The report verifier records both exact source hashes; measurements and the original capture hash are unchanged.
+- Capture: [suspense-load/results/latest.json](suspense-load/results/latest.json); reproduce with \`bun run bench:suspense-load\`.
+- The report verifier checks the measured-source SHA-256 against this checkout or the retained source snapshot before generating these tables.
 - Proa source: Cargo.lock revision ${proaRevision}${proaBranch}; Rust release build with native Proa Suspense and the direct \`ssr_stream_send\` Axum route. The same binary also serves the bounded local-executor path (\`ssr_stream\`) at \`/local\` for engineering comparison; it is not part of the published rows.
 - Marko source: optimized ahead-of-time Marko template using native &lt;await&gt; plus &lt;@placeholder&gt;; its compiler is not resident in the measured server.
-- React source: production React server build using renderToPipeableStream, Suspense, and use.
-- Node engines run with \`NODE_ENV=production\`: the driver sets it, each server's health endpoint reports it back, and React reports that it loaded the production \`react-dom/server\` build. The runner refuses to measure otherwise.
+- React source: production Bun React server build using renderToReadableStream, Suspense, and use. The shell pipes immediately; allReady is not awaited.
+- JavaScript engines run with \`NODE_ENV=production\`: the driver sets it, each server's health endpoint reports it back, and React reports that it loaded the production \`react-dom/server\` build. The runner refuses to measure otherwise.
 - Stream bytes differ by protocol, not content: Proa base64-encodes each resolved boundary inside an inert template, so its stream is roughly a third larger on the wire than React's for the same 96 cards. Compression is off in every engine here; enabling it would remove most of that gap, at a CPU cost this benchmark deliberately leaves out.
 - This is a single-host capacity curve, not a universal ranking. Loopback transfer, each framework’s HTTP adapter, boundary protocol, allocation, scheduling, and render work are all intentionally inside the application boundary.
 ${endMarker}`;
 }
 
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
 const [resultText, readme, sourceSha256] = await Promise.all([
   readFile(resultPath, "utf8"),
   readFile(readmePath, "utf8"),
   currentSourceSha256(),
 ]);
 const result = JSON.parse(resultText);
+  verifyRefresh(result, join(here, "results"));
 if (
   result.source?.sourceSha256 !== sourceSha256 &&
   displayOnlySourceRevisions.get(result.source?.sourceSha256) !== sourceSha256
 ) {
-  throw new Error(
-    `suspense publication source mismatch: captured ${result.source?.sourceSha256 ?? "missing"}, current ${sourceSha256}`,
-  );
+  verifyRetainedSource(join(here, "results"), result);
 }
 const block = render(result);
 const start = readme.indexOf(startMarker);
@@ -358,9 +340,11 @@ if (start === -1 && end === -1) {
 }
 
 if (check) {
-  if (next !== readme) throw new Error("http-capacity.md suspense-load block is stale; run node suspense-load/report.mjs");
+  if (next !== readme) throw new Error("http-capacity.md suspense-load block is stale; run bun suspense-load/report.mjs");
   console.log("Suspense-load http-capacity.md block is current.");
 } else {
   await writeFile(readmePath, next);
   console.log("Updated the http-capacity.md suspense-load section.");
+}
+
 }

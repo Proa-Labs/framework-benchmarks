@@ -77,6 +77,55 @@ written to an ignored `latest.json.partial` file and is only renamed to
 
 ## Run
 
+### Styled browser preview
+
+The optional Fieldnote marketplace preview wraps the real streamed fixture in a
+responsive layout with local CSS artwork. It adds no external assets or fonts.
+The benchmark runner still requests the original servers directly; preview
+styling is outside the measured workload.
+
+```sh
+node suspense-load/preview.mjs                 # React fixture; http://127.0.0.1:5720
+node suspense-load/preview.mjs --engine proa   # Requires target/release/proa_suspense_server
+node suspense-load/preview.mjs --engine marko  # Requires the compiled Marko fixture
+```
+
+Use `--port 5721` to change the preview port, or `--upstream http://127.0.0.1:5710/`
+to wrap a server that is already running. The preview preserves the fixture's
+eight delayed panels and 96 product cards.
+
+### Measuring the styled preview
+
+The engineering comparison runs fresh original and styled endpoints on the
+same machine, alternating their order across three repeats at each published
+request-rate target. It uses the shared load driver and response validator.
+Styled resource measurements include both the original engine and the preview's
+Node proxy; it therefore has an additional process and is not a one-core
+renderer comparison. A separate cold-cache Chromium capture includes loading
+the stylesheet and laying out all 96 cards.
+
+Build the production fixtures using the setup below, then run:
+
+```sh
+node suspense-load/compare-preview.mjs
+node suspense-load/compare-preview-report.mjs
+```
+
+The JSON and Markdown comparison go to `suspense-load/results/preview-comparison.*`.
+The runner leaves the published `latest.json` intact and rejects captures whose
+load generator exceeds the existing validity limits. `--rates`, `--repeats`,
+`--duration`, `--workers`, `--browser-runs`, and `--out` provide controls for
+shorter engineering runs. The report generator accepts `--input` and `--out`.
+
+Production fixture build commands:
+
+```sh
+cargo build --release --locked -p proa_bench --features http-load,topcoat --bin proa_suspense_server
+NODE_ENV=production node rendering/external/marko/compile_suspense.mjs
+```
+
+### Benchmark capture
+
 Install the root dependencies and the Marko fixture dependencies first:
 
 ```sh
@@ -87,8 +136,8 @@ npm ci --prefix rendering/external/marko
 Then run the full capture or a short wiring check:
 
 ```sh
-pnpm run bench:suspense-load
-pnpm run bench:suspense-load:smoke
+bun run bench:suspense-load
+bun run bench:suspense-load:smoke
 ```
 
 Useful controls:
@@ -116,8 +165,8 @@ After a full capture, update the root report and charts:
 
 ```sh
 node suspense-load/report.mjs
-pnpm run charts
-pnpm run check:charts
+bun run charts
+bun run check:charts
 ```
 
 The committed `results/latest.json` is the public capture. Smoke and exploratory

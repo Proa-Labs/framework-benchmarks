@@ -11,19 +11,21 @@ const HIST = 'Superseded capture · Aug 30–31, 2026';
 // ---------------------------------------------------------------------------
 // 10 · Linked showcase corpus
 // ---------------------------------------------------------------------------
-export function showcase(tables) {
-  const t = pick(tables, ['Showcase page', 'Output bytes', 'Recorded renders']);
+export function showcase(tables, meta) {
+  const refreshed = tables.some((t) => t.headers[0] === "Refreshed showcase page");
+  const pageKey = refreshed ? "Refreshed showcase page" : "Showcase page";
+  const t = pick(tables, [pageKey, 'Output bytes', 'Recorded renders']);
   const P50 = 'Process-median P50 µs [95% CI]';
-  const rows = t.objs.filter((o) => clean(o['Showcase page']) !== 'Airbnb parity').map((o) => {
+  const rows = t.objs.filter((o) => clean(o[pageKey]) !== 'Airbnb parity').map((o) => {
     const r = withRange(o[P50]);
     return {
-      page: clean(o['Showcase page']), bytes: num(o['Output bytes']),
+      page: clean(o[pageKey]), bytes: num(o['Output bytes']),
       renders: num(o['Recorded renders']), p50: r.v, lo: r.lo, hi: r.hi,
       p95: num(o['Pooled P95 µs']), stable: /^yes/i.test(clean(o['Raw bytes stable?'])),
     };
   });
   const hdr = header(PAD, 44, 'Proa showcase render latency',
-    `${HIST} · five processes per page · log scale`, COL);
+    `${refreshed ? "Proa refreshed " + meta.engineeringRefreshDate : HIST} · five processes per page · log scale`, COL);
   let b = hdr.svg;
   b += legend(PAD, 44 + hdr.h + 26, [
     { shape: 'dot', color: C.proa, label: 'P50' },

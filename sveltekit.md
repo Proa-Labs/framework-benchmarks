@@ -1,8 +1,10 @@
 # Proa versus SvelteKit
 
-Generated from fresh captures on **Apple M4 Max**, 2026-10-21 UTC. Proa revision **7ffb8a19**, **SvelteKit 3.1.0 / Svelte 5.57.2 / adapter-node 6.0.0**, Node **v24.20.0**. Full production builds, no development server, proxy, response cache, or compression.
+> **PROA-only refresh.** Only Proa was refreshed on 2026-11-11. SvelteKit retains its 2026-10-21 measurements. Proa HTTP phases are shared with the new Suspense capture; its 60 browser navigations and two JavaScript-disabled controls were measured afresh.
 
-The static 96-card HTML page sustained **17,838 responses/s for Proa** and **1,458 for SvelteKit**. In the native streaming browser tests, all 96 cards reached the DOM at median **97.9 ms / 93.7 ms on desktop** and **362.2 ms / 278.0 ms on mobile4x** (Proa / SvelteKit). Proa’s first mobile panel arrived at **96.4 ms**, versus **278.0 ms** for SvelteKit. The complete tables below retain first-panel timing, transfer size, CPU, overload failures, and every rate in the sweep.
+Generated from captures on **Apple M4 Max**, 2026-11-11 UTC. Proa revision **bbbc9684**, **SvelteKit 3.1.0 / Svelte 5.57.2 / adapter-node 6.0.0**, Node **v24.20.0**. Full production builds, no development server, proxy, response cache, or compression.
+
+The static 96-card HTML page sustained **20,863 responses/s for Proa** and **1,458 for SvelteKit**. In the native streaming browser tests, all 96 cards reached the DOM at median **97.3 ms / 93.7 ms on desktop** and **358.9 ms / 278.0 ms on mobile4x** (Proa / SvelteKit). Proa’s first mobile panel arrived at **93.8 ms**, versus **278.0 ms** for SvelteKit. The complete tables below retain first-panel timing, transfer size, CPU, overload failures, and every rate in the sweep.
 
 ## What the async comparison measures
 
@@ -29,10 +31,10 @@ Times start at navigation. “All cards” is the MutationObserver timestamp whe
 
 | Profile | Framework | Shell P50 | First panel P50 | All cards P50 | All cards P95 | 2 rAF P50 | Total transfer | External JS | Script duration P50 | Task duration P50 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| desktop | Proa | 9.65 ms | 20.0 ms | 97.9 ms | 98.8 ms | 120.6 ms | 378.7 KiB | 0.0 KiB | 4.66 ms | 24.8 ms |
 | desktop | SvelteKit | 10.3 ms | 41.5 ms | 93.7 ms | 94.4 ms | 113.5 ms | 119.7 KiB | 101.4 KiB | 3.08 ms | 30.4 ms |
-| mobile4x | Proa | 57.9 ms | 96.4 ms | 362.2 ms | 364.3 ms | 382.3 ms | 378.7 KiB | 0.0 KiB | 18.1 ms | 95.9 ms |
 | mobile4x | SvelteKit | 61.7 ms | 278.0 ms | 278.0 ms | 282.8 ms | 293.2 ms | 119.7 KiB | 101.4 KiB | 11.4 ms | 112.1 ms |
+| desktop | Proa | 9.20 ms | 19.0 ms | 97.3 ms | 97.9 ms | 117.2 ms | 378.7 KiB | 0.0 KiB | 5.23 ms | 27.6 ms |
+| mobile4x | Proa | 54.0 ms | 93.8 ms | 358.9 ms | 360.3 ms | 378.0 ms | 378.7 KiB | 0.0 KiB | 21.2 ms | 112.3 ms |
 
 JavaScript-disabled controls passed in both profiles: both frameworks leave the pending shell (zero rendered product cards). Proa's resolved HTML is transported inertly and needs its replacement script; HTML streaming here does not imply JavaScript-free progressive reveal.
 
@@ -42,21 +44,21 @@ Three fresh processes per framework/rate, order rotated, one Proa Tokio worker o
 
 | Framework | Offered rps | Response ends/s | First byte P50 | Response end P50 | Response end P95 | Response end P99 | Server CPU/response | Cores | Peak RSS | Document body | Errors |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Proa | 250 | 250 | 0.23 ms | 90.8 ms | 91.0 ms | 91.9 ms | 0.320 ms | 0.08 | 7.7 MiB | 378.4 KiB | 0 |
+| Proa | 250 | 250 | 0.26 ms | 90.9 ms | 91.9 ms | 92.0 ms | 0.340 ms | 0.08 | 8.0 MiB | 378.4 KiB | 0 |
 | SvelteKit | 250 | 250 | 0.42 ms | 90.8 ms | 91.0 ms | 91.2 ms | 0.803 ms | 0.20 | 200.0 MiB | 17.8 KiB | 0 |
-| Proa | 500 | 500 | 0.19 ms | 91.4 ms | 91.6 ms | 91.9 ms | 0.267 ms | 0.13 | 8.7 MiB | 378.4 KiB | 0 |
+| Proa | 500 | 500 | 0.18 ms | 91.4 ms | 91.7 ms | 91.9 ms | 0.268 ms | 0.13 | 9.0 MiB | 378.4 KiB | 0 |
 | SvelteKit | 500 | 500 | 0.29 ms | 90.2 ms | 90.5 ms | 90.7 ms | 0.567 ms | 0.28 | 233.1 MiB | 17.8 KiB | 0 |
-| Proa | 1,000 | 1,000 | 0.23 ms | 91.3 ms | 91.4 ms | 92.0 ms | 0.242 ms | 0.24 | 11.5 MiB | 378.4 KiB | 0 |
+| Proa | 1,000 | 1,000 | 0.18 ms | 91.2 ms | 91.3 ms | 92.2 ms | 0.229 ms | 0.23 | 12.0 MiB | 378.4 KiB | 0 |
 | SvelteKit | 1,000 | 1,000 | 0.34 ms | 90.4 ms | 90.7 ms | 91.1 ms | 0.568 ms | 0.56 | 261.0 MiB | 17.8 KiB | 0 |
-| Proa | 2,000 | 2,000 | 0.17 ms | 91.2 ms | 91.3 ms | 91.7 ms | 0.223 ms | 0.44 | 17.4 MiB | 378.4 KiB | 0 |
+| Proa | 2,000 | 2,000 | 0.18 ms | 91.0 ms | 91.3 ms | 91.6 ms | 0.219 ms | 0.43 | 17.4 MiB | 378.4 KiB | 0 |
 | SvelteKit | 2,000 | 2,000 | 0.48 ms | 90.3 ms | 91.9 ms | 92.9 ms | 0.463 ms | 0.91 | 310.7 MiB | 17.8 KiB | 0 |
-| Proa | 3,000 | 3,000 | 0.16 ms | 90.9 ms | 91.8 ms | 94.6 ms | 0.207 ms | 0.61 | 24.4 MiB | 378.4 KiB | 0 |
+| Proa | 3,000 | 3,000 | 0.18 ms | 90.9 ms | 91.3 ms | 92.6 ms | 0.203 ms | 0.60 | 23.1 MiB | 378.4 KiB | 0 |
 | SvelteKit | 3,000 | 3,003 | 0.98 ms | 91.6 ms | 95.5 ms | 98.1 ms | 0.413 ms | 1.22 | 359.3 MiB | 17.8 KiB | 0 |
-| Proa | 4,000 | 4,000 | 0.28 ms | 91.0 ms | 92.2 ms | 94.5 ms | 0.205 ms | 0.81 | 30.3 MiB | 378.4 KiB | 0 |
+| Proa | 4,000 | 4,000 | 0.32 ms | 91.0 ms | 92.2 ms | 93.5 ms | 0.207 ms | 0.82 | 29.2 MiB | 378.4 KiB | 0 |
 | SvelteKit | 4,000 | 2,935 | 601.0 ms | 720.2 ms | 5942.0 ms | 5976.9 ms | 0.416 ms | 1.02 | 527.3 MiB | 17.8 KiB | 1,186 |
-| Proa | 5,000 | 4,994 | 5.61 ms | 102.5 ms | 135.6 ms | 152.0 ms | 0.194 ms | 0.95 | 46.1 MiB | 378.4 KiB | 0 |
+| Proa | 5,000 | 4,978 | 6.02 ms | 103.4 ms | 145.4 ms | 165.4 ms | 0.193 ms | 0.95 | 50.2 MiB | 378.4 KiB | 0 |
 | SvelteKit | 5,000 | 2,923 | 1738.0 ms | 1868.6 ms | 3474.8 ms | 4335.1 ms | 0.405 ms | 1.10 | 555.3 MiB | 17.8 KiB | 1,072 |
-| Proa | 6,000 | 4,600 | 621.9 ms | 1081.0 ms | 1817.1 ms | 1965.6 ms | 0.186 ms | 0.88 | 222.6 MiB | 378.4 KiB | 0 |
+| Proa | 6,000 | 4,478 | 758.7 ms | 1233.4 ms | 2014.8 ms | 2166.4 ms | 0.185 ms | 0.86 | 218.7 MiB | 378.4 KiB | 0 |
 | SvelteKit | 6,000 | 2,986 | 2443.2 ms | 2559.7 ms | 5937.2 ms | 8527.3 ms | 0.394 ms | 1.06 | 537.2 MiB | 17.8 KiB | 0 |
 
 Recorded failure messages across the full phases: SvelteKit: `connect ETIMEDOUT 127.0.0.1:<port>`. Overload includes the production server’s accept queue and HTTP adapter; connection retries/timeouts and server queueing are part of these scheduled-arrival results. This sweep is not a renderer-only microbenchmark.
@@ -67,20 +69,20 @@ These are complete server-rendered pages on both sides. SvelteKit uses the produ
 
 | Workload | Engine | Capacity responses/s | CPU/response | Peak RSS | Equal-load rps | P50 | P99 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Component page | Proa | 87,426 | 0.011 ms | 8.1 MiB | 2,000 | 0.11 ms | 0.17 ms |
+| Component page | Proa | 95,454 | 0.010 ms | 8.5 MiB | 2,000 | 0.09 ms | 0.14 ms |
 | Component page | SvelteKit | 9,693 | 0.122 ms | 392.1 MiB | 2,000 | 0.27 ms | 0.70 ms |
-| Product grid | Proa | 17,838 | 0.056 ms | 9.3 MiB | 500 | 0.23 ms | 0.58 ms |
+| Product grid | Proa | 20,863 | 0.048 ms | 9.6 MiB | 500 | 0.21 ms | 0.35 ms |
 | Product grid | SvelteKit | 1,458 | 0.851 ms | 547.0 MiB | 500 | 0.96 ms | 1.84 ms |
-| 1,000-row table | Proa | 2,957 | 0.338 ms | 71.2 MiB | 50 | 0.69 ms | 1.84 ms |
+| 1,000-row table | Proa | 3,351 | 0.298 ms | 70.5 MiB | 50 | 1.07 ms | 2.05 ms |
 | 1,000-row table | SvelteKit | 121 | 8.440 ms | 466.4 MiB | 50 | 7.53 ms | 8.51 ms |
 
 ## Cold start
 
-Spawn to first complete, validated 96-card product response. Fifteen fresh production processes per engine after two untimed disk-cache warmups; order rotates. This includes module loading, input construction, and the first render, but excludes dependency installation and build time. Warm filesystem cache is intentional; this is not a cold disk or deployed serverless platform measurement. The host one-minute load average at capture start was 19.62 on 16 logical CPUs; other work was active on this shared development machine.
+Spawn to first complete, validated 96-card product response. Fifteen fresh production processes per engine after two untimed disk-cache warmups; order rotates. This includes module loading, input construction, and the first render, but excludes dependency installation and build time. Warm filesystem cache is intentional; this is not a cold disk or deployed serverless platform measurement. The host one-minute load average at capture start was 6.60 on 16 logical CPUs; other work was active on this shared development machine.
 
 | Engine | First response P50 | P95 | RSS after response |
 | --- | ---: | ---: | ---: |
-| Proa | 3.99 ms | 5.79 ms | 4.5 MiB |
+| Proa | 5.11 ms | 11.4 ms | 4.6 MiB |
 | SvelteKit | 55.0 ms | 57.1 ms | 72.0 MiB |
 
 ## Renderer-only and product scaling
@@ -89,17 +91,17 @@ The existing Svelte row uses the **same pinned Svelte compiler** as the SvelteKi
 
 | Workload | Proa P50 | Svelte P50 | Svelte ÷ Proa |
 | --- | ---: | ---: | ---: |
-| cards | 2.000 µs | 8.209 µs | 4.10× |
-| products | 26.292 µs | 70.438 µs | 2.68× |
-| table | 254.667 µs | 945.333 µs | 3.71× |
+| cards | 0.875 µs | 8.209 µs | 9.38× |
+| products | 10.500 µs | 70.438 µs | 6.71× |
+| table | 189.375 µs | 945.333 µs | 4.99× |
 
 The scaling capture also reruns all 17 renderers at each size, five independent processes per cell. This is a separate renderer-only run, not cached output or a second HTTP measurement.
 
 | Cards | Proa P50 | Svelte P50 |
 | --- | ---: | ---: |
-| 12 | 3.208 µs | 9.292 µs |
-| 96 | 26.417 µs | 71.042 µs |
-| 768 | 214.854 µs | 563.542 µs |
+| 12 | 1.292 µs | 9.292 µs |
+| 96 | 11.500 µs | 71.042 µs |
+| 768 | 89.375 µs | 563.542 µs |
 
 ## Reproduce and inspect
 

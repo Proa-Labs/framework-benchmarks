@@ -1,0 +1,85 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "site/**",
+      "framework-ssr/**",
+      "tooling/**",
+      "rendering/canonical/run.mjs",
+      "rendering/canonical/refresh-proa.mjs",
+      "rendering/canonical/adapters.json",
+      "rendering/canonical/source_fingerprint.mjs",
+      "rendering/canonical/workloads.json",
+      "biome.json",
+      "!site/public",
+      "!**/package-lock.json",
+      "!**/bun.lock",
+      "!framework-ssr/results",
+      "!site/src/routeTree.gen.ts"
+    ]
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended"
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["framework-ssr/adapters/next/app/catalog/page.jsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useSemanticElements": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["site/src/*.css"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDescendingSpecificity": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["framework-ssr/adapters/astro/src/pages/catalog.astro"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["site/test/browser.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noNonNullAssertion": "off"
+          }
+        }
+      }
+    }
+  ],
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  }
+}

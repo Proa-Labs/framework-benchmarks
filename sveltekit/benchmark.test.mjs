@@ -48,5 +48,5 @@ test('custom worker counts cannot overwrite the publication capture', async () =
   ], {
     // A regressed guard must fail at the build command, not start a capture.
     env: { ...process.env, PATH: '' }, timeout: 5000,
-  }), /Error: Custom runs require --out/);
+  }), /Custom runs require --out/);
 });

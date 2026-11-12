@@ -55,19 +55,20 @@ export function scoreboard(tables, meta) {
     })),
   }));
 
+  const ratioMax = Math.max(62, ...roster.flatMap((r) => r.cells.map((c) => c.x * 1.1)));
   const s = scaffold({
     title: 'Server-render latency',
-    decks: `P50 relative to Proa · log scale · lower is better · ${meta.date}`,
+    decks: `P50 relative to Proa · log scale · lower is better · ${meta.date}${meta.refreshSuffix ?? ""}${meta.proaNativeOutput ? " · Proa: fresh RenderBuffer" : ""}`,
     rows: roster.length,
   });
   let b = s.svg;
 
   WORKLOADS.forEach((w, i) => {
     const [r0, r1] = s.plot(i);
-    const sc = log10(0.68, 62, r0, r1);
+    const sc = log10(0.68, ratioMax, r0, r1);
     b += eyebrow(r0, s.eyeY, w);
     b += txt(r0, s.shapeY, SHAPE[w], 'note');
-    for (const v of [1, 2, 5, 10, 20, 50]) {
+    for (const v of [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000].filter((v) => v <= ratioMax)) {
       const X = sc(v), ref = v === 1;
       b += rule(X, s.tickY + 4, X, s.bottom, ref ? C.proaWash : C.grid, ref ? 1.5 : 1);
       b += txt(X, s.tickY, v + '×', 'tick mid');
@@ -98,7 +99,7 @@ export function scoreboard(tables, meta) {
   return doc({
     w: WIDTH, h: s.bottom + 24,
     title: `Server-render latency relative to Proa — ${meta.date} canonical capture`,
-    desc: `Renderer-only latency, excluding HTTP and hydration. Each dot is the median of five process P50s on a logarithmic axis. All cells passed DOM parity. ${roster.length} renderers across three workloads as a multiple of Proa's P50. ` +
+    desc: `Renderer-only latency, excluding HTTP and hydration. ${meta.proaNativeOutput ? "Proa returns fresh owned RenderBuffer pages without String conversion; peers retain their owned String outputs. " : ""}Each dot is the median of five process P50s on a logarithmic axis. All cells passed DOM parity. ${roster.length} renderers across three workloads as a multiple of Proa's P50. ` +
       roster.map((r) => `${r.name} — ` + WORKLOADS.map((w, i) => `${w}: ${dur(r.cells[i].us)}, ${r.cells[i].x}×`).join('; ')).join('. ') + '.',
     body: b,
   });
@@ -119,7 +120,7 @@ export function tails(tables, meta) {
 
   const s = scaffold({
     title: 'Render latency: P50–P95',
-    decks: `Separate log scales · lower is better · ${meta.date}`,
+    decks: `Separate log scales · lower is better · ${meta.date}${meta.refreshSuffix ?? ""}${meta.proaNativeOutput ? " · Proa: fresh RenderBuffer" : ""}`,
     legendItems: [
       { shape: 'dot', color: C.peer, label: 'P50' },
       { shape: 'hollow', color: C.peer, label: 'P95' },

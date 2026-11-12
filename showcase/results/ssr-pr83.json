@@ -1,0 +1,2210 @@
+{
+  "schemaVersion": 1,
+  "method": {
+    "unit": "one release benchmark process per page and repeat",
+    "order": "seeded randomized complete blocks; each repeat contains every selected page",
+    "inference": "confidence intervals use process-level medians; pooled inner renders are retained for descriptive quantiles only",
+    "outcomeParity": "each page must retain an identical byte count and canonical document SHA-256; raw byte hashes separately reveal JSON object-key-order nondeterminism"
+  },
+  "configuration": {
+    "pages": [
+      "airbnb-parity",
+      "airbnb-home",
+      "airbnb-search",
+      "airbnb-listing",
+      "nike-catalog",
+      "nike-product",
+      "ebay-cards",
+      "ebay-chrome",
+      "ebay-real-chrome",
+      "espn",
+      "sentry-otel",
+      "settings-console"
+    ],
+    "processRepeatsPerPage": 5,
+    "warmupOverride": null,
+    "iterationsOverride": null,
+    "seed": 8402026,
+    "bootstrapResamples": 10000
+  },
+  "provenance": {
+    "generatedAt": "2026-11-11T18:17:40.157Z",
+    "repository": {
+      "commit": "5ddbbafac452906d92f72db57a44235c4c3a391f",
+      "branch": "codex/proa-pr83-benchmark-refresh",
+      "status": "M Cargo.lock\n M README.md\n M cold-start/results/latest.json\n M engineering.md\n M fixtures/airbnb-parity-dump/Cargo.lock\n M fixtures/proa-buffer-comparison/Cargo.lock\n M page-load/results/latest.json\n M rendering/README.md\n M rendering/protocol.md\n M rendering/results/latest.json\n M rendering/results/latest.md\n M rendering/results/product-scaling.json\n M scoreboard.md\n M scripts/bench-proa-engineering.sh\n M scripts/report-proa-engineering.mjs\n M suspense-load/results/latest.json\n M sveltekit/results/latest.json\n?? cold-start/results/raw/proa-2026-11-11T18-01-57-303Z/\n?? page-load/results/raw/proa-2026-11-11T17-59-47-630Z/\n?? rendering/results/archive/canonical-ssr-v1-proa-2026-11-11T05-27-20-700Z.json\n?? rendering/results/archive/canonical-ssr-v1-proa-2026-11-11T17-59-43-534Z.json\n?? rendering/results/archive/product-scaling-v1-proa-2026-11-11T05-27-37-008Z.json\n?? rendering/results/archive/product-scaling-v1-proa-2026-11-11T17-59-45-827Z.json\n?? rendering/results/raw/canonical-ssr-v1-proa-2026-11-11T05-27-20-700Z/\n?? rendering/results/raw/canonical-ssr-v1-proa-2026-11-11T17-59-43-534Z/\n?? rendering/results/raw/product-scaling-v1-proa-2026-11-11T05-27-37-008Z/\n?? rendering/results/raw/product-scaling-v1-proa-2026-11-11T17-59-45-827Z/"
+    },
+    "proaRevision": "bbbc9684335109949257eea8b4c98bb7bc8572ae",
+    "fixtureBinary": {
+      "path": "/Users/andrewhariri/Desktop/proa-benchmarks-pr83/fixtures/airbnb-parity-dump/target/showcase-dump",
+      "bytes": 5863776,
+      "sha256": "f8c9c8999d8088981fba5a015666cdb6102499aa0005725e48e5e5dae371486c"
+    },
+    "inputs": [
+      {
+        "path": "fixtures/legacy-ebay-chrome/mod.rs",
+        "bytes": 36390,
+        "sha256": "47f8f3e526bda00a25ec2a2a4030d1c306827a3701f7e8c917ac573371f6d2eb"
+      },
+      {
+        "path": "fixtures/legacy-ebay-chrome/data/srp_chrome_style.css",
+        "bytes": 5466,
+        "sha256": "f34000e8991912b790b32627028cd1ca5346d61103a8239cb0c140c45a48c169"
+      },
+      {
+        "path": "fixtures/legacy-ebay-chrome/data/shell_pre.html",
+        "bytes": 725591,
+        "sha256": "bfca3d5cbd7f8bcb8ccade097267c72303d655ca1d65e238a57b523b58a8d91a"
+      },
+      {
+        "path": "fixtures/airbnb-parity-dump/Cargo.toml",
+        "bytes": 627,
+        "sha256": "13f26db39d33e9078188f40e1983060a9782d65af6a223862540d4f1274f630f"
+      },
+      {
+        "path": "fixtures/airbnb-parity-dump/Cargo.lock",
+        "bytes": 29862,
+        "sha256": "8d00d0bf0bb773f88bcc83e7aec65c98d49a8cfd63c6eb4bfae73a7864c9b9f2"
+      },
+      {
+        "path": "fixtures/airbnb-parity-dump/src/main.rs",
+        "bytes": 15827,
+        "sha256": "21f2e2f60ef2d0accda769e3912da11e68614752b5c00537e8f3ff5aa062e3fb"
+      },
+      {
+        "path": "showcase/capture_ssr.mjs",
+        "bytes": 10283,
+        "sha256": "8bd6f2f1c7461b670c39e13b8a2cb6182a9dcee5e21cd6dd71c034d12c81cf7a"
+      },
+      {
+        "path": "showcase/client_js_stats.mjs",
+        "bytes": 4572,
+        "sha256": "c385649809fcf52eb0b0a4aefd3d5cbed13fde65111e67a249f15b65186e0a91"
+      }
+    ],
+    "host": {
+      "hostname": "mac.lan",
+      "platform": "darwin",
+      "osRelease": "25.5.0",
+      "cpuModel": "Apple M4 Max",
+      "logicalCpuCount": 16,
+      "totalMemoryBytes": 137438953472
+    }
+  },
+  "executionOrder": [
+    {
+      "sequence": 1,
+      "repeat": 1,
+      "page": "nike-product"
+    },
+    {
+      "sequence": 2,
+      "repeat": 1,
+      "page": "airbnb-listing"
+    },
+    {
+      "sequence": 3,
+      "repeat": 1,
+      "page": "airbnb-parity"
+    },
+    {
+      "sequence": 4,
+      "repeat": 1,
+      "page": "settings-console"
+    },
+    {
+      "sequence": 5,
+      "repeat": 1,
+      "page": "espn"
+    },
+    {
+      "sequence": 6,
+      "repeat": 1,
+      "page": "ebay-cards"
+    },
+    {
+      "sequence": 7,
+      "repeat": 1,
+      "page": "airbnb-home"
+    },
+    {
+      "sequence": 8,
+      "repeat": 1,
+      "page": "ebay-chrome"
+    },
+    {
+      "sequence": 9,
+      "repeat": 1,
+      "page": "airbnb-search"
+    },
+    {
+      "sequence": 10,
+      "repeat": 1,
+      "page": "ebay-real-chrome"
+    },
+    {
+      "sequence": 11,
+      "repeat": 1,
+      "page": "nike-catalog"
+    },
+    {
+      "sequence": 12,
+      "repeat": 1,
+      "page": "sentry-otel"
+    },
+    {
+      "sequence": 13,
+      "repeat": 2,
+      "page": "nike-product"
+    },
+    {
+      "sequence": 14,
+      "repeat": 2,
+      "page": "airbnb-parity"
+    },
+    {
+      "sequence": 15,
+      "repeat": 2,
+      "page": "espn"
+    },
+    {
+      "sequence": 16,
+      "repeat": 2,
+      "page": "ebay-real-chrome"
+    },
+    {
+      "sequence": 17,
+      "repeat": 2,
+      "page": "ebay-chrome"
+    },
+    {
+      "sequence": 18,
+      "repeat": 2,
+      "page": "ebay-cards"
+    },
+    {
+      "sequence": 19,
+      "repeat": 2,
+      "page": "airbnb-home"
+    },
+    {
+      "sequence": 20,
+      "repeat": 2,
+      "page": "nike-catalog"
+    },
+    {
+      "sequence": 21,
+      "repeat": 2,
+      "page": "sentry-otel"
+    },
+    {
+      "sequence": 22,
+      "repeat": 2,
+      "page": "airbnb-search"
+    },
+    {
+      "sequence": 23,
+      "repeat": 2,
+      "page": "airbnb-listing"
+    },
+    {
+      "sequence": 24,
+      "repeat": 2,
+      "page": "settings-console"
+    },
+    {
+      "sequence": 25,
+      "repeat": 3,
+      "page": "espn"
+    },
+    {
+      "sequence": 26,
+      "repeat": 3,
+      "page": "nike-product"
+    },
+    {
+      "sequence": 27,
+      "repeat": 3,
+      "page": "ebay-cards"
+    },
+    {
+      "sequence": 28,
+      "repeat": 3,
+      "page": "ebay-real-chrome"
+    },
+    {
+      "sequence": 29,
+      "repeat": 3,
+      "page": "sentry-otel"
+    },
+    {
+      "sequence": 30,
+      "repeat": 3,
+      "page": "airbnb-home"
+    },
+    {
+      "sequence": 31,
+      "repeat": 3,
+      "page": "airbnb-parity"
+    },
+    {
+      "sequence": 32,
+      "repeat": 3,
+      "page": "settings-console"
+    },
+    {
+      "sequence": 33,
+      "repeat": 3,
+      "page": "airbnb-search"
+    },
+    {
+      "sequence": 34,
+      "repeat": 3,
+      "page": "nike-catalog"
+    },
+    {
+      "sequence": 35,
+      "repeat": 3,
+      "page": "airbnb-listing"
+    },
+    {
+      "sequence": 36,
+      "repeat": 3,
+      "page": "ebay-chrome"
+    },
+    {
+      "sequence": 37,
+      "repeat": 4,
+      "page": "airbnb-listing"
+    },
+    {
+      "sequence": 38,
+      "repeat": 4,
+      "page": "settings-console"
+    },
+    {
+      "sequence": 39,
+      "repeat": 4,
+      "page": "espn"
+    },
+    {
+      "sequence": 40,
+      "repeat": 4,
+      "page": "ebay-cards"
+    },
+    {
+      "sequence": 41,
+      "repeat": 4,
+      "page": "sentry-otel"
+    },
+    {
+      "sequence": 42,
+      "repeat": 4,
+      "page": "airbnb-parity"
+    },
+    {
+      "sequence": 43,
+      "repeat": 4,
+      "page": "ebay-real-chrome"
+    },
+    {
+      "sequence": 44,
+      "repeat": 4,
+      "page": "airbnb-search"
+    },
+    {
+      "sequence": 45,
+      "repeat": 4,
+      "page": "nike-product"
+    },
+    {
+      "sequence": 46,
+      "repeat": 4,
+      "page": "airbnb-home"
+    },
+    {
+      "sequence": 47,
+      "repeat": 4,
+      "page": "nike-catalog"
+    },
+    {
+      "sequence": 48,
+      "repeat": 4,
+      "page": "ebay-chrome"
+    },
+    {
+      "sequence": 49,
+      "repeat": 5,
+      "page": "nike-product"
+    },
+    {
+      "sequence": 50,
+      "repeat": 5,
+      "page": "ebay-cards"
+    },
+    {
+      "sequence": 51,
+      "repeat": 5,
+      "page": "nike-catalog"
+    },
+    {
+      "sequence": 52,
+      "repeat": 5,
+      "page": "settings-console"
+    },
+    {
+      "sequence": 53,
+      "repeat": 5,
+      "page": "ebay-real-chrome"
+    },
+    {
+      "sequence": 54,
+      "repeat": 5,
+      "page": "ebay-chrome"
+    },
+    {
+      "sequence": 55,
+      "repeat": 5,
+      "page": "airbnb-home"
+    },
+    {
+      "sequence": 56,
+      "repeat": 5,
+      "page": "sentry-otel"
+    },
+    {
+      "sequence": 57,
+      "repeat": 5,
+      "page": "espn"
+    },
+    {
+      "sequence": 58,
+      "repeat": 5,
+      "page": "airbnb-search"
+    },
+    {
+      "sequence": 59,
+      "repeat": 5,
+      "page": "airbnb-parity"
+    },
+    {
+      "sequence": 60,
+      "repeat": 5,
+      "page": "airbnb-listing"
+    }
+  ],
+  "summaries": [
+    {
+      "page": "airbnb-parity",
+      "processRepeats": 5,
+      "totalRecordedRenders": 50000,
+      "outputBytes": 149567,
+      "byteDeterministicAcrossProcesses": true,
+      "rawOutputSha256s": [
+        "c722e94655b56624eb05d618bd05e5f67a60892a1c820167278e2884b0d75bd2"
+      ],
+      "canonicalOutputSha256": "eb5820681f55d972167b60b819b36c4f66aa63ba7f4c01bde177d7e61d91bd5d",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        1000
+      ],
+      "iterationsPerProcess": [
+        10000
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 168.458,
+        "mean": 170.8914,
+        "p50": 169.375,
+        "p95": 174.52439999999999,
+        "max": 175.041,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 168.458,
+          "high": 175.041
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 170.9035254,
+        "mean": 172.9247635,
+        "p50": 172.3267745,
+        "p95": 175.91553854,
+        "max": 176.5760717,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 170.9035254,
+          "high": 176.5760717
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 50000,
+        "min": 150,
+        "mean": 172.9247635,
+        "p50": 171.459,
+        "p95": 183.542,
+        "p99": 195.0834200000001,
+        "max": 1883.542,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    },
+    {
+      "page": "airbnb-home",
+      "processRepeats": 5,
+      "totalRecordedRenders": 50000,
+      "outputBytes": 162883,
+      "byteDeterministicAcrossProcesses": true,
+      "rawOutputSha256s": [
+        "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec"
+      ],
+      "canonicalOutputSha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        1000
+      ],
+      "iterationsPerProcess": [
+        10000
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 10.958,
+        "mean": 11.0166,
+        "p50": 11,
+        "p95": 11.1,
+        "max": 11.125,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 10.958,
+          "high": 11.125
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 11.0781862,
+        "mean": 11.12894082,
+        "p50": 11.1107624,
+        "p95": 11.22534504,
+        "max": 11.2507906,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 11.0781862,
+          "high": 11.2507906
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 50000,
+        "min": 9.291,
+        "mean": 11.12894082,
+        "p50": 11,
+        "p95": 11.625,
+        "p99": 14.041,
+        "max": 572.667,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    },
+    {
+      "page": "airbnb-search",
+      "processRepeats": 5,
+      "totalRecordedRenders": 50000,
+      "outputBytes": 49996,
+      "byteDeterministicAcrossProcesses": true,
+      "rawOutputSha256s": [
+        "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e"
+      ],
+      "canonicalOutputSha256": "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        1000
+      ],
+      "iterationsPerProcess": [
+        10000
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 2.75,
+        "mean": 2.7666,
+        "p50": 2.75,
+        "p95": 2.7918,
+        "max": 2.792,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 2.75,
+          "high": 2.792
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 2.7570096,
+        "mean": 2.79815708,
+        "p50": 2.7835081,
+        "p95": 2.8492914,
+        "max": 2.8591821,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 2.7570096,
+          "high": 2.8591821
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 50000,
+        "min": 2.333,
+        "mean": 2.7981570799999997,
+        "p50": 2.75,
+        "p95": 2.958,
+        "p99": 3.583,
+        "max": 18.209,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    },
+    {
+      "page": "airbnb-listing",
+      "processRepeats": 5,
+      "totalRecordedRenders": 50000,
+      "outputBytes": 96250,
+      "byteDeterministicAcrossProcesses": false,
+      "rawOutputSha256s": [
+        "2035335917eca3412b8de2c7175af025003bd4f453dd03ad92c31336c006103c",
+        "2c15190ededf787f8152b3500436422e7f36257293e500f22ce4b33ec6b5c9b2",
+        "6d07eb4672923a5b2ef6e16ac40de2c3ce6d7daa8de3bb6e6640d91fabd00ae2",
+        "7a3e7cb1b23deb165ae3073da0558eec4fdb67859d6098808742e92a22913567",
+        "da34403ebc29b6ad618f55db30b98207dc86cff23c419d4920ac82133f732748"
+      ],
+      "canonicalOutputSha256": "723b0c52cf33a576f78e2278d46c1cd41b2cf2d0c99ffed18e85d447bb0237dc",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        1000
+      ],
+      "iterationsPerProcess": [
+        10000
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 16.125,
+        "mean": 16.2334,
+        "p50": 16.25,
+        "p95": 16.3248,
+        "max": 16.333,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 16.125,
+          "high": 16.333
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 16.1989321,
+        "mean": 16.36486154,
+        "p50": 16.3884373,
+        "p95": 16.46885762,
+        "max": 16.4772229,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 16.1989321,
+          "high": 16.4772229
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 50000,
+        "min": 13.833,
+        "mean": 16.36486154,
+        "p50": 16.25,
+        "p95": 16.959,
+        "p99": 20.666,
+        "max": 63.417,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    },
+    {
+      "page": "nike-catalog",
+      "processRepeats": 5,
+      "totalRecordedRenders": 50000,
+      "outputBytes": 128294,
+      "byteDeterministicAcrossProcesses": true,
+      "rawOutputSha256s": [
+        "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4"
+      ],
+      "canonicalOutputSha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        1000
+      ],
+      "iterationsPerProcess": [
+        10000
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 16.042,
+        "mean": 16.225,
+        "p50": 16.167,
+        "p95": 16.441399999999998,
+        "max": 16.458,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 16.042,
+          "high": 16.458
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 16.12578,
+        "mean": 16.42473338,
+        "p50": 16.396073400000002,
+        "p95": 16.63872152,
+        "max": 16.6478756,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 16.12578,
+          "high": 16.6478756
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 50000,
+        "min": 13.833,
+        "mean": 16.424733380000003,
+        "p50": 16.25,
+        "p95": 17.209,
+        "p99": 20.70801,
+        "max": 483.375,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    },
+    {
+      "page": "nike-product",
+      "processRepeats": 5,
+      "totalRecordedRenders": 50000,
+      "outputBytes": 59042,
+      "byteDeterministicAcrossProcesses": true,
+      "rawOutputSha256s": [
+        "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93"
+      ],
+      "canonicalOutputSha256": "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        1000
+      ],
+      "iterationsPerProcess": [
+        10000
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 4.25,
+        "mean": 4.433400000000001,
+        "p50": 4.25,
+        "p95": 4.9338,
+        "max": 5.084,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 4.25,
+          "high": 5.084
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 4.2769849,
+        "mean": 4.53250038,
+        "p50": 4.3611249,
+        "p95": 5.1661736000000005,
+        "max": 5.3624606,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 4.2769849,
+          "high": 5.3624606
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 50000,
+        "min": 3.583,
+        "mean": 4.53250038,
+        "p50": 4.333,
+        "p95": 5.834,
+        "p99": 7.292,
+        "max": 477.209,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    },
+    {
+      "page": "ebay-cards",
+      "processRepeats": 5,
+      "totalRecordedRenders": 50000,
+      "outputBytes": 239235,
+      "byteDeterministicAcrossProcesses": true,
+      "rawOutputSha256s": [
+        "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b"
+      ],
+      "canonicalOutputSha256": "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        1000
+      ],
+      "iterationsPerProcess": [
+        10000
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 22.917,
+        "mean": 22.967000000000002,
+        "p50": 22.959,
+        "p95": 23,
+        "max": 23,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 22.917,
+          "high": 23
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 23.157096799999998,
+        "mean": 23.271967580000002,
+        "p50": 23.281683,
+        "p95": 23.35473954,
+        "max": 23.3668877,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 23.157096799999998,
+          "high": 23.3668877
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 50000,
+        "min": 19.667,
+        "mean": 23.271967580000002,
+        "p50": 22.959,
+        "p95": 25.208,
+        "p99": 29.208,
+        "max": 516.875,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    },
+    {
+      "page": "ebay-chrome",
+      "processRepeats": 5,
+      "totalRecordedRenders": 50000,
+      "outputBytes": 521326,
+      "byteDeterministicAcrossProcesses": true,
+      "rawOutputSha256s": [
+        "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2"
+      ],
+      "canonicalOutputSha256": "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        1000
+      ],
+      "iterationsPerProcess": [
+        10000
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 37.791,
+        "mean": 37.8916,
+        "p50": 37.958,
+        "p95": 37.958800000000004,
+        "max": 37.959,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 37.791,
+          "high": 37.959
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 38.1308465,
+        "mean": 38.309030840000005,
+        "p50": 38.3291165,
+        "p95": 38.46511142,
+        "max": 38.4826639,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 38.1308465,
+          "high": 38.4826639
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 50000,
+        "min": 32.958,
+        "mean": 38.30903084,
+        "p50": 37.875,
+        "p95": 41.041,
+        "p99": 46.54241000000008,
+        "max": 435.958,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    },
+    {
+      "page": "ebay-real-chrome",
+      "processRepeats": 5,
+      "totalRecordedRenders": 50000,
+      "outputBytes": 793226,
+      "byteDeterministicAcrossProcesses": true,
+      "rawOutputSha256s": [
+        "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381"
+      ],
+      "canonicalOutputSha256": "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        1000
+      ],
+      "iterationsPerProcess": [
+        10000
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 48.792,
+        "mean": 48.8832,
+        "p50": 48.875,
+        "p95": 48.9832,
+        "max": 49,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 48.792,
+          "high": 49
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 49.2317863,
+        "mean": 49.70570748,
+        "p50": 49.5961862,
+        "p95": 50.469642640000004,
+        "max": 50.6748695,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 49.2317863,
+          "high": 50.6748695
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 50000,
+        "min": 42.625,
+        "mean": 49.705707479999994,
+        "p50": 48.875,
+        "p95": 53.834,
+        "p99": 59.54101,
+        "max": 1201.5,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    },
+    {
+      "page": "espn",
+      "processRepeats": 5,
+      "totalRecordedRenders": 50000,
+      "outputBytes": 33765,
+      "byteDeterministicAcrossProcesses": true,
+      "rawOutputSha256s": [
+        "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e"
+      ],
+      "canonicalOutputSha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        1000
+      ],
+      "iterationsPerProcess": [
+        10000
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 7.458,
+        "mean": 7.4918000000000005,
+        "p50": 7.5,
+        "p95": 7.5336,
+        "max": 7.542,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 7.458,
+          "high": 7.542
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 7.5501716,
+        "mean": 7.5813177,
+        "p50": 7.583567,
+        "p95": 7.61467832,
+        "max": 7.6215859,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 7.5501716,
+          "high": 7.6215859
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 50000,
+        "min": 6.458,
+        "mean": 7.5813177,
+        "p50": 7.5,
+        "p95": 7.875,
+        "p99": 9.583,
+        "max": 37.75,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    },
+    {
+      "page": "sentry-otel",
+      "processRepeats": 5,
+      "totalRecordedRenders": 1500,
+      "outputBytes": 875478,
+      "byteDeterministicAcrossProcesses": true,
+      "rawOutputSha256s": [
+        "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f"
+      ],
+      "canonicalOutputSha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        100
+      ],
+      "iterationsPerProcess": [
+        300
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 98.458,
+        "mean": 99.66659999999999,
+        "p50": 99.875,
+        "p95": 100.875,
+        "max": 101.125,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 98.458,
+          "high": 101.125
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 99.18877333333333,
+        "mean": 100.8343,
+        "p50": 101.05858333333333,
+        "p95": 101.771668,
+        "max": 101.86121,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 99.18877333333333,
+          "high": 101.86121
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 1500,
+        "min": 95.208,
+        "mean": 100.8343,
+        "p50": 99.75,
+        "p95": 107.41909999999999,
+        "p99": 112.88167,
+        "max": 134.875,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    },
+    {
+      "page": "settings-console",
+      "processRepeats": 5,
+      "totalRecordedRenders": 50000,
+      "outputBytes": 7925,
+      "byteDeterministicAcrossProcesses": true,
+      "rawOutputSha256s": [
+        "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b"
+      ],
+      "canonicalOutputSha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b",
+      "canonicalization": "HTML bytes unchanged; object keys recursively sorted only inside application/json script bodies",
+      "warmupsPerProcess": [
+        1000
+      ],
+      "iterationsPerProcess": [
+        10000
+      ],
+      "processMedianUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 2.917,
+        "mean": 2.9498,
+        "p50": 2.958,
+        "p95": 2.958,
+        "max": 2.958,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 2.917,
+          "high": 2.958
+        }
+      },
+      "processMeanUs": {
+        "unit": "microseconds",
+        "n": 5,
+        "min": 2.9522538,
+        "mean": 2.99123918,
+        "p50": 2.9840623,
+        "p95": 3.0380439,
+        "max": 3.0510303,
+        "medianCi95": {
+          "confidence": 0.95,
+          "method": "percentile bootstrap",
+          "resamples": 10000,
+          "low": 2.9522538,
+          "high": 3.0510303
+        }
+      },
+      "pooledDescriptiveUs": {
+        "n": 50000,
+        "min": 2.417,
+        "mean": 2.99123918,
+        "p50": 2.958,
+        "p95": 3.125,
+        "p99": 3.792,
+        "max": 139.125,
+        "note": "descriptive only; process repeats, not pooled inner renders, are the independent units"
+      }
+    }
+  ],
+  "records": [
+    {
+      "sequence": 1,
+      "repeat": 1,
+      "page": "nike-product",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 59042,
+      "output_sha256": "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93",
+      "canonical_output_sha256": "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93",
+      "mean_us": 5.3624606,
+      "p50_us": 5.084,
+      "p95_us": 7.208,
+      "p99_us": 7.709,
+      "min_us": 4,
+      "max_us": 23.5
+    },
+    {
+      "sequence": 2,
+      "repeat": 1,
+      "page": "airbnb-listing",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 96250,
+      "output_sha256": "da34403ebc29b6ad618f55db30b98207dc86cff23c419d4920ac82133f732748",
+      "canonical_output_sha256": "723b0c52cf33a576f78e2278d46c1cd41b2cf2d0c99ffed18e85d447bb0237dc",
+      "mean_us": 16.3243189,
+      "p50_us": 16.167,
+      "p95_us": 17.041,
+      "p99_us": 20.792,
+      "min_us": 14.375,
+      "max_us": 60.417
+    },
+    {
+      "sequence": 3,
+      "repeat": 1,
+      "page": "airbnb-parity",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 149567,
+      "output_sha256": "c722e94655b56624eb05d618bd05e5f67a60892a1c820167278e2884b0d75bd2",
+      "canonical_output_sha256": "eb5820681f55d972167b60b819b36c4f66aa63ba7f4c01bde177d7e61d91bd5d",
+      "mean_us": 173.2734059,
+      "p50_us": 172.458,
+      "p95_us": 184.916,
+      "p99_us": 197.833,
+      "min_us": 152.708,
+      "max_us": 513.708
+    },
+    {
+      "sequence": 4,
+      "repeat": 1,
+      "page": "settings-console",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 7925,
+      "output_sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b",
+      "canonical_output_sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b",
+      "mean_us": 2.9827512,
+      "p50_us": 2.958,
+      "p95_us": 3.166,
+      "p99_us": 3.709,
+      "min_us": 2.459,
+      "max_us": 25.459
+    },
+    {
+      "sequence": 5,
+      "repeat": 1,
+      "page": "espn",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 33765,
+      "output_sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e",
+      "canonical_output_sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e",
+      "mean_us": 7.564216,
+      "p50_us": 7.459,
+      "p95_us": 7.875,
+      "p99_us": 9.583,
+      "min_us": 6.667,
+      "max_us": 34.333
+    },
+    {
+      "sequence": 6,
+      "repeat": 1,
+      "page": "ebay-cards",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 239235,
+      "output_sha256": "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b",
+      "canonical_output_sha256": "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b",
+      "mean_us": 23.2480235,
+      "p50_us": 22.959,
+      "p95_us": 25.459,
+      "p99_us": 29.584,
+      "min_us": 20.125,
+      "max_us": 57.416
+    },
+    {
+      "sequence": 7,
+      "repeat": 1,
+      "page": "airbnb-home",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 162883,
+      "output_sha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+      "canonical_output_sha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+      "mean_us": 11.1107624,
+      "p50_us": 11,
+      "p95_us": 11.542,
+      "p99_us": 14.042,
+      "min_us": 9.333,
+      "max_us": 240.917
+    },
+    {
+      "sequence": 8,
+      "repeat": 1,
+      "page": "ebay-chrome",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 521326,
+      "output_sha256": "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2",
+      "canonical_output_sha256": "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2",
+      "mean_us": 38.3949015,
+      "p50_us": 37.959,
+      "p95_us": 41.25,
+      "p99_us": 46.792,
+      "min_us": 32.958,
+      "max_us": 76.459
+    },
+    {
+      "sequence": 9,
+      "repeat": 1,
+      "page": "airbnb-search",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 49996,
+      "output_sha256": "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e",
+      "canonical_output_sha256": "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e",
+      "mean_us": 2.7835081,
+      "p50_us": 2.75,
+      "p95_us": 2.958,
+      "p99_us": 3.542,
+      "min_us": 2.333,
+      "max_us": 18.209
+    },
+    {
+      "sequence": 10,
+      "repeat": 1,
+      "page": "ebay-real-chrome",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 793226,
+      "output_sha256": "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381",
+      "canonical_output_sha256": "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381",
+      "mean_us": 50.6748695,
+      "p50_us": 48.916,
+      "p95_us": 55.625,
+      "p99_us": 64.625,
+      "min_us": 42.625,
+      "max_us": 1201.5
+    },
+    {
+      "sequence": 11,
+      "repeat": 1,
+      "page": "nike-catalog",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 128294,
+      "output_sha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4",
+      "canonical_output_sha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4",
+      "mean_us": 16.3518327,
+      "p50_us": 16.167,
+      "p95_us": 16.917,
+      "p99_us": 20.958,
+      "min_us": 14.209,
+      "max_us": 40.917
+    },
+    {
+      "sequence": 12,
+      "repeat": 1,
+      "page": "sentry-otel",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 100,
+      "iterations": 300,
+      "output_bytes": 875478,
+      "output_sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f",
+      "canonical_output_sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f",
+      "mean_us": 101.86121,
+      "p50_us": 101.125,
+      "p95_us": 107.708,
+      "p99_us": 114.083,
+      "min_us": 95.208,
+      "max_us": 129.042
+    },
+    {
+      "sequence": 13,
+      "repeat": 2,
+      "page": "nike-product",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 59042,
+      "output_sha256": "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93",
+      "canonical_output_sha256": "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93",
+      "mean_us": 4.3810256,
+      "p50_us": 4.25,
+      "p95_us": 4.625,
+      "p99_us": 5.625,
+      "min_us": 3.583,
+      "max_us": 477.209
+    },
+    {
+      "sequence": 14,
+      "repeat": 2,
+      "page": "airbnb-parity",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 149567,
+      "output_sha256": "c722e94655b56624eb05d618bd05e5f67a60892a1c820167278e2884b0d75bd2",
+      "canonical_output_sha256": "eb5820681f55d972167b60b819b36c4f66aa63ba7f4c01bde177d7e61d91bd5d",
+      "mean_us": 170.9035254,
+      "p50_us": 169.125,
+      "p95_us": 179.958,
+      "p99_us": 189.834,
+      "min_us": 150.75,
+      "max_us": 496.416
+    },
+    {
+      "sequence": 15,
+      "repeat": 2,
+      "page": "espn",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 33765,
+      "output_sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e",
+      "canonical_output_sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e",
+      "mean_us": 7.6215859,
+      "p50_us": 7.5,
+      "p95_us": 7.958,
+      "p99_us": 9.708,
+      "min_us": 6.625,
+      "max_us": 37.75
+    },
+    {
+      "sequence": 16,
+      "repeat": 2,
+      "page": "ebay-real-chrome",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 793226,
+      "output_sha256": "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381",
+      "canonical_output_sha256": "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381",
+      "mean_us": 49.648735200000004,
+      "p50_us": 49,
+      "p95_us": 54.417,
+      "p99_us": 59.583,
+      "min_us": 43.166,
+      "max_us": 289.375
+    },
+    {
+      "sequence": 17,
+      "repeat": 2,
+      "page": "ebay-chrome",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 521326,
+      "output_sha256": "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2",
+      "canonical_output_sha256": "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2",
+      "mean_us": 38.4826639,
+      "p50_us": 37.958,
+      "p95_us": 42.042,
+      "p99_us": 48.042,
+      "min_us": 33.167,
+      "max_us": 81.042
+    },
+    {
+      "sequence": 18,
+      "repeat": 2,
+      "page": "ebay-cards",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 239235,
+      "output_sha256": "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b",
+      "canonical_output_sha256": "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b",
+      "mean_us": 23.3668877,
+      "p50_us": 22.959,
+      "p95_us": 25.959,
+      "p99_us": 29.834,
+      "min_us": 20.042,
+      "max_us": 205.167
+    },
+    {
+      "sequence": 19,
+      "repeat": 2,
+      "page": "airbnb-home",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 162883,
+      "output_sha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+      "canonical_output_sha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+      "mean_us": 11.1235628,
+      "p50_us": 11,
+      "p95_us": 11.667,
+      "p99_us": 14.166,
+      "min_us": 9.542,
+      "max_us": 31.625
+    },
+    {
+      "sequence": 20,
+      "repeat": 2,
+      "page": "nike-catalog",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 128294,
+      "output_sha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4",
+      "canonical_output_sha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4",
+      "mean_us": 16.6478756,
+      "p50_us": 16.458,
+      "p95_us": 17.042,
+      "p99_us": 21.25,
+      "min_us": 14.334,
+      "max_us": 212.375
+    },
+    {
+      "sequence": 21,
+      "repeat": 2,
+      "page": "sentry-otel",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 100,
+      "iterations": 300,
+      "output_bytes": 875478,
+      "output_sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f",
+      "canonical_output_sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f",
+      "mean_us": 101.4135,
+      "p50_us": 99,
+      "p95_us": 108.417,
+      "p99_us": 116.167,
+      "min_us": 97.333,
+      "max_us": 134.875
+    },
+    {
+      "sequence": 22,
+      "repeat": 2,
+      "page": "airbnb-search",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 49996,
+      "output_sha256": "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e",
+      "canonical_output_sha256": "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e",
+      "mean_us": 2.8591821,
+      "p50_us": 2.792,
+      "p95_us": 3.375,
+      "p99_us": 3.708,
+      "min_us": 2.375,
+      "max_us": 17.209
+    },
+    {
+      "sequence": 23,
+      "repeat": 2,
+      "page": "airbnb-listing",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 96250,
+      "output_sha256": "7a3e7cb1b23deb165ae3073da0558eec4fdb67859d6098808742e92a22913567",
+      "canonical_output_sha256": "723b0c52cf33a576f78e2278d46c1cd41b2cf2d0c99ffed18e85d447bb0237dc",
+      "mean_us": 16.4772229,
+      "p50_us": 16.292,
+      "p95_us": 17.625,
+      "p99_us": 22.083,
+      "min_us": 14.542,
+      "max_us": 47.583
+    },
+    {
+      "sequence": 24,
+      "repeat": 2,
+      "page": "settings-console",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 7925,
+      "output_sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b",
+      "canonical_output_sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b",
+      "mean_us": 2.9840623,
+      "p50_us": 2.958,
+      "p95_us": 3.125,
+      "p99_us": 3.792,
+      "min_us": 2.541,
+      "max_us": 19.25
+    },
+    {
+      "sequence": 25,
+      "repeat": 3,
+      "page": "espn",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 33765,
+      "output_sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e",
+      "canonical_output_sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e",
+      "mean_us": 7.5501716,
+      "p50_us": 7.458,
+      "p95_us": 7.875,
+      "p99_us": 9.625,
+      "min_us": 7.041,
+      "max_us": 23.583
+    },
+    {
+      "sequence": 26,
+      "repeat": 3,
+      "page": "nike-product",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 59042,
+      "output_sha256": "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93",
+      "canonical_output_sha256": "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93",
+      "mean_us": 4.3611249,
+      "p50_us": 4.333,
+      "p95_us": 4.583,
+      "p99_us": 5.458,
+      "min_us": 3.959,
+      "max_us": 17.25
+    },
+    {
+      "sequence": 27,
+      "repeat": 3,
+      "page": "ebay-cards",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 239235,
+      "output_sha256": "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b",
+      "canonical_output_sha256": "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b",
+      "mean_us": 23.281683,
+      "p50_us": 23,
+      "p95_us": 25.334,
+      "p99_us": 29.417,
+      "min_us": 19.667,
+      "max_us": 516.875
+    },
+    {
+      "sequence": 28,
+      "repeat": 3,
+      "page": "ebay-real-chrome",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 793226,
+      "output_sha256": "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381",
+      "canonical_output_sha256": "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381",
+      "mean_us": 49.5961862,
+      "p50_us": 48.875,
+      "p95_us": 53.5,
+      "p99_us": 58.583,
+      "min_us": 42.75,
+      "max_us": 284.292
+    },
+    {
+      "sequence": 29,
+      "repeat": 3,
+      "page": "sentry-otel",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 100,
+      "iterations": 300,
+      "output_bytes": 875478,
+      "output_sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f",
+      "canonical_output_sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f",
+      "mean_us": 101.05858333333333,
+      "p50_us": 99.875,
+      "p95_us": 107.292,
+      "p99_us": 111.25,
+      "min_us": 98.333,
+      "max_us": 114.083
+    },
+    {
+      "sequence": 30,
+      "repeat": 3,
+      "page": "airbnb-home",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 162883,
+      "output_sha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+      "canonical_output_sha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+      "mean_us": 11.0814021,
+      "p50_us": 11,
+      "p95_us": 11.458,
+      "p99_us": 14.041,
+      "min_us": 9.291,
+      "max_us": 34.917
+    },
+    {
+      "sequence": 31,
+      "repeat": 3,
+      "page": "airbnb-parity",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 149567,
+      "output_sha256": "c722e94655b56624eb05d618bd05e5f67a60892a1c820167278e2884b0d75bd2",
+      "canonical_output_sha256": "eb5820681f55d972167b60b819b36c4f66aa63ba7f4c01bde177d7e61d91bd5d",
+      "mean_us": 176.5760717,
+      "p50_us": 175.041,
+      "p95_us": 186.416,
+      "p99_us": 198.083,
+      "min_us": 154.334,
+      "max_us": 659.542
+    },
+    {
+      "sequence": 32,
+      "repeat": 3,
+      "page": "settings-console",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 7925,
+      "output_sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b",
+      "canonical_output_sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b",
+      "mean_us": 2.9522538,
+      "p50_us": 2.917,
+      "p95_us": 3.125,
+      "p99_us": 3.625,
+      "min_us": 2.666,
+      "max_us": 17.875
+    },
+    {
+      "sequence": 33,
+      "repeat": 3,
+      "page": "airbnb-search",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 49996,
+      "output_sha256": "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e",
+      "canonical_output_sha256": "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e",
+      "mean_us": 2.8097286,
+      "p50_us": 2.791,
+      "p95_us": 2.917,
+      "p99_us": 3.541,
+      "min_us": 2.583,
+      "max_us": 13.709
+    },
+    {
+      "sequence": 34,
+      "repeat": 3,
+      "page": "nike-catalog",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 128294,
+      "output_sha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4",
+      "canonical_output_sha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4",
+      "mean_us": 16.6021052,
+      "p50_us": 16.375,
+      "p95_us": 18.125,
+      "p99_us": 21,
+      "min_us": 14.084,
+      "max_us": 391.625
+    },
+    {
+      "sequence": 35,
+      "repeat": 3,
+      "page": "airbnb-listing",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 96250,
+      "output_sha256": "2c15190ededf787f8152b3500436422e7f36257293e500f22ce4b33ec6b5c9b2",
+      "canonical_output_sha256": "723b0c52cf33a576f78e2278d46c1cd41b2cf2d0c99ffed18e85d447bb0237dc",
+      "mean_us": 16.3884373,
+      "p50_us": 16.25,
+      "p95_us": 16.959,
+      "p99_us": 20.5,
+      "min_us": 14.083,
+      "max_us": 63.417
+    },
+    {
+      "sequence": 36,
+      "repeat": 3,
+      "page": "ebay-chrome",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 521326,
+      "output_sha256": "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2",
+      "canonical_output_sha256": "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2",
+      "mean_us": 38.2076258,
+      "p50_us": 37.791,
+      "p95_us": 40.833,
+      "p99_us": 46.125,
+      "min_us": 33.167,
+      "max_us": 230.125
+    },
+    {
+      "sequence": 37,
+      "repeat": 4,
+      "page": "airbnb-listing",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 96250,
+      "output_sha256": "6d07eb4672923a5b2ef6e16ac40de2c3ce6d7daa8de3bb6e6640d91fabd00ae2",
+      "canonical_output_sha256": "723b0c52cf33a576f78e2278d46c1cd41b2cf2d0c99ffed18e85d447bb0237dc",
+      "mean_us": 16.4353965,
+      "p50_us": 16.333,
+      "p95_us": 16.959,
+      "p99_us": 20.583,
+      "min_us": 14.25,
+      "max_us": 46.375
+    },
+    {
+      "sequence": 38,
+      "repeat": 4,
+      "page": "settings-console",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 7925,
+      "output_sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b",
+      "canonical_output_sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b",
+      "mean_us": 2.9860983,
+      "p50_us": 2.958,
+      "p95_us": 3.125,
+      "p99_us": 3.833,
+      "min_us": 2.708,
+      "max_us": 21.875
+    },
+    {
+      "sequence": 39,
+      "repeat": 4,
+      "page": "espn",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 33765,
+      "output_sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e",
+      "canonical_output_sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e",
+      "mean_us": 7.583567,
+      "p50_us": 7.5,
+      "p95_us": 7.833,
+      "p99_us": 9.583,
+      "min_us": 6.625,
+      "max_us": 28.667
+    },
+    {
+      "sequence": 40,
+      "repeat": 4,
+      "page": "ebay-cards",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 239235,
+      "output_sha256": "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b",
+      "canonical_output_sha256": "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b",
+      "mean_us": 23.306146899999998,
+      "p50_us": 23,
+      "p95_us": 25.041,
+      "p99_us": 28.791,
+      "min_us": 19.834,
+      "max_us": 490.625
+    },
+    {
+      "sequence": 41,
+      "repeat": 4,
+      "page": "sentry-otel",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 100,
+      "iterations": 300,
+      "output_bytes": 875478,
+      "output_sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f",
+      "canonical_output_sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f",
+      "mean_us": 99.18877333333333,
+      "p50_us": 98.458,
+      "p95_us": 104.125,
+      "p99_us": 108.25,
+      "min_us": 97.25,
+      "max_us": 111.5
+    },
+    {
+      "sequence": 42,
+      "repeat": 4,
+      "page": "airbnb-parity",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 149567,
+      "output_sha256": "c722e94655b56624eb05d618bd05e5f67a60892a1c820167278e2884b0d75bd2",
+      "canonical_output_sha256": "eb5820681f55d972167b60b819b36c4f66aa63ba7f4c01bde177d7e61d91bd5d",
+      "mean_us": 172.3267745,
+      "p50_us": 169.375,
+      "p95_us": 183,
+      "p99_us": 195.125,
+      "min_us": 151.084,
+      "max_us": 453.917
+    },
+    {
+      "sequence": 43,
+      "repeat": 4,
+      "page": "ebay-real-chrome",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 793226,
+      "output_sha256": "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381",
+      "canonical_output_sha256": "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381",
+      "mean_us": 49.3769602,
+      "p50_us": 48.833,
+      "p95_us": 52.583,
+      "p99_us": 57.083,
+      "min_us": 42.875,
+      "max_us": 211.625
+    },
+    {
+      "sequence": 44,
+      "repeat": 4,
+      "page": "airbnb-search",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 49996,
+      "output_sha256": "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e",
+      "canonical_output_sha256": "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e",
+      "mean_us": 2.781357,
+      "p50_us": 2.75,
+      "p95_us": 2.875,
+      "p99_us": 3.5,
+      "min_us": 2.583,
+      "max_us": 13.792
+    },
+    {
+      "sequence": 45,
+      "repeat": 4,
+      "page": "nike-product",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 59042,
+      "output_sha256": "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93",
+      "canonical_output_sha256": "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93",
+      "mean_us": 4.2769849,
+      "p50_us": 4.25,
+      "p95_us": 4.5,
+      "p99_us": 5.416,
+      "min_us": 3.625,
+      "max_us": 16
+    },
+    {
+      "sequence": 46,
+      "repeat": 4,
+      "page": "airbnb-home",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 162883,
+      "output_sha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+      "canonical_output_sha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+      "mean_us": 11.0781862,
+      "p50_us": 10.958,
+      "p95_us": 11.542,
+      "p99_us": 13.875,
+      "min_us": 9.334,
+      "max_us": 236.375
+    },
+    {
+      "sequence": 47,
+      "repeat": 4,
+      "page": "nike-catalog",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 128294,
+      "output_sha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4",
+      "canonical_output_sha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4",
+      "mean_us": 16.396073400000002,
+      "p50_us": 16.083,
+      "p95_us": 18.083,
+      "p99_us": 20.333,
+      "min_us": 14.041,
+      "max_us": 483.375
+    },
+    {
+      "sequence": 48,
+      "repeat": 4,
+      "page": "ebay-chrome",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 521326,
+      "output_sha256": "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2",
+      "canonical_output_sha256": "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2",
+      "mean_us": 38.1308465,
+      "p50_us": 37.792,
+      "p95_us": 40.167,
+      "p99_us": 45.208,
+      "min_us": 33.167,
+      "max_us": 280.958
+    },
+    {
+      "sequence": 49,
+      "repeat": 5,
+      "page": "nike-product",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 59042,
+      "output_sha256": "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93",
+      "canonical_output_sha256": "4359ce9654e337b376ef260f3cc2be9f9df38635370b17c503c77a4d8ed24f93",
+      "mean_us": 4.2809059,
+      "p50_us": 4.25,
+      "p95_us": 4.5,
+      "p99_us": 5.333,
+      "min_us": 3.916,
+      "max_us": 15.333
+    },
+    {
+      "sequence": 50,
+      "repeat": 5,
+      "page": "ebay-cards",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 239235,
+      "output_sha256": "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b",
+      "canonical_output_sha256": "3f6355af9f87f365115e1f047039e55eee23a372ffd78eec4deb1e5e7e47142b",
+      "mean_us": 23.157096799999998,
+      "p50_us": 22.917,
+      "p95_us": 23.875,
+      "p99_us": 28.042,
+      "min_us": 20.125,
+      "max_us": 299.5
+    },
+    {
+      "sequence": 51,
+      "repeat": 5,
+      "page": "nike-catalog",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 128294,
+      "output_sha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4",
+      "canonical_output_sha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4",
+      "mean_us": 16.12578,
+      "p50_us": 16.042,
+      "p95_us": 16.625,
+      "p99_us": 19.625,
+      "min_us": 13.833,
+      "max_us": 41.458
+    },
+    {
+      "sequence": 52,
+      "repeat": 5,
+      "page": "settings-console",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 7925,
+      "output_sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b",
+      "canonical_output_sha256": "be13ee0b4ef00911fd56d9d879adee04b88acab583033eeaf92c6d56fb9e456b",
+      "mean_us": 3.0510303,
+      "p50_us": 2.958,
+      "p95_us": 3.292,
+      "p99_us": 5.5,
+      "min_us": 2.417,
+      "max_us": 139.125
+    },
+    {
+      "sequence": 53,
+      "repeat": 5,
+      "page": "ebay-real-chrome",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 793226,
+      "output_sha256": "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381",
+      "canonical_output_sha256": "35c1f08c147a2e47dbac73f25091d7752a3840c2e1e51425d29d321c97716381",
+      "mean_us": 49.2317863,
+      "p50_us": 48.792,
+      "p95_us": 51.875,
+      "p99_us": 57.625,
+      "min_us": 42.625,
+      "max_us": 509.292
+    },
+    {
+      "sequence": 54,
+      "repeat": 5,
+      "page": "ebay-chrome",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 521326,
+      "output_sha256": "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2",
+      "canonical_output_sha256": "4e8cd42972299d8ca7c8a07180c519864ed6fe187060ef4158e1f93981017be2",
+      "mean_us": 38.3291165,
+      "p50_us": 37.958,
+      "p95_us": 40.5,
+      "p99_us": 45.625,
+      "min_us": 33.125,
+      "max_us": 435.958
+    },
+    {
+      "sequence": 55,
+      "repeat": 5,
+      "page": "airbnb-home",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 162883,
+      "output_sha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+      "canonical_output_sha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+      "mean_us": 11.2507906,
+      "p50_us": 11.125,
+      "p95_us": 11.792,
+      "p99_us": 13.958,
+      "min_us": 9.583,
+      "max_us": 572.667
+    },
+    {
+      "sequence": 56,
+      "repeat": 5,
+      "page": "sentry-otel",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 100,
+      "iterations": 300,
+      "output_bytes": 875478,
+      "output_sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f",
+      "canonical_output_sha256": "1c7bbc71802d0b7938fc885e59637bad3225f4cd741b0aac432b6d244e6bd37f",
+      "mean_us": 100.64943333333333,
+      "p50_us": 99.875,
+      "p95_us": 106.042,
+      "p99_us": 111.25,
+      "min_us": 98.542,
+      "max_us": 115.084
+    },
+    {
+      "sequence": 57,
+      "repeat": 5,
+      "page": "espn",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 33765,
+      "output_sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e",
+      "canonical_output_sha256": "42e5ca65d1703ea9f66e0a16f57b677e33d649668b8a2e27aefe73357a03ea3e",
+      "mean_us": 7.587047999999999,
+      "p50_us": 7.542,
+      "p95_us": 7.875,
+      "p99_us": 9.292,
+      "min_us": 6.458,
+      "max_us": 28.333
+    },
+    {
+      "sequence": 58,
+      "repeat": 5,
+      "page": "airbnb-search",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 49996,
+      "output_sha256": "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e",
+      "canonical_output_sha256": "a33e9d82def439e6c35e459af3b6a082b122785ce91a095eb4a2c4809347d93e",
+      "mean_us": 2.7570096,
+      "p50_us": 2.75,
+      "p95_us": 2.875,
+      "p99_us": 3.459,
+      "min_us": 2.375,
+      "max_us": 12.833
+    },
+    {
+      "sequence": 59,
+      "repeat": 5,
+      "page": "airbnb-parity",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 149567,
+      "output_sha256": "c722e94655b56624eb05d618bd05e5f67a60892a1c820167278e2884b0d75bd2",
+      "canonical_output_sha256": "eb5820681f55d972167b60b819b36c4f66aa63ba7f4c01bde177d7e61d91bd5d",
+      "mean_us": 171.54404,
+      "p50_us": 168.458,
+      "p95_us": 181.042,
+      "p99_us": 192.667,
+      "min_us": 150,
+      "max_us": 1883.542
+    },
+    {
+      "sequence": 60,
+      "repeat": 5,
+      "page": "airbnb-listing",
+      "mode": "render",
+      "operations_per_sample": 1,
+      "warmup": 1000,
+      "iterations": 10000,
+      "output_bytes": 96250,
+      "output_sha256": "2035335917eca3412b8de2c7175af025003bd4f453dd03ad92c31336c006103c",
+      "canonical_output_sha256": "723b0c52cf33a576f78e2278d46c1cd41b2cf2d0c99ffed18e85d447bb0237dc",
+      "mean_us": 16.1989321,
+      "p50_us": 16.125,
+      "p95_us": 16.75,
+      "p99_us": 19.333,
+      "min_us": 13.833,
+      "max_us": 47.791
+    }
+  ],
+  "rawArtifact": {
+    "path": "showcase/results/raw/proa-pr83-ssr.json.gz",
+    "sha256": "0faf2a66c77fb88c0cda27366b2b3804bf204824bb44254d3a00bba7614cb41b",
+    "uncompressedSha256": "06ee8a6254a8409eb829edddec39443d054a0301e3d49569449466cccb549073",
+    "encoding": "gzip"
+  }
+}

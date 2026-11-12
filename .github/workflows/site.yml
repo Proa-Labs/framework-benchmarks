@@ -1,0 +1,72 @@
+name: Frameworks website
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      deploy:
+        description: Deploy the validated site to Cloudflare production
+        type: boolean
+        default: false
+
+# Serialize main publications so an older build cannot overwrite a newer one.
+concurrency:
+  group: frameworks-site-publication-v2-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  site:
+    name: Build and validate TanStack Start website
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      deployments: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - name: Set up Cloudflare local tooling host
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "26.13.0"
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      - run: bun install --frozen-lockfile
+      - run: bun install --cwd site --frozen-lockfile
+      - run: bun install --cwd framework-ssr --frozen-lockfile
+      - run: bun install --cwd rendering/external/react --frozen-lockfile
+      - run: bun install --cwd rendering/external/vue --frozen-lockfile
+      - name: Validate contracts, source snapshots, types and site build
+        run: bun run check
+      - name: Install browser
+        run: bun node_modules/playwright/cli.js install --with-deps chromium
+      - name: Verify browser interactions
+        run: bun site/test/browser.ts
+      - name: Verify contributor benchmark path
+        run: bun run bench run rendering --renderers react,vue --workloads cards
+      - name: Publish Cloudflare PR preview
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: bun site/preview.ts
+      - name: Deploy validated production assets
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy))
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "Configure the CLOUDFLARE_API_TOKEN repository secret before deploying."
+            exit 1
+          fi
+          cd site
+          bun --bun node_modules/wrangler/bin/wrangler.js deploy

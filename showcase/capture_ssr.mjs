@@ -282,6 +282,9 @@ const report = {
 			sha256: sha256(binary),
 		},
 		inputs: await Promise.all([
+			inputDigest("fixtures/legacy-ebay-chrome/mod.rs"),
+			inputDigest("fixtures/legacy-ebay-chrome/data/srp_chrome_style.css"),
+			inputDigest("fixtures/legacy-ebay-chrome/data/shell_pre.html"),
 			inputDigest("fixtures/airbnb-parity-dump/Cargo.toml"),
 			inputDigest("fixtures/airbnb-parity-dump/Cargo.lock"),
 			inputDigest("fixtures/airbnb-parity-dump/src/main.rs"),
