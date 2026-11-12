@@ -238,7 +238,13 @@ All three fixtures share the same buffer allocation/context setup. Rust GitHub
 props and Airbnb data, and React elements/log inputs, are prepared before
 warmup. Sentry renders its default 400 synthetic rows through the showcase API.
 Only the separate, untimed `dump` path converts Proa's buffer into a String for
-DOM parity. Normal render warmups are used without an allocator seed.
+DOM parity. Every capture records its allocator policy. To match the earlier
+warm-process CI setup, `PROA_PRIME_ALLOCATOR=1` allocates/frees an explicit
+`i32` seed of output-byte-count elements before render warmups. It reads only
+buffer length and never flattens the output. The default mode omits that seed.
+Keep the same-host default result alongside the primed result because allocator
+state can materially affect Linux page allocation. Each measured iteration
+allocates a new owned buffer in both modes.
 
 The full browser DOM must match before timing: preformatted text, application
 attributes, and script/style contents are retained. Comments, preload hints,
@@ -260,7 +266,8 @@ bun install --frozen-lockfile
   --no-check --no-assets -p landing-hero-bench \
   --artifact-out "$PWD/showcase/landing-hero/out/landing-hero-bench"
 node showcase/landing-hero/run.mjs --proa /path/to/proa --parity-only
-node showcase/landing-hero/run.mjs --proa /path/to/proa --out showcase/results/landing-hero-owned-buffer/ci-c4.json
+node showcase/landing-hero/run.mjs --proa /path/to/proa --out showcase/results/landing-hero-owned-buffer/ci-c4-default.json
+PROA_PRIME_ALLOCATOR=1 node showcase/landing-hero/run.mjs --proa /path/to/proa --out showcase/results/landing-hero-owned-buffer/ci-c4.json
 ```
 
 For CI captures, prefix the runner with `taskset -c 0`. M4 captures use the macOS

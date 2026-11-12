@@ -27,6 +27,13 @@ fn main() {
         }
         out
     };
+    let allocator_primed = std::env::var_os("PROA_PRIME_ALLOCATOR").is_some();
+    if allocator_primed {
+        // Match the historical warm-process policy without flattening output.
+        let capacity = render().len();
+        let seed = vec![0_i32; capacity];
+        black_box(seed.as_slice());
+    }
     if args[2] == "dump" {
         // Parity serialization is outside every measured render interval.
         print!("{}", render().into_string());
@@ -54,6 +61,7 @@ fn main() {
             "output_bytes": bytes,
             "output_kind": "owned-render-buffer",
             "debug_assertions": cfg!(debug_assertions),
+            "allocator_primed": allocator_primed,
         })
     );
 }

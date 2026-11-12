@@ -75,6 +75,7 @@ await build({
   ],
 });
 const env = { ...process.env, NODE_ENV: "production", PROA_ROOT: proa };
+const allocatorPrimed = process.env.PROA_PRIME_ALLOCATOR !== undefined;
 const run = (engine, page, ...args) =>
   execFileSync(
     engine === "proa" ? binary : process.execPath,
@@ -167,7 +168,7 @@ for (let repeat = 0; repeat < 5; repeat++) {
         record.samples_us.some((n) => !Number.isFinite(n) || n <= 0)
       )
         throw new Error("Invalid timing samples");
-      if (engine === "proa" && (record.output_kind !== "owned-render-buffer" || record.debug_assertions !== false))
+      if (engine === "proa" && (record.output_kind !== "owned-render-buffer" || record.debug_assertions !== false || record.allocator_primed !== allocatorPrimed))
         throw new Error("Native benchmark must render a fresh owned buffer in release mode");
       if (record.output_bytes !== parity[page][engine].bytes)
         throw new Error("Output size changed during timing");
@@ -215,8 +216,9 @@ const result = {
   completed_at: new Date().toISOString(),
   host,
   method:
-    "Same-host production render-only; Proa allocates and returns a fresh owned RenderBuffer, React returns its native String. Allocation and rendering included. Flattening, encoding, output destruction, prepared inputs, parity checks and I/O outside timer. Standard render warmups, no allocator seed. Median of five independent process P50s per engine/page; process order alternates and page order rotates.",
+    "Same-host production render-only; Proa allocates and returns a fresh owned RenderBuffer, React returns its native String. Allocation and rendering included. Flattening, encoding, output destruction, prepared inputs, parity checks and I/O outside timer. Allocator policy recorded separately. Median of five independent process P50s per engine/page; process order alternates and page order rotates.",
   output_contract: "fresh-owned-render-buffer",
+  allocator_policy: allocatorPrimed ? "explicit-warm-seed" : "render-warmups-only",
   native_source_sha256: sha(readFileSync(join(root, "fixtures/landing-hero/src/main.rs"))),
   proa_revision: revision,
   harness_revision: execFileSync("git", ["rev-parse", "HEAD"], {
