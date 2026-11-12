@@ -227,10 +227,16 @@ this lane with `render_to_string` or the reused-buffer diagnostic.
 
 `landing-hero/run.mjs` compares GitHub PR diff, 400-row Sentry OTel, and Airbnb
 home against their production React ports from Proa revision
-`6952e336b338181a7bd4118756977608f7f36dc9`. GitHub regenerates and syntax-
+`15409e4d952dc8445000036dae4f08c4f2856755`. GitHub regenerates and syntax-
 highlights every diff row on every iteration in both engines. The Proa-only
 runtime HTML cache and leaked pre-rendered rows have been removed, including
-the default-fixture fallback. Root dependencies pin React 19.2.4. The native
+the default-fixture fallback. At this revision the Proa GitHub page writes the
+class names, comment side and line markers that it defines itself without
+scanning them for characters to escape, uses one static template per highlight
+class, and classifies source bytes through a lookup table. It keeps no state
+between renders, and its output is byte-identical to the preceding revision
+`6952e336b338181a7bd4118756977608f7f36dc9`. The React port is unchanged. Root
+dependencies pin React 19.2.4. The native
 program is built in release mode (opt-level 3, ThinLTO, one codegen unit). Each timed native process
 reports its output contract and compile-time debug-assertion mode; the runner
 rejects a stale String-producing binary or an assertion-enabled build.
@@ -267,8 +273,8 @@ bun install --frozen-lockfile
   --no-check --no-assets -p landing-hero-bench \
   --artifact-out "$PWD/showcase/landing-hero/out/landing-hero-bench"
 node showcase/landing-hero/run.mjs --proa /path/to/proa --parity-only
-node showcase/landing-hero/run.mjs --proa /path/to/proa --out showcase/results/landing-hero-live-rows/ci-c4-default.json
-PROA_PRIME_ALLOCATOR=1 node showcase/landing-hero/run.mjs --proa /path/to/proa --out showcase/results/landing-hero-live-rows/ci-c4.json
+node showcase/landing-hero/run.mjs --proa /path/to/proa --out showcase/results/landing-hero-restructured-rows/ci-c4-default.json
+PROA_PRIME_ALLOCATOR=1 node showcase/landing-hero/run.mjs --proa /path/to/proa --out showcase/results/landing-hero-restructured-rows/ci-c4.json
 ```
 
 For CI captures, prefix the runner with `taskset -c 0`. M4 captures use the macOS

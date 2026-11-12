@@ -24,7 +24,7 @@ const resultFile = resultArg < 0
   : resolve(process.argv[resultArg + 1]);
 if (!resultFile.endsWith(".json")) throw new Error("--out must end in .json");
 const rawFile = resultFile.slice(0, -5) + "-raw.json.gz";
-const revision = "6952e336b338181a7bd4118756977608f7f36dc9";
+const revision = "15409e4d952dc8445000036dae4f08c4f2856755";
 const paths = [
   "proa_demo/react-ssr-shared",
   "proa_demo/src/github_pr_diff.rs",
