@@ -262,7 +262,7 @@ test("compares the retained September and October canonical archives", async () 
   const { stdout } = await exec(process.execPath, [
     cli,
     "rendering/results/archive/canonical-ssr-v1-2026-09-05-9363fc29b790.json",
-    "rendering/results/latest.json",
+    "rendering/results/archive/canonical-ssr-v1-2026-10-21-77c5c5fce085.json",
   ], { cwd: workspace, maxBuffer: 2 * 1024 * 1024 });
   assert.match(stdout, /canonical-ssr-v1-2026-09-05-9363fc29b790/);
   assert.match(stdout, /canonical-ssr-v1-2026-10-21-77c5c5fce085/);
