@@ -2,6 +2,7 @@ import type {
   BenchmarkData,
   ChartMode,
   ChartRow,
+  HttpRow,
   Metric,
   Percentiles,
   View,
@@ -193,12 +194,24 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   }
   function showRowPercentiles(row: HTMLElement) {
     const workload = row.dataset.statWorkload,
-      r = (workload ? data.rendering.rows[workload] : getRows()).find(
-        (r) => r.id === row.dataset.focus,
-      ),
-      stats = latencyStats(r, { flow: state.chart === "balls" });
+      framework = row.dataset.statSuite === "framework",
+      r = (
+        framework
+          ? data.framework.workloads[required(workload)]
+          : workload
+            ? data.rendering.rows[workload]
+            : getRows()
+      ).find((r) => r.id === row.dataset.focus),
+      stats =
+        framework && r
+          ? {
+              values: (r as HttpRow).percentiles.equalLoad,
+              unit: "ms",
+              scope: `Full-framework HTTP request → complete HTML · equal load ${(r as HttpRow).equalLoadRps} requests/s · median of three run percentiles`,
+            }
+          : latencyStats(r, { flow: state.chart === "balls" });
     if (workload && stats)
-      stats.scope = `${required(data.workloads.find((w) => w.id === workload)).label} · ${stats.scope}`;
+      stats.scope = `${required((framework ? frameworkWorkloads() : data.workloads).find((w) => w.id === workload)).label} · ${stats.scope}`;
     showPercentiles(
       [
         {
@@ -250,7 +263,10 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     window,
     "scroll",
     () => {
-      if (popupPinned && popupAnchor?.isConnected)
+      if (
+        popupAnchor?.isConnected &&
+        (popupPinned || popupAnchor.matches(":hover, :focus-visible"))
+      )
         placePercentiles(null, popupAnchor);
       else hidePercentiles();
     },
@@ -675,14 +691,16 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     else if (state.chart === "balls") drawBalls(rows);
     else if (state.chart === "table") drawTable(rows);
     else drawBars(rows);
+    $("[data-framework-results]").innerHTML = markup.frameworkComparison();
     if (
       state.view === "rendering" &&
       (state.chart !== "compare" || !rows.length) &&
-      uncaptured().length
+      uncaptured().some((r) => !data.framework.rows.some((v) => v.id === r.id))
     )
       $("[data-results]").insertAdjacentHTML(
         "beforeend",
         `<div class="fw-unmeasured-list"><h3>Outside this experiment</h3>${uncaptured()
+          .filter((r) => !data.framework.rows.some((v) => v.id === r.id))
           .map(
             (r) =>
               `<div>${label(r.id)}<span>${markup.coverage(r)}</span></div>`,
@@ -982,6 +1000,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       state.focus = null;
     } else if (el.dataset.sortWorkload) {
       state.workload = el.dataset.sortWorkload;
+    } else if (el.dataset.sortFrameworkWorkload) {
+      state.workload = el.dataset.sortFrameworkWorkload;
     } else if (el.dataset.workload) {
       state.workload = el.dataset.workload;
       if (state.chart === "compare") state.chart = "bars";
@@ -1024,7 +1044,9 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         ? `[data-workload="${el.dataset.workload}"]`
         : el.dataset.sortWorkload
           ? `[data-sort-workload="${el.dataset.sortWorkload}"]`
-          : null;
+          : el.dataset.sortFrameworkWorkload
+            ? `[data-sort-framework-workload="${el.dataset.sortFrameworkWorkload}"]`
+            : null;
     if (focusSelector) $(focusSelector)?.focus({ preventScroll: true });
   });
   listen(root, "change", (e) => {

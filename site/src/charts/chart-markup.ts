@@ -76,7 +76,7 @@ export function createChartMarkup(model: DashboardModel) {
           return [w.id, (v: number) => (100 * v) / max];
         }),
       );
-    output.html = `<table class="fw-comparison"><caption class="sr-only">SSR render latency in microseconds across workloads. Select a column heading to sort.</caption><thead><tr><th scope="col">Renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" title="Sort by ${esc(w.label)}">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>µs</small></button></th>`).join("")}</tr></thead><tbody>${rows
+    output.html = `<table class="fw-comparison" data-renderer-comparison><caption class="sr-only">Renderer-only SSR latency in microseconds across workloads. Select a column heading to sort.</caption><thead><tr><th scope="col">Renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" title="Sort by ${esc(w.label)}">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>µs</small></button></th>`).join("")}</tr></thead><tbody>${rows
       .map(
         (r) =>
           `<tr style="--brand:${required(renderer(r.id)).color}" class="${state.focus === r.id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" data-focus="${r.id}" aria-pressed="${state.focus === r.id}">${label(r.id)}</button></th>${workloads
@@ -89,6 +89,7 @@ export function createChartMarkup(model: DashboardModel) {
             .join("")}</tr>`,
       )
       .join("")}${uncaptured()
+      .filter((r) => !data.framework.rows.some((v) => v.id === r.id))
       .map(
         (r) =>
           `<tr class="fw-uncaptured"><th scope="row">${label(r.id)}<small>${model.measurementLinks(r.id).length ? "Measured separately" : "Not measured here"}</small></th><td colspan="3">${coverage(r)}</td></tr>`,
@@ -96,6 +97,47 @@ export function createChartMarkup(model: DashboardModel) {
       .join("")}</tbody></table>`;
     output.note =
       "Median SSR render latency · µs · lower is better · sort by any workload heading · bars scale linearly within each column";
+  }
+  function frameworkComparison() {
+    if (state.view !== "rendering") return "";
+    const workloads = model.frameworkWorkloads();
+    const sortWorkload =
+      workloads.find((w) => w.id === state.workload) || workloads[0];
+    const rows = data.framework.workloads[sortWorkload.id]
+      .filter(isVisible)
+      .toSorted((a, b) => required(a.p50) - required(b.p50));
+    if (!rows.length) return "";
+    const max = Object.fromEntries(
+      workloads.map((w) => [
+        w.id,
+        Math.max(
+          1,
+          ...data.framework.workloads[w.id]
+            .filter(isVisible)
+            .map((r) => required(r.p50)),
+        ) * 1.04,
+      ]),
+    );
+    const host = data.framework.host;
+    const provenance = `${host?.cloud || host?.cpu_model || host?.cpuModel || "Recorded host"} · ${data.framework.date}${/^\d+$/.test(host?.serverCpuAffinity || "") ? " · 1 logical CPU per server" : ""}`;
+    return `<section aria-labelledby="framework-comparison-title" class="mt-9 border-t border-line pt-7" data-framework-comparison-section>
+      <div class="mb-3 flex flex-wrap items-baseline justify-between gap-3"><h2 id="framework-comparison-title" class="text-xl font-medium tracking-tight">Framework SSR latency</h2><a href="?view=framework&framework=p50" class="text-xs text-muted underline underline-offset-4">Detailed results ↗</a></div>
+      <p class="mb-4 text-xs leading-relaxed text-muted">HTTP request → complete HTML response, including routing and rendering. Median P50 in milliseconds; lower is better. This is a separate measurement from the renderer-only timings above.</p>
+      <table class="fw-comparison" data-framework-comparison><caption class="sr-only">Full-framework HTTP SSR latency in milliseconds across workloads. Select a column heading to sort.</caption><thead><tr><th scope="col">Framework</th>${workloads.map((w) => `<th scope="col" aria-sort="${w.id === sortWorkload.id ? "ascending" : "none"}"><button type="button" data-sort-framework-workload="${w.id}">${esc(w.label)}${w.id === sortWorkload.id ? " ↓" : ""}<small>ms · ${w.fixedRateRps} req/s</small></button></th>`).join("")}</tr></thead><tbody>${rows
+        .map(
+          (row) =>
+            `<tr style="--brand:${required(renderer(row.id)).color}" class="${state.focus === row.id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" data-focus="${row.id}" data-stat-suite="framework" data-stat-workload="${sortWorkload.id}" aria-pressed="${state.focus === row.id}">${label(row.id)}</button></th>${workloads
+              .map((w) => {
+                const cell = required(
+                  data.framework.workloads[w.id].find((r) => r.id === row.id),
+                );
+                return `<td class="fw-comparison-cell"><button type="button" data-focus="${row.id}" data-stat-suite="framework" data-stat-workload="${w.id}" aria-pressed="${state.focus === row.id}" aria-label="${esc(name(row.id))}, ${esc(w.label)}, ${fmt(required(cell.p50))} ms"><span class="fw-comparison-value">${fmt(required(cell.p50))}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${(100 * required(cell.p50)) / max[w.id]}%"></span></span></button></td>`;
+              })
+              .join("")}</tr>`,
+        )
+        .join("")}</tbody></table>
+      <p class="mt-4 text-[11px] leading-relaxed text-muted">${esc(provenance)}. ${data.framework.methodology.repeats} independent server starts per workload. Each column uses the same offered load for all frameworks. <a href="/${esc(data.framework.download)}" class="underline underline-offset-2">Raw capture ↗</a></p>
+    </section>`;
   }
   function renderCatalog() {
     const groups = [
@@ -460,6 +502,7 @@ export function createChartMarkup(model: DashboardModel) {
   }
   return {
     draw,
+    frameworkComparison,
     line: lineMarkup,
     lineKey,
     pointMarker,

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
+import type { BenchmarkData } from "../benchmark-types.ts";
 import { required } from "../required.ts";
 
 // Exercise the deployed assets too: a successful upload does not prove that
@@ -13,9 +14,34 @@ export async function verifyPreview(url: string) {
       waitUntil: "domcontentloaded",
     });
     assert.ok(
-      (await initial.locator(".fw-comparison tbody tr").count()) > 0,
+      (await initial.locator("[data-renderer-comparison] tbody tr").count()) >
+        0,
       "Preview must include benchmark results without JavaScript",
     );
+    const data: BenchmarkData = await (
+      await initial.request.get(new URL("/data/results.json", url).href)
+    ).json();
+    const table = initial.locator("[data-framework-comparison]");
+    assert.equal(await initial.locator(".fw-uncaptured").count(), 0);
+    assert.equal(
+      await table.locator("tbody tr").count(),
+      data.framework.rows.length,
+    );
+    for (const workload of data.framework.workloadDefinitions)
+      for (const row of data.framework.workloads[workload.id]) {
+        const expected = Number(row.p50).toLocaleString("en-US", {
+          maximumFractionDigits: Number(row.p50) < 10 ? 2 : 1,
+        });
+        assert.equal(
+          await table
+            .locator(
+              `td [data-focus="${row.id}"][data-stat-workload="${workload.id}"] .fw-comparison-value`,
+            )
+            .textContent(),
+          expected,
+          `${row.id}/${workload.id} must be in the server HTML`,
+        );
+      }
     await initial.goto(
       new URL("/features?group=server&display=matrix&tools=astro,nextjs", url)
         .href,
@@ -41,13 +67,44 @@ export async function verifyPreview(url: string) {
     await page.getByRole("button", { name: "Overview", exact: true }).click();
     await page.locator(".fw-feature-overview").waitFor({ state: "visible" });
     await page.getByRole("link", { name: "Performance", exact: true }).click();
-    await page.locator(".fw-comparison").waitFor({ state: "visible" });
+    await page
+      .locator("[data-renderer-comparison]")
+      .waitFor({ state: "visible" });
     await page.locator('[data-app-ready="true"]').waitFor();
     await page.locator("[data-stat-workload]").first().hover();
     await page.locator("[data-percentile-popup]").waitFor({ state: "visible" });
+    for (const workload of data.framework.workloadDefinitions)
+      for (const row of data.framework.workloads[workload.id]) {
+        const cell = page.locator(
+          `[data-framework-comparison] td [data-focus="${row.id}"][data-stat-workload="${workload.id}"]`,
+        );
+        await cell.hover();
+        const popup = page.locator("[data-percentile-popup]");
+        await popup.waitFor({ state: "visible" });
+        assert.equal(
+          await popup.locator(".fw-popover-unit").first().textContent(),
+          "ms",
+        );
+        assert.match(
+          required(await popup.locator(".fw-popover-scope").textContent()),
+          /Full-framework HTTP request/,
+        );
+        const expectedPercentiles = (["p50", "p95", "p99"] as const).map(
+          (q) => {
+            const value = row.percentiles.equalLoad[q];
+            return value.toLocaleString("en-US", {
+              maximumFractionDigits: value >= 1000 ? 0 : value < 10 ? 3 : 2,
+            });
+          },
+        );
+        assert.deepEqual(
+          await popup.locator(".fw-percentile-number strong").allTextContents(),
+          expectedPercentiles,
+        );
+      }
     assert.deepEqual(errors, [], "Deployed preview has browser errors");
     console.log(
-      `Verified preview routes, feature views and hover details: ${url}`,
+      `Verified preview routes, feature views, all framework cells without JavaScript and their hover percentiles: ${url}`,
     );
   } finally {
     await browser.close();

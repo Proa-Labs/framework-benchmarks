@@ -210,7 +210,7 @@ try {
   assert.equal(await page.locator("[data-load-points]").isVisible(), false);
   await page.locator("[data-stream-view]").selectOption("throughput");
   await page.locator('[data-view="rendering"]').click();
-  assert.equal(await page.locator(".fw-comparison").count(), 1);
+  assert.equal(await page.locator("[data-renderer-comparison]").count(), 1);
   assert.equal(
     required(
       await page.locator('[data-chart="compare"]').getAttribute("aria-pressed"),
@@ -301,12 +301,14 @@ try {
   }
   await navigate(server.url);
   assert.equal(
-    await page.locator(".fw-comparison tbody tr:not(.fw-uncaptured)").count(),
+    await page
+      .locator("[data-renderer-comparison] tbody tr:not(.fw-uncaptured)")
+      .count(),
     17,
   );
   assert.equal(
     await page
-      .locator(".fw-comparison tbody tr:not(.fw-uncaptured) td")
+      .locator("[data-renderer-comparison] tbody tr:not(.fw-uncaptured) td")
       .count(),
     51,
   );
@@ -344,53 +346,107 @@ try {
   await page
     .getByRole("button", { name: "All workloads", exact: true })
     .click();
-  assert.equal(await page.locator(".fw-uncaptured").count(), 4);
-  for (const tool of ["Astro", "Exact", "Next.js"]) {
-    const row = page.locator(".fw-uncaptured").filter({ hasText: tool });
-    const link = row.getByRole("link", { name: "Framework SSR results ↗" });
-    assert.equal(await link.getAttribute("href"), "?view=framework");
-    assert.doesNotMatch(
-      required(await row.textContent()),
-      /No canonical capture/,
+  assert.equal(await page.locator(".fw-uncaptured").count(), 0);
+  const related = page.locator("[data-framework-comparison]");
+  assert.equal(await related.locator("tbody tr").count(), 5);
+  const relatedData: BenchmarkData = await (
+    await context.request.get(`${server.url}/data/results.json`)
+  ).json();
+  for (const workload of relatedData.framework.workloadDefinitions) {
+    assert.match(
+      required(await related.locator("thead").textContent()),
+      new RegExp(`${workload.fixedRateRps} req/s`),
     );
+    for (const row of relatedData.framework.workloads[workload.id]) {
+      const cell = related.locator(
+        `td [data-focus="${row.id}"][data-stat-workload="${workload.id}"]`,
+      );
+      const expected = Number(row.p50).toLocaleString("en-US", {
+        maximumFractionDigits: Number(row.p50) < 10 ? 2 : 1,
+      });
+      assert.equal(
+        await cell.locator(".fw-comparison-value").textContent(),
+        expected,
+      );
+      await cell.hover();
+      await page
+        .locator("[data-percentile-popup]")
+        .waitFor({ state: "visible" });
+      assert.equal(
+        await page.locator(".fw-popover-unit").first().textContent(),
+        "ms",
+      );
+      assert.deepEqual(
+        await page.locator(".fw-percentile-number strong").allTextContents(),
+        (["p50", "p95", "p99"] as const).map((q) => {
+          const value = row.percentiles.equalLoad[q];
+          return value.toLocaleString("en-US", {
+            maximumFractionDigits: value >= 1000 ? 0 : value < 10 ? 3 : 2,
+          });
+        }),
+      );
+      assert.match(
+        required(await page.locator(".fw-popover-scope").textContent()),
+        /Full-framework HTTP request/,
+      );
+      assert.match(
+        required(await page.locator(".fw-popover-scope").textContent()),
+        new RegExp(`${row.equalLoadRps} requests/s`),
+      );
+    }
   }
-  const svelteKitCoverage = page
-    .locator(".fw-uncaptured")
-    .filter({ hasText: "SvelteKit" });
+  await related.locator('[data-sort-framework-workload="table"]').click();
+  const frameworkOrder = relatedData.framework.workloads.table
+    .toSorted((a, b) => Number(a.p50) - Number(b.p50))
+    .map((r) => r.id);
+  assert.deepEqual(
+    await related
+      .locator("tbody th button")
+      .evaluateAll((buttons) =>
+        buttons.map((b) => (b as HTMLElement).dataset.focus),
+      ),
+    frameworkOrder,
+  );
+  await related.getByRole("button", { name: "Astro", exact: true }).hover();
   assert.equal(
-    await svelteKitCoverage
-      .getByRole("link", { name: "HTTP results ↗" })
-      .count(),
+    await related.getByRole("button", { name: "Astro", exact: true }).count(),
     1,
   );
-  await svelteKitCoverage
-    .getByRole("link", { name: "Cold Start results ↗" })
+  const raw = await context.request.get(
+    new URL(
+      required(
+        await page
+          .getByRole("link", { name: "Raw capture ↗", exact: true })
+          .getAttribute("href"),
+      ),
+      server.url,
+    ).href,
+  );
+  assert.equal(raw.status(), 200);
+  assert.equal((await raw.json()).captureKind, "publication");
+  await page
+    .getByRole("link", { name: "Detailed results ↗", exact: true })
     .click();
   await ready();
   assert.equal(
     await page
-      .getByRole("tab", { name: "Cold Start", exact: true })
+      .getByRole("tab", { name: "Framework SSR", exact: true })
       .getAttribute("aria-selected"),
     "true",
   );
-  assert.equal(
-    await page.locator('.fw-row[data-focus="sveltekit"]').count(),
-    1,
-  );
+  assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
+  assert.equal(await page.locator(".fw-row").count(), 5);
   await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
   await page
     .getByRole("button", { name: "All workloads", exact: true })
     .click();
-  assert.match(
-    await page
-      .locator(".fw-uncaptured")
-      .allTextContents()
-      .then((rows) => rows.join(" ")),
-    /SvelteKit/,
-  );
+  assert.equal(await related.locator("tbody tr").count(), 5);
   await page.locator('[data-type="frameworks"]').click();
   assert.equal(await page.locator('[data-type="baselines"]').count(), 0);
-  assert.equal(await page.locator(".fw-uncaptured").count(), 0);
+  assert.equal(await related.count(), 0);
+  checks.push(
+    "default page shows all 15 framework values from the capture, correct millisecond hover percentiles, sorting, raw data and filters",
+  );
   const filtered: TestExport = JSON.parse(
     decodeURIComponent(
       required(await page.locator("[data-json]").getAttribute("href"))
@@ -1111,8 +1167,11 @@ try {
     await page.getByRole("link", { name: "Performance", exact: true }).click();
     await page.locator("#experiment-rendering").waitFor();
     await ready();
-    assert.equal(await page.locator(".fw-comparison tbody tr").count(), 21);
-    await page.locator(".fw-comparison tbody tr").first().hover();
+    assert.equal(
+      await page.locator("[data-renderer-comparison] tbody tr").count(),
+      17,
+    );
+    await page.locator("[data-renderer-comparison] tbody tr").first().hover();
     await page.locator("[data-percentile-popup]").waitFor({ state: "visible" });
     await page.getByRole("link", { name: "Features", exact: true }).click();
     await page.locator("#feature-comparison").waitFor();
@@ -1144,7 +1203,8 @@ try {
   });
   const initial = await noJS.newPage();
   for (const [path, selector, count] of [
-    ["/", ".fw-comparison tbody tr", 21],
+    ["/", "[data-renderer-comparison] tbody tr", 17],
+    ["/", "[data-framework-comparison] tbody tr", 5],
     ["/?chart=bars&workload=products&selected=proa,react", ".fw-row", 2],
     ["/?view=framework&workload=cards", ".fw-row", 5],
     ["/?view=framework&workload=products", ".fw-row", 5],
@@ -1176,7 +1236,7 @@ try {
   assert.equal(await serverNote.textContent(), expectedNote);
   await initial.evaluate(() => document.fonts.ready);
   const serverTable = required(
-    await initial.locator(".fw-comparison").boundingBox(),
+    await initial.locator("[data-renderer-comparison]").boundingBox(),
   );
   await navigate(`${server.url}/?chart=compare`);
   await page.evaluate(() => document.fonts.ready);
@@ -1186,7 +1246,7 @@ try {
     expectedNote,
   );
   const hydratedTable = required(
-    await page.locator(".fw-comparison").boundingBox(),
+    await page.locator("[data-renderer-comparison]").boundingBox(),
   );
   assert.ok(Math.abs(serverTable.y - hydratedTable.y) < 1);
   await initial.getByText("Method & data", { exact: true }).click();
