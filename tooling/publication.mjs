@@ -75,6 +75,14 @@ export function validatePublication(results) {
   return { machineId: reference.machineId, campaignId: reference.campaignId };
 }
 
+export function validateProcessRepeats(runs) {
+  assert.deepEqual(
+    runs.map((run) => run.repeat).sort((a, b) => a - b),
+    [0, 1, 2, 3, 4],
+    "Proa raw observations must cover all five independent processes",
+  );
+}
+
 export async function verifyPublication(root) {
   const results = {};
   // Check the campaign first so historical data reports the actionable blocker.
@@ -106,11 +114,7 @@ export async function verifyPublication(root) {
         const proa = runs.filter(
           (run) => run.framework_id === "proa" && run.workload === workload.id,
         );
-        assert.deepEqual(
-          proa.map((run) => run.repeat).sort(),
-          [1, 2, 3, 4, 5],
-          "Proa raw observations must cover all five independent processes",
-        );
+        validateProcessRepeats(proa);
         for (const run of proa) validateProaRenderRun(run);
       }
     }

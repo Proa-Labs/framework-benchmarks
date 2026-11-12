@@ -7,66 +7,65 @@ One core of each framework's production server serves the same parity-gated page
 <!-- page-load:start -->
 ## Canonical pages over HTTP, one core each
 
-> **PROA-only refresh.** Only Proa was rerun on 2026-11-11; peer rows retain their 2026-10-21 capture. Both runs used the same machine and suite protocol; they were not measured together.
 
-**November 11, 2026 · Apple M4 Max · 5 production servers · every response byte-identical to its parity-gated dump**
+**November 12, 2026 · Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz · 5 production servers · every response byte-identical to its parity-gated dump**
 
-This is the capacity question behind the scoreboard: the same three parity-gated pages, served over real loopback HTTP/1.1 by each framework's ordinary production server, with every engine limited to one core of work. Proa runs one Tokio worker thread on Axum, React and Marko run one Bun process, and Go runs `GOMAXPROCS=1` on `net/http`. On the product grid, one Proa core sustained 20,863 complete responses per second against 1,614 for React, and spent 0.048 ms of CPU per response against React's 0.635 ms.
+This is the capacity question behind the scoreboard: the same three parity-gated pages, served over real loopback HTTP/1.1 by each framework's ordinary production server, with every engine limited to one core of work. Proa runs one Tokio worker thread on Axum, React and Marko run one Bun process, and Go runs `GOMAXPROCS=1` on `net/http`. On the product grid, one Proa core sustained 16,046 complete responses per second against 1,361 for React, and spent 0.066 ms of CPU per response against React's 0.757 ms.
 
-Each value is the median of 3 fresh server processes. **Capacity** rows use 64 closed-loop connections issuing requests back to back; throughput counts complete responses inside a fixed 5-second window after a 1-second pre-roll. **CPU per response** is the server process's exact CPU-time delta across all of its threads, including garbage-collector helpers, divided by successful responses. The load generator is 8 separate worker processes that hash every response; a phase is rejected if any worker's event loop exceeds 80% busy.
+Each value is the median of 3 fresh server processes. **Capacity** rows use 64 closed-loop connections issuing requests back to back; throughput counts complete responses inside a fixed 5-second window after a 1-second pre-roll. **CPU per response** is the server process's exact CPU-time delta across all of its threads, including garbage-collector helpers, divided by successful responses. The load generator is 24 separate worker processes that hash every response; a phase is rejected if any worker's event loop exceeds 80% busy.
 
 | Workload | Engine | Sustained responses/s | Proa ÷ engine | CPU per response | Cores used | Peak RSS |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Component page | Proa | 95,454 | 1.00× | 0.010 ms | 0.99 | 8.5 MiB |
-| Component page | React | 9,426 | 10.1× | 0.112 ms | 1.04 | 240.8 MiB |
-| Component page | Marko | 39,348 | 2.43× | 0.027 ms | 1.04 | 227.4 MiB |
-| Component page | Go html/template | 7,407 | 12.9× | 0.135 ms | 1.00 | 19.1 MiB |
-| Component page | SvelteKit | 9,693 | 9.85× | 0.122 ms | 1.14 | 392.1 MiB |
-| Product grid | Proa | 20,863 | 1.00× | 0.048 ms | 0.99 | 9.6 MiB |
-| Product grid | React | 1,614 | 12.9× | 0.635 ms | 1.02 | 312.0 MiB |
-| Product grid | Marko | 4,507 | 4.63× | 0.244 ms | 1.09 | 375.5 MiB |
-| Product grid | Go html/template | 1,055 | 19.8× | 0.949 ms | 1.00 | 18.3 MiB |
-| Product grid | SvelteKit | 1,458 | 14.3× | 0.851 ms | 1.21 | 547.0 MiB |
-| 1,000-row table | Proa | 3,351 | 1.00× | 0.298 ms | 1.00 | 70.5 MiB |
-| 1,000-row table | React | 189 | 17.7× | 5.413 ms | 1.03 | 442.0 MiB |
-| 1,000-row table | Marko | 564 | 5.94× | 1.689 ms | 0.94 | 303.0 MiB |
-| 1,000-row table | Go html/template | 69 | 48.4× | 12.425 ms | 0.89 | 20.0 MiB |
-| 1,000-row table | SvelteKit | 121 | 27.7× | 8.440 ms | 1.03 | 466.4 MiB |
+| Component page | Proa | 90,480 | 1.00× | 0.011 ms | 1.00 | 8.6 MiB |
+| Component page | React | 6,647 | 13.6× | 0.157 ms | 1.00 | 98.7 MiB |
+| Component page | Marko | 33,197 | 2.73× | 0.032 ms | 1.00 | 87.9 MiB |
+| Component page | Go html/template | 5,488 | 16.5× | 0.182 ms | 1.00 | 16.2 MiB |
+| Component page | SvelteKit | 6,514 | 13.9× | 0.166 ms | 1.00 | 112.9 MiB |
+| Product grid | Proa | 16,046 | 1.00× | 0.066 ms | 1.00 | 9.2 MiB |
+| Product grid | React | 1,361 | 11.8× | 0.757 ms | 1.00 | 112.8 MiB |
+| Product grid | Marko | 4,472 | 3.59× | 0.227 ms | 1.00 | 107.5 MiB |
+| Product grid | Go html/template | 771 | 20.8× | 1.297 ms | 1.00 | 15.7 MiB |
+| Product grid | SvelteKit | 1,174 | 13.7× | 0.896 ms | 1.00 | 286.8 MiB |
+| 1,000-row table | Proa | 1,484 | 1.00× | 0.703 ms | 1.00 | 10.6 MiB |
+| 1,000-row table | React | 127 | 11.7× | 7.955 ms | 1.00 | 155.4 MiB |
+| 1,000-row table | Marko | 456 | 3.25× | 2.238 ms | 1.00 | 119.6 MiB |
+| 1,000-row table | Go html/template | 62 | 23.9× | 15.971 ms | 1.00 | 17.0 MiB |
+| 1,000-row table | SvelteKit | 186 | 7.99× | 5.551 ms | 1.00 | 678.2 MiB |
 
 Translating CPU per response into fleet size: the cores needed to serve 10,000 responses per second of each page, from the measured CPU per response. Real deployments add headroom, but the ratios carry over.
 
 | Workload | Proa | React | Marko | Go html/template | SvelteKit |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Component page | 0.1 | 1.1 | 0.3 | 1.3 | 1.2 |
-| Product grid | 0.5 | 6.4 | 2.4 | 9.5 | 8.5 |
-| 1,000-row table | 3.0 | 54.1 | 16.9 | 124.2 | 84.4 |
+| Component page | 0.1 | 1.6 | 0.3 | 1.8 | 1.7 |
+| Product grid | 0.7 | 7.6 | 2.3 | 13.0 | 9.0 |
+| 1,000-row table | 7.0 | 79.5 | 22.4 | 159.7 | 55.5 |
 
 **Latency at equal load** uses fixed-rate open-loop arrivals below every engine's knee, so the percentiles compare the same request-rate target rather than each server's own saturation point. Latency is measured from scheduled arrival and includes generator lag.
 
 | Workload | Engine | Request rate (rps) | Complete P50 | Complete P99 | CPU per response | Peak RSS |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| Component page | Proa | 2,000 | 0.09 ms | 0.14 ms | 0.025 ms | 5.6 MiB |
-| Component page | React | 2,000 | 0.22 ms | 0.29 ms | 0.151 ms | 84.0 MiB |
-| Component page | Marko | 2,000 | 0.15 ms | 0.34 ms | 0.078 ms | 194.1 MiB |
-| Component page | Go html/template | 2,000 | 0.23 ms | 3.97 ms | 0.187 ms | 18.1 MiB |
-| Component page | SvelteKit | 2,000 | 0.27 ms | 0.70 ms | 0.266 ms | 205.7 MiB |
-| Product grid | Proa | 500 | 0.21 ms | 0.35 ms | 0.076 ms | 6.8 MiB |
-| Product grid | React | 500 | 0.74 ms | 1.04 ms | 0.664 ms | 146.0 MiB |
-| Product grid | Marko | 500 | 0.39 ms | 1.02 ms | 0.310 ms | 115.0 MiB |
-| Product grid | Go html/template | 500 | 1.05 ms | 1.48 ms | 1.078 ms | 17.6 MiB |
-| Product grid | SvelteKit | 500 | 0.96 ms | 1.84 ms | 1.369 ms | 160.6 MiB |
-| 1,000-row table | Proa | 50 | 1.07 ms | 2.05 ms | 0.704 ms | 29.5 MiB |
-| 1,000-row table | React | 50 | 4.90 ms | 6.24 ms | 4.874 ms | 282.4 MiB |
-| 1,000-row table | Marko | 50 | 1.80 ms | 3.89 ms | 1.782 ms | 139.5 MiB |
-| 1,000-row table | Go html/template | 50 | 11.2 ms | 12.2 ms | 11.209 ms | 17.7 MiB |
-| 1,000-row table | SvelteKit | 50 | 7.53 ms | 8.51 ms | 7.496 ms | 162.8 MiB |
+| Component page | Proa | 2,000 | 0.12 ms | 0.48 ms | 0.022 ms | 7.3 MiB |
+| Component page | React | 2,000 | 0.23 ms | 11.8 ms | 0.206 ms | 90.0 MiB |
+| Component page | Marko | 2,000 | 0.13 ms | 1.46 ms | 0.073 ms | 63.6 MiB |
+| Component page | Go html/template | 2,000 | 0.24 ms | 0.77 ms | 0.195 ms | 15.2 MiB |
+| Component page | SvelteKit | 2,000 | 0.24 ms | 20.9 ms | 0.250 ms | 102.6 MiB |
+| Product grid | Proa | 500 | 0.34 ms | 0.94 ms | 0.122 ms | 7.8 MiB |
+| Product grid | React | 500 | 0.89 ms | 2.66 ms | 0.826 ms | 105.4 MiB |
+| Product grid | Marko | 500 | 0.42 ms | 1.01 ms | 0.282 ms | 77.1 MiB |
+| Product grid | Go html/template | 500 | 1.30 ms | 1.94 ms | 1.292 ms | 15.1 MiB |
+| Product grid | SvelteKit | 500 | 0.90 ms | 11.6 ms | 0.908 ms | 118.9 MiB |
+| 1,000-row table | Proa | 50 | 1.85 ms | 2.47 ms | 0.923 ms | 9.2 MiB |
+| 1,000-row table | React | 50 | 8.34 ms | 14.1 ms | 8.263 ms | 139.0 MiB |
+| 1,000-row table | Marko | 50 | 2.76 ms | 3.82 ms | 2.446 ms | 85.8 MiB |
+| 1,000-row table | Go html/template | 50 | 16.3 ms | 17.1 ms | 16.127 ms | 15.4 MiB |
+| 1,000-row table | SvelteKit | 50 | 5.26 ms | 16.2 ms | 5.532 ms | 180.0 MiB |
 
 Every measured response was compared byte for byte against the dump the same engine produced through its canonical adapter, which is the dump that passed the scoreboard's browser-DOM parity gate.
 
 | Engine version | Component page bytes | Product grid bytes | 1,000-row table bytes | HTTP responses |
 | --- | ---: | ---: | ---: | --- |
 | Proa 0.3.0 @ bbbc9684 | 25,108 | 284,908 | 988,509 | byte-identical |
-| React 19.2.8 | 25,202 | 285,868 | 990,695 | byte-identical |
+| React 19.2.4 | 25,202 | 285,868 | 990,695 | byte-identical |
 | Marko 6.0.150 | 24,038 | 282,604 | 983,187 | byte-identical |
 | Go html/template go1.25.5 | 25,108 | 285,676 | 990,509 | byte-identical |
 | SvelteKit 3.1.0 / Svelte 5.57.2 / adapter-node 6.0.0 | 25,959 | 286,704 | 1,003,437 | byte-identical |
@@ -87,23 +86,22 @@ The same servers pay a start-up cost on every fresh process, measured next in [C
 <!-- cold-start:start -->
 ## Cold start to first response
 
-> **PROA-only refresh.** Only Proa was rerun on 2026-11-11; peer rows retain their 2026-10-21 capture. Both runs used the same machine and suite protocol; they were not measured together.
 
-**November 11, 2026 · Apple M4 Max · 15 fresh processes per engine**
+**November 12, 2026 · Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz · 15 fresh processes per engine**
 
-Every autoscaling event, cold serverless instance, per-tenant process, and developer restart pays this cost. Each row spawns the same production server used in the HTTP capacity section, polls its port every millisecond, and stops the clock when the first complete product-grid response ends; that response must be byte-identical to the engine's canonical dump. Proa's first response arrived in 5.11 ms at the median against 50.7 ms for React, whose figure includes Node v24.20.0 start-up and loading React and the page module. Engines rotate every start, 2 untimed starts warm the disk cache, and the RSS column is sampled immediately after the first response.
+Every autoscaling event, cold serverless instance, per-tenant process, and developer restart pays this cost. Each row spawns the same production server used in the HTTP capacity section, polls its port every millisecond, and stops the clock when the first complete product-grid response ends; that response must be byte-identical to the engine's canonical dump. Proa's first response arrived in 5.98 ms at the median against 46.6 ms for React, whose figure includes Bun 1.4.2 start-up and loading React and the page module. Engines rotate every start, 2 untimed starts warm the disk cache, and the RSS column is sampled immediately after the first response.
 
 | Engine | First response P50 | P95 | Max | First byte P50 | RSS after first response |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Proa 0.3.0 @ bbbc9684 | 5.11 ms | 11.4 ms | 14.6 ms | 4.92 ms | 4.6 MiB |
-| React | 50.7 ms | 60.8 ms | 66.0 ms | 50.6 ms | 76.1 MiB |
-| Marko | 43.1 ms | 47.9 ms | 48.6 ms | 43.0 ms | 63.3 MiB |
-| Go html/template | 6.27 ms | 8.47 ms | 10.7 ms | 5.33 ms | 12.5 MiB |
-| SvelteKit | 55.0 ms | 57.1 ms | 57.3 ms | 54.9 ms | 72.0 MiB |
+| Proa 0.3.0 @ bbbc9684 | 5.98 ms | 8.46 ms | 8.64 ms | 5.67 ms | 6.3 MiB |
+| React | 46.6 ms | 53.0 ms | 53.1 ms | 46.3 ms | 57.8 MiB |
+| Marko | 33.2 ms | 35.9 ms | 36.5 ms | 33.0 ms | 39.9 MiB |
+| Go html/template | 8.82 ms | 10.6 ms | 11.0 ms | 7.41 ms | 9.9 MiB |
+| SvelteKit | 52.7 ms | 57.1 ms | 58.7 ms | 52.5 ms | 51.0 MiB |
 
 - Capture: [cold-start/results/latest.json](cold-start/results/latest.json); reproduce with `bun run bench:cold-start`.
 - Servers, ports, and per-core limits are the same as the [HTTP capacity section](#canonical-pages-over-http-one-core-each). Wall time includes process creation, runtime start-up, module or binary loading, fixture construction, and the first render.
-- Host one-minute load average when the capture started: 6.60 on 16 logical CPUs. Cold start is a few milliseconds of wall time, so it is the measurement most sensitive to other work on the machine; rerun it on an idle host before quoting absolute values.
+- Host one-minute load average when the capture started: 0.78 on 16 logical CPUs. Cold start is a few milliseconds of wall time, so it is the measurement most sensitive to other work on the machine; rerun it on an idle host before quoting absolute values.
 <!-- cold-start:end -->
 
 [![Median, P95 and slowest time from process spawn to first complete product-grid response for Proa, React, Marko and Go html/template, with RSS after the first response](charts/svg/09-cold-start.svg)](charts/svg/09-cold-start.svg)
@@ -116,7 +114,7 @@ The product grid also streams, which is the subject of [Suspense streaming over 
 ## Suspense streaming over HTTP, one core each
 
 
-**November 10, 2026 · Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz · 8 async boundaries × 12 product cards · one worker thread or process per engine**
+**November 12, 2026 · Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz · 8 async boundaries × 12 product cards · one worker thread or process per engine**
 
 This is the product grid from the capacity section, streamed. Equivalent production-mode Proa, Marko, and React applications run over real loopback HTTP/1.1. Every request streams a shell, starts 8 independent data operations across the 5, 8, 12, 18, 27, 40, 60, 90 ms delay tiers, may stream loading placeholders while those operations are pending, and completes only after every panel has resolved to its 12 product cards on the wire, 96 cards in all. Delayed values stay typed and in memory; there is no JSON serialization, deserialization, or external I/O in the measured request path. Rendering, boundary scheduling, replacement framing, and one flush per boundary are all inside the measurement.
 
@@ -126,50 +124,50 @@ Each row is the median of 3 fresh-process phases under fixed-rate open-loop arri
 
 | Engine | Request rate (rps) | Window completions/s | Shell P50 | Complete P50 | Complete P95 | Complete P99 | CPU/request | Cores | Peak RSS | Max in-flight | Generator lag P95 | Errors |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Proa | 250 | 250 | 0.25 ms | 91.6 ms | 91.8 ms | 92.4 ms | 0.246 ms | 0.06 | 7.8 MiB | 24 | 0.00 ms | 0 |
-| Proa | 500 | 500 | 0.20 ms | 91.4 ms | 91.5 ms | 92.0 ms | 0.240 ms | 0.12 | 9.4 MiB | 52 | 0.01 ms | 0 |
-| Proa | 1,000 | 1000 | 0.17 ms | 91.2 ms | 91.4 ms | 92.2 ms | 0.247 ms | 0.24 | 12.7 MiB | 105 | 0.01 ms | 0 |
-| Proa | 2,000 | 2000 | 0.20 ms | 91.2 ms | 94.3 ms | 101.9 ms | 0.269 ms | 0.53 | 18.3 MiB | 203 | 1.18 ms | 0 |
-| Proa | 3,000 | 2998 | 0.77 ms | 91.9 ms | 101.5 ms | 104.7 ms | 0.282 ms | 0.83 | 24.9 MiB | 327 | 3.06 ms | 0 |
-| Proa | 4,000 | 3502 | 29.1 ms | 566.1 ms | 1211.2 ms | 1322.2 ms | 0.279 ms | 0.99 | 194.0 MiB | 3,242 | 5.89 ms | 0 |
-| Proa | 5,000 | 3300 | 823.2 ms | 1889.5 ms | 3271.0 ms | 3568.2 ms | 0.288 ms | 1.00 | 379.7 MiB | 10,400 | 5.16 ms | 0 |
-| Proa | 6,000 | 3340 | 1674.5 ms | 2826.7 ms | 4727.2 ms | 5123.1 ms | 0.290 ms | 1.00 | 384.6 MiB | 16,571 | 6.94 ms | 0 |
-| Marko | 250 | 250 | 0.38 ms | 90.4 ms | 91.3 ms | 92.4 ms | 0.945 ms | 0.23 | 90.1 MiB | 25 | 0.01 ms | 0 |
-| Marko | 500 | 500 | 0.37 ms | 90.3 ms | 91.9 ms | 94.9 ms | 0.821 ms | 0.40 | 103.9 MiB | 54 | 0.00 ms | 0 |
-| Marko | 1,000 | 1000 | 0.37 ms | 91.1 ms | 97.1 ms | 108.4 ms | 0.732 ms | 0.72 | 134.1 MiB | 124 | 0.01 ms | 0 |
-| Marko | 2,000 | 1034 | 3002.2 ms | 3190.7 ms | 5222.3 ms | 6769.5 ms | 0.861 ms | 1.00 | 2225.8 MiB | 6,079 | 0.21 ms | 0 |
-| Marko | 3,000 | 1068 | 6254.3 ms | 6304.8 ms | 9827.1 ms | 13369.4 ms | 0.850 ms | 0.89 | 2523.6 MiB | 11,941 | 0.28 ms | 0 |
-| Marko | 4,000 | 1080 | 8929.7 ms | 8929.7 ms | 13711.7 ms | 14428.2 ms | 0.825 ms | 1.00 | 2701.7 MiB | 17,939 | 0.44 ms | 0 |
-| Marko | 5,000 | 1025 | 11732.1 ms | 11732.1 ms | 18362.6 ms | 18729.4 ms | 0.829 ms | 1.00 | 3410.7 MiB | 24,243 | 0.64 ms | 160 |
-| Marko | 6,000 | 1107 | 14686.5 ms | 15067.2 ms | 23253.0 ms | 23864.5 ms | 0.830 ms | 1.00 | 3100.7 MiB | 29,993 | 1.51 ms | 0 |
-| React | 250 | 250 | 0.85 ms | 94.1 ms | 98.6 ms | 102.6 ms | 3.397 ms | 0.84 | 96.0 MiB | 32 | 0.38 ms | 0 |
-| React | 500 | 273 | 462.2 ms | 2778.0 ms | 4411.5 ms | 4619.4 ms | 3.520 ms | 1.00 | 402.5 MiB | 1,380 | 0.01 ms | 0 |
-| React | 1,000 | 255 | 2854.9 ms | 9127.1 ms | 16896.9 ms | 19993.0 ms | 3.579 ms | 0.89 | 696.1 MiB | 4,489 | 0.01 ms | 0 |
-| React | 2,000 | 285 | 5401.0 ms | 19528.6 ms | 39638.2 ms | 40419.2 ms | 4.437 ms | 1.00 | 2457.7 MiB | 10,539 | 0.01 ms | 7,356 |
-| React | 3,000 | 272 | 18413.0 ms | 31564.0 ms | 53814.6 ms | 68651.7 ms | 4.436 ms | 0.89 | 3548.2 MiB | 16,622 | 0.01 ms | 12,477 |
-| React | 4,000 | 257 | 37764.8 ms | 48648.5 ms | 71212.0 ms | 72597.3 ms | 4.583 ms | 0.85 | 2841.7 MiB | 22,713 | 0.01 ms | 19,603 |
-| React | 5,000 | 265 | 49856.8 ms | 56573.5 ms | 87891.0 ms | 99800.0 ms | 4.556 ms | 0.93 | 2736.0 MiB | 28,674 | 0.01 ms | 24,462 |
-| React | 6,000 | 273 | 49589.4 ms | 60942.1 ms | 106453.7 ms | 108841.2 ms | 4.460 ms | 0.84 | 3544.3 MiB | 34,636 | 0.83 ms | 27,662 |
+| Proa | 250 | 250 | 0.23 ms | 91.6 ms | 91.7 ms | 92.3 ms | 0.240 ms | 0.06 | 8.0 MiB | 24 | 0.00 ms | 0 |
+| Proa | 500 | 500 | 0.17 ms | 91.3 ms | 91.4 ms | 91.7 ms | 0.235 ms | 0.12 | 9.2 MiB | 49 | 0.01 ms | 0 |
+| Proa | 1,000 | 1000 | 0.15 ms | 91.2 ms | 91.4 ms | 92.2 ms | 0.235 ms | 0.23 | 12.4 MiB | 102 | 0.01 ms | 0 |
+| Proa | 2,000 | 2000 | 0.19 ms | 91.2 ms | 93.3 ms | 101.9 ms | 0.255 ms | 0.50 | 18.2 MiB | 213 | 0.90 ms | 0 |
+| Proa | 3,000 | 3000 | 0.67 ms | 91.8 ms | 101.3 ms | 103.9 ms | 0.271 ms | 0.80 | 23.9 MiB | 322 | 3.09 ms | 0 |
+| Proa | 4,000 | 3651 | 30.4 ms | 444.1 ms | 912.3 ms | 977.7 ms | 0.270 ms | 0.99 | 149.7 MiB | 2,516 | 6.48 ms | 0 |
+| Proa | 5,000 | 3570 | 586.5 ms | 1531.5 ms | 2823.6 ms | 3149.6 ms | 0.274 ms | 1.00 | 364.6 MiB | 9,092 | 5.76 ms | 0 |
+| Proa | 6,000 | 3475 | 1711.9 ms | 2703.3 ms | 4199.1 ms | 4589.4 ms | 0.279 ms | 1.00 | 368.3 MiB | 15,772 | 7.10 ms | 0 |
+| Marko | 250 | 250 | 0.35 ms | 90.3 ms | 91.1 ms | 92.4 ms | 0.883 ms | 0.22 | 93.1 MiB | 25 | 0.01 ms | 0 |
+| Marko | 500 | 500 | 0.38 ms | 90.3 ms | 91.9 ms | 95.8 ms | 0.768 ms | 0.38 | 105.1 MiB | 52 | 0.00 ms | 0 |
+| Marko | 1,000 | 1000 | 0.40 ms | 90.8 ms | 96.2 ms | 106.9 ms | 0.704 ms | 0.69 | 138.0 MiB | 128 | 0.01 ms | 0 |
+| Marko | 2,000 | 1189 | 2487.7 ms | 2819.0 ms | 4265.0 ms | 5561.6 ms | 0.820 ms | 0.94 | 1839.5 MiB | 5,348 | 0.19 ms | 0 |
+| Marko | 3,000 | 1093 | 5084.4 ms | 5322.6 ms | 10368.8 ms | 13118.4 ms | 0.830 ms | 0.93 | 2426.9 MiB | 11,782 | 0.34 ms | 0 |
+| Marko | 4,000 | 1029 | 8708.7 ms | 8912.4 ms | 13163.1 ms | 13346.8 ms | 0.804 ms | 1.00 | 2816.2 MiB | 18,203 | 0.40 ms | 11 |
+| Marko | 5,000 | 1126 | 10977.2 ms | 10977.4 ms | 17694.5 ms | 17903.6 ms | 0.798 ms | 1.00 | 3104.7 MiB | 23,999 | 0.64 ms | 130 |
+| Marko | 6,000 | 1009 | 13413.1 ms | 14379.8 ms | 22435.9 ms | 22893.7 ms | 0.803 ms | 1.00 | 3593.1 MiB | 30,433 | 1.36 ms | 0 |
+| React | 250 | 250 | 0.73 ms | 93.5 ms | 97.4 ms | 100.5 ms | 3.268 ms | 0.81 | 93.7 MiB | 30 | 0.18 ms | 0 |
+| React | 500 | 290 | 423.4 ms | 2437.9 ms | 3972.0 ms | 4021.7 ms | 3.327 ms | 1.00 | 396.4 MiB | 1,279 | 0.01 ms | 0 |
+| React | 1,000 | 265 | 2147.5 ms | 8056.2 ms | 18822.3 ms | 19875.3 ms | 3.443 ms | 0.87 | 686.6 MiB | 4,425 | 0.01 ms | 0 |
+| React | 2,000 | 273 | 10385.3 ms | 21510.1 ms | 36411.6 ms | 38198.8 ms | 3.467 ms | 1.00 | 1213.4 MiB | 10,481 | 0.01 ms | 1,814 |
+| React | 3,000 | 279 | 25123.2 ms | 36706.8 ms | 52108.0 ms | 54973.9 ms | 4.529 ms | 1.00 | 3891.2 MiB | 16,575 | 0.01 ms | 12,846 |
+| React | 4,000 | 291 | 44864.2 ms | 50514.3 ms | 72769.0 ms | 75838.7 ms | 4.387 ms | 0.99 | 3187.6 MiB | 22,547 | 0.01 ms | 16,320 |
+| React | 5,000 | 288 | 33051.2 ms | 46621.3 ms | 81653.2 ms | 83738.4 ms | 4.038 ms | 1.00 | 2220.5 MiB | 28,559 | 0.01 ms | 20,952 |
+| React | 6,000 | 284 | 49456.9 ms | 63350.3 ms | 106138.3 ms | 112549.4 ms | 4.099 ms | 0.99 | 2811.2 MiB | 34,579 | 0.71 ms | 23,099 |
 
-**Every comparative row uses one logical CPU.** Proa runs one Tokio worker thread, and Marko and React each run one Bun process. Server CPU affinity is 2; the load generator runs separately. Above saturation, completed responses can plateau or decline while queueing and failures increase. This capture does not measure multicore capacity.
+**Every comparative row uses one logical CPU.** Proa runs one Tokio worker thread, and Marko and React each run one Bun process. Server CPU affinity is 0; the load generator runs separately. Above saturation, completed responses can plateau or decline while queueing and failures increase. This capture does not measure multicore capacity.
 
-**Reference point, outside the comparison.** Proa alone was rerun at the top rate with 4 worker threads. CPU affinity remains 2; this changes thread count within the same CPU budget and does not measure multi-core scaling. Marko and React were not rerun with more processes, so this row is not comparable to theirs. With 4 threads Proa completed 3,444 responses per second at a request-rate target of 6,000 rps and a P99 of 5132.7 ms, using 1.00 cores.
+**Reference point, outside the comparison.** Proa alone was rerun at the top rate with 4 worker threads. CPU affinity remains 0; this changes thread count within the same CPU budget and does not measure multi-core scaling. Marko and React were not rerun with more processes, so this row is not comparable to theirs. With 4 threads Proa completed 3,569 responses per second at a request-rate target of 6,000 rps and a P99 of 4654.4 ms, using 1.00 cores.
 
 | Proa worker threads | Request rate (rps) | Window completions/s | Complete P50 | Complete P99 | CPU/request | Cores | Peak RSS | Errors |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 4 | 6,000 | 3444 | 2608.0 ms | 5132.7 ms | 0.290 ms | 1.00 | 425.4 MiB | 0 |
+| 4 | 6,000 | 3569 | 2406.8 ms | 4654.4 ms | 0.277 ms | 1.00 | 401.2 MiB | 0 |
 
 The unloaded preflight checks all loading placeholders and resolved panels. Every measured response must contain the shell, all resolved panels, and every product card. Loading placeholders are optional during load: a boundary can resolve before its placeholder is flushed. Any placeholders present must have valid, unique boundary keys. The cards are the same markup the scoreboard's product-grid parity gate accepted from each engine. Wire bytes legitimately differ because each framework carries its own boundary-replacement protocol.
 
 | Engine version | Fallback panels | Resolved panels | Product cards | Stream bytes |
 | --- | ---: | ---: | ---: | ---: |
-| Proa 0.3.0 @ 7ffb8a19 | 8 | 8 | 96 | 387,511 |
+| Proa 0.3.0 @ bbbc9684 | 8 | 8 | 96 | 387,511 |
 | Marko 6.0.150 | 8 | 8 | 96 | 289,888 |
-| React 19.2.8 | 8 | 8 | 96 | 292,213 |
+| React 19.2.4 | 8 | 8 | 96 | 292,213 |
 
 - Capture: [suspense-load/results/latest.json](suspense-load/results/latest.json); reproduce with `bun run bench:suspense-load`.
 - The report verifier checks the measured-source SHA-256 against this checkout or the retained source snapshot before generating these tables.
-- Proa source: Cargo.lock revision 7ffb8a19; Rust release build with native Proa Suspense and the direct `ssr_stream_send` Axum route. The same binary also serves the bounded local-executor path (`ssr_stream`) at `/local` for engineering comparison; it is not part of the published rows.
+- Proa source: Cargo.lock revision bbbc9684; Rust release build with native Proa Suspense and the direct `ssr_stream_send` Axum route. The same binary also serves the bounded local-executor path (`ssr_stream`) at `/local` for engineering comparison; it is not part of the published rows.
 - Marko source: optimized ahead-of-time Marko template using native &lt;await&gt; plus &lt;@placeholder&gt;; its compiler is not resident in the measured server.
 - React source: production Bun React server build using renderToReadableStream, Suspense, and use. The shell pipes immediately; allReady is not awaited.
 - JavaScript engines run with `NODE_ENV=production`: the driver sets it, each server's health endpoint reports it back, and React reports that it loaded the production `react-dom/server` build. The runner refuses to measure otherwise.

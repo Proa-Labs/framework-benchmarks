@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { validatePublication } from "./publication.mjs";
+import { validateProcessRepeats, validatePublication } from "./publication.mjs";
 import suites from "./suites.json" with { type: "json" };
 
 const complete = () =>
@@ -20,6 +20,18 @@ const complete = () =>
       },
     ]),
   );
+
+test("publication requires all five zero-indexed process repeats", () => {
+  const runs = (repeats) => repeats.map((repeat) => ({ repeat }));
+  validateProcessRepeats(runs([4, 2, 0, 3, 1]));
+  for (const repeats of [
+    [0, 1, 2, 3],
+    [0, 1, 2, 3, 3],
+    [1, 2, 3, 4, 5],
+  ]) {
+    expect(() => validateProcessRepeats(runs(repeats))).toThrow();
+  }
+});
 
 test("publication accepts one complete campaign and rejects mixed machines, partial refreshes and smoke results", () => {
   expect(validatePublication(complete()).campaignId).toBe("publication-test");

@@ -2,25 +2,25 @@
 
 Production HTTP request, routing, SSR and framework response serialization to complete uncompressed HTML over loopback. Static fixture input is available locally; no database or external I/O. Full-document caching is disabled.
 
-Captured: 2026-11-12T05:50:39.229Z. publication.
+Captured: 2026-11-12T18:15:48.594Z. publication.
 
 | Workload | Framework | Runtime | Capacity (responses/s) | Equal-load P50 (ms) | Equal-load P99 (ms) |
 | --- | --- | --- | ---: | ---: | ---: |
-| Component page | Proa bbbc96843351 | Rust / Tokio | 55685.7 | 0.570 | 1.004 |
-| Component page | Exact 94b8671f70fe | Bun 1.4.2 | 60.7 | 13.628 | 24.071 |
-| Component page | Next.js 16.4.6 | Bun 1.4.2 | 358.4 | 6.883 | 16.489 |
-| Component page | Astro 7.4.8 | Bun 1.4.2 | 5411.5 | 1.577 | 2.538 |
-| Component page | SvelteKit 3.1.0 | Bun 1.4.2 | 5011.2 | 1.654 | 2.693 |
-| Product grid | Proa bbbc96843351 | Rust / Tokio | 12685.0 | 0.954 | 1.389 |
-| Product grid | Exact 94b8671f70fe | Bun 1.4.2 | 22.5 | 35.288 | 70.194 |
-| Product grid | Next.js 16.4.6 | Bun 1.4.2 | 102.4 | 14.913 | 28.985 |
-| Product grid | Astro 7.4.8 | Bun 1.4.2 | 1493.6 | 2.309 | 4.439 |
-| Product grid | SvelteKit 3.1.0 | Bun 1.4.2 | 1006.0 | 2.614 | 5.328 |
-| 1,000-row table | Proa bbbc96843351 | Rust / Tokio | 3188.4 | 1.611 | 1.969 |
-| 1,000-row table | Exact 94b8671f70fe | Bun 1.4.2 | 3.2 | 299.551 | 347.887 |
-| 1,000-row table | Next.js 16.4.6 | Bun 1.4.2 | 18.0 | 75.571 | 84.984 |
-| 1,000-row table | Astro 7.4.8 | Bun 1.4.2 | 253.8 | 7.298 | 13.286 |
-| 1,000-row table | SvelteKit 3.1.0 | Bun 1.4.2 | 218.9 | 7.210 | 8.951 |
+| Component page | Proa bbbc96843351 | Rust / Tokio | 62672.9 | 0.329 | 0.679 |
+| Component page | Exact 94b8671f70fe | Bun 1.4.2 | 66.1 | 9.679 | 15.368 |
+| Component page | Next.js 16.4.6 | Bun 1.4.2 | 448.0 | 3.080 | 6.779 |
+| Component page | Astro 7.4.8 | Bun 1.4.2 | 7335.5 | 0.744 | 1.563 |
+| Component page | SvelteKit 3.1.0 | Bun 1.4.2 | 6380.3 | 0.756 | 1.226 |
+| Product grid | Proa bbbc96843351 | Rust / Tokio | 13836.6 | 0.688 | 0.988 |
+| Product grid | Exact 94b8671f70fe | Bun 1.4.2 | 25.6 | 28.809 | 43.766 |
+| Product grid | Next.js 16.4.6 | Bun 1.4.2 | 120.7 | 8.396 | 16.972 |
+| Product grid | Astro 7.4.8 | Bun 1.4.2 | 2083.7 | 1.246 | 2.906 |
+| Product grid | SvelteKit 3.1.0 | Bun 1.4.2 | 1282.7 | 1.554 | 3.049 |
+| 1,000-row table | Proa bbbc96843351 | Rust / Tokio | 3507.7 | 1.268 | 1.348 |
+| 1,000-row table | Exact 94b8671f70fe | Bun 1.4.2 | 3.2 | 233.735 | 282.444 |
+| 1,000-row table | Next.js 16.4.6 | Bun 1.4.2 | 20.3 | 40.755 | 70.483 |
+| 1,000-row table | Astro 7.4.8 | Bun 1.4.2 | 298.4 | 5.400 | 8.206 |
+| 1,000-row table | SvelteKit 3.1.0 | Bun 1.4.2 | 280.5 | 5.451 | 6.801 |
 
 Equal load by workload: Component page: 10 requests/s; Product grid: 5 requests/s; 1,000-row table: 1 requests/s. 3 independent server starts per phase kind. No errors or generator-limited phases.
 

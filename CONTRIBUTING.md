@@ -137,6 +137,16 @@ does not require building Exact.
 
 ## Rerun a publication capture
 
+Use the Node version in `.nvmrc` for the npm-locked SvelteKit adapter setup,
+including development dependencies needed by its production build:
+
+```sh
+npm ci --include=dev --prefix rendering/external/sveltekit
+```
+
+Complete this setup before running HTTP, cold-start, streaming, or the C4
+capture script. Measured JavaScript servers still run on the pinned Bun runtime.
+
 ```sh
 bun run bench run rendering --publish
 bun run bench run framework --publish
