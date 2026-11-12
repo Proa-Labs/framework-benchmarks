@@ -5,9 +5,9 @@ edition = "2024"
 publish = false
 
 [dependencies]
-proa_core = { git = "https://github.com/Proa-Labs/proa", rev = "bbbc9684335109949257eea8b4c98bb7bc8572ae" }
-proa_demo = { git = "https://github.com/Proa-Labs/proa", rev = "bbbc9684335109949257eea8b4c98bb7bc8572ae" }
-proa_showcase = { git = "https://github.com/Proa-Labs/proa", rev = "bbbc9684335109949257eea8b4c98bb7bc8572ae" }
+proa_core = { git = "https://github.com/Proa-Labs/proa", rev = "2c9033fac6424564a59fbd5854953e86c26df477" }
+proa_demo = { git = "https://github.com/Proa-Labs/proa", rev = "2c9033fac6424564a59fbd5854953e86c26df477" }
+proa_showcase = { git = "https://github.com/Proa-Labs/proa", rev = "2c9033fac6424564a59fbd5854953e86c26df477" }
 serde_json = "1"
 
 [profile.release]

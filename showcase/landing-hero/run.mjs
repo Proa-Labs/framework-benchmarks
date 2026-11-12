@@ -1,7 +1,7 @@
 // Copyright Proa Labs, Inc.
 // SPDX-License-Identifier: Apache-2.0
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { resolve, dirname, join } from "node:path";
+import { resolve, dirname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -15,10 +15,16 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const proaArg = process.argv.indexOf("--proa");
 if (proaArg < 0)
   throw new Error(
-    "Usage: node showcase/landing-hero/run.mjs --proa <checkout> [--binary <binary>] [--parity-only]",
+    "Usage: node showcase/landing-hero/run.mjs --proa <checkout> [--binary <binary>] [--parity-only] [--out <summary.json>]",
   );
 const proa = resolve(process.argv[proaArg + 1]);
-const revision = "bbbc9684335109949257eea8b4c98bb7bc8572ae";
+const resultArg = process.argv.indexOf("--out");
+const resultFile = resultArg < 0
+  ? join(root, "showcase/results/landing-hero-buffer.json")
+  : resolve(process.argv[resultArg + 1]);
+if (!resultFile.endsWith(".json")) throw new Error("--out must end in .json");
+const rawFile = resultFile.slice(0, -5) + "-raw.json.gz";
+const revision = "2c9033fac6424564a59fbd5854953e86c26df477";
 const paths = [
   "proa_demo/react-ssr-shared",
   "proa_demo/src/github_pr_diff.rs",
@@ -161,6 +167,8 @@ for (let repeat = 0; repeat < 5; repeat++) {
         record.samples_us.some((n) => !Number.isFinite(n) || n <= 0)
       )
         throw new Error("Invalid timing samples");
+      if (engine === "proa" && (record.output_kind !== "owned-render-buffer" || record.debug_assertions !== false))
+        throw new Error("Native benchmark must render a fresh owned buffer in release mode");
       if (record.output_bytes !== parity[page][engine].bytes)
         throw new Error("Output size changed during timing");
       records.push({
@@ -202,12 +210,14 @@ const source_files = Object.fromEntries(
   files.map((path) => [path, sha(readFileSync(join(proa, path)))]),
 );
 const result = {
-  schema_version: 1,
+  schema_version: 2,
   captured_at: started,
   completed_at: new Date().toISOString(),
   host,
   method:
-    "Same-host production render-only; fresh complete owned String; allocation and String finalization included; output destruction outside timer; prepared inputs and I/O excluded. Median of five independent process P50s per engine/page; process order alternates and page order rotates.",
+    "Same-host production render-only; Proa allocates and returns a fresh owned RenderBuffer, React returns its native String. Allocation and rendering included. Flattening, encoding, output destruction, prepared inputs, parity checks and I/O outside timer. Standard render warmups, no allocator seed. Median of five independent process P50s per engine/page; process order alternates and page order rotates.",
+  output_contract: "fresh-owned-render-buffer",
+  native_source_sha256: sha(readFileSync(join(root, "fixtures/landing-hero/src/main.rs"))),
   proa_revision: revision,
   harness_revision: execFileSync("git", ["rev-parse", "HEAD"], {
     cwd: root,
@@ -223,16 +233,16 @@ const result = {
   summaries,
   records,
 };
-mkdirSync(join(root, "showcase/results"), { recursive: true });
+mkdirSync(dirname(resultFile), { recursive: true });
 const raw = gzipSync(JSON.stringify(result));
-writeFileSync(join(root, "showcase/results/landing-hero-raw.json.gz"), raw);
+writeFileSync(rawFile, raw);
 delete result.records;
 result.raw_artifact = {
-  path: "showcase/results/landing-hero-raw.json.gz",
+  path: relative(root, rawFile),
   sha256: sha(raw),
 };
 writeFileSync(
-  join(root, "showcase/results/landing-hero.json"),
+  resultFile,
   JSON.stringify(result, null, 2) + "\n",
 );
 console.log(JSON.stringify(summaries, null, 2));

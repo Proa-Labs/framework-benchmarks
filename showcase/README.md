@@ -218,33 +218,41 @@ source patch and an identical-output comparison against this pinned version.
 
 ## Landing-page paired comparisons
 
-`landing-hero/run.mjs` compares the actual GitHub PR diff, 400-row Sentry OTel,
-and Airbnb home fixtures from Proa revision
-`bbbc9684335109949257eea8b4c98bb7bc8572ae` with their React ports from that same
-checkout. The Rust fixture pins its dependencies to that revision; the runner
-rejects changes to the measured Proa/React fixture sources. Root dependencies
-pin production React 19.2.4. Node and Rust versions are recorded per capture.
+The benchmark contract is **allocation and rendering into a fresh owned output
+buffer on every Proa iteration**. No buffer is reused. Proa returns its native
+`RenderBuffer`; React returns its native `renderToString` result. Flattening
+into a String or contiguous Vec, UTF-8 encoding, output destruction, input
+preparation, parity checks, and I/O are outside the render timer. Do not replace
+this lane with `render_to_string` or the reused-buffer diagnostic.
 
-Both sides return a fresh complete HTML String. Allocation and document
-assembly are timed; filesystem reads, initial input setup, HTTP, browser work,
-and output destruction are outside the render timer. React uses its native
-String representation; no extra UTF-8 Buffer conversion is charged to either
-render timer. The Rust Airbnb data and GitHub props, and React elements/log
-inputs, are prepared before warmup. Sentry's Rust benchmark renders its default
-400 synthetic rows through the existing showcase API.
+`landing-hero/run.mjs` compares GitHub PR diff, 400-row Sentry OTel, and Airbnb
+home against their production React ports from Proa revision
+`2c9033fac6424564a59fbd5854953e86c26df477`. That revision adds a buffer entry
+point to the Sentry fixture; the framework rendering code is unchanged from
+`bbbc968`. Root dependencies pin React 19.2.4. The native program is built in
+release mode (opt-level 3, ThinLTO, one codegen unit). Each timed native process
+reports its output contract and compile-time debug-assertion mode; the runner
+rejects a stale String-producing binary or an assertion-enabled build.
 
-The runner checks the full browser DOM before timing, including preformatted
-text, application attributes, and script/style contents. Only comments,
-preload hints, head-child ordering, ordinary collapsed whitespace, class
-ordering, and equivalent inline-style serialization are normalized. Adjacent text is merged before whitespace normalization so React's
-text-slot comments cannot remove visible spaces. A changed-body-attribute
-negative control must fail for every page.
+All three fixtures share the same buffer allocation/context setup. Rust GitHub
+props and Airbnb data, and React elements/log inputs, are prepared before
+warmup. Sentry renders its default 400 synthetic rows through the showcase API.
+Only the separate, untimed `dump` path converts Proa's buffer into a String for
+DOM parity. Normal render warmups are used without an allocator seed.
 
-There are five independent processes per engine/page. Engine order alternates
-and page order rotates between repeats. GitHub and Airbnb use 1,000 warmups and
-2,000 samples per process; Sentry uses 100 and 300. The reported P50 is the
-median of the five process P50s; their full range and every raw sample are
-retained. Run capture commands sequentially on an otherwise idle host.
+The full browser DOM must match before timing: preformatted text, application
+attributes, and script/style contents are retained. Comments, preload hints,
+head-child ordering, ordinary collapsed whitespace, class ordering, and equivalent
+inline-style serialization are normalized. Adjacent text is merged before
+whitespace normalization so React text-slot comments preserve visible spaces.
+A changed-body-attribute negative control must fail for every fixture.
+
+Five independent processes run per engine/page; engine order alternates and page
+order rotates. GitHub and Airbnb use 1,000 warmups and 2,000 timed renders per
+process; Sentry uses 100 and 300. Reported P50s are medians of the five process
+P50s. Keep every sample, process range, source/binary hash and host/runtime
+version. Peers must run on the same host. These are render-only measurements;
+HTTP, network and browser performance are separate lanes.
 
 ```sh
 bun install --frozen-lockfile
@@ -252,22 +260,23 @@ bun install --frozen-lockfile
   --no-check --no-assets -p landing-hero-bench \
   --artifact-out "$PWD/showcase/landing-hero/out/landing-hero-bench"
 node showcase/landing-hero/run.mjs --proa /path/to/proa --parity-only
-node showcase/landing-hero/run.mjs --proa /path/to/proa
+node showcase/landing-hero/run.mjs --proa /path/to/proa --out showcase/results/landing-hero-owned-buffer/ci-c4.json
 ```
 
-The summary is `showcase/results/landing-hero.json`, with complete samples in
-`showcase/results/landing-hero-raw.json.gz`. These paired measurements are
-separate from the Proa-only linked-page corpus and the canonical three-page
-scoreboard; they should not borrow peer results from those captures.
+For CI captures, prefix the runner with `taskset -c 0`. M4 captures use the macOS
+scheduler and must disclose desktop activity. `--out` selects the summary; its
+matching `-raw.json.gz` contains every process record. The captures below using
+fresh Strings are historical diagnostics and do not satisfy the owned-buffer
+contract.
 
-### GCP CI capture, November 12, 2026 UTC
+### Superseded fresh-String GCP capture, November 12, 2026 UTC
 
-The landing-page figures use the same machine type and image as Proa CI:
+This superseded String-output diagnostic used the same machine type and image as Proa CI:
 `c4-standard-16-lssd`, Intel Xeon 6985P-C (Granite Rapids), 16 vCPUs, runner
 image `proa-runner:1.95.0-v6`. Timed processes are pinned to CPU 0. Rust 1.95.0,
 production React 19.2.4 on Node 26.13.0; Proa `bbbc968`.
 
-The selected capture explicitly primes Proa's allocator before normal render
+That historical capture explicitly primes Proa's allocator before normal render
 warmups, reproducing the old Sentry benchmark's seed allocation. Both engines
 still return fresh complete Strings on every render. This allocator-state
 assumption materially affects Linux timings; these figures do not describe an
@@ -301,18 +310,19 @@ updated for this archive location. Together they retain 60 process records.
 
 The selected capture used harness base `e28e9a1` plus the exact
 [allocator patch](results/landing-hero-gcp/allocator-prime.patch). The native
-fixture on this branch incorporates that patch. Rebuild it through the linked
-Proa CLI using the command above, then run on matching CI hardware:
+fixture at `65474b5` incorporates that patch; use that historical revision and
+its Proa source pin to reproduce this String-output diagnostic:
 
 ```sh
 PROA_PRIME_ALLOCATOR=1 taskset -c 0 node showcase/landing-hero/run.mjs --proa /path/to/proa
 ```
 
-To reproduce the default capture's original native program, use the unpatched
-fixture from `e28e9a1`, rebuild, and omit `PROA_PRIME_ALLOCATOR`. These explicit
+To reproduce the default capture, use the harness and unpatched native fixture
+from `e28e9a1` with its pinned Proa source, rebuild, and omit
+`PROA_PRIME_ALLOCATOR`. These explicit
 steps keep the two allocator policies distinguishable.
 
-### Earlier M4 capture, November 12, 2026 UTC
+### Superseded fresh-String M4 capture, November 12, 2026 UTC
 
 Apple M4 Max, Darwin 25.5.0, Rust 1.95.0, production React 19.2.4 on Node
 26.13.0. All three complete-page DOMs passed parity and changed-output negative
