@@ -24,6 +24,14 @@ fn main() {
         "sentry" => sentry_otel::render_benchmark_rows(400),
         _ => panic!("unknown page"),
     };
+    // Controlled experiment: reproduce the old Sentry allocator priming.
+    if std::env::var_os("PROA_PRIME_ALLOCATOR").is_some() {
+        let sample = render();
+        let capacity = sample.len();
+        drop(sample);
+        let seed = vec![0; capacity];
+        black_box(seed.as_slice());
+    }
     if args[2] == "dump" {
         print!("{}", render());
         return;

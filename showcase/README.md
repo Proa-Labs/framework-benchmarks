@@ -260,7 +260,59 @@ The summary is `showcase/results/landing-hero.json`, with complete samples in
 separate from the Proa-only linked-page corpus and the canonical three-page
 scoreboard; they should not borrow peer results from those captures.
 
-### November 12, 2026 UTC paired capture
+### GCP CI capture, November 12, 2026 UTC
+
+The landing-page figures use the same machine type and image as Proa CI:
+`c4-standard-16-lssd`, Intel Xeon 6985P-C (Granite Rapids), 16 vCPUs, runner
+image `proa-runner:1.95.0-v6`. Timed processes are pinned to CPU 0. Rust 1.95.0,
+production React 19.2.4 on Node 26.13.0; Proa `bbbc968`.
+
+The selected capture explicitly primes Proa's allocator before normal render
+warmups, reproducing the old Sentry benchmark's seed allocation. Both engines
+still return fresh complete Strings on every render. This allocator-state
+assumption materially affects Linux timings; these figures do not describe an
+unprimed process or HTTP/browser performance. Every peer was rerun on this host.
+
+| Page | Proa P50 µs | React P50 µs | React / Proa | Proa process P50 range µs | React process P50 range µs |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GitHub PR diff | 47.346 | 2637.277 | 55.7× | 46.572–47.766 | 2621.904–2669.912 |
+| Sentry OTel, 400 rows | 159.562 | 10014.358 | 62.8× | 159.342–160.922 | 9754.638–10087.458 |
+| Airbnb home | 12.410 | 436.396 | 35.2× | 12.330–12.459 | 434.222–439.642 |
+
+Retained [selected summary](results/landing-hero-gcp/allocator-primed/landing-hero.json),
+[all selected samples](results/landing-hero-gcp/allocator-primed/landing-hero-raw.json.gz),
+and [host, image digest, CPU affinity, and source provenance](results/landing-hero-gcp/capture.json).
+All three DOM parity gates and changed-attribute negative controls passed.
+
+The same host and CPU affinity also ran the default allocator, without the
+seed allocation. This is a separate complete paired capture, not a reused
+React baseline:
+
+| Page | Default Proa P50 µs | Default React P50 µs | React / Proa |
+| --- | ---: | ---: | ---: |
+| GitHub PR diff | 232.283 | 2638.085 | 11.4× |
+| Sentry OTel, 400 rows | 436.114 | 9940.458 | 22.8× |
+| Airbnb home | 30.864 | 437.806 | 14.2× |
+
+Retained [default summary](results/landing-hero-gcp/single-cpu/landing-hero.json)
+and [all default samples](results/landing-hero-gcp/single-cpu/landing-hero-raw.json.gz).
+Both summaries retain original measurements; their raw-artifact paths are
+updated for this archive location. Together they retain 60 process records.
+
+The selected capture used harness base `e28e9a1` plus the exact
+[allocator patch](results/landing-hero-gcp/allocator-prime.patch). The native
+fixture on this branch incorporates that patch. Rebuild it through the linked
+Proa CLI using the command above, then run on matching CI hardware:
+
+```sh
+PROA_PRIME_ALLOCATOR=1 taskset -c 0 node showcase/landing-hero/run.mjs --proa /path/to/proa
+```
+
+To reproduce the default capture's original native program, use the unpatched
+fixture from `e28e9a1`, rebuild, and omit `PROA_PRIME_ALLOCATOR`. These explicit
+steps keep the two allocator policies distinguishable.
+
+### Earlier M4 capture, November 12, 2026 UTC
 
 Apple M4 Max, Darwin 25.5.0, Rust 1.95.0, production React 19.2.4 on Node
 26.13.0. All three complete-page DOMs passed parity and changed-output negative
