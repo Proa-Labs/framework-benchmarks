@@ -2,6 +2,8 @@
 
 > **PROA-only refresh.** Only Proa was refreshed on 2026-11-11. SvelteKit retains its 2026-10-21 measurements. Proa HTTP phases are shared with the new Suspense capture; its 60 browser navigations and two JavaScript-disabled controls were measured afresh.
 
+**Historical comparison.** Its five inputs are pinned in [the capture manifest](sveltekit/comparison-captures.json). Updating the main scoreboard or HTTP suites does not change this report; the current renderer publication is shown on [the main scoreboard](scoreboard.md).
+
 Generated from captures on **Apple M4 Max**, 2026-11-11 UTC. Proa revision **bbbc9684**, **SvelteKit 3.1.0 / Svelte 5.57.2 / adapter-node 6.0.0**, Node **v24.20.0**. Full production builds, no development server, proxy, response cache, or compression.
 
 The static 96-card HTML page sustained **20,863 responses/s for Proa** and **1,458 for SvelteKit**. In the native streaming browser tests, all 96 cards reached the DOM at median **97.3 ms / 93.7 ms on desktop** and **358.9 ms / 278.0 ms on mobile4x** (Proa / SvelteKit). Proa’s first mobile panel arrived at **93.8 ms**, versus **278.0 ms** for SvelteKit. The complete tables below retain first-panel timing, transfer size, CPU, overload failures, and every rate in the sweep.
@@ -65,7 +67,7 @@ Recorded failure messages across the full phases: SvelteKit: `connect ETIMEDOUT 
 
 ## Static pages over HTTP
 
-These are complete server-rendered pages on both sides. SvelteKit uses the production [Node adapter](https://svelte.dev/docs/kit/adapter-node), ordinary filesystem routing, and `csr=false`, avoiding an unnecessary hydration payload for the static-page workload. Every served response must hash to its engine's production dump; SvelteKit's full document also passes the canonical Svelte DOM gate and a changed-text negative control. Capacity uses 64 closed-loop connections, five-second windows, three fresh-process repeats. Equal-load latency uses the existing fixed rates below each engine's capacity, with three repeats. The [full five-engine capture](http-capacity.md#canonical-pages-over-http-one-core-each) also refreshes React, Marko, and Go.
+These are complete server-rendered pages on both sides. SvelteKit uses the production [Node adapter](https://svelte.dev/docs/kit/adapter-node), ordinary filesystem routing, and `csr=false`, avoiding an unnecessary hydration payload for the static-page workload. Every served response must hash to its engine's production dump; SvelteKit's full document also passes the canonical Svelte DOM gate and a changed-text negative control. Capacity uses 64 closed-loop connections, five-second windows, three fresh-process repeats. Equal-load latency uses the existing fixed rates below each engine's capacity, with three repeats. The [retained five-engine capture](page-load/results/archive/retained-ab83bbaa90793486a44213c7.json) also includes React, Marko, and Go.
 
 | Workload | Engine | Capacity responses/s | CPU/response | Peak RSS | Equal-load rps | P50 | P99 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -121,7 +123,7 @@ node sveltekit/report.mjs --check
 
 Implementation: [production SvelteKit app](rendering/external/sveltekit/), [load runner](sveltekit/run.mjs), [browser observer](sveltekit/browser.mjs), and [promise-value validator](rendering/external/sveltekit/stream-validator.mjs).
 
-Raw evidence: [streaming + browser samples](sveltekit/results/latest.json), [HTTP](page-load/results/latest.json), [cold starts](cold-start/results/latest.json), [renderer-only](rendering/results/latest.json), [scaling](rendering/results/product-scaling.json). Each capture retains timestamps, framework/host metadata and a measured-source SHA-256. The comparison generator refuses incomplete, smoke, stale-source, missing-phase, unsupported-throughput, browser-parity, and inconsistent-summary captures.
+Raw evidence: [streaming + browser samples](sveltekit/results/archive/retained-719ec008c43dc06f4201e488.json), [HTTP](page-load/results/archive/retained-ab83bbaa90793486a44213c7.json), [cold starts](cold-start/results/archive/retained-28efb77c8e12de21553fe758.json), [renderer-only](rendering/results/archive/canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z.json), [scaling](rendering/results/archive/product-scaling-v1-proa-2026-11-11T18-37-57-269Z.json). Each capture retains timestamps, framework/host metadata and a measured-source SHA-256. The comparison generator refuses incomplete, smoke, stale-source, missing-phase, unsupported-throughput, browser-parity, and inconsistent-summary captures.
 
 The retained capture also includes a buffered control for validation; it is excluded from the comparison charts and tables.
 
