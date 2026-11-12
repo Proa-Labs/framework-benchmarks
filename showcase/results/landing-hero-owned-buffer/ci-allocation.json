@@ -1,0 +1,26 @@
+{
+  "project": "airy-cycle-504821-k9",
+  "cluster": "proa-ci",
+  "zone": "us-west1-a",
+  "pod": "proa-hero-buffer-warm-20261112",
+  "node": "gke-proa-ci-runners-c4-19143b73-q7gz",
+  "node_labels": {
+    "ci-runner-family": "c4",
+    "cloud.google.com/machine-family": "c4",
+    "node.kubernetes.io/instance-type": "c4-standard-16-lssd",
+    "topology.kubernetes.io/zone": "us-west1-b"
+  },
+  "container_image": "us-west1-docker.pkg.dev/airy-cycle-504821-k9/ci-images/proa-runner:1.95.0-v6",
+  "container_image_id": "us-west1-docker.pkg.dev/airy-cycle-504821-k9/ci-images/proa-runner@sha256:4842472009e5b4bbcc8fe84ee5eaea507d07b7d111a4907aa00ba410d1bd3daa",
+  "resources": {
+    "requests": {
+      "cpu": "15",
+      "ephemeral-storage": "80Gi",
+      "memory": "48Gi"
+    }
+  },
+  "node_selector": {
+    "ci-runner-family": "c4",
+    "ci-runner-pool": "true"
+  }
+}

@@ -272,9 +272,82 @@ PROA_PRIME_ALLOCATOR=1 node showcase/landing-hero/run.mjs --proa /path/to/proa -
 
 For CI captures, prefix the runner with `taskset -c 0`. M4 captures use the macOS
 scheduler and must disclose desktop activity. `--out` selects the summary; its
-matching `-raw.json.gz` contains every process record. The captures below using
-fresh Strings are historical diagnostics and do not satisfy the owned-buffer
-contract.
+matching `-raw.json.gz` contains every process record.
+
+### Fresh-owned-buffer GCP CI capture, November 12, 2026 UTC
+
+The selected landing-page figures preserve the previous capture's explicit
+allocator seed, with the corrected fresh-owned-buffer output boundary. The
+policy was selected before these captures; it is not a claim about cold or
+unprimed processes. Both engines were rerun on the same `c4-standard-16-lssd`
+(Intel Xeon 6985P-C, Granite Rapids), using the CI runner image
+`proa-runner:1.95.0-v6`, CPU affinity 0. Proa uses Rust 1.95.0; production
+React 19.2.4 uses Node 26.13.0. Every native process reports disabled debug
+assertions and a fresh-owned-buffer output contract.
+
+| Page | Proa P50 µs | React P50 µs | React / Proa | Proa process P50 range µs | React process P50 range µs |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GitHub PR diff | 29.013 | 2759.857 | 95.1× | 28.343–29.611 | 2747.668–2778.445 |
+| Sentry OTel, 400 rows | 143.181 | 10385.647 | 72.5× | 140.792–147.284 | 10196.957–10464.485 |
+| Airbnb home | 9.092 | 453.839 | 49.9× | 9.075–9.382 | 451.581–455.527 |
+
+Retained [selected summary](results/landing-hero-owned-buffer/ci-c4.json),
+[all selected samples](results/landing-hero-owned-buffer/ci-c4-raw.json.gz),
+[host and CPU affinity](results/landing-hero-owned-buffer/ci-host.json), and
+[actual Pod allocation and image digest](results/landing-hero-owned-buffer/ci-allocation.json).
+
+The same host also ran a complete paired capture with ordinary render warmups
+and **no explicit allocator seed**. These results use their own React reruns:
+
+| Page | Proa P50 µs | React P50 µs | React / Proa |
+| --- | ---: | ---: | ---: |
+| GitHub PR diff | 92.480 | 2858.546 | 30.9× |
+| Sentry OTel, 400 rows | 252.465 | 10676.036 | 42.3× |
+| Airbnb home | 9.196 | 456.305 | 49.6× |
+
+Retained [default summary](results/landing-hero-owned-buffer/ci-c4-default.json)
+and [all default samples](results/landing-hero-owned-buffer/ci-c4-default-raw.json.gz).
+Both modes allocate a fresh owned buffer every iteration. Allocator state
+materially affects the larger Linux pages; the selected figures must carry the
+priming disclosure when reused.
+
+### Fresh-owned-buffer M4 capture, November 12, 2026 UTC
+
+Apple M4 Max, Darwin 25.5.0, Rust 1.95.0, production React 19.2.4 on Node
+26.13.0. The same explicit-seed policy gives:
+
+| Page | Proa P50 µs | React P50 µs | React / Proa | Proa process P50 range µs | React process P50 range µs |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GitHub PR diff | 21.583 | 1784.166 | 82.7× | 21.125–21.833 | 1726.083–1920.250 |
+| Sentry OTel, 400 rows | 90.375 | 6562.209 | 72.6× | 85.916–96.792 | 6513.041–7322.583 |
+| Airbnb home | 6.750 | 326.334 | 48.3× | 6.708–6.833 | 324.000–342.625 |
+
+Retained [summary](results/landing-hero-owned-buffer/m4-max.json) and
+[all samples](results/landing-hero-owned-buffer/m4-max-raw.json.gz).
+This shared development machine used the macOS scheduler, with starting load
+average 6.46 across 16 logical CPUs. Desktop activity can affect either engine;
+these are not controlled universal speedups. No timed harness processes ran
+concurrently on this host.
+
+The separate no-seed capture, starting load average 5.07, gives:
+
+| Page | Proa P50 µs | React P50 µs | React / Proa |
+| --- | ---: | ---: | ---: |
+| GitHub PR diff | 21.541 | 1880.542 | 87.3× |
+| Sentry OTel, 400 rows | 89.083 | 7345.375 | 82.5× |
+| Airbnb home | 6.833 | 333.125 | 48.8× |
+
+Retained [default summary](results/landing-hero-owned-buffer/m4-max-default.json)
+and [all default samples](results/landing-hero-owned-buffer/m4-max-default-raw.json.gz).
+The difference between the two desktop captures does not establish an allocator
+benefit on macOS.
+
+All four captures use frozen harness `8a16e9883c231e54ab38be037b8b72dcc11a1805`
+and Proa `2c9033fac6424564a59fbd5854953e86c26df477`, with identical source
+fingerprints and fixture output bytes across hosts and policies. Each retains
+30 process records, for 120 total. Every fixture passed full DOM parity and
+changed-output negative controls before timing. Raw sample checksums, native
+binary hashes and runtime versions are retained in each summary.
 
 ### Superseded fresh-String GCP capture, November 12, 2026 UTC
 
