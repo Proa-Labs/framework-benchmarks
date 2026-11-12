@@ -1,20 +1,32 @@
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
-import { chromium } from "playwright";
+import { chromium, type Response } from "playwright";
 import type { BenchmarkData } from "../benchmark-types.ts";
 import { required } from "../required.ts";
 
 // Exercise the deployed assets too: a successful upload does not prove that
 // clean URLs, route chunks and production hover handlers work together.
-export async function verifyPreview(url: string) {
+export async function verifyPreview(url: string, expectedEntryScript?: string) {
   const browser = await chromium.launch({ headless: true });
   try {
     const initial = await browser.newPage({ javaScriptEnabled: false });
-    const initialResponse = required(
-      await initial.goto(new URL("/", url).href, {
-        waitUntil: "domcontentloaded",
-      }),
-    );
+    // The alias can propagate to fetch and browser traffic at different times.
+    // Check the browser's actual HTML before comparing it with fresh data assets.
+    let initialResponse: Response;
+    for (let attempt = 0; ; attempt++) {
+      initialResponse = required(
+        await initial.goto(new URL("/", url).href, {
+          waitUntil: "load",
+        }),
+      );
+      if (
+        !expectedEntryScript ||
+        (await initialResponse.text()).includes(expectedEntryScript)
+      )
+        break;
+      assert.ok(attempt < 10, "Browser preview still serves a previous build");
+      await Bun.sleep(2000);
+    }
     assert.equal(
       initialResponse.headers()["content-security-policy"],
       "object-src 'none'; base-uri 'self'; frame-ancestors 'none'",

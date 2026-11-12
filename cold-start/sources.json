@@ -11,6 +11,7 @@
   "page-load/react_server.mjs",
   "pnpm-lock.yaml",
   "rendering/Cargo.toml",
+  "rendering/build.rs",
   "rendering/canonical/dom.mjs",
   "rendering/external/go/suite_bench.go",
   "rendering/external/marko/bun.lock",

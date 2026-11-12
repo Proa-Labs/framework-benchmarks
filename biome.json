@@ -12,6 +12,7 @@
       "framework-ssr/**",
       "tooling/**",
       "rendering/canonical/run.mjs",
+      "rendering/canonical/render-contract.mjs",
       "rendering/canonical/refresh-proa.mjs",
       "rendering/canonical/adapters.json",
       "rendering/canonical/source_fingerprint.mjs",

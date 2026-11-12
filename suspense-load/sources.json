@@ -8,6 +8,7 @@
   "package.json",
   "pnpm-lock.yaml",
   "rendering/Cargo.toml",
+  "rendering/build.rs",
   "rendering/external/marko/bun.lock",
   "rendering/external/marko/compile_suspense.mjs",
   "rendering/external/marko/package-lock.json",

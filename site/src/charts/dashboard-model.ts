@@ -375,7 +375,10 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
           rate:
             suite === "framework" ? (row as HttpRow).equalLoadRps : undefined,
           unit: suite === "rendering" ? "µs" : "ms",
-          capturedAt: data[suite].capturedAt,
+          capturedAt:
+            suite === "rendering"
+              ? (row as RenderRow).capturedAt
+              : data.framework.capturedAt,
           source: suites[suite].path,
           latency:
             suite === "rendering"

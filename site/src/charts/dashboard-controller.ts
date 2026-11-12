@@ -879,6 +879,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         suite: r.suite ?? state.view,
         unit: r.unit ?? unit(),
         capturedAt: r.capturedAt ?? s.capturedAt,
+        captureId: "captureId" in r ? r.captureId : undefined,
         source: r.source ?? suites[state.view].path,
         metric: r.exportMetric || metric(),
         rate: r.rate ?? (state.view === "streaming" ? state.rate : null),

@@ -25,7 +25,12 @@ test("one comparison table preserves both boundaries, one tool row, and every me
       const source = expected[row.workload].find((r) => r.id === row.id);
       assert.equal(row.p50, source?.p50);
       assert.equal(row.unit, suite === "rendering" ? "µs" : "ms");
-      assert.equal(row.capturedAt, data[suite].capturedAt);
+      assert.equal(
+        row.capturedAt,
+        source && "capturedAt" in source
+          ? source.capturedAt
+          : data[suite].capturedAt,
+      );
       assert.equal(row.latency.values.p50, row.p50);
     }
   }

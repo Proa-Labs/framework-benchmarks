@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { frameworkSourceFiles } from "../framework-ssr/sources.ts";
+import { validateProaRenderRun } from "../rendering/canonical/render-contract.mjs";
 import { renderingSourceFiles } from "../rendering/canonical/source_fingerprint.mjs";
 import { sourceDigest } from "./captures.mjs";
 import { readMeasuredSources } from "./measured-sources.mjs";
@@ -88,6 +89,31 @@ export async function verifyPublication(root) {
   const campaign = validatePublication(results);
   for (const [id, suite] of Object.entries(suites)) {
     const result = await validateCapture(id, undefined, root);
+    if (id === "rendering") {
+      const runs = JSON.parse(
+        await readFile(
+          join(
+            root,
+            suite.directory,
+            "results/raw",
+            result.capture_id,
+            "process-summaries.json",
+          ),
+          "utf8",
+        ),
+      );
+      for (const workload of result.workloads) {
+        const proa = runs.filter(
+          (run) => run.framework_id === "proa" && run.workload === workload.id,
+        );
+        assert.deepEqual(
+          proa.map((run) => run.repeat).sort(),
+          [1, 2, 3, 4, 5],
+          "Proa raw observations must cover all five independent processes",
+        );
+        for (const run of proa) validateProaRenderRun(run);
+      }
+    }
     const rendering = id === "rendering";
     const files = rendering
       ? renderingSourceFiles(root)

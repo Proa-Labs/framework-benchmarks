@@ -82,6 +82,7 @@ function Methodology() {
         measuring. Headline values are medians of five independently measured
         process P50s.
       </p>
+      {metadata.renderingOutput && <p>{metadata.renderingOutput}</p>}
       <h2>Framework SSR</h2>
       <p>
         {metadata.framework.scenario.boundary} This is a separate shared

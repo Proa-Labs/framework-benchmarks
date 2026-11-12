@@ -84,6 +84,10 @@ export async function prepareData() {
   }).formatRange(dates[0], required(dates.at(-1)));
   const metadata = {
     dateRange,
+    renderingOutput:
+      typeof data.rendering.outputBoundary === "string"
+        ? data.rendering.outputBoundary
+        : null,
     framework: {
       scenario: input.framework.scenario,
       versions: data.framework.versions,

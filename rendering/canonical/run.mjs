@@ -27,6 +27,7 @@ import {
 } from "../../tooling/captures.mjs";
 import { canonicalDocument, firstDifference } from "./dom.mjs";
 import { refreshProa } from "./refresh-proa.mjs";
+import { validateProaRenderRun } from "./render-contract.mjs";
 import { validateCanonicalResult } from "./report.mjs";
 import {
   renderingSourceFiles,
@@ -463,6 +464,7 @@ function benchmark(temporaryDirectory, activeWorkloads = workloads) {
           resultPath,
         ]).trim();
         const cell = JSON.parse(readFileSync(resultPath, "utf8"));
+        if (rendererId === "proa") validateProaRenderRun(cell);
         if (cell.framework_id !== rendererId || cell.workload !== workload.id) {
           throw new Error(
             `${rendererId}/${workload.id} returned identity ${cell.framework_id}/${cell.workload}`,
@@ -943,6 +945,8 @@ try {
           })),
           parity,
           measurements: benchmarkResult.measurements,
+          proa_output:
+            "Fresh owned RenderBuffer per iteration. Allocation and rendering are timed; flattening/copying, encoding, parity, hashing and output destruction are outside the render timer.",
           versions: environment.versions,
           provenance: environment.provenance,
           commands: [

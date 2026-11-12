@@ -221,3 +221,16 @@ is blocked. Both production deployment entry points enforce this gate.
 **Publication readiness** is a required status check in the existing main-branch
 ruleset. Keep this requirement when editing repository rules. Do not mark the PR
 ready or deploy until the complete campaign passes.
+
+### Proa render-only timing boundary
+
+Every default Proa iteration allocates and renders into a fresh owned
+`RenderBuffer`. The timer stops before replacing/destroying the previous
+output. Flattening/copying, output encoding, parity, hashing and destruction
+remain outside this timer. The separately labeled String and reused-copy
+controls do not replace the published Proa measurement.
+
+The native executable refuses unoptimized, non-release or debug-assertion
+builds. It records the build profile, optimization level, timing boundary and
+raw observations in capture order. The capture runner and publication gate
+verify those fields and recompute the Proa summaries from the retained samples.
