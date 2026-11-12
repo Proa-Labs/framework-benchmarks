@@ -539,6 +539,7 @@ export function FeaturesPage({
               Category
               <select
                 data-feature-mobile-category=""
+                className="fw-native-select"
                 value={group}
                 onChange={(event) => selectGroup(event.target.value)}
               >

@@ -778,7 +778,7 @@
         "socialImages": {
           "status": "community",
           "note": "astro-og-canvas generates Open Graph images from page data through an Astro endpoint; it is a separate integration.",
-          "url": "https://github.com/delucis/astro-og-canvas/tree/main/packages/astro-og-canvas",
+          "url": "https://github.com/delucis/astro-og-canvas/tree/latest/packages/astro-og-canvas",
           "label": "astro-og-canvas"
         },
         "sitemaps": {
@@ -10985,37 +10985,37 @@
         "orm": {
           "status": "scope",
           "note": "ORM / query builder belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://sailfish-template.github.io/sailfish"
+          "url": "https://rust-sailfish.github.io/sailfish/"
         },
         "migrations": {
           "status": "scope",
           "note": "Schema migrations belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://sailfish-template.github.io/sailfish"
+          "url": "https://rust-sailfish.github.io/sailfish/"
         },
         "transactions": {
           "status": "scope",
           "note": "Transactions belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://sailfish-template.github.io/sailfish"
+          "url": "https://rust-sailfish.github.io/sailfish/"
         },
         "jobs": {
           "status": "scope",
           "note": "Background jobs belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://sailfish-template.github.io/sailfish"
+          "url": "https://rust-sailfish.github.io/sailfish/"
         },
         "mail": {
           "status": "scope",
           "note": "Email belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://sailfish-template.github.io/sailfish"
+          "url": "https://rust-sailfish.github.io/sailfish/"
         },
         "uploads": {
           "status": "scope",
           "note": "File uploads & storage belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://sailfish-template.github.io/sailfish"
+          "url": "https://rust-sailfish.github.io/sailfish/"
         },
         "realtime": {
           "status": "scope",
           "note": "Real-time delivery belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://sailfish-template.github.io/sailfish"
+          "url": "https://rust-sailfish.github.io/sailfish/"
         },
         "xssEscaping": {
           "status": "native",

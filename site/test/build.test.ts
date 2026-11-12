@@ -33,7 +33,25 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       initialResponse.headers.get("x-content-type-options"),
       "nosniff",
     );
+    assert.equal(
+      initialResponse.headers.get("x-robots-tag"),
+      "noindex, nofollow",
+    );
+    assert.equal(
+      initialResponse.headers.get("content-security-policy"),
+      "object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+    );
     const index = await initialResponse.text();
+    assert.match(index, /name="description"/);
+    assert.match(index, /rel="canonical" href="https:\/\/frameworks.run\/"/);
+    const fixtureResponse = await fetch(
+      `${server.url}/previews/framework-cards.html`,
+    );
+    assert.equal(
+      fixtureResponse.headers.get("content-security-policy"),
+      null,
+      "Static fixture must remain embeddable",
+    );
     const viteManifest: Manifest = JSON.parse(
       await readFile(join(outputDirectory, ".vite/manifest.json"), "utf8"),
     );
@@ -106,6 +124,9 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       "/",
       ...versionedAssets,
       "/favicon.svg",
+      "/licenses/devicon.txt",
+      "/licenses/simple-icons.txt",
+      "/logos/sources.json",
       "/previews/cards.html",
       "/previews/products.html",
       "/previews/table.html",

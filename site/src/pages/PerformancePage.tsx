@@ -78,35 +78,31 @@ export function PerformancePage({
               aria-controls="experiment-panel"
               aria-selected={state.view === "rendering"}
               data-view="rendering"
+              aria-describedby="rendering-info"
               aria-current={state.view === "rendering" ? "page" : undefined}
             >
               SSR Rendering
-            </button>
-            <button
-              type="button"
-              className="fw-experiment-info"
-              aria-label="About SSR Rendering"
-              aria-describedby="rendering-info"
-            >
-              <svg
-                viewBox="0 0 20 20"
-                width="15"
-                height="15"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
-              >
-                <circle cx="10" cy="10" r="7.5"></circle>
-                <path d="M10 9v5"></path>
-                <circle
-                  cx="10"
-                  cy="6"
-                  r=".5"
-                  fill="currentColor"
-                  stroke="none"
-                ></circle>
-              </svg>
+              <span className="fw-experiment-info" aria-hidden="true">
+                <svg
+                  viewBox="0 0 20 20"
+                  width="15"
+                  height="15"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
+                  <circle cx="10" cy="10" r="7.5"></circle>
+                  <path d="M10 9v5"></path>
+                  <circle
+                    cx="10"
+                    cy="6"
+                    r=".5"
+                    fill="currentColor"
+                    stroke="none"
+                  ></circle>
+                </svg>
+              </span>
             </button>
           </div>
           <button
@@ -247,6 +243,7 @@ export function PerformancePage({
               </fieldset>
               <select
                 data-framework-view
+                className="fw-native-select"
                 aria-label="Framework SSR analysis"
                 hidden={state.view !== "framework"}
                 defaultValue={state.framework}
@@ -259,6 +256,7 @@ export function PerformancePage({
               </select>
               <select
                 data-http-view=""
+                className="fw-native-select"
                 aria-label="HTTP analysis"
                 hidden={state.view !== "http"}
                 defaultValue={state.http}
@@ -273,6 +271,7 @@ export function PerformancePage({
               </select>
               <select
                 data-stream-view=""
+                className="fw-native-select"
                 aria-label="Streaming analysis"
                 hidden={state.view !== "streaming"}
                 defaultValue={state.stream}

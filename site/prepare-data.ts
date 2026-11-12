@@ -86,6 +86,7 @@ export async function prepareData() {
     dateRange,
     framework: {
       scenario: input.framework.scenario,
+      versions: data.framework.versions,
       methodology: input.framework.methodology,
       workloads: data.framework.workloadDefinitions,
     },

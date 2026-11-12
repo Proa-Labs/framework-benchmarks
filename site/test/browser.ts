@@ -13,19 +13,21 @@ interface TestExport {
   toolTypes: string[];
 }
 
+import type axe from "axe-core";
 import type { Page } from "playwright";
 import type { BenchmarkData } from "../benchmark-types.ts";
 
 declare global {
   interface Window {
     reactNavigationProbe?: string;
+    axe: typeof axe;
   }
 }
 
 // Optional browser regression suite for local development and CI. Manual
 // desktop-app browser verification can also use the same visible controls.
 import assert from "node:assert/strict";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "playwright";
 import { siteRoot } from "../build.ts";
@@ -71,10 +73,7 @@ try {
   await navigate(`${server.url}/?chart=bars`);
   await page.locator(".fw-row").first().waitFor();
   assert.equal(await page.locator(".fw-row").count(), 17);
-  const renderingInfo = page.getByRole("button", {
-    name: "About SSR Rendering",
-    exact: true,
-  });
+  const renderingInfo = page.locator(".fw-experiment-info");
   await renderingInfo.hover();
   assert.equal(await page.locator("#rendering-info").isVisible(), true);
   await page.locator("#rendering-info").hover();
@@ -82,9 +81,8 @@ try {
   await page.locator("h1").hover();
   await page.locator("#rendering-info").waitFor({ state: "hidden" });
   await page.locator("#experiment-rendering").focus();
-  await page.locator("#experiment-rendering").press("Tab");
   assert.equal(await page.locator("#rendering-info").isVisible(), true);
-  await renderingInfo.press("Escape");
+  await page.locator("#experiment-rendering").press("Escape");
   assert.equal(await page.locator("#rendering-info").isVisible(), false);
   await page.screenshot({
     path: join(siteRoot, "test-results/desktop.png"),
@@ -1070,6 +1068,14 @@ try {
     assert.ok(geometry.left >= 0 && geometry.right <= width);
     assert.ok(geometry.top >= 0 && geometry.bottom <= 935);
     assert.ok(
+      Math.abs(geometry.left - (width - geometry.right)) < 2,
+      "profile is horizontally centered",
+    );
+    assert.ok(
+      Math.abs(geometry.top - (935 - geometry.bottom)) < 2,
+      "profile is vertically centered",
+    );
+    assert.ok(
       geometry.scroll <= geometry.width + 1,
       "profile has no horizontal overflow",
     );
@@ -1302,6 +1308,27 @@ try {
   checks.push(
     "server-rendered methodology follows each workload's captured load rate",
   );
+  await initial.goto(server.url);
+  await initial.getByRole("link", { name: "Ecosystem", exact: true }).click();
+  assert.equal(await initial.locator("h1").textContent(), "The ecosystem");
+  await initial.getByRole("link", { name: "Performance", exact: true }).click();
+  assert.equal(
+    await initial.locator("[data-renderer-comparison] tbody tr").count(),
+    17,
+  );
+  assert.match(
+    methodology,
+    /Exact uses its production JavaScript SSR backend on Bun/,
+  );
+  assert.match(
+    required(
+      await initial.locator("[data-framework-comparison] tbody").textContent(),
+    ),
+    /Exact \(JS SSR\)/,
+  );
+  checks.push(
+    "header navigation and backend disclosures work without JavaScript",
+  );
   await noJS.close();
   checks.push(
     "Cloudflare request-time SSR sends selected benchmark tables, bars, streaming panels and feature filters with JavaScript disabled",
@@ -1312,6 +1339,113 @@ try {
   await reducedPage.locator('[data-app-ready="true"]').waitFor();
   assert.equal(await reducedPage.locator("[data-play]").isDisabled(), true);
   await reduced.close();
+  await navigate(`${server.url}/?view=rendering&workload=cards&chart=bars`);
+  await page.locator('[data-workload="products"]').click();
+  await page.locator('a[data-section="ecosystem"]').click();
+  await page.locator("[data-ecosystem]").waitFor({ state: "visible" });
+  await page.locator('a[data-section="performance"]').click();
+  await page.locator("[data-performance]").waitFor({ state: "visible" });
+  assert.match(page.url(), /workload=products/);
+  assert.match(
+    required(
+      await page.locator('a[data-section="ecosystem"]').getAttribute("href"),
+    ),
+    /workload=products/,
+  );
+  checks.push(
+    "section links preserve live chart state and expose working fallback URLs",
+  );
+  const axeSource = await readFile(
+    join(siteRoot, "node_modules/axe-core/axe.min.js"),
+    "utf8",
+  );
+  const accessibilityViolations = () =>
+    page.evaluate(async () => {
+      const result = await window.axe.run(document, {
+        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] },
+      });
+      return result.violations.map(({ id, nodes }) => ({
+        id,
+        targets: nodes.map(({ target }) => target),
+      }));
+    });
+  for (const theme of ["light", "dark"]) {
+    for (const path of [
+      "/",
+      "/?view=streaming",
+      "/features",
+      "/features?display=matrix&group=server&tools=nextjs,astro,exact,proa",
+      "/about",
+      "/methodology",
+    ]) {
+      await page.setViewportSize({ width: 1280, height: 1000 });
+      await navigate(server.url + path);
+      await page.evaluate((theme) => {
+        document.documentElement.dataset.theme = theme;
+      }, theme);
+      await page.addScriptTag({ content: axeSource });
+      assert.deepEqual(
+        await accessibilityViolations(),
+        [],
+        `${theme} ${path} accessibility`,
+      );
+      if (path === "/features") {
+        await page.locator('[data-feature-profile="nextjs"]').click();
+        await page.locator(".fw-feature-dialog[open]").waitFor();
+        assert.deepEqual(
+          await accessibilityViolations(),
+          [],
+          `${theme} feature profile accessibility`,
+        );
+        await page.locator(".fw-feature-dialog").press("Escape");
+        await page.locator("[data-tool-picker-trigger]").click();
+        assert.deepEqual(
+          await accessibilityViolations(),
+          [],
+          `${theme} tool picker accessibility`,
+        );
+        await page.locator("#fw-tool-picker").press("Escape");
+      }
+    }
+    for (const view of ["http", "framework", "streaming"]) {
+      await navigate(`${server.url}/?view=${view}`);
+      const select = page.locator("select:visible");
+      assert.equal(await select.count(), 1);
+      const style = await select.evaluate((element) => {
+        const css = getComputedStyle(element);
+        return {
+          appearance: css.appearance,
+          inset: css.backgroundPosition,
+          padding: parseFloat(css.paddingRight),
+          image: css.backgroundImage,
+        };
+      });
+      assert.equal(style.appearance, "none");
+      assert.ok(style.inset.includes("12px"));
+      assert.ok(style.padding >= 34);
+      assert.ok(style.image.includes("svg"));
+    }
+  }
+  await page.setViewportSize({ width: 375, height: 812 });
+  await navigate(`${server.url}/features`);
+  await page.addScriptTag({ content: axeSource });
+  assert.deepEqual(
+    await accessibilityViolations(),
+    [],
+    "mobile features accessibility",
+  );
+  const mobileSelect = page.locator("select:visible");
+  assert.equal(await mobileSelect.count(), 1);
+  assert.ok(
+    await mobileSelect.evaluate(
+      (element) => parseFloat(getComputedStyle(element).paddingRight) >= 34,
+    ),
+  );
+  await mobileSelect.selectOption("metadata");
+  assert.match(page.url(), /group=metadata/);
+  checks.push(
+    "public pages pass WCAG A/AA automated checks in both themes; all analysis and mobile selects retain inset arrows",
+  );
   assert.deepEqual(errors, []);
   await writeFile(
     join(siteRoot, "test-results/browser.json"),

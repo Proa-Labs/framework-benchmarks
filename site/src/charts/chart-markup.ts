@@ -126,7 +126,7 @@ export function createChartMarkup(model: DashboardModel) {
       <table class="fw-comparison" data-framework-comparison><caption class="sr-only">Full-framework HTTP SSR latency in milliseconds across workloads. Select a column heading to sort.</caption><thead><tr><th scope="col">Framework</th>${workloads.map((w) => `<th scope="col" aria-sort="${w.id === sortWorkload.id ? "ascending" : "none"}"><button type="button" data-sort-framework-workload="${w.id}">${esc(w.label)}${w.id === sortWorkload.id ? " ↓" : ""}<small>ms · ${w.fixedRateRps} req/s</small></button></th>`).join("")}</tr></thead><tbody>${rows
         .map(
           (row) =>
-            `<tr style="--brand:${required(renderer(row.id)).color}" class="${state.focus === row.id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" data-focus="${row.id}" data-stat-suite="framework" data-stat-workload="${sortWorkload.id}" aria-pressed="${state.focus === row.id}">${label(row.id)}</button></th>${workloads
+            `<tr style="--brand:${required(renderer(row.id)).color}" class="${state.focus === row.id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" data-focus="${row.id}" data-stat-suite="framework" data-stat-workload="${sortWorkload.id}" aria-pressed="${state.focus === row.id}">${label(row.id, true)}</button></th>${workloads
               .map((w) => {
                 const cell = required(
                   data.framework.workloads[w.id].find((r) => r.id === row.id),
@@ -136,7 +136,7 @@ export function createChartMarkup(model: DashboardModel) {
               .join("")}</tr>`,
         )
         .join("")}</tbody></table>
-      <p class="mt-4 text-[11px] leading-relaxed text-muted">${esc(provenance)}. ${data.framework.methodology.repeats} independent server starts per workload. Each column uses the same offered load for all frameworks. <a href="/${esc(data.framework.download)}" class="underline underline-offset-2">Raw capture ↗</a></p>
+      <p class="mt-4 text-[11px] leading-relaxed text-muted">${esc(provenance)}. ${data.framework.methodology.repeats} independent server starts per workload. Each column uses the same offered load for all frameworks. ${model.frameworkUsesJsSsr() ? "Exact uses its production JavaScript SSR backend; its native Rust host is not measured here. " : ""}<a href="/${esc(data.framework.download)}" class="underline underline-offset-2">Raw capture ↗</a></p>
     </section>`;
   }
   function renderCatalog() {

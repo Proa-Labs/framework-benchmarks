@@ -92,6 +92,13 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     $("[data-chart-note]").textContent = chart.note;
     return chart;
   }
+  const syncSectionLinks = () => {
+    $$<HTMLAnchorElement>("a[data-section]").forEach((link) => {
+      const params = new URLSearchParams(currentSearch);
+      params.set("section", required(link.dataset.section));
+      link.href = `${location.pathname}?${params}`;
+    });
+  };
   const save = () => {
     const params = new URLSearchParams();
     for (const key of [
@@ -111,6 +118,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     if (state.types.length !== ALL_GROUPS.length)
       params.set("types", state.types.join(","));
     currentSearch = `?${params.toString()}`;
+    syncSectionLinks();
     history.replaceState(
       history.state,
       "",
@@ -905,6 +913,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     )
     .join("");
   const infoButton = $(".fw-experiment-info");
+  const infoFocusTarget = $("#experiment-rendering");
   const infoPopup = $("#rendering-info");
   let infoHovered = false,
     infoFocused = false,
@@ -934,11 +943,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       hideInfoSoon();
     });
   }
-  listen(infoButton, "focus", () => {
-    infoFocused = infoButton.matches(":focus-visible");
+  listen(infoFocusTarget, "focus", () => {
+    infoFocused = infoFocusTarget.matches(":focus-visible");
     if (infoFocused) showInfo();
   });
-  listen(infoButton, "blur", () => {
+  listen(infoFocusTarget, "blur", () => {
     infoFocused = false;
     hideInfoSoon();
   });
@@ -947,6 +956,18 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       infoPopup.hidePopover();
   });
   listen(root, "click", (e) => {
+    const sectionLink = closest(e, "a[data-section]");
+    if (sectionLink) {
+      // Preserve live D3 selections, which may be newer than React's route
+      // snapshot. Keep real hrefs for no-JS, modified-click and new-tab use.
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
+        return;
+      e.preventDefault();
+      state.section = required(sectionLink.dataset.section);
+      render();
+      save();
+      return;
+    }
     const el = closest(e, "button");
     if (!el) return;
     if (el.hasAttribute("data-share")) {

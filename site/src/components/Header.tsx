@@ -17,28 +17,22 @@ export function Header({
         ["performance", "Performance"],
         ["features", "Features"],
         ["ecosystem", "Ecosystem"],
-      ].map(([id, label]) =>
-        interactive && id !== "features" ? (
-          <button
-            key={id}
-            type="button"
-            className="cursor-interaction"
-            data-section={id}
-            aria-current={active === id ? "page" : undefined}
-          >
-            {label}
-          </button>
-        ) : (
-          <Link
-            key={id}
-            to={id === "features" ? "/features" : "/"}
-            search={id === "features" ? {} : { section: id }}
-            aria-current={active === id ? "page" : undefined}
-          >
-            {label}
-          </Link>
-        ),
-      )}
+      ].map(([id, label]) => (
+        <Link
+          key={id}
+          to={id === "features" ? "/features" : "/"}
+          search={
+            id === "features"
+              ? {}
+              : (previous) =>
+                  interactive ? { ...previous, section: id } : { section: id }
+          }
+          data-section={interactive && id !== "features" ? id : undefined}
+          aria-current={active === id ? "page" : undefined}
+        >
+          {label}
+        </Link>
+      ))}
     </nav>
   );
   return (

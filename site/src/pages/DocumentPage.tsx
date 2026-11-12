@@ -52,6 +52,13 @@ function About() {
         <a href="https://github.com/Proa-Labs/proa">Proa</a> is included in the
         benchmarks.
       </p>
+      <p>
+        Project names and logos identify their respective owners. Inclusion does
+        not imply affiliation or endorsement.{" "}
+        <a href="/logos/sources.json">Logo sources</a> ·{" "}
+        <a href="/licenses/devicon.txt">Devicon license</a> ·{" "}
+        <a href="/licenses/simple-icons.txt">Simple Icons license</a>.
+      </p>
     </>
   );
 }
@@ -99,6 +106,13 @@ function Methodology() {
         {metadata.framework.methodology.durationSeconds} seconds; low-rate tail
         percentiles have few samples, whose counts are retained in the raw data.
       </p>
+      {/\bBun\b/.test(metadata.framework.versions.exact || "") && (
+        <p>
+          Exact uses its production JavaScript SSR backend on Bun. Its native
+          Rust render host is a separate backend and is not measured in this
+          capture. The tested backend and version are retained in the raw data.
+        </p>
+      )}
       <h2>HTTP</h2>
       <p>
         The normal production servers handle the same parity-gated pages over
@@ -151,8 +165,8 @@ function Methodology() {
       <ul>
         {metadata.captures.map((capture) => (
           <li key={capture.id}>
-            <a href={capture.download}>{capture.id}: original capture</a> ·{" "}
-            {capture.date} · <code>{capture.capture}</code>
+            <a href={`/${capture.download}`}>{capture.id}: original capture</a>{" "}
+            · {capture.date} · <code>{capture.capture}</code>
           </li>
         ))}
       </ul>
@@ -164,7 +178,7 @@ function Methodology() {
         <a href="https://github.com/Proa-Labs/framework-benchmarks/blob/main/README.md">
           Reproduction commands ↗
         </a>{" "}
-        · <a href="data/manifest.json">Artifact hashes</a>
+        · <a href="/data/manifest.json">Artifact hashes</a>
       </p>
       <h2>No single overall winner</h2>
       <p>

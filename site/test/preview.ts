@@ -10,9 +10,25 @@ export async function verifyPreview(url: string) {
   const browser = await chromium.launch({ headless: true });
   try {
     const initial = await browser.newPage({ javaScriptEnabled: false });
-    await initial.goto(new URL("/", url).href, {
-      waitUntil: "domcontentloaded",
-    });
+    const initialResponse = required(
+      await initial.goto(new URL("/", url).href, {
+        waitUntil: "domcontentloaded",
+      }),
+    );
+    assert.equal(
+      initialResponse.headers()["content-security-policy"],
+      "object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+    );
+    if (new URL(url).hostname.endsWith(".workers.dev"))
+      assert.equal(
+        initialResponse.headers()["x-robots-tag"],
+        "noindex, nofollow",
+      );
+    assert.equal(await initial.locator('meta[name="description"]').count(), 1);
+    assert.equal(
+      await initial.locator('link[rel="canonical"]').getAttribute("href"),
+      "https://frameworks.run/",
+    );
     assert.ok(
       (await initial.locator("[data-renderer-comparison] tbody tr").count()) >
         0,

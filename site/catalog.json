@@ -94,7 +94,7 @@
     "id": "sailfish",
     "kind": "Template engine",
     "color": "var(--fw-fg)",
-    "homepage": "https://sailfish-template.github.io/sailfish",
+    "homepage": "https://rust-sailfish.github.io/sailfish/",
     "colorSource": "logos/sailfish.svg"
   },
   {

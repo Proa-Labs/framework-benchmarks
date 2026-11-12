@@ -62,8 +62,13 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     name = (id: string) => renderer(id)?.label || id;
   const logo = (id: string) =>
     `<span class="fw-logo-mark" style="--logo-mask:url('${id === "jte" ? "/logos/jte-mark.svg" : `/${required(renderer(id)).logo}`}')" aria-hidden="true"><img class="fw-logo" data-logo="${id}" src="/${required(renderer(id)).logo}" width="18" height="18" alt=""></span>`;
-  const label = (id: string) =>
-    `<span class="fw-renderer">${logo(id)}<span>${esc(name(id))}</span></span>`;
+  const frameworkUsesJsSsr = () =>
+    /\bBun\b/.test(data.framework.versions.exact || "");
+  const label = (
+    id: string,
+    framework = state.view === "framework" && state.section === "performance",
+  ) =>
+    `<span class="fw-renderer">${logo(id)}<span>${esc(name(id))}${id === "exact" && framework && frameworkUsesJsSsr() ? " (JS SSR)" : ""}</span></span>`;
   const defaults: DashboardState = {
     section: "performance",
     view: "rendering",
@@ -95,8 +100,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
         .join(
           ". ",
         )}. Every response is validated; generator-limited phases are rejected.`,
-      scope:
-        "Production HTTP routing → complete SSR HTML. Shared component page, product grid and table workloads with escaping, branches, lists and a request-specific value. Framework shells may differ. No full-document cache, database, external I/O or browser hydration timing.",
+      scope: `Production HTTP routing → complete SSR HTML. Shared component page, product grid and table workloads with escaping, branches, lists and a request-specific value. Framework shells may differ. ${frameworkUsesJsSsr() ? "Exact uses its production JavaScript SSR backend on Bun; its native Rust render host is not measured in this capture. " : ""}No full-document cache, database, external I/O or browser hydration timing.`,
     },
     rendering: {
       title: "SSR render latency",
@@ -487,6 +491,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     label,
     isVisible,
     frameworkWorkloads,
+    frameworkUsesJsSsr,
     suites,
     viewDefaults,
     viewStateKeys,

@@ -306,3 +306,25 @@ test("new suite engines appear without duplicate ecosystem or invented render me
   assert.equal(data.ecosystem.filter((r) => r.id === "sveltekit").length, 1);
   assert.ok(!data.rendering.rows.cards.some((r) => r.id === "sveltekit"));
 });
+
+test("shared URLs recover from invalid controls and preserve intentional empty filters", async () => {
+  const data = normalize((await loadInputs()).input);
+  const model = createDashboardModel(
+    data,
+    "?view=__proto__&chart=%3Cscript%3E&workload=missing&rate=Infinity&focus=unknown",
+  );
+  assert.equal(model.state.view, "rendering");
+  assert.equal(model.state.chart, "compare");
+  assert.equal(model.state.workload, "cards");
+  assert.equal(model.state.focus, null);
+  assert.ok(data.rates.includes(model.state.rate));
+  assert.equal(model.visibleRows().length, data.rendering.rows.cards.length);
+  for (const search of ["?selected=", "?types=unknown", "?selected=__proto__"])
+    assert.deepEqual(createDashboardModel(data, search).visibleRows(), []);
+  const legacy = createDashboardModel(
+    data,
+    "?view=framework&workload=catalog&chart=balls",
+  );
+  assert.equal(legacy.state.chart, "bars");
+  assert.ok(legacy.visibleRows().length > 0);
+});
