@@ -7,7 +7,12 @@ import { mkdir, readFile, rename, symlink, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { verifyPublication } from "../publication.mjs";
-import { jobManifest, suiteIds, validateOptions } from "./plan.mjs";
+import {
+  jobManifest,
+  suiteIds,
+  validateOptions,
+  validateReconnect,
+} from "./plan.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const argv = process.argv.slice(2);
@@ -121,28 +126,49 @@ async function runSuite(suite) {
     console.log(`${suite}: reusing retained complete run`);
     return;
   }
+  let reconnect = false;
+  let attempt = retained?.attempt || 0;
+  let manifest;
   if (retained?.job) {
-    assert.equal(
-      retained.job,
-      jobManifest(options, suite, retained.attempt).metadata.name,
-    );
-    await kube([
-      "delete",
-      "job",
-      retained.job,
-      "-n",
-      options.namespace,
-      "--ignore-not-found",
-      "--wait=false",
-    ]);
+    manifest = jobManifest(options, suite, attempt);
+    assert.equal(retained.job, manifest.metadata.name);
+    if (["running", "starting"].includes(retained.status)) {
+      const existing = await kube([
+        "get",
+        "job",
+        retained.job,
+        "-n",
+        options.namespace,
+        "--ignore-not-found",
+        "-o",
+        "json",
+      ]);
+      if (existing) {
+        validateReconnect(manifest, JSON.parse(existing));
+        reconnect = true;
+      }
+    }
+    if (!reconnect)
+      await kube([
+        "delete",
+        "job",
+        retained.job,
+        "-n",
+        options.namespace,
+        "--ignore-not-found",
+        "--wait=false",
+      ]);
   }
-  const attempt = (retained?.attempt || 0) + 1;
-  const manifest = jobManifest(options, suite, attempt);
+  if (!reconnect) {
+    attempt++;
+    manifest = jobManifest(options, suite, attempt);
+  }
   const name = manifest.metadata.name;
   state.suites[suite] = { attempt, job: name, status: "starting" };
   await save();
   jobs.add(name);
-  await kube(["apply", "-f", "-"], { input: JSON.stringify(manifest) });
+  if (!reconnect)
+    await kube(["apply", "-f", "-"], { input: JSON.stringify(manifest) });
   const deadline = Date.now() + 4 * 60 * 60 * 1000;
   let pod;
   while (!pod) {
@@ -171,27 +197,47 @@ async function runSuite(suite) {
   }
   const exec = (args, config) =>
     kube(["exec", "-n", options.namespace, "-i", pod, "--", ...args], config);
-  // Transfer trusted orchestration separately from the immutable measured checkout.
-  for (const [local, remote] of [
-    ["framework-ssr/cloud/bootstrap.sh", "bootstrap.sh"],
-    ["tooling/cloud/run-suite.sh", "run-suite.sh"],
-  ]) {
-    await exec(["bash", "-c", `cat > /work/${remote}`], {
-      input: await readFile(join(root, local)),
-    });
-  }
-  const launch = `#!/usr/bin/env bash\nset -euo pipefail\nbash /work/bootstrap.sh > /work/bootstrap.log 2>&1\nmkdir -p /work/repo\ncd /work/repo\ngit init -q\ngit remote add origin https://github.com/Proa-Labs/framework-benchmarks.git\ngit fetch --depth=1 origin ${options.revision}\ngit checkout --detach FETCH_HEAD\nbash /work/run-suite.sh ${options.revision} ${options.campaignId} ${suite} ${options.smoke ? "smoke" : "publication"}\n`;
-  await exec(
-    [
+  const launched =
+    reconnect &&
+    (await exec([
       "bash",
       "-c",
-      "cat > /work/launch.tmp && mv /work/launch.tmp /work/launch.sh",
-    ],
-    { input: launch },
-  );
+      "if test -f /work/launch.sh; then cat /work/launch.sh; fi",
+    ]));
+  if (launched) {
+    assert.ok(
+      launched.includes(`git fetch --depth=1 origin ${options.revision}`),
+      "Active worker has a different source revision",
+    );
+    assert.ok(
+      launched.includes(
+        `bash /work/run-suite.sh ${options.revision} ${options.campaignId} ${suite} ${options.smoke ? "smoke" : "publication"}`,
+      ),
+      "Active worker has a different campaign or suite",
+    );
+  } else {
+    // Transfer trusted orchestration separately from the immutable measured checkout.
+    for (const [local, remote] of [
+      ["framework-ssr/cloud/bootstrap.sh", "bootstrap.sh"],
+      ["tooling/cloud/run-suite.sh", "run-suite.sh"],
+    ]) {
+      await exec(["bash", "-c", `cat > /work/${remote}`], {
+        input: await readFile(join(root, local)),
+      });
+    }
+    const launch = `#!/usr/bin/env bash\nset -euo pipefail\nbash /work/bootstrap.sh > /work/bootstrap.log 2>&1\nmkdir -p /work/repo\ncd /work/repo\ngit init -q\ngit remote add origin https://github.com/Proa-Labs/framework-benchmarks.git\ngit fetch --depth=1 origin ${options.revision}\ngit checkout --detach FETCH_HEAD\nbash /work/run-suite.sh ${options.revision} ${options.campaignId} ${suite} ${options.smoke ? "smoke" : "publication"}\n`;
+    await exec(
+      [
+        "bash",
+        "-c",
+        "cat > /work/launch.tmp && mv /work/launch.tmp /work/launch.sh",
+      ],
+      { input: launch },
+    );
+  }
   state.suites[suite].status = "running";
   await save();
-  console.log(`${suite}: running on ${pod}`);
+  console.log(`${suite}: ${launched ? "reconnected to" : "running on"} ${pod}`);
   let exitCode;
   let lastLog = 0;
   while (exitCode === undefined) {
@@ -230,11 +276,24 @@ async function runSuite(suite) {
     ],
     { binary: true },
   );
-  await writeFile(join(output, `${suite}-logs.tar.gz`), logs);
+  await writeFile(
+    join(output, `${suite}-attempt-${attempt}-logs.tar.gz`),
+    logs,
+  );
   if (exitCode !== 0) {
     state.suites[suite].status = "failed";
     state.suites[suite].exitCode = exitCode;
     await save();
+    await kube([
+      "delete",
+      "job",
+      name,
+      "-n",
+      options.namespace,
+      "--ignore-not-found",
+      "--wait=false",
+    ]);
+    jobs.delete(name);
     throw new Error(
       `${suite}: failed (${exitCode}); logs retained at ${output}`,
     );

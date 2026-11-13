@@ -6,6 +6,10 @@ its product-scaling diagnostic run sequentially on the same worker. Competitors
 inside a suite are never sharded or measured concurrently. Compilation and
 setup finish before that worker starts measuring.
 
+Install the pinned Bun dependencies (`bun install --frozen-lockfile` and
+`bun install --cwd framework-ssr --frozen-lockfile`) first. The controller needs
+Python 3.12+, `git`, `tar` and an authenticated `kubectl` context.
+
 ```sh
 bun tooling/cloud/campaign.mjs --revision <full-40-character-commit-sha> \
   --context gke_airy-cycle-504821-k9_us-west1-a_proa-ci --parallel 5 \
@@ -32,7 +36,8 @@ explicitly recorded; their measurements are never mixed within one ranking.
 Results download before jobs are deleted. On failure, other workers finish and
 the controller retains successful archives and diagnostic logs. Run the **same
 command with the same output directory** to resume: completed archives are
-SHA-256 checked and reused, and failed suites restart in full. Spot eviction
+SHA-256 checked and reused, active workers are reconnected after verifying their
+job definition and immutable launch revision, and failed suites restart in full. Spot eviction
 never reuses partial timings. Jobs have a four-hour deadline and cleanup TTL;
 the controller also deletes its jobs on success, failure or cancellation.
 A forced process kill can leave a job until that deadline; the campaign manifest
@@ -41,7 +46,9 @@ retains its name for inspection. Resume does not splice partial suite results.
 A complete campaign is extracted into `<out>/validated`, then checked with
 `tooling/publication.mjs`. Archive extraction rejects traversal, links, duplicate
 entries and non-result paths. Existing working-tree results are not replaced.
-Review the staged result diff before copying it into a task branch. Smoke runs
+Review the staged result diff before copying it into a task branch. Regenerate
+all derived reports and figures with `bun run refresh`, then run `bun run check`
+and `bun run check:publication` before committing the selected captures. Smoke runs
 never receive a publication-ready status. No workflow commits, deploys or merges
 results automatically.
 

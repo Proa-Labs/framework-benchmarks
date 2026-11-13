@@ -117,7 +117,7 @@ jobs:
           npm --prefix rendering/external/sveltekit ci
           bun test rendering/external/sveltekit/stream-validator.test.mjs sveltekit/benchmark.test.mjs
           bun sveltekit/report.mjs --check
-          bash -n scripts/refresh-proa.sh rendering/run_all.sh
+          bash -n scripts/refresh-proa.sh rendering/run_all.sh framework-ssr/cloud/*.sh tooling/cloud/*.sh
 
       - name: Check Rust formatting
         if: matrix.suite == 'quality'

@@ -7,6 +7,7 @@ prefixes = ('rendering/results/', 'framework-ssr/results/', 'page-load/results/'
             'suspense-load/results/', 'cold-start/results/')
 reports = {f'{suite}/README.md' for suite in
            ('rendering', 'framework-ssr', 'page-load', 'suspense-load', 'cold-start')}
+reports |= {'scoreboard.md', 'engineering.md'}
 with tarfile.open(sys.argv[1]) as archive:
     members = archive.getmembers()
     seen = set()

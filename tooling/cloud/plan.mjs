@@ -104,3 +104,33 @@ export function jobManifest(options, suite, attempt = 1) {
     },
   };
 }
+
+// A resumed controller may attach only to its own unchanged worker definition.
+// API-server defaulted fields are allowed; security and isolation fields aren't.
+export function validateReconnect(expected, actual) {
+  assert.equal(actual.metadata.name, expected.metadata.name);
+  assert.equal(actual.metadata.namespace, expected.metadata.namespace);
+  assert.equal(
+    actual.metadata.labels.campaign,
+    expected.metadata.labels.campaign,
+  );
+  assert.equal(actual.metadata.labels.suite, expected.metadata.labels.suite);
+  const want = expected.spec.template.spec;
+  const got = actual.spec.template.spec;
+  for (const field of [
+    "automountServiceAccountToken",
+    "nodeSelector",
+    "affinity",
+    "volumes",
+  ]) {
+    assert.deepEqual(got[field], want[field], `Active worker changed ${field}`);
+  }
+  assert.equal(got.containers.length, 1);
+  for (const field of ["image", "command", "resources"]) {
+    assert.deepEqual(
+      got.containers[0][field],
+      want.containers[0][field],
+      `Active worker changed ${field}`,
+    );
+  }
+}

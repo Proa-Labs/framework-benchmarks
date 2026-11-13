@@ -4,7 +4,12 @@ import { createHash } from "node:crypto";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { jobManifest, suiteIds, validateOptions } from "./plan.mjs";
+import {
+  jobManifest,
+  suiteIds,
+  validateOptions,
+  validateReconnect,
+} from "./plan.mjs";
 
 const options = {
   revision: "a".repeat(40),
@@ -151,5 +156,31 @@ test("resume reuses complete archives and rejects a changed archive before launc
     expect(JSON.parse(readFileSync(statePath)).status).toBe("failed");
   } finally {
     rmSync(temp, { recursive: true, force: true });
+  }
+});
+
+test("reconnection rejects a worker from another suite or altered isolation contract", () => {
+  const expected = jobManifest(options, "rendering");
+  validateReconnect(expected, structuredClone(expected));
+  for (const mutate of [
+    (job) => {
+      job.metadata.labels.campaign = "other";
+    },
+    (job) => {
+      job.metadata.labels.suite = "startup";
+    },
+    (job) => {
+      job.spec.template.spec.automountServiceAccountToken = true;
+    },
+    (job) => {
+      job.spec.template.spec.containers[0].image = "another-image";
+    },
+    (job) => {
+      delete job.spec.template.spec.affinity;
+    },
+  ]) {
+    const changed = structuredClone(expected);
+    mutate(changed);
+    expect(() => validateReconnect(expected, changed)).toThrow();
   }
 });

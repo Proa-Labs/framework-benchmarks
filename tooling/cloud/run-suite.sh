@@ -18,7 +18,7 @@ lscpu -e=CPU,CORE,SOCKET,ONLINE > /work/cpu-topology.txt
 cat /sys/fs/cgroup/cpu.max > /work/cpu-quota.txt
 bun install --frozen-lockfile
 bun node_modules/playwright/cli.js install --with-deps chromium
-for adapter in react marko; do
+for adapter in react marko svelte; do
   bun install --cwd "rendering/external/$adapter" --frozen-lockfile
 done
 npm --prefix rendering/external/sveltekit ci --include=dev
@@ -66,7 +66,7 @@ import subprocess, tarfile
 paths = subprocess.check_output(['git', 'ls-files', '-z', '--modified', '--others', '--exclude-standard']).decode().split('\0')
 paths += subprocess.check_output(['git', 'ls-files', '-z', '--others', '--ignored', '--exclude-standard', '--', 'rendering/results', 'framework-ssr/results', 'page-load/results', 'suspense-load/results', 'cold-start/results']).decode().split('\0')
 allowed = ('rendering/results/', 'framework-ssr/results/', 'page-load/results/', 'suspense-load/results/', 'cold-start/results/')
-paths = sorted(set(p for p in paths if p and (p.startswith(allowed) or p in ('rendering/README.md','framework-ssr/README.md','page-load/README.md','suspense-load/README.md','cold-start/README.md'))))
+paths = sorted(set(p for p in paths if p and (p.startswith(allowed) or p in ('rendering/README.md','framework-ssr/README.md','page-load/README.md','suspense-load/README.md','cold-start/README.md', 'scoreboard.md', 'engineering.md'))))
 with tarfile.open('/work/results.tar.gz', 'w:gz') as archive:
     for path in paths:
         archive.add(path, arcname=path, recursive=False)
