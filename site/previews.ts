@@ -89,7 +89,16 @@ export async function buildPreviews(
         `Preview fixture missing for ${id}: add it to rendering/external/react/suite_components.mjs`,
       );
     const raw = renderToString(React.createElement(ROOTS[id]));
-    const body = raw.replaceAll(
+    // The original sample's header names an obsolete Rust-only roster. Give
+    // the illustration neutral labels without changing any measured fixture.
+    const labelled =
+      id === "cards"
+        ? raw.replace(
+            /<header class="hero-section">[\s\S]*?<\/header>/,
+            '<header class="hero-section"><h1 class="title">Component page preview</h1><p class="subtitle">Shared component-page workload</p></header>',
+          )
+        : raw;
+    const body = labelled.replaceAll(
       "/images/benchmark.png",
       `data:image/svg+xml,${encodeURIComponent(chart)}`,
     );

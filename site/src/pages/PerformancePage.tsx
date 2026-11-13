@@ -506,7 +506,7 @@ export function PerformancePage({
         <p>
           Tags shown as text, such as <code>&lt;b&gt;plain text&lt;/b&gt;</code>
           , intentionally test that dynamic data is escaped safely. Preview
-          styling and images are outside the timed benchmark.
+          labels, styling and images are illustrative.
         </p>
         <iframe
           data-fixture-frame=""
