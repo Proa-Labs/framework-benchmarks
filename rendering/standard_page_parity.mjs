@@ -211,7 +211,12 @@ const playwrightCorePackagePath = requireFromPlaywright.resolve(
 const playwrightCorePackage = JSON.parse(
   readFileSync(playwrightCorePackagePath, "utf8"),
 );
-const declaredPlaywright = workspacePackageJson.dependencies?.playwright;
+const playwrightSpec = workspacePackageJson.dependencies?.playwright;
+// Catalogs keep the exact shared pin in the root manifest, rather than
+// repeating its version in each workspace dependency declaration.
+const declaredPlaywright = playwrightSpec === "catalog:"
+  ? workspacePackageJson.catalog?.playwright
+  : playwrightSpec;
 if (declaredPlaywright !== playwrightPackage.version) {
   throw new Error(
     `installed Playwright ${playwrightPackage.version} does not match the exact package.json pin ${declaredPlaywright ?? "<missing>"}`,

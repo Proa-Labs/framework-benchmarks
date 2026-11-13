@@ -144,6 +144,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   let supportHideTimer = 0;
   let returningPopupFocus = false;
   let dismissedHover = false;
+  let pointerX = Number.NaN,
+    pointerY = Number.NaN;
   const percentileTarget =
     ".fw-row[data-focus], .fw-comparison [data-focus], .fw-comparison [data-render-support]";
   function hidePercentiles(force = false) {
@@ -342,7 +344,12 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     }
   });
   listen(root, "pointermove", (event) => {
-    if (!dismissedHover || !(event.movementX || event.movementY)) return;
+    // movementX/Y can stay zero outside pointer lock. Compare viewport
+    // coordinates so a real move can reopen a dismissed explanation reliably.
+    const moved = event.clientX !== pointerX || event.clientY !== pointerY;
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (!dismissedHover || !moved) return;
     dismissedHover = false;
     const row = closest(event, percentileTarget);
     if (row) showRowPercentiles(row);

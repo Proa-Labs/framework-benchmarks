@@ -457,6 +457,19 @@ try {
     );
   }
   const adaptedName = page.locator('[data-render-adaptation="exact"]');
+  // A real pointer move must reopen a dismissed note even on browsers that
+  // report zero movement deltas. Keep the actual viewport coordinates intact.
+  await page.evaluate(() => {
+    document.addEventListener(
+      "pointermove",
+      (event) =>
+        Object.defineProperties(event, {
+          movementX: { value: 0 },
+          movementY: { value: 0 },
+        }),
+      { capture: true },
+    );
+  });
   await adaptedName.hover();
   const adaptedPopup = page.locator("[data-adaptation-explanation]");
   await adaptedPopup.waitFor({ state: "visible" });
