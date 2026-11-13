@@ -126,9 +126,15 @@
     "color": "var(--fw-fg)",
     "homepage": "https://github.com/expo/exact",
     "status": "unmeasured",
-    "coverageReason": "Exact requires styles to be defined in its own format. It rejects the CSS class names written directly in this test’s HTML, so it can’t render the test unchanged.",
+    "coverageReason": "Exact uses equivalent named styles because it generates its own CSS classes and HTML. The content and render-only timing are the same; the markup differs.",
     "coverageSource": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
     "colorSource": "https://expo.dev/brand",
+    "renderingAdaptation": {
+      "label": "Adapted fixture",
+      "reason": "Exact can’t use our CSS classes directly: it requires its own named styles. We translated the styles and kept the same content, but Exact generates different HTML.",
+      "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#styling-and-layout",
+      "details": "https://github.com/Proa-Labs/framework-benchmarks/blob/codex/site-cleanup/rendering/external/exact/README.md"
+    },
     "renderingUnsupported": {
       "cards": {
         "reason": "Exact requires styles to be defined in its own format. It rejects the CSS class names written directly in this test’s HTML, so it can’t render the test unchanged.",

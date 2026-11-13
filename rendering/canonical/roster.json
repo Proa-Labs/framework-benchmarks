@@ -121,6 +121,13 @@
       "label": "Next.js",
       "language": "JavaScript",
       "adapter": "nextjs"
+    },
+    {
+      "id": "exact",
+      "label": "Exact",
+      "language": "JavaScript",
+      "adapter": "exact",
+      "fixture": "exact-native-v1"
     }
   ]
 }

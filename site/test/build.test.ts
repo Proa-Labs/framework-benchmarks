@@ -79,7 +79,7 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       index,
       /cdn\.jsdelivr|window\.openai|independent research/i,
     );
-    assert.match(index, /Maintained by Andrew Hariri, founder of Proa Labs/);
+    assert.match(index, /href="https:\/\/github\.com\/Proa-Labs"/);
     assert.match(index, /href="\/features"/);
     assert.ok(
       index.indexOf("data-initial-theme") <

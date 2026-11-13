@@ -189,8 +189,11 @@ export async function verifyPublication(root) {
   for (const [id, suite] of Object.entries(suites)) {
     const result = await validateCapture(id, undefined, root);
     if (id === "rendering") {
-      const admissions = result.raw_artifacts.find(
-        (artifact) => artifact.label === "Unranked fixture admission checks",
+      const admissions = result.raw_artifacts.find((artifact) =>
+        [
+          "Unranked fixture admission checks",
+          "Unchanged fixture admission checks",
+        ].includes(artifact.label),
       );
       assert.equal(
         admissions?.path,

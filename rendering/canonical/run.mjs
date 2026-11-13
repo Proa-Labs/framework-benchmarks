@@ -3,6 +3,7 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
+  copyFileSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -25,6 +26,7 @@ import {
   captureId as newCaptureId,
   retainCapture,
 } from "../../tooling/captures.mjs";
+import { validateAdaptedFixture } from "../external/exact/parity.mjs";
 import { canonicalDocument, firstDifference } from "./dom.mjs";
 import { refreshProa } from "./refresh-proa.mjs";
 import { validateProaRenderRun } from "./render-contract.mjs";
@@ -367,7 +369,17 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
           temporaryDirectory,
           `${workload.id}-${rendererId}.html`,
         );
-        runCell(rendererId, workload.id, ["--dump", dumpPath, "--dump-only"]);
+        const cssPath = join(
+          temporaryDirectory,
+          `${workload.id}-${rendererId}.css`,
+        );
+        runCell(rendererId, workload.id, [
+          "--dump",
+          dumpPath,
+          "--dump-only",
+          ...(rendererId === "exact" ? ["--dump-css", cssPath] : []),
+        ]);
+        let adaptation;
         const html = readFileSync(dumpPath, "utf8");
         const canonical = JSON.stringify(await canonicalDocument(page, html));
         if (rendererId === referenceId) {
@@ -390,6 +402,14 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
               `${workload.id} parity negative control did not fail`,
             );
           }
+        } else if (rendererId === "exact") {
+          adaptation = await validateAdaptedFixture(
+            page,
+            expectedHtml,
+            html,
+            workload.id,
+            readFileSync(cssPath, "utf8"),
+          );
         } else if (canonical !== expectedCanonical) {
           const difference = firstDifference(expectedCanonical, canonical);
           throw new Error(
@@ -406,6 +426,7 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
           payload_delta_bytes:
             Buffer.byteLength(html) - Buffer.byteLength(expectedHtml),
           byte_equal_to_proa: html === expectedHtml,
+          ...adaptation,
         };
         process.stdout.write(".");
       }
@@ -612,6 +633,7 @@ async function captureProductScaling(temporaryDirectory) {
       id,
       label,
       language,
+      ...(id === "exact" ? { fixture: "exact-native-v1" } : {}),
     })),
     parity,
     measurements,
@@ -627,6 +649,14 @@ async function captureProductScaling(temporaryDirectory) {
       ? {}
       : { raw_artifact: `raw/${captureId}/process-summaries.json` }),
   };
+  if (!smoke && rendererIds.includes("exact")) {
+    const path = `raw/${captureId}/products-exact.css`;
+    copyFileSync(
+      join(temporaryDirectory, "768/products-exact.css"),
+      join(storageDirectory, path),
+    );
+    result.raw_stylesheets = [path];
+  }
   const outputName =
     smoke || engineering
       ? "product-scaling-smoke.json"
@@ -941,6 +971,7 @@ try {
             label,
             language,
             status: "included",
+            ...(id === "exact" ? { fixture: "exact-native-v1" } : {}),
           })),
           parity,
           measurements: benchmarkResult.measurements,
@@ -964,6 +995,11 @@ try {
             "Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.",
             "Semantic DOM parity permits documented serializer metadata and whitespace differences; payload deltas remain visible.",
             "This capture describes one machine and these three workloads; it is not a universal application ranking.",
+            ...(rendererIds.includes("exact")
+              ? [
+                  "Exact uses the disclosed exact-native-v1 adaptation: named native styles, generated classes, text/list wrappers and separated table borders. Content, attributes, formatting and representative computed CSS are checked separately; strict DOM parity is not claimed. Runtime VM/module initialization and input seeding are outside timing; fresh DOM construction and HTML serialization are inside.",
+                ]
+              : []),
           ],
           raw_artifacts: [
             {
@@ -975,6 +1011,18 @@ try {
         };
         const rawDirectory = join(storageDirectory, "raw", captureId);
         mkdirSync(rawDirectory, { recursive: true });
+        if (rendererIds.includes("exact"))
+          for (const workload of workloads) {
+            const filename = `${workload.id}-exact.css`;
+            copyFileSync(
+              join(temporaryDirectory, filename),
+              join(rawDirectory, filename),
+            );
+            result.raw_artifacts.push({
+              label: `Exact adapted ${workload.id} stylesheet`,
+              path: `raw/${captureId}/${filename}`,
+            });
+          }
         writeFileSync(
           join(rawDirectory, "process-summaries.json"),
           `${JSON.stringify(benchmarkResult.processResults, null, 2)}\n`,
@@ -998,7 +1046,7 @@ try {
               { flag: "wx" },
             );
             result.raw_artifacts.push({
-              label: "Unranked fixture admission checks",
+              label: "Unchanged fixture admission checks",
               path: `raw/${captureId}/admissions.json`,
             });
           }

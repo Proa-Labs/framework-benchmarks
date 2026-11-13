@@ -44,6 +44,21 @@ The comparison may ignore renderer-internal comments, resource-preload hints, no
 
 Each workload also has a negative control. The runner mutates a semantically relevant output and asserts that the gate rejects it. If any positive or negative parity check fails, timing never starts.
 
+### Disclosed Exact native adaptation
+
+The `exact-native-v1` row is explicitly marked **Exact†**. The pinned compiler
+cannot accept the literal classes or all HTML element spellings in the strict
+fixture. User-requested native named styles and equivalent content receive a
+separate content/attribute and representative computed-CSS gate, including
+negative controls. This exception applies only to Exact; strict DOM/class parity
+remains required for every other row. Exact records a distinct DOM digest and
+matching projected-content digests, style-check counts, output bytes and native
+stylesheets. The common render-only boundary, fresh output, host, warmup/sample
+counts and process rotations remain shared. Runtime module/VM initialization
+precedes timing; a fresh native DOM, app construction, formatting and serialization
+are timed. See [the adaptation notes](external/exact/README.md) for every
+structural/styling difference and the exact timer boundary.
+
 ## Sampling
 
 The default policy is fixed in [`canonical/workloads.json`](canonical/workloads.json):

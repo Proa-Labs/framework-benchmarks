@@ -180,6 +180,18 @@
   #frameworks-explorer .fw-popover-renderer {
     @apply text-left [overflow-wrap:anywhere];
   }
+  #frameworks-explorer .fw-fixture-adapted {
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: #dc2626;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 5px;
+    text-decoration-skip-ink: none;
+  }
+  #frameworks-explorer .fw-popover-scope a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
   #frameworks-explorer .fw-popover-scope {
     @apply [margin-top:10px] [padding-top:9px] [border-top:1px_solid_var(--fw-line)] text-muted [max-width:370px] [font-size:11px];
   }

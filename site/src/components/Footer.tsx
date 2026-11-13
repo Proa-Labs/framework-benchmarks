@@ -77,7 +77,7 @@ export function Footer({
       <div className="flex flex-col gap-3 border-t border-line pt-5 text-xs leading-relaxed sm:flex-row sm:items-center sm:justify-between">
         <span>© 2026 frameworks.run</span>
         <span>
-          Maintained by Andrew Hariri, founder of{" "}
+          Maintained by{" "}
           <a
             className="underline underline-offset-2 hover:text-ink"
             href="https://github.com/Proa-Labs"

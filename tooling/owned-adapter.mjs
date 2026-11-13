@@ -8,7 +8,7 @@ import manifest from "../rendering/canonical/workloads.json" with {
 // Framework initialization, compilation and input construction precede this call.
 // Await native async SSR to completion; inspect, hash and write output afterward.
 export async function runOwnedAdapter(
-  { id, label, allocationPolicy, render },
+  { id, label, allocationPolicy, render, prepare = () => undefined },
   args = process.argv.slice(2),
 ) {
   assert.equal(process.env.NODE_ENV, "production");
@@ -35,7 +35,7 @@ export async function runOwnedAdapter(
       ? Number(process.env.PROA_BENCH_PRODUCT_COUNT || workload.cardinality)
       : workload.cardinality;
   assert.ok(Number.isSafeInteger(cardinality) && cardinality > 0);
-  let html = await render();
+  let html = await render(await prepare());
   assert.equal(
     typeof html,
     "string",
@@ -43,11 +43,12 @@ export async function runOwnedAdapter(
   );
   if (option("--dump")) write(option("--dump"), html);
   if (args.includes("--dump-only")) return;
-  for (let i = 0; i < warmup; i++) html = await render();
+  for (let i = 0; i < warmup; i++) html = await render(await prepare());
   const samples = [];
   for (let i = 0; i < iterations; i++) {
+    const prepared = await prepare();
     const started = process.hrtime.bigint();
-    const output = await render();
+    const output = await render(prepared);
     const elapsed = Number(process.hrtime.bigint() - started) / 1000;
     assert.equal(typeof output, "string");
     samples.push(elapsed);

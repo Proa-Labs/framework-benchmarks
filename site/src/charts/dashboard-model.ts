@@ -68,7 +68,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     id: string,
     framework = state.view === "framework" && state.section === "performance",
   ) =>
-    `<span class="fw-renderer">${logo(id)}<span>${esc(name(id))}${id === "exact" && framework && frameworkUsesJsSsr() ? " (JS SSR)" : ""}</span></span>`;
+    `<span class="fw-renderer">${logo(id)}<span>${renderer(id)?.renderingAdaptation && state.view === "rendering" ? `<span class="fw-fixture-adapted">${esc(name(id))}<sup>†</sup></span>` : esc(name(id))}${id === "exact" && framework && frameworkUsesJsSsr() ? " (JS SSR)" : ""}</span></span>`;
   const defaults: DashboardState = {
     section: "performance",
     view: "rendering",
@@ -108,7 +108,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       method:
         "Five independent processes. Bars show the median process P50; boxes summarize those five process medians, not individual render latency.",
       scope:
-        "Prepared data → a complete, freshly owned HTML output. Each adapter uses its declared native output type; Proa may return a RenderBuffer without String conversion. Includes rendering, formatting, and output allocation. Excludes data setup, HTTP, routing, databases, hydration, and network transfer. All captured semantic DOM parity cells passed.",
+        "Prepared data → a complete, freshly owned HTML output. Each adapter uses its declared native output type; Proa may return a RenderBuffer without String conversion. Includes rendering, formatting, and output allocation. Excludes data setup, HTTP, routing, databases, hydration, and network transfer. Strict rows passed unchanged DOM/class parity. Exact† uses separately checked native styles and markup; its adaptation is disclosed.",
     },
     http: {
       title: "HTTP capacity",

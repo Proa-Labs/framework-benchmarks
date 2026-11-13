@@ -189,5 +189,22 @@
     "args": ["suite_bench.mjs"],
     "build": ["{bun}", "build.mjs"],
     "versionCommand": ["{bun}", "version.mjs"]
+  },
+  "exact": {
+    "id": "exact",
+    "label": "Exact",
+    "language": "JavaScript",
+    "setup": "custom",
+    "cwd": "rendering/external/exact",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "build": ["{bun}", "build.mjs"],
+    "versionCommand": [
+      "git",
+      "-C",
+      "../../../framework-ssr/.cache/exact",
+      "rev-parse",
+      "HEAD"
+    ]
   }
 }

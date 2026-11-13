@@ -35,9 +35,11 @@ test("SSR comparison uses one render-only column per workload and exports only t
 
 test("missing render-only coverage stays explicit and a legacy URL cannot substitute HTTP timings", async () => {
   const data = normalize((await loadInputs()).input);
-  const id = data.framework.rows.find(
-    (r) => !data.rendering.rows.cards.some((v) => v.id === r.id),
-  )?.id;
+  const id = data.framework.rows[0].id;
+  for (const w of data.workloads)
+    data.rendering.rows[w.id] = data.rendering.rows[w.id].filter(
+      (r) => r.id !== id,
+    );
   assert.ok(id);
   const model = createDashboardModel(
     data,
@@ -53,26 +55,33 @@ test("missing render-only coverage stays explicit and a legacy URL cannot substi
   );
   assert.ok(!html.includes("fw-comparison-value"));
   assert.ok(!html.includes('data-stat-suite="framework"'));
-  assert.ok(html.includes("Only entries that pass the same unchanged fixture"));
+  assert.ok(html.includes("Strict rows pass the unchanged HTML fixture"));
   const empty = createDashboardModel(data, "?selected=");
   assert.equal(empty.comparisonMeasurements().length, 0);
   assert.ok(!createChartMarkup(empty).draw([]).html.includes("<table"));
 });
 
-test("unsupported literal-class fixtures have per-workload explanations and never acquire latency samples", async () => {
+test("Exact discloses native fixture differences and keeps strict-fixture limitations explicit", async () => {
   const data = normalize((await loadInputs()).input);
   const model = createDashboardModel(data, "?selected=exact");
   const html = createChartMarkup(model).draw(model.visibleRows()).html;
-  assert.equal(model.comparisonMeasurements().length, 0);
-  assert.equal(
-    (html.match(/>Unsupported<span/g) || []).length,
-    data.workloads.length,
-  );
+  const adaptation = data.renderers.find(
+    (r) => r.id === "exact",
+  )?.renderingAdaptation;
+  assert.ok(adaptation?.source.includes("#styling-and-layout"));
+  assert.ok(adaptation?.details.endsWith("/exact/README.md"));
+  assert.ok(html.includes('class="fw-fixture-adapted"'));
+  assert.ok(html.includes('data-render-adaptation="exact"'));
+  for (const row of model.comparisonMeasurements()) {
+    assert.equal(row.fixture, "exact-native-v1");
+    assert.deepEqual(row.adaptation, adaptation);
+  }
   for (const workload of data.workloads) {
     const support = model.renderingCoverage("exact", workload.id);
     assert.equal(support.status, "unsupported");
     assert.ok(support.reason.length > 0);
     assert.match(support.version, /94b8671f70fe/);
-    assert.ok(html.includes(`data-support-workload="${workload.id}"`));
+    if (!data.rendering.rows[workload.id].some((r) => r.id === "exact"))
+      assert.ok(html.includes(`data-support-workload="${workload.id}"`));
   }
 });

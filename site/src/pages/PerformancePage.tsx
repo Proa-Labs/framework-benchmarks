@@ -416,11 +416,10 @@ export function PerformancePage({
                     )}
                   </p>
                   <p>
-                    Maintained by Andrew Hariri, founder of Proa Labs. Proa is
-                    included in the comparisons. Each experiment identifies its
-                    recorded host, source and capture date. Some captures
-                    include uncommitted source changes. No external database is
-                    included.
+                    Maintained by Proa Labs. Proa is included in the
+                    comparisons. Each experiment identifies its recorded host,
+                    source and capture date. Some captures include uncommitted
+                    source changes. No external database is included.
                   </p>
                 </div>
               </details>

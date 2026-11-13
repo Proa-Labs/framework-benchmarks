@@ -339,6 +339,13 @@ export function normalize(input: Inputs): BenchmarkData {
             p99: r.p99_us,
           })),
           outputBytes: m.output_bytes,
+          ...("fixture" in renderer
+            ? {
+                fixture: String(renderer.fixture),
+                adaptation: renderers.find((r) => r.id === renderer.id)
+                  ?.renderingAdaptation,
+              }
+            : {}),
           detail: `${m.output_bytes.toLocaleString("en-US")} output bytes. ${m.allocation_policy}.`,
         };
       });

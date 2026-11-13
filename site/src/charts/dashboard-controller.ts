@@ -204,13 +204,38 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     anchor.setAttribute("aria-describedby", "fw-percentile-popover");
     const single = ready.length === 1,
       first = ready[0];
+    const adapted =
+      state.view === "rendering"
+        ? renderer(first.id)?.renderingAdaptation
+        : undefined;
+    if (adapted) percentilePopup.setAttribute("data-support-popover", "");
     percentilePopup.innerHTML = single
       ? `<div class="fw-popover-heading"><div class="fw-popover-identity">${logo(first.id)}<span class="fw-popover-title">${esc(name(first.id))}</span></div></div><div class="fw-percentile-values">${(["p50", "p95", "p99"] as const).map((q) => `<div class="fw-percentile-value"><small>${q.toUpperCase()}</small><div class="fw-percentile-number"><strong>${pctFmt(first.stats.values[q])}</strong><span class="fw-popover-unit">${esc(first.stats.unit)}</span></div></div>`).join("")}</div><div class="fw-popover-scope">${esc(first.stats.scope)}</div>`
       : `<div class="fw-popover-heading">${esc(heading)}</div><div class="fw-percentile-grid"><span></span><span>P50</span><span>P95</span><span>P99</span>${ready.map((e) => `<span class="fw-popover-renderer">${esc(name(e.id))}</span>${(["p50", "p95", "p99"] as const).map((q) => `<span>${pctFmt(e.stats.values[q])}<span class="fw-popover-unit">${esc(e.stats.unit)}</span></span>`).join("")}`).join("")}</div><div class="fw-popover-scope">${esc(first.stats.scope)}</div>`;
+    if (adapted) percentilePopup.innerHTML += adaptationDescription(adapted);
     percentilePopup.hidden = false;
     placePercentiles(event, anchor);
   }
+  function adaptationDescription(
+    adapted: NonNullable<
+      import("../../benchmark-types.ts").Renderer["renderingAdaptation"]
+    >,
+  ) {
+    return `<div class="fw-popover-scope" data-adaptation-explanation><strong>${esc(adapted.label)}</strong><p>${esc(adapted.reason)}</p><p><a href="${esc(adapted.source)}" target="_blank" rel="noreferrer">Exact’s styling guide ↗</a> · <a href="${esc(adapted.details)}" target="_blank" rel="noreferrer">What we changed ↗</a></p></div>`;
+  }
   function showRowPercentiles(row: HTMLElement) {
+    if (row.dataset.renderAdaptation) {
+      const id = row.dataset.renderAdaptation;
+      const adapted = required(renderer(id)?.renderingAdaptation);
+      popupAnchor?.removeAttribute("aria-describedby");
+      popupAnchor = row;
+      row.setAttribute("aria-describedby", "fw-percentile-popover");
+      percentilePopup.setAttribute("data-support-popover", "");
+      percentilePopup.innerHTML = `<div class="fw-popover-heading">${logo(id)} ${esc(name(id))}</div>${adaptationDescription(adapted)}`;
+      percentilePopup.hidden = false;
+      placePercentiles(null, row);
+      return;
+    }
     if (row.dataset.renderSupport) {
       clearTimeout(supportHideTimer);
       const id = row.dataset.renderSupport;
@@ -230,7 +255,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
           : coverage.status === "parity-failed"
             ? "Does not pass this fixture"
             : "Not measured";
-      percentilePopup.innerHTML = `<div class="fw-popover-heading">${logo(id)} ${esc(name(id))} · ${esc(workload.label)}</div><div class="fw-popover-scope"><strong>${status}</strong><p>${esc(coverage.reason)}</p>${coverage.version ? `<p>Checked version: ${esc(coverage.version)}</p>` : ""}</div>`;
+      percentilePopup.innerHTML = `<div class="fw-popover-heading">${logo(id)} ${esc(name(id))} · ${esc(workload.label)}</div><div class="fw-popover-scope"><strong>${status}</strong><p>${esc(coverage.reason)}</p>${coverage.version ? `<p>Checked version: ${esc(coverage.version)}</p>` : ""}<p><a href="${esc(coverage.source)}" target="_blank" rel="noreferrer">Why this differs ↗</a></p></div>`;
       percentilePopup.hidden = false;
       placePercentiles(null, row);
       return;
@@ -924,6 +949,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         value: r.exportValue ?? value(r),
         samples: r.exportSamples ?? samples(r),
         detail: r.detail,
+        fixture: "fixture" in r ? r.fixture : undefined,
+        adaptation: "adaptation" in r ? r.adaptation : undefined,
         errors: r.errors ?? null,
         latencyPercentiles:
           r.latency ?? latencyStats(r, { rate: r.rate ?? null }),
@@ -952,6 +979,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
             "latency_p99",
             "latency_unit",
             "errors",
+            "fixture",
+            "fixture_notes_url",
           ],
           ...exportRows.map((r) => {
             const latency =
@@ -970,6 +999,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
               latency?.values.p99 ?? "",
               latency?.unit ?? "",
               r.errors ?? "",
+              "fixture" in r ? r.fixture : "",
+              "adaptation" in r ? (r.adaptation?.details ?? "") : "",
             ];
           }),
         ]

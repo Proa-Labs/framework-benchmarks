@@ -28,6 +28,12 @@ export interface Renderer extends Project {
   homepage: string;
   version?: string;
   status: string;
+  renderingAdaptation?: {
+    label: string;
+    reason: string;
+    source: string;
+    details: string;
+  };
   coverageReason?: string;
   coverageSource?: string;
   renderingUnsupported?: Record<
@@ -67,6 +73,8 @@ export interface RenderRow
   captureId: string;
   capturedAt: string;
   outputBoundary: string;
+  fixture?: string;
+  adaptation?: Renderer["renderingAdaptation"];
   samples: number[];
   runPercentiles: Percentiles[];
   outputBytes: number;
