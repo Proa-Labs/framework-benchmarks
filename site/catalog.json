@@ -126,24 +126,24 @@
     "color": "var(--fw-fg)",
     "homepage": "https://github.com/expo/exact",
     "status": "unmeasured",
-    "coverageReason": "No canonical capture. Current Contract markup does not satisfy the existing DOM/class parity contract.",
+    "coverageReason": "Exact can’t use this test page’s styling as written. Changing the page just for Exact would make the comparison unfair.",
     "coverageSource": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
     "colorSource": "https://expo.dev/brand",
     "renderingUnsupported": {
       "cards": {
-        "reason": "The component-page fixture uses literal classes on its card layout, feature lists and buttons. Exact Contract requires named style declarations instead of the literal CSS class attributes used here. Its pinned compiler rejects those attributes. Changing them would violate the unchanged DOM/class parity contract used for every renderer.",
+        "reason": "Exact can’t use this test page’s styling as written. Changing the page just for Exact would make the comparison unfair.",
         "version": "Exact 94b8671f70fe",
         "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
         "status": "unsupported"
       },
       "products": {
-        "reason": "The product-grid fixture uses literal classes and conditional star classes. Exact Contract requires named style declarations instead of the literal CSS class attributes used here. Its pinned compiler rejects those attributes. Changing them would violate the unchanged DOM/class parity contract used for every renderer.",
+        "reason": "Exact can’t use this test page’s styling as written. Changing the page just for Exact would make the comparison unfair.",
         "version": "Exact 94b8671f70fe",
         "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
         "status": "unsupported"
       },
       "table": {
-        "reason": "The 1,000-row table fixture uses literal classes and conditional row/status classes. Exact Contract requires named style declarations instead of the literal CSS class attributes used here. Its pinned compiler rejects those attributes. Changing them would violate the unchanged DOM/class parity contract used for every renderer.",
+        "reason": "Exact can’t use this test page’s styling as written. Changing the page just for Exact would make the comparison unfair.",
         "version": "Exact 94b8671f70fe",
         "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
         "status": "unsupported"

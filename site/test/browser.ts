@@ -391,11 +391,15 @@ try {
     await cell.hover();
     const popup = page.locator("[data-percentile-popup]");
     await popup.waitFor({ state: "visible" });
-    assert.match(
-      required(await popup.textContent()),
-      /literal CSS class attributes/,
+    const support = required(
+      benchmarkData.renderers.find((row) => row.id === "exact")
+        ?.renderingUnsupported?.[workload.id],
     );
-    assert.match(required(await popup.textContent()), /94b8671f70fe/);
+    assert.equal(
+      await popup.locator(".fw-popover-scope p").first().textContent(),
+      support.reason,
+    );
+    assert.ok(required(await popup.textContent()).includes(support.version));
     await popup.hover();
     assert.equal(await popup.isVisible(), true);
     await cell.focus();
