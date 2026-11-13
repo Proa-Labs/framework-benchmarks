@@ -277,11 +277,80 @@ node showcase/landing-hero/run.mjs --proa /path/to/proa --out showcase/results/l
 PROA_PRIME_ALLOCATOR=1 node showcase/landing-hero/run.mjs --proa /path/to/proa --out showcase/results/landing-hero-restructured-rows/ci-c4.json
 ```
 
-For CI captures, prefix the runner with `taskset -c 0`. M4 captures use the macOS
+For CI captures, prefix the runner with `taskset -c 0` and run while the runner
+pool is otherwise idle: jobs on other nodes of the pool slowed React processes
+by up to 23% in the November 13 no-seed capture. M4 captures use the macOS
 scheduler and must disclose desktop activity. `--out` selects the summary; its
 matching `-raw.json.gz` contains every process record.
 
+### Restructured-row GCP CI capture, November 13, 2026 UTC
+
+Proa `15409e4d952dc8445000036dae4f08c4f2856755` changes one file, the Proa GitHub
+diff page. Class names, the comment side and line markers that the page
+defines itself are written without an escape scan. Each highlight class has
+its own static template, and the highlighter classifies source bytes through a
+lookup table. Every row is still tokenized, highlighted, escaped and written
+inside each timed iteration, and the page keeps no state between renders. The
+React port, its measured bundle, the native fixture source and the timing
+protocol are unchanged from the preceding capture. Proa's GitHub page measured
+205.138 µs there and 100.780 µs here; the two Proa pages whose code did not
+change moved by 2 to 4% between the captures.
+
+The selected landing-page figures keep the explicit allocator seed, disclosed
+in the landing-page caption. Both peers were rerun on a `c4-standard-16-lssd`
+(Intel Xeon 6985P-C, Granite Rapids) in the node pool and zone of the preceding
+capture, using CI runner image `proa-runner:1.95.0-v6`, CPU affinity 0, Rust
+1.95.0, production React 19.2.4 and Node 26.13.0. Each figure is the median of
+five independent process P50s.
+
+| Page | Proa P50 µs | React P50 µs | React / Proa | Proa process P50 range µs | React process P50 range µs |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GitHub PR diff | 100.780 | 2651.887 | 26.3× | 99.528–101.316 | 2640.509–2682.041 |
+| Sentry OTel, 400 rows | 136.173 | 9971.916 | 73.2× | 134.113–136.480 | 9896.748–10141.945 |
+| Airbnb home | 8.856 | 440.252 | 49.7× | 8.794–8.982 | 438.503–447.548 |
+
+Retained [selected summary](results/landing-hero-restructured-rows/ci-c4.json),
+[every selected sample](results/landing-hero-restructured-rows/ci-c4-raw.json.gz),
+[host and CPU affinity](results/landing-hero-restructured-rows/ci-host.json), and
+[actual Pod allocation and image digest](results/landing-hero-restructured-rows/ci-allocation.json).
+
+A separate complete paired capture on that host uses ordinary render warmups
+with **no explicit allocator seed**. React is independently rerun for this
+condition:
+
+| Page | Proa P50 µs | React P50 µs | React / Proa | Proa process P50 range µs | React process P50 range µs |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| GitHub PR diff | 167.620 | 2687.901 | 16.0× | 166.816–172.469 | 2653.318–3293.780 |
+| Sentry OTel, 400 rows | 239.565 | 10268.319 | 42.9× | 238.929–246.225 | 9797.669–12448.005 |
+| Airbnb home | 8.881 | 441.827 | 49.7× | 8.759–9.051 | 439.593–537.866 |
+
+Retained [no-seed summary](results/landing-hero-restructured-rows/ci-c4-default.json)
+and [every no-seed sample](results/landing-hero-restructured-rows/ci-c4-default-raw.json.gz).
+Both conditions allocate a fresh owned buffer every iteration. The selected
+figures must retain the explicit allocator disclosure when reused.
+
+A CI run on other nodes of the same pool ended at 05:01:07 UTC, during the
+no-seed capture (05:00:06 to 05:01:38). It shows in the first one or two React
+processes of each page, which are 4 to 23% slower than that page's median and
+set the upper end of each React range. Proa process P50s stay within 3.5% of
+each other throughout. Every median in that table comes from a process outside
+the overlap. The selected capture (05:02:17 to 05:03:42) started after that
+run had finished.
+
+The two captures use frozen harness `19ed5f7f4dbbfd0e8c6714dc250de65ae7ef59ad`
+and Proa `15409e4d952dc8445000036dae4f08c4f2856755`, retaining all 60 process
+records and ordered timing samples. Every native process reports disabled debug
+assertions. Each fixture passes complete DOM parity and changed-output negative
+controls before timing. The Proa and React output bytes, document hashes and
+DOM hashes for all three pages equal the preceding capture's, and so does the
+React bundle hash.
+
 ### Live-row GCP CI capture, November 12, 2026 UTC
+
+This is the preceding capture, retained for provenance. It measures Proa
+`6952e336b338181a7bd4118756977608f7f36dc9`, before the GitHub page restructure
+described above. Use the restructured-row capture for current landing-page
+figures.
 
 Both engines render and syntax-highlight GitHub diff rows inside every timed
 iteration. Proa has no runtime row-HTML cache, fixture-matching shortcut, or
@@ -337,7 +406,7 @@ pages; the computation performed for GitHub has changed.
 The earlier captures below used a Proa-only runtime HTML cache for GitHub diff
 rows, while React rendered and highlighted those rows every iteration. Their
 GitHub ratios are **not equivalent uncached renderer comparisons**. Retain
-these artifacts for provenance; use the corrected live-row capture for current
+these artifacts for provenance; use the restructured-row capture for current
 landing-page figures.
 
 The previous fresh-owned-buffer summaries and samples are archived at:
