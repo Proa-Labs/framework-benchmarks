@@ -200,6 +200,15 @@ export function normalize(input: Inputs): BenchmarkData {
     .map<Renderer>((r) => {
       const display = catalog.find((item) => item.id === r.id);
       requireValue(display, `missing display metadata for ${r.id}`);
+      if ("fixture" in r)
+        requireValue(
+          r.id === "exact" &&
+            r.fixture === "exact-native-v1" &&
+            display.renderingAdaptation?.reason &&
+            display.renderingAdaptation?.source &&
+            display.renderingAdaptation?.details,
+          `${r.id}: adapted timings require a linked disclosure`,
+        );
       const { renderingUnsupported, ...presentation } = display;
       return {
         ...presentation,

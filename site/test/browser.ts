@@ -454,6 +454,22 @@ try {
   const adaptedPopup = page.locator("[data-adaptation-explanation]");
   await adaptedPopup.waitFor({ state: "visible" });
   assert.equal(await adaptedPopup.getByRole("link").count(), 2);
+  await adaptedName.focus();
+  await adaptedName.press("Tab");
+  assert.equal(
+    await adaptedPopup
+      .getByRole("link")
+      .first()
+      .evaluate((el) => el === document.activeElement),
+    true,
+  );
+  assert.equal(await adaptedPopup.isVisible(), true);
+  await adaptedPopup.getByRole("link").first().press("Escape");
+  assert.equal(await adaptedPopup.isVisible(), false);
+  assert.equal(
+    await adaptedName.evaluate((el) => el === document.activeElement),
+    true,
+  );
   const decoration = await adaptedName
     .locator(".fw-fixture-adapted")
     .evaluate((el) => ({

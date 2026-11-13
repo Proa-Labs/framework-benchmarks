@@ -68,7 +68,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     id: string,
     framework = state.view === "framework" && state.section === "performance",
   ) =>
-    `<span class="fw-renderer">${logo(id)}<span>${renderer(id)?.renderingAdaptation && state.view === "rendering" ? `<span class="fw-fixture-adapted">${esc(name(id))}<sup>†</sup></span>` : esc(name(id))}${id === "exact" && framework && frameworkUsesJsSsr() ? " (JS SSR)" : ""}</span></span>`;
+    `<span class="fw-renderer">${logo(id)}<span>${renderer(id)?.renderingAdaptation && state.view === "rendering" && state.section === "performance" ? `<span class="fw-fixture-adapted">${esc(name(id))}</span><sup>†</sup>` : esc(name(id))}${id === "exact" && ((framework && frameworkUsesJsSsr()) || (state.view === "rendering" && state.section === "performance" && renderer(id)?.renderingAdaptation)) ? " (JS SSR)" : ""}</span></span>`;
   const defaults: DashboardState = {
     section: "performance",
     view: "rendering",

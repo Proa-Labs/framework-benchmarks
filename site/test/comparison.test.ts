@@ -85,3 +85,13 @@ test("Exact discloses native fixture differences and keeps strict-fixture limita
       assert.ok(html.includes(`data-support-workload="${workload.id}"`));
   }
 });
+
+test("adapted measurements cannot be published without their linked disclosure", async () => {
+  const { input } = await loadInputs();
+  if (!input.rendering.renderers.some((r) => r.id === "exact")) return;
+  const changed = structuredClone(input);
+  const exact = changed.catalog.find((r) => r.id === "exact");
+  assert.ok(exact);
+  delete exact.renderingAdaptation;
+  assert.throws(() => normalize(changed), /linked disclosure/);
+});

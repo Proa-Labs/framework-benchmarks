@@ -33,6 +33,7 @@ export interface Renderer extends Project {
     reason: string;
     source: string;
     details: string;
+    backend?: string;
   };
   coverageReason?: string;
   coverageSource?: string;

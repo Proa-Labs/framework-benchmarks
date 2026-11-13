@@ -142,16 +142,28 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   let popupAnchor: Element | null = null;
   let popupPinned = false;
   let supportHideTimer = 0;
+  let returningPopupFocus = false;
+  let dismissedPopupAnchor: Element | null = null;
   const percentileTarget =
     ".fw-row[data-focus], .fw-comparison [data-focus], .fw-comparison [data-render-support]";
   function hidePercentiles(force = false) {
     clearTimeout(supportHideTimer);
     if (popupPinned && !force) return;
+    if (force) dismissedPopupAnchor = popupAnchor;
+    const restore =
+      force && percentilePopup.contains(document.activeElement)
+        ? popupAnchor
+        : null;
     popupPinned = false;
     percentilePopup.hidden = true;
     if (popupAnchor) {
       popupAnchor.removeAttribute("aria-describedby");
       popupAnchor = null;
+    }
+    if (restore instanceof HTMLElement && restore.isConnected) {
+      returningPopupFocus = true;
+      restore.focus({ preventScroll: true });
+      returningPopupFocus = false;
     }
   }
   function placePercentiles(event: MouseEvent | null, anchor: Element) {
@@ -194,6 +206,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     );
     clearTimeout(supportHideTimer);
     percentilePopup.removeAttribute("data-support-popover");
+    percentilePopup.setAttribute("role", "tooltip");
+    percentilePopup.removeAttribute("aria-label");
     if (!ready.length) {
       hidePercentiles();
       return;
@@ -208,7 +222,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       state.view === "rendering"
         ? renderer(first.id)?.renderingAdaptation
         : undefined;
-    if (adapted) percentilePopup.setAttribute("data-support-popover", "");
+    if (adapted) interactivePopup(`${name(first.id)} fixture notes`);
     percentilePopup.innerHTML = single
       ? `<div class="fw-popover-heading"><div class="fw-popover-identity">${logo(first.id)}<span class="fw-popover-title">${esc(name(first.id))}</span></div></div><div class="fw-percentile-values">${(["p50", "p95", "p99"] as const).map((q) => `<div class="fw-percentile-value"><small>${q.toUpperCase()}</small><div class="fw-percentile-number"><strong>${pctFmt(first.stats.values[q])}</strong><span class="fw-popover-unit">${esc(first.stats.unit)}</span></div></div>`).join("")}</div><div class="fw-popover-scope">${esc(first.stats.scope)}</div>`
       : `<div class="fw-popover-heading">${esc(heading)}</div><div class="fw-percentile-grid"><span></span><span>P50</span><span>P95</span><span>P99</span>${ready.map((e) => `<span class="fw-popover-renderer">${esc(name(e.id))}</span>${(["p50", "p95", "p99"] as const).map((q) => `<span>${pctFmt(e.stats.values[q])}<span class="fw-popover-unit">${esc(e.stats.unit)}</span></span>`).join("")}`).join("")}</div><div class="fw-popover-scope">${esc(first.stats.scope)}</div>`;
@@ -216,21 +230,27 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     percentilePopup.hidden = false;
     placePercentiles(event, anchor);
   }
+  function interactivePopup(label: string) {
+    percentilePopup.setAttribute("data-support-popover", "");
+    percentilePopup.setAttribute("role", "dialog");
+    percentilePopup.setAttribute("aria-label", label);
+  }
   function adaptationDescription(
     adapted: NonNullable<
       import("../../benchmark-types.ts").Renderer["renderingAdaptation"]
     >,
   ) {
-    return `<div class="fw-popover-scope" data-adaptation-explanation><strong>${esc(adapted.label)}</strong><p>${esc(adapted.reason)}</p><p><a href="${esc(adapted.source)}" target="_blank" rel="noreferrer">Exact’s styling guide ↗</a> · <a href="${esc(adapted.details)}" target="_blank" rel="noreferrer">What we changed ↗</a></p></div>`;
+    return `<div class="fw-popover-scope" data-adaptation-explanation><strong>${esc(adapted.label)}</strong><p>${esc(adapted.reason)}</p>${adapted.backend ? `<p>${esc(adapted.backend)}</p>` : ""}<p><a href="${esc(adapted.source)}" target="_blank" rel="noreferrer">Exact’s styling guide ↗</a> · <a href="${esc(adapted.details)}" target="_blank" rel="noreferrer">What we changed ↗</a></p></div>`;
   }
   function showRowPercentiles(row: HTMLElement) {
+    clearTimeout(supportHideTimer);
     if (row.dataset.renderAdaptation) {
       const id = row.dataset.renderAdaptation;
       const adapted = required(renderer(id)?.renderingAdaptation);
       popupAnchor?.removeAttribute("aria-describedby");
       popupAnchor = row;
       row.setAttribute("aria-describedby", "fw-percentile-popover");
-      percentilePopup.setAttribute("data-support-popover", "");
+      interactivePopup(`${name(id)} fixture notes`);
       percentilePopup.innerHTML = `<div class="fw-popover-heading">${logo(id)} ${esc(name(id))}</div>${adaptationDescription(adapted)}`;
       percentilePopup.hidden = false;
       placePercentiles(null, row);
@@ -246,7 +266,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       if (popupAnchor && popupAnchor !== row)
         popupAnchor.removeAttribute("aria-describedby");
       popupAnchor = row;
-      percentilePopup.setAttribute("data-support-popover", "");
+      interactivePopup(`${name(id)} fixture notes`);
       row.removeAttribute("title");
       row.setAttribute("aria-describedby", "fw-percentile-popover");
       const status =
@@ -298,6 +318,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         event.relatedTarget instanceof Node ? event.relatedTarget : null,
       )
     ) {
+      if (row === dismissedPopupAnchor) return;
       if (popupAnchor !== row) popupPinned = false;
       showRowPercentiles(row);
     }
@@ -312,6 +333,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     ) {
       const next =
         event.relatedTarget instanceof Node ? event.relatedTarget : null;
+      if (row === dismissedPopupAnchor) dismissedPopupAnchor = null;
       if (percentilePopup.hasAttribute("data-support-popover")) {
         if (!percentilePopup.contains(next))
           supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
@@ -320,18 +342,53 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   });
   listen(percentilePopup, "pointerenter", () => clearTimeout(supportHideTimer));
   listen(percentilePopup, "pointerleave", () => {
-    if (percentilePopup.hasAttribute("data-support-popover"))
+    if (
+      percentilePopup.hasAttribute("data-support-popover") &&
+      !percentilePopup.contains(document.activeElement)
+    )
       supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
   });
   listen(root, "focusin", (event) => {
     const row = closest(event, percentileTarget);
-    if (row) showRowPercentiles(row);
+    if (row && !returningPopupFocus) {
+      dismissedPopupAnchor = null;
+      showRowPercentiles(row);
+    }
   });
   listen(root, "focusout", (event) => {
-    if (closest(event, percentileTarget)) hidePercentiles();
+    const next =
+      event.relatedTarget instanceof Node ? event.relatedTarget : null;
+    if (percentilePopup.contains(next)) return;
+    if (
+      event.target instanceof Node &&
+      percentilePopup.contains(event.target) &&
+      next !== popupAnchor
+    )
+      hidePercentiles(true);
+    else if (closest(event, percentileTarget)) hidePercentiles();
   });
   listen(document, "keydown", (event) => {
     if (event.key === "Escape") hidePercentiles(true);
+    if (
+      event.key === "Tab" &&
+      !percentilePopup.hidden &&
+      percentilePopup.hasAttribute("data-support-popover")
+    ) {
+      const links = Array.from(
+        percentilePopup.querySelectorAll<HTMLAnchorElement>("a[href]"),
+      );
+      if (!event.shiftKey && event.target === popupAnchor && links[0]) {
+        event.preventDefault();
+        links[0].focus();
+      } else if (
+        event.shiftKey &&
+        event.target === links[0] &&
+        popupAnchor instanceof HTMLElement
+      ) {
+        event.preventDefault();
+        popupAnchor.focus();
+      }
+    }
   });
   listen(window, "resize", () => {
     if (!percentilePopup.hidden && popupAnchor?.isConnected)
@@ -1196,6 +1253,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     const row = closest(event, percentileTarget);
     if (row) {
       if (row.isConnected) {
+        dismissedPopupAnchor = null;
         popupPinned = true;
         showRowPercentiles(row);
       }

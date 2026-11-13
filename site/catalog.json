@@ -131,9 +131,10 @@
     "colorSource": "https://expo.dev/brand",
     "renderingAdaptation": {
       "label": "Adapted fixture",
-      "reason": "CSS classes didn’t make the guest list. Exact requires its own named styles, so we translated ours. Same content; different generated HTML.",
+      "reason": "Unfortunately, Exact doesn’t support the CSS classes used in this test. We adapted its styling, so it isn’t an apples-to-apples comparison. The red underline flags that difference.",
       "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#styling-and-layout",
-      "details": "https://github.com/Proa-Labs/framework-benchmarks/blob/codex/site-cleanup/rendering/external/exact/README.md"
+      "details": "https://github.com/Proa-Labs/framework-benchmarks/blob/e70841310f4ad70045869cee96ad0a7f82055661/rendering/external/exact/README.md",
+      "backend": "Production JavaScript renderer on Bun, including a fresh runtime for each render."
     },
     "renderingUnsupported": {
       "cards": {

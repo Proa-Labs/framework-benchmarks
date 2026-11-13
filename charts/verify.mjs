@@ -24,6 +24,8 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const md = readSources(join(HERE, '..'));
 const tables = parseTables(md);
 const SVG = join(HERE, 'svg');
+// Preserve the visible adaptation marker in figures; strip it only for identity lookups.
+const rendererKey = value => clean(value).replace(/†$/, '');
 const scalingCapture = JSON.parse(readFileSync(
   join(HERE, '..', 'rendering', 'results', 'product-scaling.json'),
   'utf8',
@@ -51,7 +53,7 @@ console.log('\nSource fidelity');
   const det = pick(tables, ['Renderer', 'Workload', 'P50', 'P95']);
   const exact = {}, printedRel = {};
   for (const o of det.objs) {
-    const key = clean(o.Renderer) + '|' + clean(o.Workload);
+    const key = rendererKey(o.Renderer) + '|' + clean(o.Workload);
     exact[key] = toUs(o.P50);
     // the detailed table itself prints three decimals, so a derived ratio
     // inherits half a unit of that rounding from each operand
@@ -67,7 +69,7 @@ console.log('\nSource fidelity');
   };
   const ratioBad = [], timeBad = [];
   for (const o of t.objs) {
-    const name = clean(o.Renderer);
+    const name = rendererKey(o.Renderer);
     for (const w of ['Component page', '1,000-row table', 'Product grid']) {
       const [timeCell, ratioCell] = o[w].split('·');
       const ratioTxt = ratioCell.replace(/[×x]/g, '').trim();
@@ -117,20 +119,20 @@ console.log('\nSource fidelity');
     : bad('parity', `${failed.length} cells did not pass`);
   const inverted = det.objs.filter((o) => toUs(o.P95) < toUs(o.P50));
   inverted.length === 0 ? ok('no cell has a P95 below its P50')
-    : bad('percentile ordering', inverted.map((o) => clean(o.Renderer)).join(', '));
+    : bad('percentile ordering', inverted.map((o) => rendererKey(o.Renderer)).join(', '));
   const inverted99 = det.objs.filter((o) => toUs(o.P99) < toUs(o.P95));
   inverted99.length === 0 ? ok('no cell has a P99 below its P95')
-    : bad('P99 ordering', inverted99.map((o) => clean(o.Renderer)).join(', '));
+    : bad('P99 ordering', inverted99.map((o) => rendererKey(o.Renderer)).join(', '));
   const invalidMeans = det.objs.filter((o) => toUs(o.Mean) <= 0);
   invalidMeans.length === 0 ? ok('every cell has a positive retained mean')
-    : bad('mean values', invalidMeans.map((o) => clean(o.Renderer)).join(', '));
+    : bad('mean values', invalidMeans.map((o) => rendererKey(o.Renderer)).join(', '));
 }
 
 // 4 · retained payload deltas must agree with each workload's Proa response.
 {
   const det = pick(tables, ['Renderer', 'Workload', 'P50', 'P95']);
   const proa = {};
-  for (const o of det.objs) if (clean(o.Renderer) === 'Proa') proa[clean(o.Workload)] = num(o['Payload bytes']);
+  for (const o of det.objs) if (rendererKey(o.Renderer) === 'Proa') proa[clean(o.Workload)] = num(o['Payload bytes']);
   let worst = 0;
   for (const o of det.objs) {
     const b = num(o['Payload bytes']), d = num(o['Payload Δ vs Proa']);
@@ -156,7 +158,7 @@ console.log('\nSource fidelity');
   const captureByLabel = new Map(
     captureRenderers.map((renderer) => [renderer.label, renderer.id]),
   );
-  const tableLabels = table.objs.map((row) => clean(row.Renderer));
+  const tableLabels = table.objs.map((row) => rendererKey(row.Renderer));
   const fidelityFailures = [];
   if (
     tableLabels.length !== captureRenderers.length ||
@@ -166,7 +168,7 @@ console.log('\nSource fidelity');
     fidelityFailures.push('README renderer rows do not exactly match the capture roster');
   }
   for (const row of table.objs) {
-    const label = clean(row.Renderer);
+    const label = rendererKey(row.Renderer);
     const rendererId = captureByLabel.get(label);
     if (!rendererId) {
       fidelityFailures.push(`${label}: no renderer in product-scaling.json`);
@@ -215,7 +217,7 @@ console.log('\nSource fidelity');
     artifactFailures.push(`capture must contain ${rosterSize} unique renderer IDs`);
   }
   const proaParity = scalingCapture.parity?.proa ?? {};
-  for (const { id, label } of captureRenderers) {
+  for (const { id, label, fixture } of captureRenderers) {
     if (!scalingCapture.versions?.[label]) {
       artifactFailures.push(`${id}: runtime version is missing`);
     }
@@ -239,8 +241,13 @@ console.log('\nSource fidelity');
         artifactFailures.push(`${id}/${count}: process or sample shape is invalid`);
       }
       if (
-        !parity || parity.status !== 'pass' || parity.mode !== 'semantic DOM' ||
-        parity.canonical_sha256 !== proaParity[count]?.canonical_sha256 ||
+        !parity || parity.status !== 'pass' ||
+        (fixture === 'exact-native-v1'
+          ? id !== 'exact' || parity.fixture !== fixture || parity.mode !== 'adapted content and styles' ||
+            parity.semantics_sha256 !== parity.reference_semantics_sha256 ||
+            !/^[a-f0-9]{64}$/.test(parity.semantics_sha256 ?? '') ||
+            !(parity.style_checks > 0) || parity.negative_controls !== 'pass'
+          : parity.mode !== 'semantic DOM' || parity.canonical_sha256 !== proaParity[count]?.canonical_sha256) ||
         parity.output_bytes !== measurement.output_bytes
       ) {
         artifactFailures.push(`${id}/${count}: parity evidence is missing or inconsistent`);
