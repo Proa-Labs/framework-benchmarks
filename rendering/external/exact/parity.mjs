@@ -12,12 +12,11 @@ const digest = (value) =>
 export async function adaptedProjection(page, html, workload, css = "") {
   await page.setContent(html, { waitUntil: "domcontentloaded" });
   if (css) {
-    await page.evaluate(() => {
-      const wrapper = document.createElement("div");
-      wrapper.id = "exact-root";
-      wrapper.append(...document.body.childNodes);
-      document.body.append(wrapper);
-    });
+    assert.equal(
+      await page.locator("#exact-root").count(),
+      1,
+      "Timed HTML must carry Exact’s generated CSS scope",
+    );
     await page.addStyleTag({ content: css });
   }
   return page.evaluate(
@@ -187,6 +186,16 @@ export async function validateAdaptedFixture(
   css,
 ) {
   assert.ok(css?.length, "Retain the native generated stylesheet");
+  await assert.rejects(
+    () =>
+      adaptedProjection(
+        page,
+        html.replace('id="exact-root"', 'id="missing-root"'),
+        workload,
+        css,
+      ),
+    "Removing the native CSS scope must fail",
+  );
   const expected = await adaptedProjection(page, expectedHtml, workload);
   const actual = await adaptedProjection(page, html, workload, css);
   assert.deepEqual(

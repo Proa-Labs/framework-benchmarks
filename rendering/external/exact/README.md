@@ -27,7 +27,8 @@ or tap. These are render-only measurements, just like the other rows; they are
   card styles translate the shared preview’s CSS because that fixture’s named
   classes carry no stylesheet in its timed output.
 - Exact emits native text wrappers, heading metadata, list roles and its own
-  root wrapper. Paragraph/list element names and class strings differ.
+  root wrapper. The timed output includes the `exact-root` wrapper required by
+  its generated stylesheet. Paragraph/list element names and class strings differ.
 - The desktop grid is four columns. Responsive utility breakpoints and the
   product title’s parent-hover color are not reproduced. Native control/reset
   behavior and font metrics can differ. This is a close styling adaptation,

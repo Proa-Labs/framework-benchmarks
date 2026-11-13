@@ -86,7 +86,7 @@ for (const workload of ["cards", "products", "table"]) {
   // exposes only app construction, resource seeding and native serialization.
   writeFileSync(
     resolve(app, "dist/.gen/bench-entry.js"),
-    `import app from './app.js';\nimport {checkpoint} from './rt.js';\nglobalThis.prepareInput = value => { checkpoint().kept = new Map([['${workload === "cards" ? "sections" : workload === "products" ? "products" : "rows"}',[[],value]]]); };\nglobalThis.renderFixture = () => { app(); return document.rootHTML(); };\n`,
+    `import app from './app.js';\nimport {checkpoint} from './rt.js';\nglobalThis.prepareInput = value => { checkpoint().kept = new Map([['${workload === "cards" ? "sections" : workload === "products" ? "products" : "rows"}',[[],value]]]); };\nglobalThis.renderFixture = () => { app(); return '<div id="exact-root">' + document.rootHTML() + '</div>'; };\n`,
   );
   const result = await Bun.build({
     entrypoints: [resolve(app, "dist/.gen/bench-entry.js")],
