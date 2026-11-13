@@ -42,8 +42,10 @@ comparison only. The table reports cores used, and CPU per request charges
 every thread of every engine.
 
 After the per-core matrix, Proa alone reruns the top request-rate target with four
-worker threads (`PROA_WORKER_THREADS=4`). The published row shows that the
-per-core knee is a thread budget, not a framework ceiling.
+worker threads (`PROA_WORKER_THREADS=4`) as a separate reference point. With
+single-CPU server affinity, this changes thread count within the same CPU
+budget; it does not measure multicore scaling. Comparative rows retain the
+same one-CPU budget for every engine.
 
 ## Load and metrics
 
