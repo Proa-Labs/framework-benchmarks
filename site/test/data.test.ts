@@ -212,22 +212,39 @@ test("failed captures, broken parity and incomplete runs cannot become website d
 
 test("requested roster entries never acquire invented measurements", async () => {
   const { input } = await loadInputs();
+  const id = "pending-renderer";
+  input.catalog.push({
+    id,
+    label: "Pending renderer",
+    language: "JavaScript",
+    kind: "UI framework",
+    color: "#64748b",
+    homepage: "https://example.invalid",
+    colorSource: "https://example.invalid",
+    status: "unmeasured",
+    coverageReason: "No admitted render-only capture",
+    coverageSource: "https://example.invalid",
+  });
   const data = normalize(input);
-  for (const id of ["exact", "nextjs", "astro"]) {
-    const renderer = required(data.renderers.find((r) => r.id === id));
-    assert.equal(renderer.status, "unmeasured");
-    assert.ok(renderer.coverageReason);
-    for (const rows of Object.values(data.rendering.rows))
-      assert.equal(
-        rows.some((r) => r.id === id),
-        false,
-      );
-  }
+  const renderer = required(data.renderers.find((r) => r.id === id));
+  assert.equal(renderer.status, "unmeasured");
+  assert.ok(renderer.coverageReason);
+  for (const rows of Object.values(data.rendering.rows))
+    assert.equal(
+      rows.some((r) => r.id === id),
+      false,
+    );
 });
 
 test("coverage links follow recorded suites without substituting renderer timings", async () => {
   const { input } = await loadInputs();
   const data = normalize(input);
+  // Exercise absent rendering coverage even after these native adapters join
+  // a newer capture. Other experiments must not fill those missing cells.
+  for (const workload of data.workloads)
+    data.rendering.rows[workload.id] = data.rendering.rows[workload.id].filter(
+      (row) => !["astro", "sveltekit"].includes(row.id),
+    );
   const model = createDashboardModel(data);
   for (const id of ["astro", "exact", "nextjs"])
     assert.deepEqual(model.measurementLinks(id), [
@@ -299,12 +316,11 @@ test("full-framework measurements stay separate and reject invalid publication c
   }
 });
 
-test("new suite engines appear without duplicate ecosystem or invented render measurements", async () => {
+test("server-suite engines appear once in the ecosystem", async () => {
   const { input } = await loadInputs();
   const data = normalize(input);
   assert.ok(data.http.rows.cards.some((r) => r.id === "sveltekit"));
   assert.equal(data.ecosystem.filter((r) => r.id === "sveltekit").length, 1);
-  assert.ok(!data.rendering.rows.cards.some((r) => r.id === "sveltekit"));
 });
 
 test("shared URLs recover from invalid controls and preserve intentional empty filters", async () => {

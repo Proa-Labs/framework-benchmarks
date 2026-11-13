@@ -1,7 +1,15 @@
 import { expect, test } from "bun:test";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
@@ -182,5 +190,34 @@ test("reconnection rejects a worker from another suite or altered isolation cont
     const changed = structuredClone(expected);
     mutate(changed);
     expect(() => validateReconnect(expected, changed)).toThrow();
+  }
+});
+
+test("unknown or incomplete CLI flags fail before allocating or creating campaign state", () => {
+  const temp = mkdtempSync(join(tmpdir(), "bench-args-"));
+  const bin = join(temp, "bin");
+  mkdirSync(bin);
+  writeFileSync(join(bin, "kubectl"), "#!/bin/sh\nexit 99\n");
+  chmodSync(join(bin, "kubectl"), 0o755);
+  try {
+    for (const flags of [["--dry-run"], ["--smoke=false"], ["--parallel"]]) {
+      const state = join(temp, "campaign.json");
+      const result = spawnSync(
+        process.execPath,
+        [
+          join(import.meta.dir, "campaign.mjs"),
+          "--out",
+          temp,
+          "--revision",
+          "a".repeat(40),
+          ...flags,
+        ],
+        { env: { ...process.env, PATH: `${bin}:${process.env.PATH}` } },
+      );
+      expect(result.status).not.toBe(0);
+      expect(existsSync(state)).toBe(false);
+    }
+  } finally {
+    rmSync(temp, { recursive: true, force: true });
   }
 });

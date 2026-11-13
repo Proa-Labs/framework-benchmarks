@@ -6,6 +6,7 @@ import { existsSync } from "node:fs";
 import { mkdir, readFile, rename, symlink, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
 import { verifyPublication } from "../publication.mjs";
 import {
   jobManifest,
@@ -15,10 +16,22 @@ import {
 } from "./plan.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const argv = process.argv.slice(2);
+const { values: args } = parseArgs({
+  args: process.argv.slice(2),
+  options: {
+    revision: { type: "string" },
+    parallel: { type: "string" },
+    namespace: { type: "string" },
+    out: { type: "string" },
+    context: { type: "string" },
+    smoke: { type: "boolean" },
+    plan: { type: "boolean" },
+  },
+  strict: true,
+  allowPositionals: false,
+});
 function option(name, fallback) {
-  const index = argv.indexOf(`--${name}`);
-  return index < 0 ? fallback : argv[index + 1];
+  return args[name] ?? fallback;
 }
 const output = resolve(option("out", "cloud-results"));
 const statePath = join(output, "campaign.json");
@@ -33,7 +46,7 @@ const options = {
     previous?.options.namespace || "framework-benchmarks",
   ),
   campaignId: previous?.options.campaignId || `publication-${randomUUID()}`,
-  smoke: argv.includes("--smoke") || previous?.options.smoke || false,
+  smoke: args.smoke || previous?.options.smoke || false,
 };
 validateOptions(options);
 if (previous)
@@ -315,7 +328,7 @@ async function runSuite(suite) {
   console.log(`${suite}: complete, raw artifacts retained`);
 }
 try {
-  if (argv.includes("--plan")) {
+  if (args.plan) {
     for (const suite of suiteIds)
       console.log(JSON.stringify(jobManifest(options, suite)));
   } else {
