@@ -126,24 +126,24 @@
     "color": "var(--fw-fg)",
     "homepage": "https://github.com/expo/exact",
     "status": "unmeasured",
-    "coverageReason": "Exact can’t use this test page’s styling as written. Changing the page just for Exact would make the comparison unfair.",
+    "coverageReason": "Exact requires styles to be defined in its own format. It rejects the CSS class names written directly in this test’s HTML, so it can’t render the test unchanged.",
     "coverageSource": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
     "colorSource": "https://expo.dev/brand",
     "renderingUnsupported": {
       "cards": {
-        "reason": "Exact can’t use this test page’s styling as written. Changing the page just for Exact would make the comparison unfair.",
+        "reason": "Exact requires styles to be defined in its own format. It rejects the CSS class names written directly in this test’s HTML, so it can’t render the test unchanged.",
         "version": "Exact 94b8671f70fe",
         "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
         "status": "unsupported"
       },
       "products": {
-        "reason": "Exact can’t use this test page’s styling as written. Changing the page just for Exact would make the comparison unfair.",
+        "reason": "Exact requires styles to be defined in its own format. It rejects the CSS class names written directly in this test’s HTML, so it can’t render the test unchanged.",
         "version": "Exact 94b8671f70fe",
         "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
         "status": "unsupported"
       },
       "table": {
-        "reason": "Exact can’t use this test page’s styling as written. Changing the page just for Exact would make the comparison unfair.",
+        "reason": "Exact requires styles to be defined in its own format. It rejects the CSS class names written directly in this test’s HTML, so it can’t render the test unchanged.",
         "version": "Exact 94b8671f70fe",
         "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
         "status": "unsupported"
