@@ -1,0 +1,210 @@
+{
+  "schema_version": 2,
+  "captured_at": "2026-11-13T05:02:17.070Z",
+  "completed_at": "2026-11-13T05:03:42.936Z",
+  "host": {
+    "cpu": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
+    "logical_cpus": 16,
+    "memory_bytes": 63200768000,
+    "platform": "linux",
+    "release": "6.12.105+",
+    "load_average_at_start": [
+      0.75,
+      1.29,
+      0.87
+    ]
+  },
+  "method": "Same-host production render-only; Proa allocates and returns a fresh owned RenderBuffer, React returns its native String. Allocation and rendering included. Flattening, encoding, output destruction, prepared inputs, parity checks and I/O outside timer. GitHub rows and syntax highlighting regenerated every iteration in both engines; no runtime row-HTML cache. Allocator policy recorded separately. Median of five independent process P50s per engine/page; process order alternates and page order rotates.",
+  "output_contract": "fresh-owned-render-buffer",
+  "github_row_policy": "render-and-highlight-each-iteration",
+  "allocator_policy": "explicit-warm-seed",
+  "native_source_sha256": "2d3ac74b16358d3302c1250dfcfe819eaa015b675a8562056e95d1f5f1153bcf",
+  "proa_revision": "15409e4d952dc8445000036dae4f08c4f2856755",
+  "harness_revision": "19ed5f7f4dbbfd0e8c6714dc250de65ae7ef59ad",
+  "node": "v26.13.0",
+  "react": "19.2.4",
+  "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "binary_sha256": "12c72a0c10a31d11ad8eae89822c1005731354848834f4de20aa72e1b22bab59",
+  "react_bundle_sha256": "5410177bd69afc7df8aff4d5b8fb81b2164f7a40952ff745edddeac6d3c2218a",
+  "source_files": {
+    "proa_demo/react-ssr-shared/bench-espn.tsx": "b9047b5e25394e036e40d9544dc77c1ff331924fb2c22ed909385d70e0a90d36",
+    "proa_demo/react-ssr-shared/bench-sentry-otel.tsx": "69804253f9065df53a3d6880746afd469512d3d9e2fc54902cc08405cd23798f",
+    "proa_demo/react-ssr-shared/bench.ts": "be257784ef7cc8d551cc3bb9563a23a5cb7ce0dad8e5cb56e1545b27e474f960",
+    "proa_demo/react-ssr-shared/biome.json": "30c7b6d82ce1c5a2e013c761f259760bae845c5ec1bbf93d11b407f4691ddb1d",
+    "proa_demo/react-ssr-shared/dump-home.ts": "f8f22998858b694188ed0a3d05fd5a5e26982e8bd75a27060884a4fac7f112a7",
+    "proa_demo/react-ssr-shared/dump-nike-pdp.ts": "ebb091f3b7694564b6f5c799dc11d61dcbe150d3f4cc597a1def3330332de33b",
+    "proa_demo/react-ssr-shared/dump-sentry-otel.ts": "96d6f5459f4f017f17cb6a7e0a81bb8bc4558b7d8d1b5df963ac8c644335e207",
+    "proa_demo/react-ssr-shared/package.json": "176aace94976ad5bc49f112a63638b38bf21e736ddf2eefd51016a916ecb4ba0",
+    "proa_demo/react-ssr-shared/pnpm-lock.yaml": "3bcf823a50ffb26c33119666ed532cb5a599e8bd6f8d3efb28f7fd8ad5be8ec6",
+    "proa_demo/react-ssr-shared/showcase-parity.mjs": "f186a70acd641bad12bbb079c8a8789d479fcc571ca1f7ad004d829216cfc7a5",
+    "proa_demo/react-ssr-shared/src/calendar.tsx": "f4fee06942516aa97f132b0752cf431eec8f05799ececf9d79335c4f21a0bd98",
+    "proa_demo/react-ssr-shared/src/css.ts": "7a1b11bc9429ef7cd95c2ea5cf41e3c9ebe1e08e1e25e31cd4923d5428640a26",
+    "proa_demo/react-ssr-shared/src/data.ts": "5de30a61b4a758fcc0633c6e45df7faee1fc7dfe29453f024fbd88c328985086",
+    "proa_demo/react-ssr-shared/src/espn-gamecast.tsx": "09e05b3b7ab41f861de648c7de6147be7e33eb171240e94ef92ad352c37fb6a5",
+    "proa_demo/react-ssr-shared/src/github-pr-diff-fixtures.ts": "c61f22e577ed46901a2e1e0fddd68d2e3d27483b806af694aaafbf5cbd304294",
+    "proa_demo/react-ssr-shared/src/github-pr-diff.tsx": "4eb82ff29618f894fee2d5084944b3ce9f66f70b4260b3b4be621a664ec497ad",
+    "proa_demo/react-ssr-shared/src/home.tsx": "5140430057f90a2e6763b7d2ae19a8ed11d8f443c96b2b0fc2190e96374ff81e",
+    "proa_demo/react-ssr-shared/src/listing.tsx": "c5777f7b911a61581fd56dbd60dfd576d30e89a3eb6ae22b8b24f8f74d5e23c4",
+    "proa_demo/react-ssr-shared/src/nike-catalog.tsx": "b949c2dc2eb9387710b9b9fde9d38f1a3e39f6037445b83e6fbe82818271381f",
+    "proa_demo/react-ssr-shared/src/nike-css.ts": "50e1d42b8a7d27b30e0407cd176ba1b10e9ed890061dd6a03d070d322c7b75e0",
+    "proa_demo/react-ssr-shared/src/nike-pdp.tsx": "ce01f6ad125f2c78db308781ed0931ef416b62c18a0dcd09c1d9154db19d729a",
+    "proa_demo/react-ssr-shared/src/nike-shell.ts": "10ad94e170bb795c7cd6a9530cf467d69f11c5601edb9e14709c3faf24b9e6b9",
+    "proa_demo/react-ssr-shared/src/search.tsx": "5f4f0a104c018211dbb890427f6340d6d002f1bfb4e4c422db1d57ff6a084d93",
+    "proa_demo/react-ssr-shared/src/sentry-otel.tsx": "c2c83006d309a0d01620dfa77279beab44fbc24a06d3df31e69bb0abe8346cdb",
+    "proa_demo/react-ssr-shared/src/shared.tsx": "ea3ac235c27dc772ef782909a5a0e732271754709e7d31632e3f2d97f4f85827",
+    "proa_demo/react-ssr-shared/src/svg-elements.tsx": "efa65579d103acfafacb815515c3e9ff60370a7e8dcfbab7c8939b75ec9b563d",
+    "proa_demo/react-ssr-shared/src/svg.ts": "a9c2c940ef10ab75fca12937495c2b0c738c4d01a493a827569da4e700af9b21",
+    "proa_demo/react-ssr-shared/tsconfig.json": "e3a5934b9d5cf5810e9d5ad2ec9ef2dc7053028460ba986fbbf6f0d6a65be564",
+    "proa_demo/react-ssr-shared/update_bench.mjs": "05328ad509816f00cdf470317c9c7563e6d45a49a1d18f0eedef89b7a31384b8",
+    "proa_demo/src/github_pr_diff.rs": "5caa79601eadb1df454a2a415ee4c887ca5029ec4e3d3e4ffc0572805ce7b9dc",
+    "proa_demo/src/github_pr_diff_fixtures.rs": "06e280e1465d59c61bd3e805fbaf37769312c7bd394287504235785dc515b6d3",
+    "proa_showcase/Cargo.toml": "06f06baa7a8807a79ffa07b5736ac42ed69d46f8d38bb8e88935a82b3c4df8b6",
+    "proa_showcase/README.md": "007df13981027ed1ee28952da34752b94df36ffbe8e34c445e1c87e7ad03ba24",
+    "proa_showcase/src/airbnb/calendar.rs": "0096cef948d56e64dc3835ac018cb927ad0aed5259a7fe79cace161fc5943640",
+    "proa_showcase/src/airbnb/home.rs": "745c912b9815c4caffe27de7e08fd629a147a5d84086f446cc6eb851a8971394",
+    "proa_showcase/src/airbnb/image.rs": "00c8b15372fe2dbc8fdfa94ae0837e1234184a1dd0d62cc6b0fbab497b813fab",
+    "proa_showcase/src/airbnb/listing.rs": "963b8c9ea63d911c05a55b0c6279ef51fa1b029e970b4fb2788370acae49a8fb",
+    "proa_showcase/src/airbnb/mod.rs": "47e9fbf1a7153ec83c38940ff7ce8efb7f4704c7be6e906f0218094bfb22375d",
+    "proa_showcase/src/airbnb/parity.rs": "6f6dc76bb856e998cd4c3b3503f3e169fbd3f3217ed6654aa550b53f97ee0754",
+    "proa_showcase/src/airbnb/search.rs": "5987ff10f78a654874a26c4320ed442c081922c8e8c676281cb8902e5b48e8db",
+    "proa_showcase/src/airbnb/shared.css": "4bacc0cbd6f6108d66aafdc0f4c9bb196a628fe898c12d94ea87506d88ee85ae",
+    "proa_showcase/src/airbnb/shared.rs": "9413e7a785600955f24234698183dfaa95e55d8f532f2b062473d2562ad5faf4",
+    "proa_showcase/src/bin/airbnb_home_dump.rs": "ae74c01f6f199bd2185d66c5bf9d0ce6a494dab6ccbba6216e0bbccb77746f69",
+    "proa_showcase/src/bin/espn_bench.rs": "7ccb44c25b893e8939f71113f5ba477807ed6fcf49736e8ab2682ca83449b874",
+    "proa_showcase/src/bin/nike_pdp_dump.rs": "84dab8bb2a642a4289f79a81077ea51351156734636bb871966532293fcd21e6",
+    "proa_showcase/src/bin/sentry_otel_bench.rs": "291b6aca293b7332fb9e3b8d2bfaa23fd947544d03a0b0e7991def2a7488bd01",
+    "proa_showcase/src/bin/sentry_otel_dump.rs": "16ae02c0f46caffab08bf88d74c89949836d5a4f68908ff530ff5a59df487585",
+    "proa_showcase/src/ebay/data/README.md": "1103efe4fb9a2380c937c7bcfcfa0e1ff32585b4a00bd1086d85e44d30bdc622",
+    "proa_showcase/src/ebay/data/srp_chips_style.css": "7278c9871187a3a2f0e4c7c88a4fb5a83d0a708b2699cc145e5312a9aa60c934",
+    "proa_showcase/src/ebay/data/srp_real_style.css": "e3dae2aad3ab0ef3ece846080b56aafb41ff0a266b574def555773f37746563f",
+    "proa_showcase/src/ebay/mod.rs": "7c93fa8ceff686e24729b5ac5778b22863276d04f45ecfb7c05842b83a804b7e",
+    "proa_showcase/src/ebay/srp.rs": "64cf5130298397d5e47de50bce7a708d90dc42de1affb8e4172c3582a88b2111",
+    "proa_showcase/src/ebay/srp_chrome_real.rs": "73ef268d963b7c60dd1e09d667287dc7340c8d99f19beb2818c5a0beaffa85da",
+    "proa_showcase/src/espn/BENCHMARK.md": "aca9624a0e9243bd6728f2e8e13270fbc4293dd14f858f28a6b046f03f4c720d",
+    "proa_showcase/src/espn/data/CAPTURE.md": "992c5c5236b7eb1f733e0172e13f95dc0c6df160cd505b5aa0383003a6d5a873",
+    "proa_showcase/src/espn/data/game.json": "09e64199d7efa05f26b2da2b5edc2fb37f89d9484c495f2458ce3e687c283700",
+    "proa_showcase/src/espn/data/images/espn/dodger-stadium.jpg": "ae4a0718e3e7255c29d8a739a70e62532a34c54f05db6645327cc5d25c915eb9",
+    "proa_showcase/src/espn/data/images/espn/lad.png": "aab854c59098d4f465c1c6f31b580f2a38d2ed4f5c0c03df2da76f62f5378dc4",
+    "proa_showcase/src/espn/data/images/espn/muncy-recap.jpg": "a633a01f2f809aa8b67fddafdde59388cbf6dcff59c9c00d32266601fff3e7cf",
+    "proa_showcase/src/espn/data/images/espn/nance-news.jpg": "4f7a62998959fe195279daa43046ad0fba3536d7e2d316a847d664397f101d57",
+    "proa_showcase/src/espn/data/images/espn/nyy.png": "d98856c36bc8d3b0fb0bab5fabd79d2ae057619164365845cbc817b04ae74a26",
+    "proa_showcase/src/espn/data/images/espn/ohtani-news.jpg": "900e369477f5fa2a6d798e7c97a42e538ec3ae999f4b61842db47909ecc7f8b1",
+    "proa_showcase/src/espn/data/images/espn/wetherholt.jpg": "18dc3cdfb008da4f6a2484e08d82976e8f3d6a1556ed3dd0449d4f49a018a2fb",
+    "proa_showcase/src/espn/data/summary-401695777.json": "841b9389b0b204248fb9bf8c274a3304d66ac77aa26155442d51ad2e23fd6e3c",
+    "proa_showcase/src/espn/espn.css": "22fa5abce939038ec31b7ed4b63efab9560d99e3b378f8b289a1d08d7548f0a7",
+    "proa_showcase/src/espn/fixture.rs": "96125847a617a4d7f5a434ac845966e932a25200b6abc01f662391e6bf6fcf69",
+    "proa_showcase/src/espn/mod.rs": "e3077e341ec80f4970aa2b309fbd83a2724dec8056118ebbb2ab636ff6330970",
+    "proa_showcase/src/espn/page.rs": "1eaf7e5fb49e8ca9b2f51865aa37b830f27bd24a9d95d4b03181756a9d1548d1",
+    "proa_showcase/src/lib.rs": "b0c5ba87e9502e1be58269831a89385154dc85f6ae601defbc798cd43c74ad18",
+    "proa_showcase/src/nike/catalog.rs": "8441125fe33f06317d8132913bfb0d0312b16a31c2b314db28d04a6c0acfc25a",
+    "proa_showcase/src/nike/mod.rs": "1d896754b7fdd8f31a12bfc00dd542b24f8574befe2a5bc028372050ad714b89",
+    "proa_showcase/src/nike/product.rs": "4e6bac2ae0409d9ff670f340eb1a315ff257f88434f7c9a7a1c924320f2fc002",
+    "proa_showcase/src/nike/shared.css": "1526308181cf101cbe8e405b4ab334b261fc4b0f8c88b55b0a5b1889e7f8179e",
+    "proa_showcase/src/nike/shared.rs": "b1c82150a9f47c581c75f783af564d4766dd60049a089a0cdb493324d158eac4",
+    "proa_showcase/src/sentry_otel/BENCHMARK.md": "9f6f605972d1f120332b4b0bbfd2e6b635a2feb495b3311a933992ccfb738c41",
+    "proa_showcase/src/sentry_otel/CAPTURE.md": "714383b989b9f936c3a386ccd401bfaf2f2929fc6b458d57ca352c8b0e6be34c",
+    "proa_showcase/src/sentry_otel/fixture.rs": "e9e0821609136de416bc9c40ae32d4e6a9fdc7b40a2ea33fbe9e54e0fa929e4b",
+    "proa_showcase/src/sentry_otel/mod.rs": "4adedf257644449478d0ebdb191c686194009bb29c12d16e644daa7e037a34d1",
+    "proa_showcase/src/sentry_otel/page.rs": "55011a530239dd3cb23f455935666636e750eb88cdf7f13f453b099a16253035",
+    "proa_showcase/src/sentry_otel/sentry_otel.css": "0fcb5baec7afae84e036a0a35bc509ee1814a15736aadbf414cef54167cded58",
+    "proa_showcase/src/settings_console.rs": "be6d33088119f07c2b3879150753d5ec65a9a969e645d6bea0e8d790933dc30a"
+  },
+  "parity": {
+    "github": {
+      "proa": {
+        "bytes": 613217,
+        "sha256": "d2e30ca6d6b1ec69bfcba0322cdd6f61ede098d10942f18dbf73c2a7dccf8289",
+        "dom_sha256": "773589e57832210dedb80f23049dd4488b9aa76f12df0a92acae968d444215e9"
+      },
+      "react": {
+        "bytes": 620759,
+        "sha256": "84fc73982643e2a6e9ec1abaa6a5032efb3cc56109993f6f9f6a21a5ae3c7fa6",
+        "dom_sha256": "773589e57832210dedb80f23049dd4488b9aa76f12df0a92acae968d444215e9"
+      },
+      "negative_control": "rejected"
+    },
+    "sentry": {
+      "proa": {
+        "bytes": 874615,
+        "sha256": "87f28a6ffba0933dc551667be63433d0946ff80ac65760365e9e862ca49dfe19",
+        "dom_sha256": "c7ca9b416c29c6b9017d03b3cf8b93ee7d3423fd761eaef936fff63178b92176"
+      },
+      "react": {
+        "bytes": 875849,
+        "sha256": "a89aa36501b3c4967e20e64f9fad546544843b1fb1446c2c517d6195bd98f79c",
+        "dom_sha256": "c7ca9b416c29c6b9017d03b3cf8b93ee7d3423fd761eaef936fff63178b92176"
+      },
+      "negative_control": "rejected"
+    },
+    "airbnb": {
+      "proa": {
+        "bytes": 162883,
+        "sha256": "0206168616b3d09c14e0c5ed0757000f4062f4c80b90b7f9b006beab8007d6ec",
+        "dom_sha256": "3900a02385ccb40fe0252a09ae1cdc6bacc3e594a1aba9a840549008bc00adfc"
+      },
+      "react": {
+        "bytes": 182690,
+        "sha256": "dfd296d73736258cd998cacc0d7f5258c83f28e1889ffc625ab4c1b668b987ad",
+        "dom_sha256": "3900a02385ccb40fe0252a09ae1cdc6bacc3e594a1aba9a840549008bc00adfc"
+      },
+      "negative_control": "rejected"
+    }
+  },
+  "summaries": {
+    "github": {
+      "proa": {
+        "p50_us": 100.77999999999999,
+        "process_p50_range_us": [
+          99.528,
+          101.316
+        ]
+      },
+      "react": {
+        "p50_us": 2651.887,
+        "process_p50_range_us": [
+          2640.509,
+          2682.041
+        ]
+      },
+      "react_over_proa": 26.313623734868035
+    },
+    "sentry": {
+      "proa": {
+        "p50_us": 136.173,
+        "process_p50_range_us": [
+          134.113,
+          136.48
+        ]
+      },
+      "react": {
+        "p50_us": 9971.916,
+        "process_p50_range_us": [
+          9896.748,
+          10141.945
+        ]
+      },
+      "react_over_proa": 73.2297592033663
+    },
+    "airbnb": {
+      "proa": {
+        "p50_us": 8.856,
+        "process_p50_range_us": [
+          8.794,
+          8.982
+        ]
+      },
+      "react": {
+        "p50_us": 440.252,
+        "process_p50_range_us": [
+          438.503,
+          447.548
+        ]
+      },
+      "react_over_proa": 49.7122854561879
+    }
+  },
+  "raw_artifact": {
+    "path": "showcase/results/landing-hero-restructured-rows/ci-c4-raw.json.gz",
+    "sha256": "60e172afd8dba16e3c9a307c79ef3576d4a7fbcc222af1a88954835b75a45003"
+  }
+}
