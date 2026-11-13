@@ -1,11 +1,12 @@
 import { required } from "./required.ts";
 // Render the existing canonical adapter; preview styling stays outside timing.
 
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import type { ComponentType } from "react";
 import type { Capture } from "../framework-ssr/report.ts";
+import { writeGenerated as writeFile } from "./generated-files.ts";
 
 const requireFixture = createRequire(
   new URL("../rendering/external/react/package.json", import.meta.url),

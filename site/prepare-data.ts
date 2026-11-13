@@ -1,4 +1,4 @@
-import { cp, mkdir, writeFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import suites from "../tooling/suites.json" with { type: "json" };
@@ -13,6 +13,10 @@ import {
   supportStates,
   updatedOn,
 } from "./features-data.ts";
+import {
+  copyGenerated as cp,
+  writeGenerated as writeFile,
+} from "./generated-files.ts";
 import { buildPreviews } from "./previews.ts";
 import { copyProaRefreshEvidence } from "./proa-refresh.ts";
 import { required } from "./required.ts";
@@ -26,7 +30,7 @@ export async function prepareData() {
   const captureIds = Object.keys(buffers) as View[];
   const outputDirectory = join(generatedDirectory, "public");
   await mkdir(join(outputDirectory, "data/captures"), { recursive: true });
-  await cp(join(siteRoot, "public"), outputDirectory, { recursive: true });
+  await cp(join(siteRoot, "public"), outputDirectory);
   if (input.reviewRefresh)
     await copyProaRefreshEvidence(dirname(siteRoot), outputDirectory, captures);
   await Promise.all(

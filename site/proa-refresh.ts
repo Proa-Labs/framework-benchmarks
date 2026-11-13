@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { cp, mkdir, writeFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import {
   loadProaRefresh,
@@ -7,6 +7,10 @@ import {
   refreshFolders,
 } from "../tooling/proa-refresh.mjs";
 import type { Inputs, View } from "./benchmark-types.ts";
+import {
+  copyGenerated as cp,
+  writeGenerated as writeFile,
+} from "./generated-files.ts";
 
 // Derive a review comparison without rewriting either immutable capture.
 // The publication gate rejects this selection until a full campaign replaces it.
@@ -146,7 +150,6 @@ export async function copyProaRefreshEvidence(
         await cp(
           join(root, folder, "results/raw", id),
           join(results, "raw", id),
-          { recursive: true },
         );
       }),
     ),

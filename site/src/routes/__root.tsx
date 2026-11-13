@@ -32,9 +32,10 @@ export const Route = createRootRoute({
   component: Outlet,
   shellComponent: RootDocument,
   notFoundComponent: () => <StatusPage title="Page not found" />,
-  errorComponent: ({ reset }) => (
-    <StatusPage title="This page couldn’t load" reset={reset} />
-  ),
+  errorComponent: ({ error, reset }) => {
+    if (import.meta.env.DEV) console.error("Frameworks route failed", error);
+    return <StatusPage title="This page couldn’t load" reset={reset} />;
+  },
 });
 
 function StatusPage({ title, reset }: { title: string; reset?: () => void }) {

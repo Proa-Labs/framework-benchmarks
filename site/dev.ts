@@ -41,7 +41,8 @@ export async function startServer({
     ],
     { cwd: siteRoot, env: process.env, stdio: ["ignore", "pipe", "pipe"] },
   );
-  let output = "";
+  let output = "",
+    ready = false;
   const exited = new Promise((resolve) => child.once("exit", resolve));
   await new Promise<void>((resolve, reject) => {
     const timer = setTimeout(() => {
@@ -50,6 +51,7 @@ export async function startServer({
     }, 30000);
     const read = (chunk: Buffer) => {
       const text = chunk.toString();
+      if (ready) process.stderr.write(text);
       output = (output + text).slice(-12000);
       if (
         /Local:\s+http:\/\/127\.0\.0\.1:\d+/.test(
@@ -57,6 +59,7 @@ export async function startServer({
         )
       ) {
         clearTimeout(timer);
+        ready = true;
         resolve();
       }
     };

@@ -126,13 +126,18 @@ export async function loadInputs(
 ) {
   const buffers = {} as Record<View, Buffer>;
   const input = {} as Inputs;
-  await Promise.all(
+  const files = await Promise.all(
     Object.entries(captures).map(async ([id, path]) => {
       const buffer = await readFile(join(root, path));
-      buffers[id as View] = buffer;
-      input[id as View] = JSON.parse(buffer.toString());
+      return [id as View, buffer] as const;
     }),
   );
+  // Preserve registry order regardless of which concurrent disk read finishes
+  // first. Otherwise metadata changes on every preparation and triggers HMR.
+  for (const [id, buffer] of files) {
+    buffers[id] = buffer;
+    input[id] = JSON.parse(buffer.toString());
+  }
   const contract = capturedRenderingContract(root, input.rendering);
   input.roster = contract.roster;
   input.workloadManifest = contract.workloads;
