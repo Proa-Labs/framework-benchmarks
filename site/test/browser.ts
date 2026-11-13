@@ -13,6 +13,8 @@ interface TestExport {
   workload: string;
   rows: {
     id: string;
+    fixture?: string;
+    adaptation?: import("../benchmark-types.ts").Renderer["renderingAdaptation"];
     flow?: { rps: number; meanMs: number; repeat: number };
     [key: string]: unknown;
   }[];
@@ -384,10 +386,16 @@ try {
     unrankedIds.length,
   );
   for (const workload of benchmarkData.workloads) {
-    const cell = page.locator(
-      `[data-render-support="exact"][data-support-workload="${workload.id}"]`,
+    const adapted = benchmarkData.rendering.rows[workload.id].find(
+      (row) => row.id === "exact",
     );
-    assert.match(required(await cell.textContent()), /Unsupported/);
+    const cell = page.locator(
+      adapted
+        ? `[data-stat-suite="rendering"][data-focus="exact"][data-stat-workload="${workload.id}"]`
+        : `[data-render-support="exact"][data-support-workload="${workload.id}"]`,
+    );
+    if (adapted) assert.equal(adapted.fixture, "exact-native-v1");
+    else assert.match(required(await cell.textContent()), /Unsupported/);
     await cell.hover();
     const popup = page.locator("[data-percentile-popup]");
     await popup.waitFor({ state: "visible" });
@@ -397,9 +405,23 @@ try {
     );
     assert.equal(
       await popup.locator(".fw-popover-scope p").first().textContent(),
-      support.reason,
+      adapted ? required(adapted.adaptation).reason : support.reason,
     );
-    assert.ok(required(await popup.textContent()).includes(support.version));
+    if (adapted) {
+      assert.equal(
+        await popup
+          .getByRole("link", { name: "Exact’s styling guide ↗" })
+          .getAttribute("href"),
+        required(adapted.adaptation).source,
+      );
+      assert.equal(
+        await popup
+          .getByRole("link", { name: "What we changed ↗" })
+          .getAttribute("href"),
+        required(adapted.adaptation).details,
+      );
+    } else
+      assert.ok(required(await popup.textContent()).includes(support.version));
     await popup.hover();
     assert.equal(await popup.isVisible(), true);
     await cell.focus();
@@ -410,16 +432,38 @@ try {
     await page.locator("h1").click();
     assert.equal(await popup.isVisible(), false);
   }
-  const exactExport = comparisonExport.unmeasured?.find(
-    (row) => row.id === "exact",
-  );
-  assert.equal(
-    exactExport?.workloads?.filter((cell) => cell.status === "unsupported")
-      .length,
-    benchmarkData.workloads.length,
-  );
+  const adaptedRows = comparisonExport.rows.filter((row) => row.id === "exact");
+  if (adaptedRows.length) {
+    assert.equal(adaptedRows.length, benchmarkData.workloads.length);
+    for (const row of adaptedRows) {
+      assert.equal(row.fixture, "exact-native-v1");
+      assert.ok(row.adaptation?.source);
+    }
+  } else {
+    const exactExport = comparisonExport.unmeasured?.find(
+      (row) => row.id === "exact",
+    );
+    assert.equal(
+      exactExport?.workloads?.filter((cell) => cell.status === "unsupported")
+        .length,
+      benchmarkData.workloads.length,
+    );
+  }
+  const adaptedName = page.locator('[data-render-adaptation="exact"]');
+  await adaptedName.hover();
+  const adaptedPopup = page.locator("[data-adaptation-explanation]");
+  await adaptedPopup.waitFor({ state: "visible" });
+  assert.equal(await adaptedPopup.getByRole("link").count(), 2);
+  const decoration = await adaptedName
+    .locator(".fw-fixture-adapted")
+    .evaluate((el) => ({
+      style: getComputedStyle(el).textDecorationStyle,
+      thickness: getComputedStyle(el).textDecorationThickness,
+    }));
+  assert.deepEqual(decoration, { style: "wavy", thickness: "1px" });
+  await page.locator("h1").click();
   checks.push(
-    "per-test unsupported popovers explain pinned compiler limits on hover, focus and tap and close with Escape or outside click",
+    "Exact adapted fixture keeps numeric timing, red annotation, accessible source links and hover/focus/tap explanations explicit",
   );
   const relatedData: BenchmarkData = await (
     await context.request.get(`${server.url}/data/results.json`)

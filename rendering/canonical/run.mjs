@@ -997,7 +997,7 @@ try {
             "This capture describes one machine and these three workloads; it is not a universal application ranking.",
             ...(rendererIds.includes("exact")
               ? [
-                  "Exact uses the disclosed exact-native-v1 adaptation: named native styles, generated classes, text/list wrappers and separated table borders. Content, attributes, formatting and representative computed CSS are checked separately; strict DOM parity is not claimed. Runtime VM/module initialization and input seeding are outside timing; fresh DOM construction and HTML serialization are inside.",
+                  "Exact uses the disclosed exact-native-v1 adaptation: named native styles, generated classes, text/list wrappers and separated table borders. Content, attributes, formatting and representative computed CSS are checked separately; strict DOM parity is not claimed. Fresh per-render VM/runtime initialization, prepared-input binding, DOM construction and HTML serialization are inside timing; source compilation and input-data construction are outside.",
                 ]
               : []),
           ],

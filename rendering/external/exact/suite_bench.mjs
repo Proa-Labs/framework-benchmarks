@@ -50,10 +50,11 @@ await runOwnedAdapter({
   id: "exact",
   label: "Exact",
   allocationPolicy:
-    "Exact production-compiled Contract with native named styles and DOM serializer; fresh owned HTML string. Runtime VM/module initialization and prepared input seeding precede timing; fresh DOM allocation, app construction, formatting and serialization are timed. Adapted markup, not strict DOM parity.",
-  prepare() {
-    // As for peers, compile/load the renderer before its invocation. Each ready
-    // runtime is isolated; no prior DOM, cached HTML or live reactive tree exists.
+    "Exact production-compiled Contract with native named styles and DOM serializer; fresh owned HTML string. Fresh isolated VM/runtime initialization, prepared-input binding, DOM allocation, app construction, formatting and serialization are timed. Source/script compilation and fixture data construction precede timing. Adapted markup, not strict DOM parity.",
+  render() {
+    // Creating a fresh runtime is required per invocation, so include it in
+    // timing alongside fresh DOM construction. Only script compilation and
+    // fixture-data preparation happen before the timer.
     const ctx = vm.createContext({
       document: freshDocument(),
       location: { pathname: "/", search: "", href: "http://render.invalid/" },
@@ -82,11 +83,7 @@ await runOwnedAdapter({
     ctx.self = ctx;
     script.runInContext(ctx);
     ctx.prepareInput(input);
-    assert.equal(ctx.document.root.childNodes.length, 0);
-    return ctx;
-  },
-  render(ctx) {
-    ctx.document = freshDocument();
+
     const body = ctx.renderFixture();
     return workload === "products"
       ? body

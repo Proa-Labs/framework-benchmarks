@@ -54,9 +54,9 @@ negative controls. This exception applies only to Exact; strict DOM/class parity
 remains required for every other row. Exact records a distinct DOM digest and
 matching projected-content digests, style-check counts, output bytes and native
 stylesheets. The common render-only boundary, fresh output, host, warmup/sample
-counts and process rotations remain shared. Runtime module/VM initialization
-precedes timing; a fresh native DOM, app construction, formatting and serialization
-are timed. See [the adaptation notes](external/exact/README.md) for every
+counts and process rotations remain shared. Source/script compilation and input-data construction precede timing. Fresh per-render
+VM/runtime initialization, prepared-input binding, native DOM allocation, app
+construction, formatting and serialization are timed. See [the adaptation notes](external/exact/README.md) for every
 structural/styling difference and the exact timer boundary.
 
 ## Sampling

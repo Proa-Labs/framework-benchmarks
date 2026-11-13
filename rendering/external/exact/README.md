@@ -54,12 +54,12 @@ resource/checkpoint and DOM serialization APIs. Resources receive already
 prepared typed data; there is no fetch, HTTP routing, checkpoint serialization
 or artificial settling delay in the measured call.
 
-Each iteration initializes an isolated VM and loads runtime modules **before**
-timing, as renderer initialization is excluded for peers. The timer includes
-allocation of a fresh native DOM, construction of the whole app from prepared
-data, native formatting/escaping, serialization and assembly of one fresh HTML
-string. No tree, cached output or output buffer is reused. Runtime initialization,
-input conversion, CSS compilation, parity checking, hashing and output inspection
-are outside timing. The CSS is a compiled external stylesheet, as with peers;
-it is not appended to every timed response. Exact’s full production request
-pipeline remains a separate Framework SSR experiment.
+Each iteration initializes a fresh isolated VM, runs the already compiled script,
+binds the prepared input, allocates a fresh native DOM, constructs the whole app,
+formats/escapes its content, serializes the tree and assembles a fresh HTML string.
+**All of that per-render work is inside the timer.** Source loading, script
+compilation, input conversion, CSS compilation, parity checking, hashing and
+output inspection are outside timing. No tree, cached output or rendering context
+is reused. The CSS is a compiled external stylesheet, as with peers; it is not
+appended to every timed response. Exact’s full production request pipeline remains
+a separate Framework SSR experiment.
