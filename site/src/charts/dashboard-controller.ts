@@ -143,13 +143,15 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   let popupPinned = false;
   let supportHideTimer = 0;
   let returningPopupFocus = false;
-  let dismissedPopupAnchor: Element | null = null;
+  let dismissedHover = false;
   const percentileTarget =
     ".fw-row[data-focus], .fw-comparison [data-focus], .fw-comparison [data-render-support]";
   function hidePercentiles(force = false) {
     clearTimeout(supportHideTimer);
     if (popupPinned && !force) return;
-    if (force) dismissedPopupAnchor = popupAnchor;
+    // Hiding a popup can uncover a different cell beneath the stationary mouse.
+    // Wait for actual pointer movement before accepting another hover.
+    if (force) dismissedHover = true;
     const restore =
       force && percentilePopup.contains(document.activeElement)
         ? popupAnchor
@@ -318,7 +320,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         event.relatedTarget instanceof Node ? event.relatedTarget : null,
       )
     ) {
-      if (row === dismissedPopupAnchor) return;
+      if (dismissedHover) return;
       if (popupAnchor !== row) popupPinned = false;
       showRowPercentiles(row);
     }
@@ -333,12 +335,17 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     ) {
       const next =
         event.relatedTarget instanceof Node ? event.relatedTarget : null;
-      if (row === dismissedPopupAnchor) dismissedPopupAnchor = null;
       if (percentilePopup.hasAttribute("data-support-popover")) {
         if (!percentilePopup.contains(next))
           supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
       } else hidePercentiles();
     }
+  });
+  listen(root, "pointermove", (event) => {
+    if (!dismissedHover || !(event.movementX || event.movementY)) return;
+    dismissedHover = false;
+    const row = closest(event, percentileTarget);
+    if (row) showRowPercentiles(row);
   });
   listen(percentilePopup, "pointerenter", () => clearTimeout(supportHideTimer));
   listen(percentilePopup, "pointerleave", () => {
@@ -351,7 +358,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   listen(root, "focusin", (event) => {
     const row = closest(event, percentileTarget);
     if (row && !returningPopupFocus) {
-      dismissedPopupAnchor = null;
+      dismissedHover = false;
       showRowPercentiles(row);
     }
   });
@@ -1253,7 +1260,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     const row = closest(event, percentileTarget);
     if (row) {
       if (row.isConnected) {
-        dismissedPopupAnchor = null;
+        dismissedHover = false;
         popupPinned = true;
         showRowPercentiles(row);
       }

@@ -426,6 +426,13 @@ try {
     assert.equal(await popup.isVisible(), true);
     await cell.focus();
     await cell.press("Escape");
+    // Let the hidden popup uncover any other cell beneath the stationary mouse.
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        ),
+    );
     assert.equal(await popup.isVisible(), false);
     await cell.click();
     assert.equal(await popup.isVisible(), true);
