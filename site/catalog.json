@@ -128,7 +128,27 @@
     "status": "unmeasured",
     "coverageReason": "No canonical capture. Current Contract markup does not satisfy the existing DOM/class parity contract.",
     "coverageSource": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
-    "colorSource": "https://expo.dev/brand"
+    "colorSource": "https://expo.dev/brand",
+    "renderingUnsupported": {
+      "cards": {
+        "reason": "The component-page fixture uses literal classes on its card layout, feature lists and buttons. Exact Contract requires named style declarations instead of the literal CSS class attributes used here. Its pinned compiler rejects those attributes. Changing them would violate the unchanged DOM/class parity contract used for every renderer.",
+        "version": "Exact 94b8671f70fe",
+        "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
+        "status": "unsupported"
+      },
+      "products": {
+        "reason": "The product-grid fixture uses literal classes and conditional star classes. Exact Contract requires named style declarations instead of the literal CSS class attributes used here. Its pinned compiler rejects those attributes. Changing them would violate the unchanged DOM/class parity contract used for every renderer.",
+        "version": "Exact 94b8671f70fe",
+        "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
+        "status": "unsupported"
+      },
+      "table": {
+        "reason": "The 1,000-row table fixture uses literal classes and conditional row/status classes. Exact Contract requires named style declarations instead of the literal CSS class attributes used here. Its pinned compiler rejects those attributes. Changing them would violate the unchanged DOM/class parity contract used for every renderer.",
+        "version": "Exact 94b8671f70fe",
+        "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
+        "status": "unsupported"
+      }
+    }
   },
   {
     "id": "nextjs",
@@ -138,7 +158,7 @@
     "color": "var(--fw-fg)",
     "homepage": "https://nextjs.org",
     "status": "unmeasured",
-    "coverageReason": "No canonical capture. A production framework SSR adapter needs a separately defined measurement boundary.",
+    "coverageReason": "A production-compiled Next.js page SSR adapter is awaiting a validated render-only capture.",
     "coverageSource": "https://nextjs.org/docs/app/getting-started/server-and-client-components",
     "colorSource": "https://vercel.com/design/brands#next-js"
   },
@@ -150,8 +170,20 @@
     "color": "#f041ff",
     "homepage": "https://astro.build",
     "status": "unmeasured",
-    "coverageReason": "No canonical capture. Its asynchronous server renderer needs a separately defined measurement boundary.",
+    "coverageReason": "Native render-only adapter passed the unchanged fixtures; a validated same-machine publication capture is pending.",
     "coverageSource": "https://docs.astro.build/en/reference/container-reference/",
     "colorSource": "https://astro.build/assets/press/astro-icon-light-gradient.svg"
+  },
+  {
+    "id": "sveltekit",
+    "label": "SvelteKit",
+    "kind": "Application framework",
+    "color": "#ff3e00",
+    "homepage": "https://svelte.dev/docs/kit",
+    "colorSource": "https://svelte.dev",
+    "language": "JavaScript",
+    "status": "unmeasured",
+    "coverageReason": "Production-compiled SvelteKit page SSR adapter awaiting a validated same-machine capture.",
+    "coverageSource": "https://svelte.dev/docs/svelte/svelte-server"
   }
 ]

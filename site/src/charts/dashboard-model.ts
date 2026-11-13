@@ -413,6 +413,24 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     );
   }
 
+  function renderingCoverage(id: string, workload: string) {
+    const project = required(renderer(id));
+    const unsupported = project.renderingUnsupported?.[workload];
+    return unsupported
+      ? {
+          ...unsupported,
+          status: unsupported.status ?? ("unsupported" as const),
+        }
+      : {
+          status: "unmeasured" as const,
+          reason:
+            project.coverageReason ||
+            "No validated render-only capture is available for this workload. HTTP request measurements are a separate experiment.",
+          version: project.version || "",
+          source: project.coverageSource || project.homepage,
+        };
+  }
+
   function measurementLinks(id: string) {
     const links: { label: string; href: string }[] = [];
     if (data.framework.rows.some((r) => r.id === id))
@@ -524,6 +542,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     unit,
     summary,
     uncaptured,
+    renderingCoverage,
     measurementLinks,
     latencyStats,
     normalizeState,

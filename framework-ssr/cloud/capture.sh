@@ -14,8 +14,10 @@ lscpu -e=CPU,CORE,SOCKET,ONLINE > /work/cpu-topology.txt
 cat /sys/fs/cgroup/cpu.max > /work/cpu-quota.txt
 bun framework-ssr/build.ts > /work/framework-build.log 2>&1
 bun rendering/canonical/run.mjs --setup-only > /work/rendering-build.log 2>&1
+bun rendering/external/exact/check-admission.mjs > /work/exact-admission.log 2>&1
 taskset -c "$client_cpus" bun framework-ssr/run.ts --no-build --workers 24 > /work/framework-capture.log 2>&1
 taskset -c "$BENCH_SERVER_CPU" bun rendering/canonical/run.mjs --no-setup > /work/rendering-capture.log 2>&1
+taskset -c "$BENCH_SERVER_CPU" bun rendering/canonical/run.mjs --product-scaling --no-setup > /work/scaling-capture.log 2>&1
 taskset -c "$client_cpus" bun page-load/run.mjs --workers 24 > /work/http-capture.log 2>&1
 taskset -c "$client_cpus" bun cold-start/run.mjs --no-build > /work/startup-capture.log 2>&1
 taskset -c "$client_cpus" bun suspense-load/run.mjs --workers 24 > /work/streaming-capture.log 2>&1

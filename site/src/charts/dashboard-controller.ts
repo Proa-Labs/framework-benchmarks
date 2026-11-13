@@ -141,8 +141,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   const percentilePopup = $("[data-percentile-popup]");
   let popupAnchor: Element | null = null;
   let popupPinned = false;
-  const percentileTarget = ".fw-row[data-focus], .fw-comparison [data-focus]";
+  let supportHideTimer = 0;
+  const percentileTarget =
+    ".fw-row[data-focus], .fw-comparison [data-focus], .fw-comparison [data-render-support]";
   function hidePercentiles(force = false) {
+    clearTimeout(supportHideTimer);
     if (popupPinned && !force) return;
     popupPinned = false;
     percentilePopup.hidden = true;
@@ -189,6 +192,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     const ready = entries.filter((e): e is StatEntry & { stats: Latency } =>
       Boolean(e.stats?.values),
     );
+    clearTimeout(supportHideTimer);
+    percentilePopup.removeAttribute("data-support-popover");
     if (!ready.length) {
       hidePercentiles();
       return;
@@ -206,6 +211,30 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     placePercentiles(event, anchor);
   }
   function showRowPercentiles(row: HTMLElement) {
+    if (row.dataset.renderSupport) {
+      clearTimeout(supportHideTimer);
+      const id = row.dataset.renderSupport;
+      const workload = required(
+        data.workloads.find((w) => w.id === row.dataset.supportWorkload),
+      );
+      const coverage = model.renderingCoverage(id, workload.id);
+      if (popupAnchor && popupAnchor !== row)
+        popupAnchor.removeAttribute("aria-describedby");
+      popupAnchor = row;
+      percentilePopup.setAttribute("data-support-popover", "");
+      row.removeAttribute("title");
+      row.setAttribute("aria-describedby", "fw-percentile-popover");
+      const status =
+        coverage.status === "unsupported"
+          ? "Unsupported for this fixture"
+          : coverage.status === "parity-failed"
+            ? "Does not pass this fixture"
+            : "Not measured";
+      percentilePopup.innerHTML = `<div class="fw-popover-heading">${logo(id)} ${esc(name(id))} · ${esc(workload.label)}</div><div class="fw-popover-scope"><strong>${status}</strong><p>${esc(coverage.reason)}</p>${coverage.version ? `<p>Checked version: ${esc(coverage.version)}</p>` : ""}</div>`;
+      percentilePopup.hidden = false;
+      placePercentiles(null, row);
+      return;
+    }
     const workload = row.dataset.statWorkload,
       framework = row.dataset.statSuite === "framework",
       r = (
@@ -255,8 +284,19 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       !row.contains(
         event.relatedTarget instanceof Node ? event.relatedTarget : null,
       )
-    )
-      hidePercentiles();
+    ) {
+      const next =
+        event.relatedTarget instanceof Node ? event.relatedTarget : null;
+      if (percentilePopup.hasAttribute("data-support-popover")) {
+        if (!percentilePopup.contains(next))
+          supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
+      } else hidePercentiles();
+    }
+  });
+  listen(percentilePopup, "pointerenter", () => clearTimeout(supportHideTimer));
+  listen(percentilePopup, "pointerleave", () => {
+    if (percentilePopup.hasAttribute("data-support-popover"))
+      supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
   });
   listen(root, "focusin", (event) => {
     const row = closest(event, percentileTarget);
@@ -827,6 +867,14 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
           )
       ).map((r) => ({
         id: r.id,
+        ...(state.view === "rendering"
+          ? {
+              workloads: model.orderedWorkloads().map((w) => ({
+                workload: w.id,
+                ...model.renderingCoverage(r.id, w.id),
+              })),
+            }
+          : {}),
         reason:
           state.view === "rendering"
             ? r.coverageReason
@@ -1123,7 +1171,12 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     }
   });
   listen(document, "pointerdown", (event) => {
-    if (!closest(event, ".fw-row,.fw-comparison,.fw-chart"))
+    if (
+      !closest(
+        event,
+        ".fw-row,.fw-comparison,.fw-chart,[data-percentile-popup]",
+      )
+    )
       hidePercentiles(true);
   });
   listen(document, "visibilitychange", () => {

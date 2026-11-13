@@ -11,7 +11,8 @@ import suites from "./suites.json" with { type: "json" };
 import { validateCapture } from "./validate.mjs";
 
 // Contributor checks and previews can inspect historical results. Merging and
-// production publication require a complete fresh campaign on one machine.
+// production publication require a complete fresh campaign. Each comparison
+// stays on one machine; independent suites may use matching isolated hosts.
 export function validatePublication(results) {
   assert.deepEqual(
     Object.keys(results).sort(),
@@ -22,7 +23,7 @@ export function validatePublication(results) {
   assert.match(
     reference?.machineId || "",
     /^[a-f0-9]{64}$/,
-    "Rerun all benchmarks on one machine: machine identity is missing",
+    "Rerun all benchmarks: machine identity is missing",
   );
   assert.match(
     reference.campaignId || "",
@@ -44,13 +45,63 @@ export function validatePublication(results) {
     /^\d+$/,
     "Pin benchmark servers to one logical CPU",
   );
+  const parallel = reference.campaignProtocol === "per-suite-host-v1";
+  const profile = (host) => ({
+    machineClass: host.machineClass,
+    cpuModel: host.cpuModel,
+    logicalCpuCount: host.logicalCpuCount,
+    arch: host.arch,
+    release: host.release,
+  });
+  if (parallel) {
+    assert.match(
+      reference.sourceRevision || "",
+      /^[a-f0-9]{40}$/,
+      "Missing immutable campaign revision",
+    );
+    assert.equal(reference.machineClass, "c4-standard-16-lssd");
+    assert.equal(reference.logicalCpuCount, 16);
+    assert.equal(reference.arch, "x64");
+    assert.ok(reference.cpuModel && reference.release && reference.nodeName);
+  } else assert.ok(!reference.campaignProtocol, "Unknown campaign protocol");
   for (const [id, result] of Object.entries(results)) {
     assert.equal(result.status, "pass", `${id}: capture failed`);
-    assert.equal(
-      result.host?.machineId,
-      reference.machineId,
-      `${id}: different benchmark machine`,
+    assert.match(
+      result.host?.machineId || "",
+      /^[a-f0-9]{64}$/,
+      `${id}: missing machine identity`,
     );
+    if (parallel) {
+      assert.equal(
+        result.host.campaignProtocol,
+        reference.campaignProtocol,
+        `${id}: mixed campaign protocols`,
+      );
+      assert.equal(
+        result.host.sourceRevision,
+        reference.sourceRevision,
+        `${id}: different source revision`,
+      );
+      assert.deepEqual(
+        profile(result.host),
+        profile(reference),
+        `${id}: different benchmark hardware or OS profile`,
+      );
+      assert.ok(
+        result.host.nodeName,
+        `${id}: missing isolated worker identity`,
+      );
+    } else {
+      assert.ok(
+        !result.host.campaignProtocol,
+        `${id}: mixed campaign protocols`,
+      );
+      assert.equal(
+        result.host.machineId,
+        reference.machineId,
+        `${id}: different benchmark machine`,
+      );
+    }
     assert.equal(
       result.host?.campaignId,
       reference.campaignId,
@@ -72,7 +123,17 @@ export function validatePublication(results) {
       `${id}: partial refresh cannot satisfy publication readiness`,
     );
   }
-  return { machineId: reference.machineId, campaignId: reference.campaignId };
+  return {
+    machineId: reference.machineId,
+    campaignId: reference.campaignId,
+    protocol: parallel ? "per-suite-host-v1" : "single-host",
+    machines: Object.fromEntries(
+      Object.entries(results).map(([id, result]) => [
+        id,
+        result.host.machineId,
+      ]),
+    ),
+  };
 }
 
 export function validateProcessRepeats(runs) {
@@ -81,6 +142,36 @@ export function validateProcessRepeats(runs) {
     [0, 1, 2, 3, 4],
     "Proa raw observations must cover all five independent processes",
   );
+}
+
+export function validateAdmissionChecks(checks, result) {
+  assert.deepEqual(checks.map((check) => check.engine).sort(), ["exact"]);
+  for (const check of checks) {
+    assert.ok(typeof check.version === "string" && check.version.length > 0);
+    assert.equal(
+      check.sourceSha256,
+      result.provenance.source_sha256,
+      "Admission evidence has stale sources",
+    );
+    assert.equal(
+      check.host?.machineId,
+      result.host.machineId,
+      "Admission evidence came from a different machine",
+    );
+    assert.equal(
+      check.host?.campaignId,
+      result.host.campaignId,
+      "Admission evidence came from a different campaign",
+    );
+    assert.deepEqual(
+      check.cells.map((cell) => cell.workload).sort(),
+      result.workloads.map((workload) => workload.id).sort(),
+    );
+    for (const cell of check.cells) {
+      assert.equal(cell.status, "unsupported");
+      assert.equal(cell.diagnostic, "type-class-name");
+    }
+  }
 }
 
 export async function verifyPublication(root) {
@@ -98,6 +189,23 @@ export async function verifyPublication(root) {
   for (const [id, suite] of Object.entries(suites)) {
     const result = await validateCapture(id, undefined, root);
     if (id === "rendering") {
+      const admissions = result.raw_artifacts.find(
+        (artifact) => artifact.label === "Unranked fixture admission checks",
+      );
+      assert.equal(
+        admissions?.path,
+        `raw/${result.capture_id}/admissions.json`,
+        "Retain current fixture admission checks before publication",
+      );
+      validateAdmissionChecks(
+        JSON.parse(
+          await readFile(
+            join(root, suite.directory, "results", admissions.path),
+            "utf8",
+          ),
+        ),
+        result,
+      );
       const runs = JSON.parse(
         await readFile(
           join(
@@ -137,6 +245,6 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const root = dirname(dirname(fileURLToPath(import.meta.url)));
   const campaign = await verifyPublication(root);
   console.log(
-    `Publication ready: all five suites validated on ${campaign.machineId} (${campaign.campaignId})`,
+    `Publication ready: all five suites validated (${campaign.protocol}) (${campaign.campaignId})`,
   );
 }

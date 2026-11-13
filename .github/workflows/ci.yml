@@ -218,6 +218,11 @@ jobs:
           bun framework-ssr/build.ts
           bun framework-ssr/run.ts --no-build --smoke --workers 2
 
+      - name: Verify unchanged-fixture exclusion evidence
+        if: matrix.suite == 'rendering'
+        run: |
+          bun rendering/external/exact/check-admission.mjs
+
       - name: Show compiler cache stats
         if: always() && matrix.suite == 'rendering'
         run: sccache --show-stats

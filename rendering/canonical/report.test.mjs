@@ -1,4 +1,5 @@
 import "../../scripts/proa-refresh-evidence.test.mjs";
+import { capturedRenderingContract } from "../../tooling/rendering-contract.mjs";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import {
@@ -288,7 +289,8 @@ test("README embeds canonical details and historical result tables", () => {
 test("the retained latest artifact is complete when present", () => {
   const latestPath = join(renderingDirectory, "results", "latest.json");
   const latest = JSON.parse(readFileSync(latestPath, "utf8"));
-  assert.doesNotThrow(() => validateCanonicalResult(latest, roster, workloads));
+  const captured = capturedRenderingContract(workspaceDirectory, latest);
+  assert.doesNotThrow(() => validateCanonicalResult(latest, captured.roster, captured.workloads));
   // generate-report.mjs joins scoreboard.md and engineering.md with this
   // break, replaces every marker pair, and splits them again to write.
   const pages = ["scoreboard.md", "engineering.md"]
@@ -299,7 +301,7 @@ test("the retained latest artifact is complete when present", () => {
     "utf8",
   );
   assert.doesNotThrow(() =>
-    assertReadmeCurrent(pages, latest, roster, workloads, historicalReport)
+    assertReadmeCurrent(pages, latest, captured.roster, captured.workloads, historicalReport)
   );
 });
 

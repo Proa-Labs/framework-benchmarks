@@ -103,6 +103,24 @@
       "label": "Topcoat",
       "language": "Rust",
       "adapter": "rust"
+    },
+    {
+      "id": "astro",
+      "label": "Astro",
+      "language": "JavaScript",
+      "adapter": "astro"
+    },
+    {
+      "id": "sveltekit",
+      "label": "SvelteKit",
+      "language": "JavaScript",
+      "adapter": "sveltekit"
+    },
+    {
+      "id": "nextjs",
+      "label": "Next.js",
+      "language": "JavaScript",
+      "adapter": "nextjs"
     }
   ]
 }

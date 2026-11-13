@@ -328,3 +328,15 @@ test("shared URLs recover from invalid controls and preserve intentional empty f
   assert.equal(legacy.state.chart, "bars");
   assert.ok(legacy.visibleRows().length > 0);
 });
+
+test("admitted capture status overrides unmeasured presentation metadata", async () => {
+  const { input } = await loadInputs();
+  const proa = input.catalog.find((row) => row.id === "proa");
+  if (!proa) throw new Error("Missing Proa display metadata");
+  Object.assign(proa, { status: "unmeasured" });
+  const data = normalize(input);
+  assert.equal(
+    data.renderers.find((row) => row.id === "proa")?.status,
+    "included",
+  );
+});

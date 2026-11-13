@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
+import { capturedRenderingContract } from "./rendering-contract.mjs";
 import { verifyRetainedSource } from "./retained-source.mjs";
 import suites from "./suites.json" with { type: "json" };
 
@@ -17,15 +18,8 @@ export async function validateCapture(id, path, root) {
     const { validateCanonicalResult } = await import(
       "../rendering/canonical/report.mjs"
     );
-    const read = async (file) =>
-      JSON.parse(
-        await readFile(join(root, "rendering/canonical", file), "utf8"),
-      );
-    validateCanonicalResult(
-      result,
-      await read("roster.json"),
-      await read("workloads.json"),
-    );
+    const { roster, workloads } = capturedRenderingContract(root, result);
+    validateCanonicalResult(result, roster, workloads);
   } else {
     const { validateResult } = await import(
       new URL(`../${suite.report}`, import.meta.url)

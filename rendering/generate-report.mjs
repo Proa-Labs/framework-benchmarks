@@ -1,3 +1,4 @@
+import { capturedRenderingContract } from '../tooling/rendering-contract.mjs';
 import { verifyRefresh } from "../scripts/proa-refresh-evidence.mjs";
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -31,13 +32,8 @@ const historicalReportPath = join(
   "archive",
   "public-report-2026-08-31.md",
 );
-const roster = JSON.parse(
-  readFileSync(join(renderingDirectory, "canonical", "roster.json"), "utf8"),
-);
-const workloads = JSON.parse(
-  readFileSync(join(renderingDirectory, "canonical", "workloads.json"), "utf8"),
-);
 const result = JSON.parse(readFileSync(resultPath, "utf8"));
+const { roster, workloads } = capturedRenderingContract(workspaceDirectory, result);
 const productScaling = JSON.parse(readFileSync(productScalingPath, "utf8"));
 const historicalReport = readFileSync(historicalReportPath, "utf8");
 

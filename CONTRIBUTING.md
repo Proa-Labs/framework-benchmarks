@@ -214,16 +214,19 @@ Same-repository PRs publish a non-production Cloudflare version after website va
 
 ## Merge and launch gate
 
-PR #9 stays draft until every public suite has been rerun on the same machine.
+PR #9 stays draft until every public suite has a validated fresh campaign.
 `bun run check:publication` and CI's **Publication readiness** check require full
 renderer, framework SSR, HTTP, streaming and cold-start publication captures.
-They must share a runner-recorded machine identity, `BENCH_CAMPAIGN_ID`, and
-single-CPU server affinity. Proa-only refreshes, smoke results, mixed campaigns,
-and snapshots of measured sources that differ from the checkout are rejected.
+They must share `BENCH_CAMPAIGN_ID` and single-CPU server affinity. Each complete
+comparison stays on one machine. The parallel protocol permits separate suite
+hosts only with the same immutable revision and matching hardware/OS profiles.
+Proa-only refreshes, smoke results, mixed campaigns and snapshots of measured
+sources that differ from the checkout are rejected.
 
 Use a fresh `BENCH_CAMPAIGN_ID=publication-<unique-id>` for a complete campaign.
-On the isolated C4 host, `framework-ssr/cloud/capture.sh` sets one for all five
-suites and validates the result. Verify the actual CPU/SMT topology first. Keep
+The [parallel GCP runner](tooling/cloud/README.md) creates one for five isolated
+workers. The legacy `framework-ssr/cloud/capture.sh` runs all five suites on one
+isolated host. Both verify CPU/SMT topology before measurement. Keep
 the measured source archives and raw captures together when downloading results.
 Portable contributor checks and PR previews remain available while publication
 is blocked. Both production deployment entry points enforce this gate.
@@ -244,3 +247,50 @@ The native executable refuses unoptimized, non-release or debug-assertion
 builds. It records the build profile, optimization level, timing boundary and
 raw observations in capture order. The capture runner and publication gate
 verify those fields and recompute the Proa summaries from the retained samples.
+
+
+## Render-only admission and unsupported tests
+
+SSR Rendering keeps the same three HTML fixtures, input sizes and strict
+full-document DOM/class parity gate for every participant. A failed admission
+never receives an HTTP latency or another renderer’s timings in that table.
+Each unranked cell opens its own versioned explanation.
+
+Astro renders its production-compiled Astro component directly to a fresh HTML
+string. SvelteKit renders its production-compiled page with the native Svelte SSR
+runtime from that same build. Both include the complete asynchronous render in
+the timer; framework initialization, compilation and fixture construction happen
+before it. Proa’s fresh owned `RenderBuffer` timing boundary remains unchanged.
+
+Next.js renders the production-compiled page through its bundled React SSR
+runtime. Its framework initialization and page lookup happen before the timer;
+rendering the page and producing its owned HTML string happen inside it.
+Astro, SvelteKit and Next.js all pass the unchanged fixtures.
+
+The pinned Exact compiler rejects literal class attributes taken from all three
+fixtures. Reproduce that result after building the normal framework adapters:
+
+```sh
+bun rendering/external/exact/check-admission.mjs
+```
+
+The check publishes no latency. Cloud workers run it before rendering and retain
+matching machine/campaign/source evidence alongside the capture. Publication
+rejects missing, stale or mismatched proof. CI reruns the compiler check so an
+obsolete unsupported label cannot silently remain in the comparison.
+
+Historical captures are validated using the roster and workload manifests in
+their retained source archive. Growing today’s supported roster does not rewrite
+an older capture or its report. Publication still requires a complete fresh run
+of the current roster and matching measured sources across all five suites.
+
+
+## Parallel GCP campaigns
+
+See [the cloud runner](tooling/cloud/README.md). Independent suites run on
+separate isolated C4 nodes. Every competitor, workload and repeat within one
+suite stays on the same host; render-only product scaling stays with rendering.
+The publication gate requires a common campaign and immutable source revision,
+matching hardware/OS profiles, full rosters, source archives and raw samples.
+Per-suite machine identities remain visible in each capture. No cross-machine
+latencies are combined into a single comparison.

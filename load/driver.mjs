@@ -544,6 +544,10 @@ export function hostMetadata() {
       ? createHash("sha256").update(readFileSync("/proc/sys/kernel/random/boot_id", "utf8").trim()).digest("hex")
       : null,
     campaignId: process.env.BENCH_CAMPAIGN_ID || null,
+    campaignProtocol: process.env.BENCH_CAMPAIGN_PROTOCOL || null,
+    machineClass: process.env.BENCH_MACHINE_CLASS || null,
+    sourceRevision: process.env.BENCH_SOURCE_REVISION || null,
+    nodeName: process.env.BENCH_NODE_NAME || null,
     platform: os.platform(),
     release: os.release(),
     arch: os.arch(),

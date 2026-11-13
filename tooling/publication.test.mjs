@@ -72,3 +72,45 @@ test("publication accepts one complete campaign and rejects mixed machines, part
     expect(() => validatePublication(result)).toThrow();
   }
 });
+
+test("parallel publication accepts distinct isolated suite machines only with the same campaign revision and hardware profile", () => {
+  const results = complete();
+  for (const [index, result] of Object.values(results).entries()) {
+    Object.assign(result.host, {
+      machineId: String(index + 1).repeat(64),
+      campaignProtocol: "per-suite-host-v1",
+      sourceRevision: "b".repeat(40),
+      machineClass: "c4-standard-16-lssd",
+      cpuModel: "Intel(R) Xeon(R) Platinum 8581C CPU @ 2.30GHz",
+      logicalCpuCount: 16,
+      arch: "x64",
+      release: "6.6.0-gke",
+      nodeName: `worker-${index}`,
+    });
+  }
+  expect(validatePublication(results).protocol).toBe("per-suite-host-v1");
+  for (const mutate of [
+    (r) => {
+      r.http.host.sourceRevision = "c".repeat(40);
+    },
+    (r) => {
+      r.framework.host.machineClass = "n2-standard-16";
+    },
+    (r) => {
+      r.startup.host.cpuModel = "Another CPU";
+    },
+    (r) => {
+      r.streaming.host.logicalCpuCount = 8;
+    },
+    (r) => {
+      delete r.http.host.nodeName;
+    },
+    (r) => {
+      delete r.framework.host.campaignProtocol;
+    },
+  ]) {
+    const changed = structuredClone(results);
+    mutate(changed);
+    expect(() => validatePublication(changed)).toThrow();
+  }
+});

@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { workloadDefinitions } from "../framework-ssr/report.ts";
 import { validateCanonicalResult } from "../rendering/canonical/report.mjs";
 import { summarize } from "../suspense-load/stats.mjs";
+import { capturedRenderingContract } from "../tooling/rendering-contract.mjs";
 import suites from "../tooling/suites.json" with { type: "json" };
 import type {
   BenchmarkData,
@@ -127,12 +128,9 @@ export async function loadInputs(root = repositoryRoot) {
       input[id as View] = JSON.parse(buffer.toString());
     }),
   );
-  input.roster = JSON.parse(
-    await readFile(join(root, "rendering/canonical/roster.json"), "utf8"),
-  );
-  input.workloadManifest = JSON.parse(
-    await readFile(join(root, "rendering/canonical/workloads.json"), "utf8"),
-  );
+  const contract = capturedRenderingContract(root, input.rendering);
+  input.roster = contract.roster;
+  input.workloadManifest = contract.workloads;
   input.catalog = JSON.parse(
     await readFile(join(root, "site/catalog.json"), "utf8"),
   );
@@ -171,6 +169,24 @@ export function normalize(input: Inputs): BenchmarkData {
     processSummaries,
     digests,
   } = input;
+  for (const project of catalog) {
+    for (const [workload, support] of Object.entries(
+      project.renderingUnsupported || {},
+    )) {
+      requireValue(
+        workloadManifest.workloads.some((w) => w.id === workload),
+        `${project.id}: unsupported status has an unknown workload`,
+      );
+      requireValue(
+        ["unsupported", "parity-failed"].includes(support.status),
+        `${project.id}/${workload}: invalid support status`,
+      );
+      requireValue(
+        Boolean(support.reason && support.version && support.source),
+        `${project.id}/${workload}: support explanation is incomplete`,
+      );
+    }
+  }
   validateCanonicalResult(rendering, roster, workloadManifest);
   publication(http, "HTTP", 1);
   publication(streaming, "streaming", 3);
@@ -184,9 +200,16 @@ export function normalize(input: Inputs): BenchmarkData {
     .map<Renderer>((r) => {
       const display = catalog.find((item) => item.id === r.id);
       requireValue(display, `missing display metadata for ${r.id}`);
+      const { renderingUnsupported, ...presentation } = display;
       return {
+        ...presentation,
         ...r,
-        ...display,
+        ...(renderingUnsupported
+          ? {
+              renderingUnsupported:
+                renderingUnsupported as Renderer["renderingUnsupported"],
+            }
+          : {}),
         logo: `logos/${r.id}.svg`,
         version: (rendering.versions as Record<string, string>)[r.label],
       };

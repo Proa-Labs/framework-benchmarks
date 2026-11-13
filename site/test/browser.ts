@@ -6,7 +6,10 @@ import { required } from "../required.ts";
 interface TestExport {
   experiment: string;
   captures?: Record<string, unknown>;
-  unmeasured?: { id: string }[];
+  unmeasured?: {
+    id: string;
+    workloads?: { workload: string; status: string; version: string }[];
+  }[];
   workload: string;
   rows: {
     id: string;
@@ -41,6 +44,20 @@ import { contrastRatio, readableBrand } from "../src/brand-colors.ts";
 import { sortCoverageRows } from "../src/feature-summary.ts";
 
 const server = await startServer({ port: 0, live: false });
+const benchmarkData: BenchmarkData = await (
+  await fetch(`${server.url}/data/results.json`)
+).json();
+const renderCount = benchmarkData.rendering.rows.cards.length;
+const renderCells = Object.values(benchmarkData.rendering.rows).flat().length;
+const unrankedIds = benchmarkData.framework.rows
+  .filter(
+    (row) =>
+      !benchmarkData.rendering.rows.cards.some(
+        (render) => render.id === row.id,
+      ),
+  )
+  .map((row) => row.id);
+
 const browser = await chromium.launch({ headless: true });
 const errors: string[] = [];
 const checks: string[] = [];
@@ -75,7 +92,7 @@ try {
   });
   await navigate(`${server.url}/?chart=bars`);
   await page.locator(".fw-row").first().waitFor();
-  assert.equal(await page.locator(".fw-row").count(), 17);
+  assert.equal(await page.locator(".fw-row").count(), renderCount);
   const renderingInfo = page.locator(".fw-experiment-info");
   await renderingInfo.hover();
   assert.equal(await page.locator("#rendering-info").isVisible(), true);
@@ -241,7 +258,7 @@ try {
     ),
     "true",
   );
-  assert.equal(await page.locator(".fw-row").count(), 17);
+  assert.equal(await page.locator(".fw-row").count(), renderCount);
   await reload();
   assert.equal(
     required(
@@ -305,13 +322,13 @@ try {
     await page
       .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
       .count(),
-    17,
+    renderCount,
   );
   assert.equal(
     await page
       .locator("[data-renderer-comparison] tbody [data-stat-suite=rendering]")
       .count(),
-    51,
+    renderCells,
   );
   await page.locator('[data-sort-workload="table"]').click();
   assert.equal(
@@ -332,7 +349,7 @@ try {
     ),
   );
   assert.equal(comparisonExport.workload, "all");
-  assert.equal(comparisonExport.rows.length, 51);
+  assert.equal(comparisonExport.rows.length, renderCells);
   assert.equal(comparisonExport.experiment, "rendering");
   assert.deepEqual(Object.keys(comparisonExport.captures || {}), ["rendering"]);
   assert.ok(
@@ -340,16 +357,16 @@ try {
       (row) => row.suite === "rendering" && row.unit === "µs",
     ),
   );
-  for (const id of ["astro", "exact", "nextjs", "sveltekit"])
+  for (const id of unrankedIds)
     assert.ok(comparisonExport.unmeasured?.some((row) => row.id === id));
   assert.deepEqual(
     new Set(comparisonExport.rows.map((r) => r.workload)),
     new Set(["cards", "products", "table"]),
   );
   await page.locator('[data-workload="products"]').click();
-  assert.equal(await page.locator(".fw-row").count(), 17);
+  assert.equal(await page.locator(".fw-row").count(), renderCount);
   await page.locator('[data-workload="cards"]').click();
-  assert.equal(await page.locator(".fw-row").count(), 17);
+  assert.equal(await page.locator(".fw-row").count(), renderCount);
   checks.push(
     "all-workload comparison, column sorting, complete exports and direct workload switching",
   );
@@ -362,7 +379,44 @@ try {
     await page.locator("[data-renderer-comparison] thead th").count(),
     4,
   );
-  assert.equal(await page.locator("[data-renderer-pending]").count(), 4);
+  assert.equal(
+    await page.locator("[data-renderer-pending]").count(),
+    unrankedIds.length,
+  );
+  for (const workload of benchmarkData.workloads) {
+    const cell = page.locator(
+      `[data-render-support="exact"][data-support-workload="${workload.id}"]`,
+    );
+    assert.match(required(await cell.textContent()), /Unsupported/);
+    await cell.hover();
+    const popup = page.locator("[data-percentile-popup]");
+    await popup.waitFor({ state: "visible" });
+    assert.match(
+      required(await popup.textContent()),
+      /literal CSS class attributes/,
+    );
+    assert.match(required(await popup.textContent()), /94b8671f70fe/);
+    await popup.hover();
+    assert.equal(await popup.isVisible(), true);
+    await cell.focus();
+    await cell.press("Escape");
+    assert.equal(await popup.isVisible(), false);
+    await cell.click();
+    assert.equal(await popup.isVisible(), true);
+    await page.locator("h1").click();
+    assert.equal(await popup.isVisible(), false);
+  }
+  const exactExport = comparisonExport.unmeasured?.find(
+    (row) => row.id === "exact",
+  );
+  assert.equal(
+    exactExport?.workloads?.filter((cell) => cell.status === "unsupported")
+      .length,
+    benchmarkData.workloads.length,
+  );
+  checks.push(
+    "per-test unsupported popovers explain pinned compiler limits on hover, focus and tap and close with Escape or outside click",
+  );
   const relatedData: BenchmarkData = await (
     await context.request.get(`${server.url}/data/results.json`)
   ).json();
@@ -1150,7 +1204,7 @@ try {
       await page
         .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
         .count(),
-      17,
+      renderCount,
     );
     await page
       .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
@@ -1187,7 +1241,11 @@ try {
   });
   const initial = await noJS.newPage();
   for (const [path, selector, count] of [
-    ["/", "[data-renderer-comparison] tbody tr[data-renderer-row]", 17],
+    [
+      "/",
+      "[data-renderer-comparison] tbody tr[data-renderer-row]",
+      renderCount,
+    ],
     ["/", "[data-framework-comparison] tbody tr[data-framework-row]", 0],
     ["/?chart=bars&workload=products&selected=proa,react", ".fw-row", 2],
     ["/?view=framework&workload=cards", ".fw-row", 5],
@@ -1294,7 +1352,7 @@ try {
     await initial
       .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
       .count(),
-    17,
+    renderCount,
   );
   assert.match(
     methodology,

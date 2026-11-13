@@ -775,8 +775,7 @@ function metadata(capturedAt, fingerprint, browserVersion) {
   return {
     captured_at: capturedAt,
     host: {
-      machineId: hostMetadata().machineId,
-      campaignId: hostMetadata().campaignId,
+      ...hostMetadata(),
       cpu_model: firstCpu?.model ?? "unknown CPU",
       cloud: process.env.BENCH_HOST_LABEL || null,
       server_cpu_affinity: process.env.BENCH_SERVER_CPU || null,
@@ -981,6 +980,29 @@ try {
           `${JSON.stringify(benchmarkResult.processResults, null, 2)}\n`,
           { flag: "wx" },
         );
+        if (!smoke && !engineering) {
+          const checks = ["exact"].flatMap((id) => {
+            const path = join(resultDirectory, "local/admission", `${id}.json`);
+            if (!existsSync(path)) return [];
+            const proof = JSON.parse(readFileSync(path, "utf8"));
+            return proof.sourceSha256 === fingerprint &&
+              proof.host?.machineId === environment.host.machineId &&
+              proof.host?.campaignId === environment.host.campaignId
+              ? [proof]
+              : [];
+          });
+          if (checks.length === 1) {
+            writeFileSync(
+              join(rawDirectory, "admissions.json"),
+              `${JSON.stringify(checks, null, 2)}\n`,
+              { flag: "wx" },
+            );
+            result.raw_artifacts.push({
+              label: "Unranked fixture admission checks",
+              path: `raw/${captureId}/admissions.json`,
+            });
+          }
+        }
         if (smoke || engineering || explicitOutput) {
           retainCapture(
             workspaceDirectory,

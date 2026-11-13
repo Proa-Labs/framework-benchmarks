@@ -15,6 +15,8 @@ const sourcePaths = [
   "tooling/captures.mjs",
   "tooling/verify-source.mjs",
   "tooling/string-adapter.mjs",
+  "tooling/owned-adapter.mjs",
+  "tooling/rendering-contract.mjs",
   "load/driver.mjs",
   "suspense-load/stats.mjs",
   "rendering/Cargo.toml",

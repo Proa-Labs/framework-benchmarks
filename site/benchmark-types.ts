@@ -30,6 +30,15 @@ export interface Renderer extends Project {
   status: string;
   coverageReason?: string;
   coverageSource?: string;
+  renderingUnsupported?: Record<
+    string,
+    {
+      status?: "unsupported" | "parity-failed";
+      reason: string;
+      version: string;
+      source: string;
+    }
+  >;
 }
 export interface Workload {
   id: string;

@@ -1,0 +1,9 @@
+{
+  "name": "canonical-astro-render",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "astro": "7.4.8",
+    "@astrojs/node": "11.1.11"
+  }
+}

@@ -96,8 +96,16 @@ export function createChartMarkup(model: DashboardModel) {
           `<tr ${measuredIds.has(id) ? "data-renderer-row" : "data-renderer-pending"} style="--brand:${required(renderer(id)).color}" class="${state.focus === id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" data-focus="${id}" aria-pressed="${state.focus === id}">${label(id, false)}</button></th>${workloads
             .map((w) => {
               const cell = rowsFor(w.id).find((r) => r.id === id);
-              if (!cell)
-                return '<td><span class="text-muted" aria-label="Render-only measurement pending">Not measured</span></td>';
+              if (!cell) {
+                const coverage = model.renderingCoverage(id, w.id);
+                const status =
+                  coverage.status === "unsupported"
+                    ? "Unsupported"
+                    : coverage.status === "parity-failed"
+                      ? "Fails parity"
+                      : "Not measured";
+                return `<td><button type="button" class="fw-support-button text-muted" data-render-support="${id}" data-support-workload="${w.id}" aria-label="${esc(name(id))}, ${esc(w.label)}, ${status}. ${esc(coverage.reason)}" title="${esc(coverage.reason)}">${status}<span aria-hidden="true"> ⓘ</span></button></td>`;
+              }
               return `<td class="fw-comparison-cell"><button type="button" data-focus="${id}" data-stat-suite="rendering" data-stat-workload="${w.id}" aria-pressed="${state.focus === id}" aria-label="${esc(name(id))}, ${esc(w.label)}, render, ${fmt(required(cell.p50))} µs"><span class="fw-comparison-value">${fmt(required(cell.p50))}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${(100 * required(cell.p50)) / maximum(w.id)}%"></span></span></button></td>`;
             })
             .join("")}</tr>`,
@@ -105,7 +113,8 @@ export function createChartMarkup(model: DashboardModel) {
       .join("")}</tbody></table></div>`;
     const missing = ids.filter((id) => !measuredIds.has(id));
     if (missing.length)
-      output.html += `<p class="mt-4 text-[11px] leading-relaxed text-muted" data-renderer-coverage>${missing.map((id) => esc(name(id))).join(", ")}: render-only measurements pending. Their HTTP request results are available in <a href="?view=framework" class="underline underline-offset-2">Framework SSR ↗</a>.</p>`;
+      output.html +=
+        '<p class="mt-4 text-[11px] leading-relaxed text-muted" data-renderer-coverage>Only entries that pass the same unchanged fixture receive timings. Hover, focus or tap a status for details. HTTP results are in <a href="?view=framework" class="underline underline-offset-2">Framework SSR ↗</a>.</p>';
     output.note =
       "Median SSR render latency · µs · lower is better · prepared data → freshly owned HTML · sort by any workload heading · bars scale within each column";
   }

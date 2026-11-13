@@ -126,6 +126,9 @@
   #frameworks-explorer .fw-percentile-popover {
     @apply absolute [z-index:80] [width:max-content] [max-width:calc(100%_-_16px)] [background:var(--fw-surface)] text-ink [border:1px_solid_var(--fw-border)] [border-radius:9px] [padding:16px] [box-shadow:0_16px_48px_#0009,_0_2px_8px_#0006] pointer-events-none [font:12px_/_1.5_Arial,_Helvetica,_sans-serif];
   }
+  #frameworks-explorer .fw-percentile-popover[data-support-popover] {
+    @apply pointer-events-auto;
+  }
   #frameworks-explorer .fw-popover-identity {
     @apply flex items-center [gap:9px];
   }

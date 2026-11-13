@@ -17,20 +17,19 @@ import { validateBuffers, updateBufferReadme } from '../showcase/capture_buffers
 import { validateCapture as validateMemcpyCapture, updateReadme as updateMemcpyReadme } from '../showcase/capture_memcpy.mjs';
 import { verifySourceSnapshot } from '../tooling/verify-source.mjs';
 import { verifyRetainedSource } from '../tooling/retained-source.mjs';
+import { capturedRenderingContract } from '../tooling/rendering-contract.mjs';
 import { renderingSourceFingerprint } from '../rendering/canonical/source_fingerprint.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const md = readSources(join(HERE, '..'));
 const tables = parseTables(md);
 const SVG = join(HERE, 'svg');
-const rosterSize = JSON.parse(readFileSync(
-  join(HERE, '..', 'rendering', 'canonical', 'roster.json'),
-  'utf8',
-)).renderers.length;
 const scalingCapture = JSON.parse(readFileSync(
   join(HERE, '..', 'rendering', 'results', 'product-scaling.json'),
   'utf8',
 ));
+
+const rosterSize = capturedRenderingContract(join(HERE, '..'), scalingCapture).roster.renderers.length;
 
 function currentRenderingSourceFingerprint() {
   const workspace = join(HERE, '..');

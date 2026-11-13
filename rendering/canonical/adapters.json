@@ -156,5 +156,38 @@
     "cwd": ".",
     "command": "{root}/target/release/representative_suite_bench",
     "args": ["--framework", "{id}"]
+  },
+  "astro": {
+    "id": "astro",
+    "label": "Astro",
+    "language": "JavaScript",
+    "setup": "bun",
+    "cwd": "rendering/external/astro",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "build": ["{bun}", "build.mjs"],
+    "versionPackage": "astro"
+  },
+  "sveltekit": {
+    "id": "sveltekit",
+    "label": "SvelteKit",
+    "language": "JavaScript",
+    "setup": "custom",
+    "cwd": "rendering/external/sveltekit",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "build": ["{bun}", "render_build.mjs"],
+    "versionPackage": "@sveltejs/kit"
+  },
+  "nextjs": {
+    "id": "nextjs",
+    "label": "Next.js",
+    "language": "JavaScript",
+    "setup": "bun",
+    "cwd": "rendering/external/next",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "build": ["{bun}", "build.mjs"],
+    "versionCommand": ["{bun}", "version.mjs"]
   }
 }
