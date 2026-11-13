@@ -244,11 +244,6 @@ function buildAll() {
   console.log(`Building selected adapters: ${requiredIds.join(", ")}`);
   for (const id of requiredIds) {
     const adapter = adapters[id];
-    if (adapter.setup === "bun")
-      run(process.execPath, ["install", "--frozen-lockfile"], {
-        cwd: resolve(workspaceDirectory, adapter.cwd),
-        stdio: "inherit",
-      });
     if (adapter.build)
       run(
         adapter.build[0] === "{bun}" ? process.execPath : adapter.build[0],
@@ -980,7 +975,7 @@ try {
           versions: environment.versions,
           provenance: environment.provenance,
           commands: [
-            "bun install --frozen-lockfile (JavaScript adapter directories)",
+            "bun install --frozen-lockfile (repository root, all JavaScript workspaces)",
             "bundle check || bundle install (Rails adapter directory)",
             "cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench",
             "go build -trimpath -o rendering/external/go/build/canonical_suite rendering/external/go/suite_bench.go",

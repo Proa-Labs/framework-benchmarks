@@ -2,15 +2,15 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const here = fileURLToPath(new URL("./", import.meta.url));
-for (const args of [
-  ["npm", "ci", "--include=dev"],
-  [process.execPath, "--bun", "node_modules/vite/bin/vite.js", "build"],
-]) {
-  const child = Bun.spawn(args, {
-    cwd: here,
-    stdout: "inherit",
-    stderr: "inherit",
-  });
+{
+  const child = Bun.spawn(
+    [process.execPath, "--bun", "node_modules/vite/bin/vite.js", "build"],
+    {
+      cwd: here,
+      stdout: "inherit",
+      stderr: "inherit",
+    },
+  );
   if ((await child.exited) !== 0)
     throw new Error("SvelteKit production build failed");
 }

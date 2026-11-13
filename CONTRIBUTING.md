@@ -116,12 +116,28 @@ make seventeen engines render an equivalent page by itself.
 
 ## Validate locally
 
-For portable checks and the website, install these additional locked packages:
+All JavaScript projects use one Bun workspace and the root `bun.lock`. Dependency
+versions shared across projects live in the root `catalog`; the site's newer
+React version has its own named catalog. Bun's isolated linker shares a single
+package store while keeping differing framework/peer versions separate. Biome,
+TypeScript and Turbo are installed once at the root. The framework benchmark
+harness also belongs to the root package, with each adapter a workspace.
+
+`bun run lint` and `bun run typecheck` use Turbo. `bun run build` builds the
+JavaScript workspaces in parallel; `bun run build:framework-adapters` builds only
+the three framework adapters after generating their common fixtures once.
+`bun run dev` starts the website. Existing `bun run bench …` commands continue
+to run the measurement protocols directly. Build, browser, capture and benchmark
+tasks are uncached, so Turbo cannot replay timings from another run or machine.
+Native builds and measurements remain controlled by their suite runners.
+
+Add JavaScript dependencies to the owning workspace's `package.json`, reuse a
+`catalog:` pin where appropriate, then run `bun install` from the root. Commit
+only the root lockfile; do not create npm, pnpm or per-workspace lockfiles.
+
+The root install covers every JavaScript workspace. Validate with:
 
 ```sh
-bun install --cwd rendering/external/react --frozen-lockfile
-bun install --cwd framework-ssr --frozen-lockfile
-bun install --cwd site --frozen-lockfile
 bun run check
 bun run --cwd site test:browser
 ```
@@ -137,15 +153,9 @@ does not require building Exact.
 
 ## Rerun a publication capture
 
-Use the Node version in `.nvmrc` for the npm-locked SvelteKit adapter setup,
-including development dependencies needed by its production build:
-
-```sh
-npm ci --include=dev --prefix rendering/external/sveltekit
-```
-
-Complete this setup before running HTTP, cold-start, streaming, or the C4
-capture script. Measured JavaScript servers still run on the pinned Bun runtime.
+Install all JavaScript dependencies once from the repository root with
+`bun install --frozen-lockfile`. Use the Node version in `.nvmrc` for framework
+build tooling; measured JavaScript servers run on the pinned Bun runtime.
 
 ```sh
 bun run bench run rendering --publish

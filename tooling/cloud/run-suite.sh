@@ -18,17 +18,12 @@ lscpu -e=CPU,CORE,SOCKET,ONLINE > /work/cpu-topology.txt
 cat /sys/fs/cgroup/cpu.max > /work/cpu-quota.txt
 bun install --frozen-lockfile
 bun node_modules/playwright/cli.js install --with-deps chromium
-for adapter in react marko svelte; do
-  bun install --cwd "rendering/external/$adapter" --frozen-lockfile
-done
-npm --prefix rendering/external/sveltekit ci --include=dev
 smoke=()
 if [[ "$mode" == smoke ]]; then smoke=(--smoke); fi
 case "$suite" in
   rendering)
     # Exact's official builder supplies the versioned exclusion proof. Setup
     # and compilation finish before any of the timed processes are started.
-    bun install --cwd framework-ssr --frozen-lockfile
     bun framework-ssr/build.ts
     bun rendering/canonical/run.mjs --setup-only
     bun rendering/external/exact/check-admission.mjs
@@ -36,7 +31,6 @@ case "$suite" in
     taskset -c 0 bun rendering/canonical/run.mjs --product-scaling --no-setup "${smoke[@]}"
     ;;
   framework)
-    bun install --cwd framework-ssr --frozen-lockfile
     bun framework-ssr/build.ts
     taskset -c 1-7,9-15 bun framework-ssr/run.ts --no-build --workers 24 "${smoke[@]}"
     ;;

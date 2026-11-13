@@ -131,7 +131,7 @@ NODE_ENV=production node rendering/external/marko/compile_suspense.mjs
 Install the root dependencies and the Marko fixture dependencies first:
 
 ```sh
-pnpm install --frozen-lockfile
+bun install --frozen-lockfile
 npm ci --prefix rendering/external/marko
 ```
 

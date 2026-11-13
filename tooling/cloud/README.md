@@ -26,8 +26,7 @@ its product-scaling diagnostic run sequentially on the same worker. Competitors
 inside a suite are never sharded or measured concurrently. Compilation and
 setup finish before that worker starts measuring.
 
-Install the pinned Bun dependencies (`bun install --frozen-lockfile` and
-`bun install --cwd framework-ssr --frozen-lockfile`) first. The controller needs
+Install all JavaScript workspaces with `bun install --frozen-lockfile` first. The controller needs
 Python 3.12+, `git`, `tar` and an authenticated `kubectl` context.
 
 ```sh

@@ -114,7 +114,6 @@ jobs:
           set -euo pipefail
           bun install --frozen-lockfile
           bun run test
-          npm --prefix rendering/external/sveltekit ci
           bun test rendering/external/sveltekit/stream-validator.test.mjs sveltekit/benchmark.test.mjs
           bun sveltekit/report.mjs --check
           bash -n scripts/refresh-proa.sh rendering/run_all.sh framework-ssr/cloud/*.sh tooling/cloud/*.sh
@@ -154,11 +153,6 @@ jobs:
         run: |
           set -euo pipefail
           bun install --frozen-lockfile
-          bun install --cwd rendering/external/react --frozen-lockfile
-          bun install --cwd rendering/external/marko --frozen-lockfile
-          bun install --cwd rendering/external/vue --frozen-lockfile
-          bun install --cwd rendering/external/svelte --frozen-lockfile
-          npm --prefix rendering/external/sveltekit ci
           bun node_modules/playwright/cli.js install --with-deps chromium
 
       - name: Run Clippy correctness lints
@@ -214,7 +208,6 @@ jobs:
       - name: Build and gate all full-framework SSR workloads
         if: matrix.suite == 'rendering'
         run: |
-          bun install --cwd framework-ssr --frozen-lockfile
           bun framework-ssr/build.ts
           bun framework-ssr/run.ts --no-build --smoke --workers 2
 

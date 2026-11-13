@@ -52,34 +52,7 @@ export async function buildProa() {
 }
 export async function buildAll() {
   if (Bun.version !== "1.4.2") throw new Error("Use pinned Bun 1.4.2");
-  for (const engine of ["next", "astro", "exact", "proa", "sveltekit"]) {
-    await Bun.write(
-      join(here, "adapters", engine, "fixture.json"),
-      `${JSON.stringify(fixture)}\n`,
-    );
-    await Bun.write(
-      join(here, "adapters", engine, "cards.json"),
-      `${JSON.stringify(cards, null, 2)}\n`,
-    );
-  }
-  for (const engine of ["next", "astro", "sveltekit"]) {
-    await command(
-      [process.execPath, "install", "--frozen-lockfile"],
-      join(here, "adapters", engine),
-    );
-  }
-  await command(
-    [process.execPath, "--bun", "node_modules/next/dist/bin/next", "build"],
-    join(here, "adapters/next"),
-  );
-  await command(
-    [process.execPath, "--bun", "node_modules/astro/bin/astro.mjs", "build"],
-    join(here, "adapters/astro"),
-  );
-  await command(
-    [process.execPath, "--bun", "node_modules/vite/bin/vite.js", "build"],
-    join(here, "adapters/sveltekit"),
-  );
+  await command([process.execPath, "run", "build:framework-adapters"]);
   if (!(await Bun.file(join(exactSource, "Cargo.toml")).exists())) {
     await mkdir(dirname(exactSource), { recursive: true });
     await command([

@@ -1,8 +1,9 @@
 import { execFileSync } from "node:child_process";
+import { workspaceSources } from "../tooling/workspace-sources.mjs";
 
 // Shared by capture and publication checks, including newly added adapter files.
 export function frameworkSourceFiles(root: string) {
-  return execFileSync(
+  const files = execFileSync(
     "git",
     [
       "ls-files",
@@ -21,6 +22,8 @@ export function frameworkSourceFiles(root: string) {
       "Cargo.toml",
       "package.json",
       "bun.lock",
+      "bunfig.toml",
+      "turbo.json",
       "rendering/src",
       "rendering/Cargo.toml",
       "rendering/external/shared/suite_data.mjs",
@@ -31,4 +34,5 @@ export function frameworkSourceFiles(root: string) {
     .split("\0")
     .filter((p) => p && !p.startsWith("framework-ssr/results/"))
     .sort();
+  return [...new Set([...files, ...workspaceSources(root)])].sort();
 }

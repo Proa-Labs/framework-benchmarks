@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { workspaceSources } from "./workspace-sources.mjs";
 
 // Data-only manifest: importing a runner would start a capture.
 export async function readMeasuredSources(runner) {
@@ -23,5 +24,7 @@ export async function readMeasuredSources(runner) {
     assert.match(file, /^[a-zA-Z0-9_./+()[\]-]+$/);
     assert.ok(!file.startsWith("/") && !file.split("/").includes(".."));
   }
-  return files;
+  return [
+    ...new Set([...files, ...workspaceSources(dirname(dirname(path)))]),
+  ].sort();
 }

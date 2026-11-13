@@ -52,7 +52,6 @@ jobs:
         run: |
           set -euo pipefail
           bun install --frozen-lockfile
-          bun install --cwd framework-ssr --frozen-lockfile
           source tooling/cloud/in-cluster-config.sh
           args=()
           if [[ "$BENCH_SMOKE" == true ]]; then args+=(--smoke); fi

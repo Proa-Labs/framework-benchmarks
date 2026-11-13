@@ -99,25 +99,20 @@ The separate [full-framework SSR suite](framework-ssr/README.md) compares produc
 Install the JavaScript dependencies once. Use Bun 1.4.2 (the canonical runner rejects other runtimes), the Rust toolchain in [`rust-toolchain.toml`](rust-toolchain.toml), and Go 1.25. The full scoreboard also needs Ruby 3.2+, a JDK 17+ with Gradle, PHP 8, and Python 3.13+.
 
 ```sh filename="Terminal"
-pnpm install --frozen-lockfile
-pnpm exec playwright install chromium
-npm ci --prefix rendering/external/react
-npm ci --prefix rendering/external/marko
-npm ci --prefix rendering/external/handlebars
-npm ci --prefix rendering/external/svelte
-npm ci --prefix rendering/external/sveltekit
+bun install --frozen-lockfile
+bun x playwright install chromium
 ```
 
 Run timed suites sequentially. The runners build their servers, gate parity before timing, and reject a phase whose load generator was the bottleneck. The report commands regenerate the evidence pages and figures.
 
 ```sh filename="Terminal"
 ./rendering/run-all            # scoreboard: build, parity-gate, time, regenerate scoreboard.md
-pnpm run bench:page-load       # canonical pages over HTTP, one core each
-pnpm run bench:cold-start      # cold start to first response
-pnpm run bench:suspense-load   # Suspense streaming over HTTP
-node sveltekit/run.mjs         # Proa vs SvelteKit HTTP streaming + browser completion
-node sveltekit/report.mjs      # regenerate SvelteKit comparison
-pnpm run refresh               # regenerate every evidence page and figure from the captures
+bun run bench:page-load       # canonical pages over HTTP, one core each
+bun run bench:cold-start      # cold start to first response
+bun run bench:suspense-load   # Suspense streaming over HTTP
+bun sveltekit/run.mjs         # Proa vs SvelteKit HTTP streaming + browser completion
+bun sveltekit/report.mjs      # regenerate SvelteKit comparison
+bun run refresh               # regenerate every evidence page and figure from the captures
 ```
 
 > **Good to know**: the committed numbers are dated evidence from one machine, not universal claims. Rerun the relevant suite before publishing a current comparison.

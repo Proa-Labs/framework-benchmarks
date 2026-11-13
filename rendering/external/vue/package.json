@@ -4,6 +4,7 @@
   "type": "module",
   "version": "0.0.0",
   "dependencies": {
-    "vue": "^3.5.0"
+    "vue": "3.5.42",
+    "@vue/compiler-ssr": "3.5.42"
   }
 }

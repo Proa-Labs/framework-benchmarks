@@ -34,3 +34,6 @@ travel-agent/results/*.partial
 
 # Local GCP campaign artifacts and staging checkouts.
 /cloud-results/
+
+# Shared Turborepo task cache.
+.turbo/

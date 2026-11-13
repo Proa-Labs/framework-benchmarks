@@ -3,7 +3,7 @@ import { sourceFiles as kitSources } from '../rendering/external/sveltekit/bench
 // Every measured server implementation, shared fixture, and load/browser driver.
 // Reporting code and retained artifacts do not participate in these timings.
 export const sourceFiles = [...new Set([...kitSources,
-  '.nvmrc', 'Cargo.lock', 'Cargo.toml', 'package.json', 'pnpm-lock.yaml',
+  '.nvmrc', 'Cargo.lock', 'Cargo.toml', 'package.json', 'bun.lock', 'bunfig.toml',
   'load/driver.mjs', 'load/worker.mjs', 'page-load/scenario.mjs',
   'rendering/Cargo.toml', 'rendering/src/http_load.rs',
   'rendering/src/bin/proa_suspense_server.rs', 'rendering/src/topcoat_product_grid.rs',

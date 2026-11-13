@@ -202,7 +202,7 @@ const workspacePackageJson = JSON.parse(
 const playwrightPackagePath = require.resolve("playwright/package.json");
 const playwrightPackage = JSON.parse(readFileSync(playwrightPackagePath, "utf8"));
 // Resolve Playwright's private dependency from Playwright itself. npm happened
-// to hoist playwright-core to the workspace root; pnpm correctly keeps the
+// to hoist playwright-core to the workspace root; isolated installs keep the
 // transitive package behind Playwright's dependency boundary.
 const requireFromPlaywright = createRequire(playwrightPackagePath);
 const playwrightCorePackagePath = requireFromPlaywright.resolve(

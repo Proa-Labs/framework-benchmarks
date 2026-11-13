@@ -2,6 +2,7 @@
 set -euo pipefail
 source /work/env.sh
 cd /work/repo
+bun install --frozen-lockfile
 export BENCH_SERVER_CPU=0
 export BENCH_CAMPAIGN_ID="publication-$(cat /proc/sys/kernel/random/uuid)"
 export BENCH_HOST_LABEL="${BENCH_HOST_LABEL:-GCP C4 c4-standard-16-lssd · isolated spot node}"
@@ -9,7 +10,6 @@ export BENCH_HOST_LABEL="${BENCH_HOST_LABEL:-GCP C4 c4-standard-16-lssd · isola
 # CPU 0's SMT sibling; keep both out of the generator affinity.
 client_cpus=1-7,9-15
 test "$(cat /sys/devices/system/cpu/cpu0/topology/thread_siblings_list)" = "0,8"
-bun install --cwd framework-ssr --frozen-lockfile
 lscpu -e=CPU,CORE,SOCKET,ONLINE > /work/cpu-topology.txt
 cat /sys/fs/cgroup/cpu.max > /work/cpu-quota.txt
 bun framework-ssr/build.ts > /work/framework-build.log 2>&1

@@ -41,36 +41,74 @@
     "check:charts": "bun charts/verify.mjs",
     "test:python": "python3 -m unittest discover -s travel-agent -p 'test_*.py' -v",
     "test": "bun run check:bun && bun run test:bun && bun run test:python && bun run check:rendering:report && bun run check:suspense-load:report && bun run check:page-load:report && bun run check:cold-start:report && bun run check:charts",
-    "lint": "biome check site framework-ssr tooling rendering/canonical biome.json",
-    "typecheck": "bun site/prepare-data.ts && tsc --noEmit -p framework-ssr/tsconfig.json && tsc --noEmit -p site/tsconfig.json",
-    "test:site": "bun site/prepare-data.ts && bun test site/test",
+    "lint": "turbo run lint:repo",
+    "typecheck": "turbo run typecheck typecheck:benchmarks",
+    "test:site": "turbo run test --filter=frameworks-run-site",
     "bench:framework-ssr": "bun framework-ssr/run.ts",
     "check:bun": "bun tooling/check-js.mjs agent-chain/app.mjs agent-chain/client.mjs agent-chain/run.mjs agent-chain/server.mjs load/driver.mjs load/worker.mjs page-load/run.mjs cold-start/run.mjs cold-start/report.mjs page-load/report.mjs page-load/react_server.mjs page-load/scenario.mjs page-load/validate.mjs rendering/external/marko/page_server.mjs rendering/external/marko/compile_suite.mjs rendering/external/react/suite_components.mjs suspense-load/react_server.mjs suspense-load/validate.mjs suspense-load/scenario.mjs suspense-load/run.mjs suspense-load/report.mjs suspense-load/stats.mjs travel-agent/capture.mjs travel-agent/measure_proa_js.mjs travel-agent/surfaces.mjs rendering/standard_page_parity.mjs rendering/representative_suite.mjs rendering/canonical/run.mjs rendering/canonical/report.mjs rendering/generate-report.mjs rendering/external/shared/suite_data.mjs rendering/external/react/suite_bench.mjs rendering/external/marko/compile_suspense.mjs rendering/external/marko/suspense_server.mjs rendering/external/handlebars/suite_bench.mjs showcase/capture_ssr.mjs showcase/capture_client_js.mjs showcase/client_js_stats.mjs showcase/measure_react_hydration_payload.mjs showcase/workloads.mjs charts/build.mjs charts/verify.mjs",
     "test:bun": "bun test rendering/canonical/report.test.mjs showcase/client_js_stats.test.mjs suspense-load/scenario.test.mjs suspense-load/stats.test.mjs",
     "bench": "bun tooling/bench.mjs",
     "test:contracts": "bun test tooling framework-ssr/test rendering/canonical/report.test.mjs suspense-load/scenario.test.mjs suspense-load/stats.test.mjs",
     "check": "bun tooling/bench.mjs check",
-    "check:publication": "bun tooling/publication.mjs"
+    "check:publication": "bun tooling/publication.mjs",
+    "lint:repo": "biome check .",
+    "typecheck:benchmarks": "tsc --noEmit -p framework-ssr/tsconfig.json",
+    "build": "turbo run build",
+    "dev": "turbo run dev --filter=frameworks-run-site",
+    "build:framework-adapters": "turbo run build --filter='framework-ssr-*'",
+    "prepare:fixtures": "bun framework-ssr/prepare-fixtures.ts"
   },
   "dependencies": {
-    "esbuild": "^0.25.0",
-    "playwright": "1.61.1",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "esbuild": "0.25.12",
+    "playwright": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "parse5": "8.1.1"
   },
   "engines": {
     "bun": ">=1.4.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.6",
-    "typescript": "7.0.2",
-    "@types/bun": "1.4.4",
-    "@types/node": "26.6.6",
-    "@types/react": "19.3.0",
-    "bun": "1.4.2"
+    "@biomejs/biome": "catalog:",
+    "typescript": "catalog:",
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "bun": "1.4.2",
+    "turbo": "2.11.11"
   },
   "trustedDependencies": [
     "bun",
     "esbuild"
-  ]
+  ],
+  "workspaces": [
+    "site",
+    "framework-ssr/adapters/*",
+    "rendering/external/*"
+  ],
+  "catalog": {
+    "@biomejs/biome": "2.6.6",
+    "@types/bun": "1.4.4",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "typescript": "7.0.2",
+    "playwright": "1.61.1",
+    "vite": "8.3.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "svelte": "5.57.2",
+    "astro": "7.4.8",
+    "@astrojs/node": "11.1.11",
+    "next": "16.4.6",
+    "@sveltejs/adapter-node": "6.0.0",
+    "@sveltejs/kit": "3.1.0",
+    "@sveltejs/vite-plugin-svelte": "7.3.1",
+    "acorn": "8.17.0"
+  },
+  "catalogs": {
+    "site": {
+      "react": "19.3.0",
+      "react-dom": "19.3.0"
+    }
+  }
 }

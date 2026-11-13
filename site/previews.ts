@@ -31,7 +31,7 @@ export async function buildPreviews(
     ));
   } catch (error) {
     throw new Error(
-      "Install canonical preview dependencies with: bun install --cwd rendering/external/react --frozen-lockfile",
+      "Install canonical preview dependencies with: bun install --frozen-lockfile (repository root)",
       { cause: error },
     );
   }

@@ -18,8 +18,6 @@ From the repository root:
 
 ```sh
 bun install --frozen-lockfile
-bun install --cwd rendering/external/react --frozen-lockfile
-bun install --cwd site --frozen-lockfile
 bun run --cwd site dev
 ```
 
@@ -33,7 +31,7 @@ bun run --cwd site test:browser
 bun run --cwd site build
 ```
 
-Install Playwright Chromium if needed: `cd site && bun node_modules/playwright/cli.js install chromium`. Website checks do not require Rust, Ruby, Java, Go or a benchmark rerun.
+Install Playwright Chromium if needed: `bun node_modules/playwright/cli.js install chromium` from the repository root. Website checks do not require Rust, Ruby, Java, Go or a benchmark rerun.
 
 ## Structure
 

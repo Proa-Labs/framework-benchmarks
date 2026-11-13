@@ -16,7 +16,6 @@ Use Bun **1.4.2** for every JavaScript adapter, builder and load worker. Type ch
 
 ```sh
 bun install --frozen-lockfile
-bun install --cwd framework-ssr --frozen-lockfile
 bun framework-ssr/build.ts  # Generates fixtures/types, checks with native TS 7, builds production servers
 bun run typecheck
 bun run lint

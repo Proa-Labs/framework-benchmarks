@@ -4,7 +4,7 @@ Nine figures covering the benchmark report: the [front page](../README.md) and i
 
 Each one is **generated from the evidence pages' own tables** — no measurement is
 retyped here. Re-run the capture, let it regenerate its page, then run the build and
-the figures follow. Figure 03 uses the current canonical rendering table and the latest matched copy controls, including their capture dates; it never reads the archived core matrix. `pnpm refresh` updates it through the same build pipeline as the other figures.
+the figures follow. Figure 03 uses the current canonical rendering table and the latest matched copy controls, including their capture dates; it never reads the archived core matrix. `bun run refresh` updates it through the same build pipeline as the other figures.
 
 ```sh
 node charts/build.mjs     # regenerate every figure from the evidence pages

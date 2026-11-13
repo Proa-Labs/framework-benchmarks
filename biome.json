@@ -29,7 +29,12 @@
       "!**/package-lock.json",
       "!**/bun.lock",
       "!framework-ssr/results",
-      "!site/src/routeTree.gen.ts"
+      "!site/src/routeTree.gen.ts",
+      "package.json",
+      "turbo.json",
+      "rendering/external/*/package.json",
+      "framework-ssr/prepare-fixtures.ts",
+      "tooling/workspace.test.mjs"
     ]
   },
   "formatter": {
@@ -40,6 +45,9 @@
     "enabled": true,
     "rules": {
       "preset": "recommended"
+    },
+    "domains": {
+      "react": "recommended"
     }
   },
   "overrides": [
