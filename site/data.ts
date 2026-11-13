@@ -1,6 +1,7 @@
 // Presentation adapters only. Benchmark execution, fixtures, and statistics stay
 // in their existing suites. Never add measurements to the site's source files.
 import { createHash } from "node:crypto";
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -19,6 +20,7 @@ import type {
 } from "./benchmark-types.ts";
 import featureProjects from "./feature-projects.json" with { type: "json" };
 import { frameworkRows } from "./framework-data.ts";
+import { applyProaRefresh } from "./proa-refresh.ts";
 import { required } from "./required.ts";
 
 export const repositoryRoot = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -118,7 +120,10 @@ const meta = (
   };
 };
 
-export async function loadInputs(root = repositoryRoot) {
+export async function loadInputs(
+  root = repositoryRoot,
+  { refresh = true } = {},
+) {
   const buffers = {} as Record<View, Buffer>;
   const input = {} as Inputs;
   await Promise.all(
@@ -147,6 +152,8 @@ export async function loadInputs(root = repositoryRoot) {
       "utf8",
     ),
   );
+  if (refresh && existsSync(join(root, "site/proa-refresh.json")))
+    applyProaRefresh(root, input, buffers);
   input.digests = Object.fromEntries(
     Object.entries(buffers).map(([id, buffer]) => [
       id,
@@ -517,5 +524,43 @@ export function normalize(input: Inputs): BenchmarkData {
     };
   });
   output.startup.note = `Host load average: ${startup.host.loadAverage1m}. Startup is sensitive to other activity.`;
+  for (const view of [
+    "rendering",
+    "framework",
+    "http",
+    "streaming",
+    "startup",
+  ] as const) {
+    const refresh = input.reviewRefresh?.[view];
+    if (!refresh) continue;
+    output[view].reviewRefresh = refresh;
+    output[view].source = "site/proa-refresh.json";
+    output[view].note += ` ${refresh.note}`;
+    output[view].host = {
+      ...output[view].host,
+      cloud: "GCP C4 · Proa refresh and retained peer campaign",
+    };
+    const rows =
+      view === "startup"
+        ? output.startup.rows
+        : view === "framework"
+          ? [
+              ...output.framework.rows,
+              ...Object.values(output.framework.workloads).flat(),
+            ]
+          : Object.values(output[view].rows).flat();
+    for (const row of rows) {
+      row.captureId =
+        row.id === "proa"
+          ? refresh.proa_capture_id
+          : refresh.baseline_capture_id;
+      row.capturedAt =
+        row.id === "proa"
+          ? refresh.proa_captured_at
+          : refresh.baseline_captured_at;
+      const directory = suites[view === "http" ? "http" : view].directory;
+      row.source = `${directory}/results/archive/${row.captureId}.json`;
+    }
+  }
   return output;
 }

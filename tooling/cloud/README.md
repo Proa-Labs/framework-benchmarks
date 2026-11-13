@@ -1,5 +1,25 @@
 # Parallel GCP benchmark campaigns
 
+## Proa-only review refreshes
+
+`site/proa-refresh.json` selects the retained before/after Proa captures for a
+review preview. It preserves the full campaign's peer measurements, records each
+row's original capture and date, and links the evidence from every experiment.
+Both Proa revisions must run on the same physical worker; peers use matching C4
+profiles from the retained campaign. Source snapshots must differ only in the
+pinned Proa revision, and raw render samples, parity and load-generator validity
+are checked before preparing the site. Streaming's refresh uses 32 generator
+workers for both revisions, disclosed alongside the original peer protocol.
+
+This selection intentionally blocks `check:publication`, required for merging
+and production deployment. Run a fresh full campaign with the updated Proa pin,
+select its validated results, and remove the review selection before merging.
+The five-suite campaign below remains the publication path. For an isolated
+full-framework Proa diagnostic, use `bun framework-ssr/run.ts --proa-only --out
+framework-ssr/results/local/proa.json`; it cannot replace a published capture.
+
+## Full comparison campaigns
+
 Run the five independent comparison suites concurrently, each on its own
 `c4-standard-16-lssd` node in the existing GKE `runners-c4` pool. Rendering and
 its product-scaling diagnostic run sequentially on the same worker. Competitors

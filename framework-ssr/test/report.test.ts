@@ -64,6 +64,15 @@ function capture(smoke = false): Capture {
     })),
   };
 }
+test("Proa-only full-duration diagnostics cannot satisfy publication", () => {
+  const result = capture();
+  result.captureKind = "engineering";
+  result.engines = result.engines.filter((e) => e.id === "proa");
+  expect(() => validateResult(result, false)).not.toThrow();
+  expect(() => validateResult(result, true)).toThrow();
+  result.engines[0].phases[0].loadGeneratorValid = false;
+  expect(() => validateResult(result, false)).toThrow();
+});
 test("publication rejects incomplete rosters, duplicate repeats, failures and generator limits", () => {
   expect(() => validateResult(capture())).not.toThrow();
   const mutations: ((c: Capture) => void)[] = [

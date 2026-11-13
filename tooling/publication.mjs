@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -175,6 +176,10 @@ export function validateAdmissionChecks(checks, result) {
 }
 
 export async function verifyPublication(root) {
+  assert.ok(
+    !existsSync(join(root, "site/proa-refresh.json")),
+    "Proa-only review refresh selected: rerun the complete comparison campaign before merge or launch, then remove site/proa-refresh.json",
+  );
   const results = {};
   // Check the campaign first so historical data reports the actionable blocker.
   for (const [id, suite] of Object.entries(suites)) {

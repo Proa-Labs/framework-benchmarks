@@ -995,7 +995,7 @@ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
 [[package]]
 name = "itoa_lut"
 version = "0.1.2"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 
 [[package]]
 name = "jiff"
@@ -1654,7 +1654,7 @@ dependencies = [
 [[package]]
 name = "proa_core"
 version = "0.4.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 dependencies = [
  "bytes",
  "dashmap",
@@ -1676,7 +1676,7 @@ dependencies = [
 [[package]]
 name = "proa_dsl"
 version = "0.2.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 dependencies = [
  "comrak",
  "proa_html_policy",
@@ -1691,7 +1691,7 @@ dependencies = [
 [[package]]
 name = "proa_framework_axum"
 version = "0.4.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 dependencies = [
  "anyhow",
  "axum",
@@ -1735,7 +1735,7 @@ dependencies = [
 [[package]]
 name = "proa_framework_core"
 version = "0.4.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 dependencies = [
  "async-stream",
  "bytes",
@@ -1757,12 +1757,12 @@ dependencies = [
 [[package]]
 name = "proa_html_policy"
 version = "0.1.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 
 [[package]]
 name = "proa_ir"
 version = "0.2.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 dependencies = [
  "regex",
  "serde",
@@ -1773,7 +1773,7 @@ dependencies = [
 [[package]]
 name = "proa_macros"
 version = "0.4.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 dependencies = [
  "proa_dsl",
  "proc-macro2",
@@ -1785,7 +1785,7 @@ dependencies = [
 [[package]]
 name = "proa_stream"
 version = "0.4.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 dependencies = [
  "base64",
  "bytes",
@@ -2064,7 +2064,7 @@ dependencies = [
 [[package]]
 name = "rsjs"
 version = "0.3.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 dependencies = [
  "base64",
  "linkme",
@@ -2081,7 +2081,7 @@ dependencies = [
 [[package]]
 name = "rsjs_ir"
 version = "0.3.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 dependencies = [
  "rsjs_web",
  "serde",
@@ -2092,7 +2092,7 @@ dependencies = [
 [[package]]
 name = "rsjs_macros"
 version = "0.3.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 dependencies = [
  "proa_dsl",
  "proc-macro2",
@@ -2107,7 +2107,7 @@ dependencies = [
 [[package]]
 name = "rsjs_transport"
 version = "0.2.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 dependencies = [
  "serde_json",
  "sha2",
@@ -2116,7 +2116,7 @@ dependencies = [
 [[package]]
 name = "rsjs_web"
 version = "0.3.0"
-source = "git+https://github.com/Proa-Labs/proa?branch=main#bbbc9684335109949257eea8b4c98bb7bc8572ae"
+source = "git+https://github.com/Proa-Labs/proa?branch=main#ceffd9f305acabbb0584fa181df4f4e2d7883e94"
 
 [[package]]
 name = "rustc-hash"

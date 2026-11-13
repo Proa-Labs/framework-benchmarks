@@ -30,6 +30,26 @@ export async function command(args: string[], cwd = root, env = environment) {
   if (code)
     throw new Error(`${args[0]} ${args.slice(1).join(" ")} failed (${code})`);
 }
+export async function buildProa() {
+  await Bun.write(
+    join(here, "adapters/proa/fixture.json"),
+    `${JSON.stringify(fixture)}\n`,
+  );
+  await Bun.write(
+    join(here, "adapters/proa/cards.json"),
+    `${JSON.stringify(cards, null, 2)}\n`,
+  );
+  await command([
+    "cargo",
+    "build",
+    "--release",
+    "--locked",
+    "--manifest-path",
+    join(here, "adapters/proa/Cargo.toml"),
+    "--target-dir",
+    targetDirectory,
+  ]);
+}
 export async function buildAll() {
   if (Bun.version !== "1.4.2") throw new Error("Use pinned Bun 1.4.2");
   for (const engine of ["next", "astro", "exact", "proa", "sveltekit"]) {
@@ -121,16 +141,7 @@ export async function buildAll() {
     "-p",
     join(here, "tsconfig.adapters.json"),
   ]);
-  await command([
-    "cargo",
-    "build",
-    "--release",
-    "--locked",
-    "--manifest-path",
-    join(here, "adapters/proa/Cargo.toml"),
-    "--target-dir",
-    targetDirectory,
-  ]);
+  await buildProa();
   console.log("Built all five production framework adapters");
 }
 if (import.meta.main) await buildAll();

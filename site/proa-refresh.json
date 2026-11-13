@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "reviewOnly": true,
+  "beforeRevision": "bbbc9684335109949257eea8b4c98bb7bc8572ae",
+  "afterRevision": "ceffd9f305acabbb0584fa181df4f4e2d7883e94",
+  "baseline": {
+    "rendering": {
+      "captureId": "canonical-ssr-v1-2026-11-13T18-11-27-817Z-1ab1ba3f",
+      "sha256": "65cf52dfa281e5fc3974dc48bc130ad257496b1a2df11e6aa97cb5edf6b23392"
+    },
+    "framework": {
+      "captureId": "framework-ssr-2026-11-13T18-10-06-942Z-e0b9cc12",
+      "sha256": "0e30b8aec3e31ab632aec55f5e8a2edbf75b769db84c537330c59f851bf3619c"
+    },
+    "http": {
+      "captureId": "page-load-2026-11-13T18-09-45-057Z-932f76a8",
+      "sha256": "8b9977e13fac5bc7686806a745ee4d0e3057c1cf4931a4f2ede36a708ef6ae29"
+    },
+    "streaming": {
+      "captureId": "suspense-load-2026-11-13T18-09-36-381Z-310de6c0",
+      "sha256": "c04a4cb0722fe61a1c5a9f8ac54fc4346841621d33722f224824ed6a9c7f125a"
+    },
+    "startup": {
+      "captureId": "cold-start-2026-11-13T18-09-41-324Z-10eaff36",
+      "sha256": "6b1e16b286c877f422cafad8acf3b1334db90c69bb2ec54c58853d8e12a06e82"
+    }
+  },
+  "runs": {
+    "rendering": {
+      "baseline": "canonical-ssr-v1-2026-11-13T20-56-06-313Z-30021088",
+      "merged": "canonical-ssr-v1-2026-11-13T20-58-02-708Z-6010adcf"
+    },
+    "scaling": {
+      "baseline": "product-scaling-v1-2026-11-13T20-56-12-539Z-ebed13d7",
+      "merged": "product-scaling-v1-2026-11-13T20-58-08-676Z-e24e7516"
+    },
+    "framework": {
+      "baseline": "framework-ssr-2026-11-13T21-03-22-358Z-1a4e0170",
+      "merged": "framework-ssr-2026-11-13T21-09-36-787Z-8f9b6dd1"
+    },
+    "http": {
+      "baseline": "page-load-2026-11-13T20-53-53-725Z-19abddcb",
+      "merged": "page-load-2026-11-13T20-56-26-679Z-bcf50b0d"
+    },
+    "streaming": {
+      "baseline": "suspense-load-2026-11-13T21-05-17-966Z-51d19d5c",
+      "merged": "suspense-load-2026-11-13T21-09-38-025Z-b4b4b312"
+    },
+    "startup": {
+      "baseline": "cold-start-2026-11-13T20-54-18-373Z-3a15a433",
+      "merged": "cold-start-2026-11-13T20-54-48-031Z-7b170748"
+    }
+  },
+  "artifactSha256": {
+    "canonical-ssr-v1-2026-11-13T20-56-06-313Z-30021088": "d47ecbb24d06923c156dbeaf5841dbea91e2494dc6e047050c2453f293e371e8",
+    "canonical-ssr-v1-2026-11-13T20-58-02-708Z-6010adcf": "8a11b0f8a5ccaaf9c12b610bbfed562905f0b085def6b850af8c291c4054d00f",
+    "product-scaling-v1-2026-11-13T20-56-12-539Z-ebed13d7": "67013ee5a52266371313a94f256b3e447990e1c1bb511ca2e7afb7ea2641f270",
+    "product-scaling-v1-2026-11-13T20-58-08-676Z-e24e7516": "26b28106511500a09082df4acff8334ad3cca54f91959e7746ae5cc615bcc1f9",
+    "framework-ssr-2026-11-13T21-03-22-358Z-1a4e0170": "528bbc0f11799a985c6566b32c369d33a42364e879dabaaf5857060d745983a6",
+    "framework-ssr-2026-11-13T21-09-36-787Z-8f9b6dd1": "b46df5a13bfb203106bb24c7b1d103d9d1d037e155ced68a6e15afa86940f63b",
+    "page-load-2026-11-13T20-53-53-725Z-19abddcb": "2e362da2c1130680391866b7b730231dd2dca93eb28a54680a1be9bbe760a7f2",
+    "page-load-2026-11-13T20-56-26-679Z-bcf50b0d": "e700fc729b0dbabb7ba6b5e42d13c2c9b2db820ac7024def9fa97e9720be35d8",
+    "suspense-load-2026-11-13T21-05-17-966Z-51d19d5c": "2c501a777b2583223e643e401c3b5b5bb914de6bb9f599046dc6e71b1553772c",
+    "suspense-load-2026-11-13T21-09-38-025Z-b4b4b312": "4e7d150ef1af044940bb9bef51b6ceda1be954bd69b07ae5f4509d2389388a24",
+    "cold-start-2026-11-13T20-54-18-373Z-3a15a433": "e401a42a9e4870ff68ca5e258607e2711b1cd613e2669dafcf86fec557cadfd1",
+    "cold-start-2026-11-13T20-54-48-031Z-7b170748": "f04159868b726d542a010e821adc4a6943ac11cabca2ffff6dc3ad0da8f54c40"
+  }
+}

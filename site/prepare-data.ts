@@ -5,7 +5,7 @@ import suites from "../tooling/suites.json" with { type: "json" };
 import { validateCapture } from "../tooling/validate.mjs";
 import { verifySourceSnapshot } from "../tooling/verify-source.mjs";
 import type { View } from "./benchmark-types.ts";
-import { loadInputs, normalize } from "./data.ts";
+import { captures, loadInputs, normalize } from "./data.ts";
 import {
   featureRows,
   features,
@@ -14,6 +14,7 @@ import {
   updatedOn,
 } from "./features-data.ts";
 import { buildPreviews } from "./previews.ts";
+import { copyProaRefreshEvidence } from "./proa-refresh.ts";
 import { required } from "./required.ts";
 export const siteRoot = dirname(fileURLToPath(import.meta.url));
 export const generatedDirectory = join(siteRoot, ".generated");
@@ -26,6 +27,8 @@ export async function prepareData() {
   const outputDirectory = join(generatedDirectory, "public");
   await mkdir(join(outputDirectory, "data/captures"), { recursive: true });
   await cp(join(siteRoot, "public"), outputDirectory, { recursive: true });
+  if (input.reviewRefresh)
+    await copyProaRefreshEvidence(dirname(siteRoot), outputDirectory, captures);
   await Promise.all(
     Object.entries(buffers).map(([id, buffer]) =>
       writeFile(join(outputDirectory, "data/captures", `${id}.json`), buffer),

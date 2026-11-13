@@ -533,7 +533,28 @@ try {
     new URL(relatedData.framework.download, server.url).href,
   );
   assert.equal(raw.status(), 200);
-  assert.equal((await raw.json()).captureKind, "publication");
+  const rawCapture = await raw.json();
+  assert.equal(
+    rawCapture.captureKind,
+    relatedData.framework.reviewRefresh ? "review" : "publication",
+  );
+  if (relatedData.framework.reviewRefresh) {
+    assert.equal(await page.locator("[data-review-note]").isVisible(), true);
+    const evidence = await context.request.get(
+      `${server.url}/data/proa-refresh/manifest.json`,
+    );
+    assert.equal(evidence.status(), 200);
+    assert.equal((await evidence.json()).reviewOnly, true);
+    const original = await (
+      await context.request.get(
+        `${server.url}/data/proa-refresh/baseline/framework.json`,
+      )
+    ).json();
+    assert.deepEqual(
+      rawCapture.engines.filter((e: { id: string }) => e.id !== "proa"),
+      original.engines.filter((e: { id: string }) => e.id !== "proa"),
+    );
+  }
   await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
   assert.equal(await page.locator("[data-renderer-comparison]").count(), 1);
   assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
@@ -1344,7 +1365,7 @@ try {
     await context.request.get(`${server.url}/data/results.json`)
   ).json();
   const expectedNote = captures.rendering.refresh?.note || "";
-  const serverNote = initial.locator("[data-capture-note]");
+  const serverNote = initial.locator("[data-capture-note-copy]");
   assert.equal(await serverNote.isVisible(), false);
   assert.equal(await serverNote.textContent(), expectedNote);
   await initial.evaluate(() => document.fonts.ready);
@@ -1355,7 +1376,7 @@ try {
   await page.evaluate(() => document.fonts.ready);
   assert.equal(await page.locator("[data-capture-note]").isVisible(), false);
   assert.equal(
-    await page.locator("[data-capture-note]").textContent(),
+    await page.locator("[data-capture-note-copy]").textContent(),
     expectedNote,
   );
   const hydratedTable = required(
@@ -1385,14 +1406,21 @@ try {
     await page.locator("[data-experiment-description]").textContent(),
     coldStartDefinition,
   );
-  assert.equal(await page.locator("[data-capture-note]").isVisible(), false);
+  assert.equal(
+    await page.locator("[data-capture-note]").isVisible(),
+    Boolean(captures.startup.reviewRefresh),
+  );
+  assert.equal(
+    await page.locator("[data-capture-note-copy]").textContent(),
+    captures.startup.reviewRefresh?.note || "",
+  );
   await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
   assert.equal(
     await page.locator("[data-experiment-description]").isVisible(),
     false,
   );
   assert.equal(
-    await page.locator("[data-capture-note]").textContent(),
+    await page.locator("[data-capture-note-copy]").textContent(),
     expectedNote,
   );
   checks.push(

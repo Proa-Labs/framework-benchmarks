@@ -55,6 +55,9 @@ export interface Workload {
 }
 export interface BaseRow {
   id: string;
+  source?: string;
+  captureId?: string;
+  capturedAt?: string;
   detail: string;
   errors?: number;
   p50?: number;
@@ -121,6 +124,7 @@ export interface StartupRow
 }
 export type ChartRow = RenderRow | HttpRow | StreamRow | StartupRow;
 export interface CaptureMeta {
+  reviewRefresh?: { note: string };
   date: string;
   capturedAt: string;
   capture: string;
@@ -214,6 +218,17 @@ export interface RawRun {
   source_capture_id?: string;
 }
 export interface Inputs {
+  reviewRefresh?: Record<
+    View,
+    {
+      note: string;
+      baseline_capture_id: string;
+      baseline_captured_at: string;
+      proa_capture_id: string;
+      proa_captured_at: string;
+      proa_revision: string;
+    }
+  >;
   rendering: RenderingCapture;
   http: HttpCapture;
   streaming: typeof streaming;

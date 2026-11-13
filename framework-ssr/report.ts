@@ -86,7 +86,9 @@ export function validateResult(result: Capture, publication = true) {
     assert.deepEqual(result.scenario.workloads, contract.workloads);
   assert.deepEqual(
     [...result.engines.map((e) => e.id)].sort(),
-    [...expected.engines].sort(),
+    result.captureKind === "engineering" && !publication
+      ? ["proa"]
+      : [...expected.engines].sort(),
   );
   assert.ok(Number.isFinite(Date.parse(result.capturedAt)));
   assert.match(result.source.sourceSha256, /^[a-f0-9]{64}$/);
@@ -129,7 +131,9 @@ export function validateResult(result: Capture, publication = true) {
         for (const phase of phases) {
           assert.equal(
             phase.durationSeconds,
-            publication && result.schemaVersion === 2 && mode === "closed"
+            result.captureKind !== "smoke" &&
+              result.schemaVersion === 2 &&
+              mode === "closed"
               ? contract.workloads.find((w) => w.id === workload.id)
                   ?.capacityDurationSeconds
               : result.methodology.durationSeconds,
@@ -142,7 +146,7 @@ export function validateResult(result: Capture, publication = true) {
               `${engine.id}/${workload.id} unequal offered load`,
             );
           assert.equal(phase.errorCount, 0, `${engine.id} failed requests`);
-          if (publication)
+          if (result.captureKind !== "smoke")
             assert.equal(
               phase.loadGeneratorValid,
               true,

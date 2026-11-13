@@ -298,6 +298,20 @@ export function PerformancePage({
               </button>
             </div>
             <ChartMarkup model={model} initialChart={initialChart} />
+            <p
+              data-review-note
+              hidden={!capture.reviewRefresh}
+              className="mt-4 text-xs leading-relaxed text-muted"
+            >
+              Proa uses the newer PR #86 run; peers retain the previous
+              campaign. Separate runs on matching C4 machines.{" "}
+              <a
+                href="/data/proa-refresh/manifest.json"
+                className="underline underline-offset-4"
+              >
+                Refresh evidence ↗
+              </a>
+            </p>
 
             <div className="fw-chart-note" data-chart-note="">
               {initialChart.note}
@@ -350,7 +364,20 @@ export function PerformancePage({
                     })()}
                   </span>
                   <p data-capture-note hidden={!captureNote}>
-                    {captureNote}
+                    <span data-capture-note-copy>{captureNote}</span>
+                    {capture.reviewRefresh && (
+                      <>
+                        {" "}
+                        <a
+                          className="underline underline-offset-4"
+                          href="/data/proa-refresh/manifest.json"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Refresh evidence ↗
+                        </a>
+                      </>
+                    )}
                   </p>
                   <p data-scope="">{model.suites[state.view].scope}</p>
                   <p data-method="">{model.suites[state.view].method}</p>
@@ -395,18 +422,26 @@ export function PerformancePage({
                   </div>
                   <p data-source="">
                     <a href={capture.download} download>
-                      Original capture ↗
+                      {capture.reviewRefresh
+                        ? "Review comparison ↗"
+                        : "Original capture ↗"}
                     </a>
                     {" · "}
                     <a
-                      href={`https://github.com/Proa-Labs/framework-benchmarks/blob/main/${capture.source}`}
+                      href={
+                        capture.reviewRefresh
+                          ? "/data/proa-refresh/manifest.json"
+                          : `https://github.com/Proa-Labs/framework-benchmarks/blob/main/${capture.source}`
+                      }
                     >
                       View source ↗
                     </a>
                     <br />
                     <span className="fw-source-hash">
-                      Source SHA-256 {capture.hash} · Artifact SHA-256{" "}
-                      {capture.artifactSha256}
+                      {capture.reviewRefresh
+                        ? "Proa source SHA-256"
+                        : "Source SHA-256"}{" "}
+                      {capture.hash} · Artifact SHA-256 {capture.artifactSha256}
                     </span>
                     {capture.note && (
                       <>

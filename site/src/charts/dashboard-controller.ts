@@ -895,10 +895,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     $("[data-scope]").textContent = suites[state.view].scope;
     $("[data-method]").textContent = suites[state.view].method;
     const captureNote = $("[data-capture-note]");
-    captureNote.textContent = model.captureNote();
+    $("[data-review-note]").hidden = !s.reviewRefresh;
+    captureNote.innerHTML = `<span data-capture-note-copy>${esc(model.captureNote())}</span>${s.reviewRefresh ? ' <a class="underline underline-offset-4" href="/data/proa-refresh/manifest.json" target="_blank" rel="noreferrer">Refresh evidence ↗</a>' : ""}`;
     captureNote.hidden = !captureNote.textContent;
     $("[data-source]").innerHTML =
-      `<a href="${s.download}" download>Original capture ↗</a> · <a href="https://github.com/Proa-Labs/framework-benchmarks/blob/main/${s.source}" target="_blank" rel="noreferrer">View source ↗</a><br><span class="fw-source-hash">${s.sourceSnapshot ? `<a href="${s.sourceSnapshot}" download>Captured source snapshot ↗</a><br>` : ""}Source SHA-256 ${esc(s.hash)} · Artifact SHA-256 ${esc(s.artifactSha256)}</span>${s.note ? `<br>${esc(s.note)}` : ""}`;
+      `<a href="${s.download}" download>${s.reviewRefresh ? "Review comparison" : "Original capture"} ↗</a> · <a href="${s.reviewRefresh ? "/data/proa-refresh/manifest.json" : `https://github.com/Proa-Labs/framework-benchmarks/blob/main/${s.source}`}" target="_blank" rel="noreferrer">View source ↗</a><br><span class="fw-source-hash">${s.sourceSnapshot ? `<a href="${s.sourceSnapshot}" download>Captured source snapshot ↗</a><br>` : ""}${s.reviewRefresh ? "Proa source SHA-256" : "Source SHA-256"} ${esc(s.hash)} · Artifact SHA-256 ${esc(s.artifactSha256)}</span>${s.note ? `<br>${esc(s.note)}` : ""}`;
     $$<HTMLInputElement>("[data-engine]").forEach((el) => {
       (el as HTMLInputElement).checked = state.selected.includes(
         required(el.dataset.engine),
@@ -935,6 +936,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
             ? model.comparisonMeasurements()
             : rows;
     const exportData = {
+      reviewRefresh: s.reviewRefresh,
       measurementStatus:
         metric() === "breakdown" ? "not instrumented" : "measured",
       experiment: state.view,
@@ -996,7 +998,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
           : null,
       unit: state.chart === "compare" ? "per row" : unit(),
       capturedAt: s.capturedAt,
-      source: suites[state.view].path,
+      source: s.source,
       hash: s.hash,
       method: suites[state.view].method,
       scope: suites[state.view].scope,
@@ -1045,6 +1047,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
             "errors",
             "fixture",
             "fixture_notes_url",
+            "review_refresh",
           ],
           ...exportRows.map((r) => {
             const latency =
@@ -1065,6 +1068,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
               r.errors ?? "",
               "fixture" in r ? r.fixture : "",
               "adaptation" in r ? (r.adaptation?.details ?? "") : "",
+              s.reviewRefresh?.note ?? "",
             ];
           }),
         ]

@@ -21,7 +21,14 @@ import {
   captureId as newCaptureId,
   retainCapture,
 } from "../tooling/captures.mjs";
-import { buildAll, environment, here, root, targetDirectory } from "./build.ts";
+import {
+  buildAll,
+  buildProa,
+  environment,
+  here,
+  root,
+  targetDirectory,
+} from "./build.ts";
 import contract from "./contract.json";
 import { sha256, validateSemanticHtml } from "./parity.mjs";
 import {
@@ -39,6 +46,10 @@ if (!globalThis.Bun || Bun.version !== "1.4.2")
 const smoke = process.argv.includes("--smoke");
 const parityOnly = process.argv.includes("--parity-only");
 const noBuild = process.argv.includes("--no-build");
+const proaOnly = process.argv.includes("--proa-only");
+const selectedEngines = proaOnly ? ["proa"] : contract.engines;
+if (proaOnly && smoke)
+  throw new Error("Proa-only diagnostics use full sampling; omit --smoke");
 const argument = (name: string, fallback: string) => {
   const i = process.argv.indexOf(name);
   return i < 0 ? fallback : process.argv[i + 1];
@@ -64,6 +75,14 @@ const output = resolve(
 assert.ok(output.endsWith(".json"), "Capture output must end in .json");
 if (smoke && output === join(here, "results/latest.json"))
   throw new Error("Smoke captures cannot replace latest.json");
+if (
+  proaOnly &&
+  (!process.argv.includes("--out") ||
+    output === join(here, "results/latest.json"))
+)
+  throw new Error(
+    "Proa-only diagnostics require an explicit non-publication --out path",
+  );
 const workersCount = Number(argument("--workers", "8"));
 const headers = {
   accept: "text/html",
@@ -138,13 +157,13 @@ async function response(id: string, request: string, workload: string) {
   return result;
 }
 try {
-  if (!noBuild) await buildAll();
+  if (!noBuild) await (proaOnly ? buildProa() : buildAll());
   const source = await gitMetadata(root, sourceFiles);
   const captureId = newCaptureId("framework-ssr");
   const captureDirectory = join(
     here,
     "results",
-    smoke || parityOnly ? "local" : ".",
+    smoke || parityOnly || proaOnly ? "local" : ".",
   );
   const raw = join(captureDirectory, "raw", captureId);
   await mkdir(raw, { recursive: true });
@@ -159,7 +178,7 @@ try {
     }
   > = [];
   // Complete the entire admission matrix before any timed phase starts.
-  for (const id of contract.engines) {
+  for (const id of selectedEngines) {
     const server = serverFor(id);
     try {
       const health = await ready(server, id);
@@ -218,16 +237,16 @@ try {
   }
   if (parityOnly) {
     console.log(
-      "All 15 framework/workload admission cells passed; no timings collected.",
+      `All ${selectedEngines.length * contract.workloads.length} framework/workload admission cells passed; no timings collected.`,
     );
   } else {
     workers = await spawnWorkers(workersCount);
     for (const workload of contract.workloads)
       for (const mode of ["closed", "open"] as const)
         for (let repeat = 1; repeat <= policy.repeats; repeat++) {
-          const order = contract.engines.map(
+          const order = selectedEngines.map(
             (_, i) =>
-              contract.engines[(i + repeat - 1) % contract.engines.length],
+              selectedEngines[(i + repeat - 1) % selectedEngines.length],
           );
           for (const id of order) {
             const engine = engines.find((e) => e.id === id);
@@ -306,7 +325,7 @@ try {
     const result = {
       schemaVersion: 2,
       status: "pass",
-      captureKind: smoke ? "smoke" : "publication",
+      captureKind: smoke ? "smoke" : proaOnly ? "engineering" : "publication",
       captureId,
       capturedAt: new Date().toISOString(),
       host: {
@@ -323,9 +342,16 @@ try {
         build: "bun framework-ssr/build.ts",
         capture: "bun framework-ssr/run.ts",
       },
-      limitations: contract.limitations,
+      limitations: [
+        ...contract.limitations,
+        ...(proaOnly
+          ? [
+              "Proa-only diagnostic; peer results were not rerun. This capture cannot replace the published comparison.",
+            ]
+          : []),
+      ],
     } satisfies Capture;
-    validateResult(result, !smoke);
+    validateResult(result, !smoke && !proaOnly);
     await mkdir(join(here, "results"), { recursive: true });
     retainCapture(root, captureDirectory, result, sourceFiles);
     atomicWrite(output, `${JSON.stringify(result, null, 2)}\n`);

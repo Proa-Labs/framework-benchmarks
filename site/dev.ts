@@ -104,7 +104,9 @@ export async function startServer({
       watch(siteRoot, (_event, name) => {
         if (
           name &&
-          /^(feature.*\.(ts|json)|catalog\.json|data\.ts)$/.test(name)
+          /^(feature.*\.(ts|json)|catalog\.json|proa-refresh\.json|data\.ts)$/.test(
+            name,
+          )
         )
           changed();
       }),

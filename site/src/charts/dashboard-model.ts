@@ -362,7 +362,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
         suite: "rendering" as const,
         unit: "µs",
         capturedAt: row.capturedAt,
-        source: suites.rendering.path,
+        source: row.source ?? suites.rendering.path,
         latency: {
           values: row,
           unit: "µs",
@@ -475,6 +475,8 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     return "";
   }
   function captureNote() {
+    const review = data[state.view].reviewRefresh;
+    if (review) return review.note;
     return state.view === "rendering" ? data.rendering.refresh?.note || "" : "";
   }
 

@@ -30,6 +30,7 @@
     "report": "framework-ssr/report.ts",
     "requires": ["git", "tar", "cargo", "Bun", "Exact pinned source"],
     "options": {
+      "proa-only": "flag",
       "out": "value",
       "workers": "value",
       "no-build": "flag",
