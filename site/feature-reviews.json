@@ -1,6 +1,6 @@
 {
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-11",
+  "updatedOn": "2026-11-13",
   "reviews": [
     {
       "id": "askama",
@@ -14018,9 +14018,9 @@
     },
     {
       "id": "topcoat",
-      "scope": "Topcoat 0.3.1 crate README and roadmap; early-stage and experimental.",
+      "scope": "Streaming and Suspense reviewed against Topcoat 0.12.1; other feature findings retain the 0.3.1 review. Render benchmarks use 0.3.1.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -14028,14 +14028,16 @@
           "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
         },
         "streaming": {
-          "status": "planned",
-          "note": "Streaming SSR / Suspense is an unchecked roadmap item in the reviewed version.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "status": "native",
+          "note": "live!() and emit!() send initial HTML and later region updates over the original HTTP response. Available since 0.7; verified in 0.12.1. Optional WebSocket updates can continue after the initial page load.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view/live.md",
+          "reviewedOn": "2026-11-13"
         },
         "suspense": {
-          "status": "planned",
-          "note": "Streaming SSR / Suspense is an unchecked roadmap item in the reviewed version.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "status": "native",
+          "note": "The built-in suspense component shows fallback UI while async child content loads, then streams the result into place. Available since 0.7; verified in 0.12.1.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view/live.md#suspense-and-error-boundaries",
+          "reviewedOn": "2026-11-13"
         },
         "client": {
           "status": "native",

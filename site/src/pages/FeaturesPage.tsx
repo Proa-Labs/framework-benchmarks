@@ -46,6 +46,12 @@ const defaults = {
   types: ["frameworks", "templates"],
 };
 const categories = [{ id: "all", label: "All features" }, ...featureGroups];
+const updatedDateLabel = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+}).format(new Date(evidence.updatedOn));
 const count = (group: string) =>
   features.filter((feature) => group === "all" || feature.group === group)
     .length;
@@ -1079,7 +1085,8 @@ export function FeaturesPage({
             </p>
             <div className="fw-feature-review-bar">
               <span>
-                Updated <time dateTime={evidence.updatedOn}>Nov 11, 2026</time>
+                Updated{" "}
+                <time dateTime={evidence.updatedOn}>{updatedDateLabel}</time>
               </span>
               <details className="fw-feature-key">
                 <summary>Support key</summary>
