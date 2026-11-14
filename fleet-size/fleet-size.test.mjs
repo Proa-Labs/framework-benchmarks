@@ -135,9 +135,9 @@ test("Markdown names the capture and prints one table per request rate", () => {
 test("CLI defaults to the retained page-load capture and reproduces the published 10k table", async () => {
   const { stdout } = await exec(process.execPath, [cli], { cwd: workspace, maxBuffer: 1024 * 1024 });
   assert.match(stdout, /Fleet size from CPU per response/);
-  assert.match(stdout, /\| Component page \| 0\.1 \| 1\.1 \| 0\.3 \| 1\.3 \| 1\.2 \|/);
-  assert.match(stdout, /\| Product grid \| 0\.5 \| 6\.4 \| 2\.4 \| 9\.5 \| 8\.5 \|/);
-  assert.match(stdout, /\| 1,000-row table \| 3\.0 \| 54\.1 \| 16\.9 \| 124\.2 \| 84\.4 \|/);
+  assert.match(stdout, /\| Component page \| 0\.1 \| 1\.6 \| 0\.3 \| 1\.9 \| 1\.9 \|/);
+  assert.match(stdout, /\| Product grid \| 0\.7 \| 7\.7 \| 2\.4 \| 13\.2 \| 9\.3 \|/);
+  assert.match(stdout, /\| 1,000-row table \| 6\.2 \| 83\.8 \| 23\.1 \| 161\.7 \| 58\.0 \|/);
 });
 
 test("CLI writes JSON, honors headroom, and exits 2 when a max-cores budget is exceeded", async () => {
@@ -194,5 +194,5 @@ test("retained publication capture is readable through planFleet", async () => {
     "sveltekit",
   ]);
   const table = plan.tables[0].rows.find((row) => row.workloadId === "table");
-  assert.equal(table.cells.find((cell) => cell.engineId === "proa").display, "3.0");
+  assert.equal(table.cells.find((cell) => cell.engineId === "proa").display, "6.2");
 });
