@@ -126,6 +126,9 @@
   #frameworks-explorer .fw-percentile-popover {
     @apply absolute [z-index:80] [width:max-content] [max-width:calc(100%_-_16px)] [background:var(--fw-surface)] text-ink [border:1px_solid_var(--fw-border)] [border-radius:9px] [padding:16px] [box-shadow:0_16px_48px_#0009,_0_2px_8px_#0006] pointer-events-none [font:12px_/_1.5_Arial,_Helvetica,_sans-serif];
   }
+  #frameworks-explorer .fw-percentile-popover[data-support-popover] {
+    @apply pointer-events-auto;
+  }
   #frameworks-explorer .fw-popover-identity {
     @apply flex items-center [gap:9px];
   }
@@ -176,6 +179,18 @@
   }
   #frameworks-explorer .fw-popover-renderer {
     @apply text-left [overflow-wrap:anywhere];
+  }
+  #frameworks-explorer .fw-fixture-adapted {
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: color-mix(in srgb, #b45353 65%, var(--fw-muted));
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    text-decoration-skip-ink: none;
+  }
+  #frameworks-explorer .fw-popover-scope a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
   #frameworks-explorer .fw-popover-scope {
     @apply [margin-top:10px] [padding-top:9px] [border-top:1px_solid_var(--fw-line)] text-muted [max-width:370px] [font-size:11px];
@@ -386,6 +401,10 @@
   }
   #frameworks-explorer .fw-toolbar select {
     @apply [background:var(--fw-surface)] [border:1px_solid_var(--fw-line)] [padding:6px_8px] [border-radius:3px] [font-size:11px] [max-width:100%];
+  }
+  #frameworks-explorer select.fw-native-select {
+    @apply appearance-none bg-no-repeat [background-position:right_12px_center] [background-size:12px_12px] [padding-right:34px];
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%237c8796' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
   }
   #frameworks-explorer .fw-unit {
     @apply [margin-left:auto] text-muted [font:11px_monospace];
@@ -947,16 +966,6 @@
   #frameworks-explorer .fw-source-hash {
     @apply [overflow-wrap:anywhere] [font-size:10px];
   }
-  #frameworks-explorer .fw-site-footer {
-    @apply flex flex-wrap [gap:20px] items-center justify-between text-muted [border-top:1px_solid_var(--fw-line)] [margin-top:38px] [padding:24px_0_32px] [font-size:10px];
-  }
-  #frameworks-explorer .fw-site-footer > div {
-    @apply flex flex-wrap [gap:22px];
-  }
-  #frameworks-explorer .fw-site-footer a,
-  #frameworks-explorer .fw-site-footer button {
-    @apply no-underline text-muted [font-size:10px];
-  }
   #frameworks-explorer .fw-table-scroll {
     @apply overflow-x-auto;
   }
@@ -1006,9 +1015,6 @@
   .document .disclosure {
     @apply [border-left:2px_solid_var(--fw-border)] [padding:12px_20px] [background:var(--fw-surface)];
   }
-  .document footer {
-    @apply [font-size:12px] [margin-top:45px] [padding-top:20px] [border-top:1px_solid_var(--fw-line)];
-  }
   @media (max-width: 800px) {
     #frameworks-explorer {
       @apply [padding:24px_22px_0];
@@ -1053,12 +1059,6 @@
     }
     #frameworks-explorer .fw-catalog-row a {
       @apply [grid-column:2_/_-1] text-left;
-    }
-    #frameworks-explorer .fw-site-footer {
-      @apply [gap:17px] [margin-top:25px];
-    }
-    #frameworks-explorer .fw-site-footer > div {
-      @apply [gap:18px];
     }
   }
 
@@ -1381,7 +1381,7 @@
     @apply [width:800px] [height:640px] [border:0] [transform:scale(0.05)] [transform-origin:top_left] pointer-events-none;
   }
   #frameworks-explorer .fw-fixture-dialog {
-    @apply [width:min(1100px,_calc(100%_-_32px))] [height:min(850px,_calc(100dvh_-_40px))] [padding:16px] [border:1px_solid_var(--fw-border)] [border-radius:9px] text-ink [background:var(--fw-bg)];
+    @apply fixed [inset:0] [margin:auto] [width:min(1100px,_calc(100%_-_32px))] [height:min(850px,_calc(100dvh_-_40px))] [padding:16px] [border:1px_solid_var(--fw-border)] [border-radius:9px] text-ink [background:var(--fw-bg)];
   }
   #frameworks-explorer .fw-fixture-dialog::backdrop {
     @apply [background:#0009];
@@ -1615,7 +1615,7 @@
     @apply [border-bottom-color:var(--fw-fg)];
   }
   #frameworks-explorer .fw-experiment-tab [role="tab"] {
-    @apply [border-bottom:0] [margin-bottom:0];
+    @apply inline-flex items-center [gap:5px] [border-bottom:0] [margin-bottom:0];
   }
   #frameworks-explorer .fw-experiment-info {
     @apply inline-flex items-center justify-center [width:24px] [height:28px] [padding:0] [border-radius:4px];
@@ -1953,7 +1953,7 @@
       @apply flex items-center [gap:12px] [margin-bottom:22px] text-muted [font-size:12px];
     }
     #frameworks-explorer .fw-feature-mobile-category select {
-      @apply [min-width:0] [flex:1] [padding:9px] text-ink [border:1px_solid_var(--fw-line)] [border-radius:6px] [background:var(--fw-surface)] [font:inherit];
+      @apply [min-width:0] [flex:1] [padding:9px_34px_9px_9px] text-ink [border:1px_solid_var(--fw-line)] [border-radius:6px] [background-color:var(--fw-surface)] [font:inherit];
     }
     #frameworks-explorer .fw-feature-heading h2 {
       @apply [font-size:18px];
@@ -1963,7 +1963,7 @@
     }
   }
   #frameworks-explorer .fw-feature-dialog {
-    @apply fixed [width:min(780px,_calc(100vw_-_40px))] [max-height:min(760px,_calc(100dvh_-_48px))] [box-sizing:border-box] overflow-hidden [padding:0] [border:1px_solid_var(--fw-line)] [border-radius:12px] text-ink [background:var(--fw-bg)] [box-shadow:0_24px_80px_rgb(0_0_0_/_22%)];
+    @apply fixed [inset:0] [margin:auto] [width:min(780px,_calc(100vw_-_40px))] [max-height:min(760px,_calc(100dvh_-_48px))] [box-sizing:border-box] overflow-hidden [padding:0] [border:1px_solid_var(--fw-line)] [border-radius:12px] text-ink [background:var(--fw-bg)] [box-shadow:0_24px_80px_rgb(0_0_0_/_22%)];
   }
   #frameworks-explorer .fw-feature-dialog[open] {
     @apply flex flex-col;
@@ -2012,7 +2012,7 @@
     @apply [background:var(--fw-hover)] text-ink;
   }
   #frameworks-explorer .fw-profile-nav small {
-    @apply [font-size:10px] [opacity:0.65];
+    @apply [font-size:10px];
   }
   #frameworks-explorer .fw-profile-capabilities,
   #frameworks-explorer .fw-profile-findings {

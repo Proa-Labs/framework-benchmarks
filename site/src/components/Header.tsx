@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ThemeToggle } from "./ThemeToggle.tsx";
+import { Wordmark } from "./Wordmark.tsx";
 export function Header({
   active = "performance",
   interactive = false,
@@ -16,50 +17,28 @@ export function Header({
         ["performance", "Performance"],
         ["features", "Features"],
         ["ecosystem", "Ecosystem"],
-      ].map(([id, label]) =>
-        interactive && id !== "features" ? (
-          <button
-            key={id}
-            type="button"
-            className="cursor-interaction"
-            data-section={id}
-            aria-current={active === id ? "page" : undefined}
-          >
-            {label}
-          </button>
-        ) : (
-          <Link
-            key={id}
-            to={id === "features" ? "/features" : "/"}
-            search={id === "features" ? {} : { section: id }}
-            aria-current={active === id ? "page" : undefined}
-          >
-            {label}
-          </Link>
-        ),
-      )}
+      ].map(([id, label]) => (
+        <Link
+          key={id}
+          to={id === "features" ? "/features" : "/"}
+          search={
+            id === "features"
+              ? {}
+              : (previous) =>
+                  interactive ? { ...previous, section: id } : { section: id }
+          }
+          data-section={interactive && id !== "features" ? id : undefined}
+          aria-current={active === id ? "page" : undefined}
+        >
+          {label}
+        </Link>
+      ))}
     </nav>
   );
   return (
     <header className="flex flex-wrap items-center justify-between">
       <div className="fw-brand flex shrink-0 items-center">
-        <Link className="fw-wordmark" to="/" aria-label="Frameworks home">
-          <svg
-            className="fw-mark"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 32 32"
-            width="32"
-            height="32"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <path d="M4 4h4v24H4z" opacity=".5"></path>
-            <path d="M4 4h24v6H4zm0 10h18v6H4zm0 10h6v4H4z"></path>
-          </svg>
-          <span>
-            frameworks<span className="fw-wordmark-domain">.run</span>
-          </span>
-        </Link>
+        <Wordmark />
       </div>
       {navigation}
       <nav

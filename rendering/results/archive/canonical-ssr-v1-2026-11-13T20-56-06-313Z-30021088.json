@@ -1,0 +1,190 @@
+{
+  "schema_version": 2,
+  "benchmark_version": "canonical-ssr-v1",
+  "capture_id": "canonical-ssr-v1-2026-11-13T20-56-06-313Z-30021088",
+  "capture_kind": "engineering",
+  "status": "pass",
+  "captured_at": "2026-11-13T20:56:06.313Z",
+  "completed_at": "2026-11-13T20:56:09.431Z",
+  "host": {
+    "machineId": "28653bc9a7aa6d1057ffe318b9b2bd44e20660dc9c9e0a27636c7d0f43b40dda",
+    "campaignId": "publication-23ab862c-d2de-441e-9c25-e90aef62e86b",
+    "campaignProtocol": "proa-only-v1",
+    "machineClass": "c4-standard-16-lssd",
+    "sourceRevision": "42539a429e2eb61aae8916e7c069cd3edb473a4c",
+    "nodeName": "gke-proa-ci-runners-c4-19143b73-7vgw",
+    "platform": "linux",
+    "release": "6.12.105+",
+    "arch": "x64",
+    "cpuModel": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
+    "logicalCpuCount": 16,
+    "totalMemoryBytes": 63200755712,
+    "node": "v26.3.0",
+    "javascriptRuntime": "Bun 1.4.2",
+    "serverCpuAffinity": "0",
+    "cpu_model": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
+    "cloud": "GCP C4 c4-standard-16-lssd · gke-proa-ci-runners-c4-19143b73-7vgw · isolated Proa-only diagnostic",
+    "server_cpu_affinity": "0",
+    "logical_cpus": 16,
+    "memory_bytes": 63200755712,
+    "architecture": "x64",
+    "os_name": "linux",
+    "os_release": "6.12.105+"
+  },
+  "workloads": [
+    {
+      "id": "cards",
+      "label": "Component page",
+      "cardinality": 32,
+      "description": "4 sections, 32 cards, and 160 feature-list items",
+      "warmup": 200,
+      "iterations": 2000,
+      "negative_control": {
+        "from": "SSR Framework Benchmark",
+        "to": "SSR Framework Benchmark changed"
+      }
+    },
+    {
+      "id": "table",
+      "label": "1,000-row table",
+      "cardinality": 1000,
+      "description": "1,000 rows and 12 columns with escaping, formatting, branches, and variable-length lists",
+      "warmup": 20,
+      "iterations": 200,
+      "negative_control": {
+        "from": "Customer Accounts",
+        "to": "Customer Accounts changed"
+      }
+    },
+    {
+      "id": "products",
+      "label": "Product grid",
+      "cardinality": 96,
+      "description": "96 product cards and 480 SVG stars",
+      "warmup": 50,
+      "iterations": 500,
+      "negative_control": {
+        "from": "All products",
+        "to": "All products changed"
+      }
+    }
+  ],
+  "renderers": [
+    {
+      "id": "proa",
+      "label": "Proa",
+      "language": "Rust",
+      "status": "included"
+    }
+  ],
+  "parity": {
+    "proa": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25108,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 988509,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 284908,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      }
+    }
+  },
+  "measurements": {
+    "proa": {
+      "cards": {
+        "p50_us": 1.373,
+        "p95_us": 1.42405,
+        "p99_us": 1.4932399999999997,
+        "mean_us": 1.4002140000000043,
+        "process_p50_min_us": 1.349,
+        "process_p50_max_us": 1.3880000000000001,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25108,
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
+        "capture_id": "canonical-ssr-v1-2026-11-13T20-56-06-313Z-30021088"
+      },
+      "table": {
+        "p50_us": 332.00149999999996,
+        "p95_us": 354.9648,
+        "p99_us": 372.90174,
+        "mean_us": 335.3246550000001,
+        "process_p50_min_us": 327.73199999999997,
+        "process_p50_max_us": 336.59000000000003,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 988509,
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
+        "capture_id": "canonical-ssr-v1-2026-11-13T20-56-06-313Z-30021088"
+      },
+      "products": {
+        "p50_us": 13.7165,
+        "p95_us": 14.161499999999998,
+        "p99_us": 19.401889999999995,
+        "mean_us": 13.897109999999985,
+        "process_p50_min_us": 13.5495,
+        "process_p50_max_us": 13.8875,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 284908,
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
+        "capture_id": "canonical-ssr-v1-2026-11-13T20-56-06-313Z-30021088"
+      }
+    }
+  },
+  "proa_output": "Fresh owned RenderBuffer per iteration. Allocation and rendering are timed; flattening/copying, encoding, parity, hashing and output destruction are outside the render timer.",
+  "versions": {
+    "Proa": "0.4.0 @ bbbc9684335109949257eea8b4c98bb7bc8572ae / rustc 1.95.0 (59807616e 2026-04-14)",
+    "Playwright": "1.61.1",
+    "Chromium": "149.0.7827.55"
+  },
+  "provenance": {
+    "harness_commit": "42539a429e2eb61aae8916e7c069cd3edb473a4c",
+    "dirty": true,
+    "source_sha256": "4a258158eada1467fbe52aa8c8e2569949b2e3fb321aa348a9682dc457d43a54"
+  },
+  "commands": [
+    "bun install --frozen-lockfile (JavaScript adapter directories)",
+    "bundle check || bundle install (Rails adapter directory)",
+    "cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench",
+    "go build -trimpath -o rendering/external/go/build/canonical_suite rendering/external/go/suite_bench.go",
+    "python3 -m venv rendering/external/jinja/.venv && pip install -r rendering/external/jinja/requirements.txt",
+    "gradle --no-daemon --quiet installDist copyJteBinaryStaticContent (jte adapter directory)",
+    "gradle --no-daemon --quiet installDist (Rocker adapter directory)",
+    "\"bun\" \"rendering/canonical/run.mjs\" \"--renderers\" \"proa\" \"--out\" \"rendering/results/local/pr86-baseline.json\""
+  ],
+  "limitations": [
+    "Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.",
+    "Semantic DOM parity permits documented serializer metadata and whitespace differences; payload deltas remain visible.",
+    "This capture describes one machine and these three workloads; it is not a universal application ranking."
+  ],
+  "raw_artifacts": [
+    {
+      "label": "Per-process summaries",
+      "path": "raw/canonical-ssr-v1-2026-11-13T20-56-06-313Z-30021088/process-summaries.json"
+    },
+    {
+      "label": "Result-table migration map",
+      "path": "../MIGRATION.md"
+    }
+  ]
+}

@@ -61,13 +61,13 @@ The process orchestrator retains raw nanoseconds for every iteration and uses
 five independent process repeats in seeded randomized complete blocks:
 
 ```sh
-pnpm run bench:showcase:ssr
+bun run bench:showcase:ssr
 ```
 
 Each process defaults to 1,000 warmups and 10,000 recorded renders, except the
 400-row Sentry document (100 warmups and 300 recorded renders). Confidence
 intervals use the five process medians as independent units; pooled inner
-renders are descriptive only. Use `pnpm run bench:showcase:ssr:smoke` for a
+renders are descriptive only. Use `bun run bench:showcase:ssr:smoke` for a
 three-iteration integrity pass. Use direct `--warmup N` and `--iterations N`
 overrides only for smoke tests or an explicitly different protocol.
 
@@ -126,13 +126,13 @@ recorded in the summary. The capture writes its table to the root README.
 Run a one-sample integrity check first:
 
 ```sh
-pnpm run bench:showcase:client-js:smoke
+bun run bench:showcase:client-js:smoke
 ```
 
 Then run the retained protocol:
 
 ```sh
-pnpm run bench:showcase:client-js
+bun run bench:showcase:client-js
 ```
 
 Defaults are 30 recorded samples per page/profile cell, three fresh Chromium

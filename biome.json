@@ -11,7 +11,15 @@
       "site/**",
       "framework-ssr/**",
       "tooling/**",
+      "rendering/external/astro/*.mjs",
+      "rendering/external/sveltekit/suite_bench.mjs",
+      "rendering/external/sveltekit/render_build.mjs",
+      "rendering/external/next/*.mjs",
+      "rendering/external/next/app/**/*.jsx",
+      "rendering/external/exact/*.mjs",
+      "rendering/external/shared/render_inputs.mjs",
       "rendering/canonical/run.mjs",
+      "rendering/canonical/render-contract.mjs",
       "rendering/canonical/refresh-proa.mjs",
       "rendering/canonical/adapters.json",
       "rendering/canonical/source_fingerprint.mjs",
@@ -21,7 +29,12 @@
       "!**/package-lock.json",
       "!**/bun.lock",
       "!framework-ssr/results",
-      "!site/src/routeTree.gen.ts"
+      "!site/src/routeTree.gen.ts",
+      "package.json",
+      "turbo.json",
+      "rendering/external/*/package.json",
+      "framework-ssr/prepare-fixtures.ts",
+      "tooling/workspace.test.mjs"
     ]
   },
   "formatter": {
@@ -32,6 +45,9 @@
     "enabled": true,
     "rules": {
       "preset": "recommended"
+    },
+    "domains": {
+      "react": "recommended"
     }
   },
   "overrides": [
@@ -72,6 +88,30 @@
         "rules": {
           "style": {
             "noNonNullAssertion": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["framework-ssr/adapters/next/app/**/*.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useSemanticElements": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "framework-ssr/adapters/astro/src/pages/*.astro",
+        "framework-ssr/adapters/sveltekit/src/routes/**/*.svelte"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
           }
         }
       }

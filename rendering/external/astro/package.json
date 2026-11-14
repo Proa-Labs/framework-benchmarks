@@ -1,0 +1,12 @@
+{
+  "name": "canonical-astro-render",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "astro": "catalog:",
+    "@astrojs/node": "catalog:"
+  },
+  "scripts": {
+    "build": "bun build.mjs"
+  }
+}

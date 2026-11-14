@@ -1,0 +1,80 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "globalDependencies": [
+    "bunfig.toml",
+    "biome.json",
+    "tooling/**",
+    "rendering/external/shared/**",
+    "rendering/canonical/**"
+  ],
+  "tasks": {
+    "//#lint:repo": {
+      "outputs": []
+    },
+    "//#typecheck:benchmarks": {
+      "outputs": []
+    },
+    "//#prepare:fixtures": {
+      "cache": false
+    },
+    "typecheck": {
+      "cache": false
+    },
+    "test": {
+      "cache": false
+    },
+    "test:browser": {
+      "cache": false
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
+    "framework-ssr-astro#build": {
+      "dependsOn": ["//#prepare:fixtures"],
+      "cache": false
+    },
+    "framework-ssr-next#build": {
+      "dependsOn": ["//#prepare:fixtures"],
+      "cache": false
+    },
+    "framework-ssr-sveltekit#build": {
+      "dependsOn": ["//#prepare:fixtures"],
+      "cache": false
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "bench": {
+      "cache": false
+    },
+    "capture": {
+      "cache": false
+    },
+    "deploy": {
+      "cache": false
+    },
+    "deploy:check": {
+      "cache": false
+    }
+  },
+  "globalEnv": [
+    "NODE_ENV",
+    "CARGO_TARGET_DIR",
+    "EXACT_SOURCE",
+    "CANONICAL_SUITE_RUBY",
+    "JAVA_HOME"
+  ],
+  "globalPassThroughEnv": [
+    "BENCH_*",
+    "PROA_*",
+    "PORT",
+    "NEXT_TELEMETRY_DISABLED",
+    "ASTRO_TELEMETRY_DISABLED",
+    "CLOUDFLARE_*",
+    "PR_NUMBER",
+    "RUNNER_TEMP",
+    "GITHUB_*"
+  ]
+}

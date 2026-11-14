@@ -1,18 +1,35 @@
 {
   "schema_version": 2,
   "benchmark_version": "canonical-ssr-v1",
-  "capture_id": "canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z",
-  "capture_kind": "proa_refresh",
+  "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929",
+  "capture_kind": "canonical",
   "status": "pass",
-  "captured_at": "2026-11-11T18:37:55.139Z",
-  "completed_at": "2026-11-11T18:37:57.005Z",
+  "captured_at": "2026-11-14T04:25:12.136Z",
+  "completed_at": "2026-11-14T04:36:08.618Z",
   "host": {
-    "cpu_model": "Apple M4 Max",
+    "machineId": "16a7be6dccee6c1b0d95d23e49d4b63dd1f4814d6b95ff4243078ea52fc55ee9",
+    "campaignId": "publication-adbce8eb-d5ae-41d6-96f4-2032ad38537a",
+    "campaignProtocol": "per-suite-host-v1",
+    "machineClass": "c4-standard-16-lssd",
+    "sourceRevision": "db57c694b8a9f35be288bc5ac6cd1a4bf83a0e33",
+    "nodeName": "gke-proa-ci-runners-c4-19143b73-7hgx",
+    "platform": "linux",
+    "release": "6.12.105+",
+    "arch": "x64",
+    "cpuModel": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
+    "logicalCpuCount": 16,
+    "totalMemoryBytes": 63200751616,
+    "node": "v26.3.0",
+    "javascriptRuntime": "Bun 1.4.2",
+    "serverCpuAffinity": "0",
+    "cpu_model": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
+    "cloud": "GCP C4 c4-standard-16-lssd · gke-proa-ci-runners-c4-19143b73-7hgx · isolated node",
+    "server_cpu_affinity": "0",
     "logical_cpus": 16,
-    "memory_bytes": 137438953472,
-    "architecture": "arm64",
-    "os_name": "macOS (Darwin)",
-    "os_release": "25.5.0"
+    "memory_bytes": 63200751616,
+    "architecture": "x64",
+    "os_name": "linux",
+    "os_release": "6.12.105+"
   },
   "workloads": [
     {
@@ -21,7 +38,11 @@
       "cardinality": 32,
       "description": "4 sections, 32 cards, and 160 feature-list items",
       "warmup": 200,
-      "iterations": 2000
+      "iterations": 2000,
+      "negative_control": {
+        "from": "SSR Framework Benchmark",
+        "to": "SSR Framework Benchmark changed"
+      }
     },
     {
       "id": "table",
@@ -29,7 +50,11 @@
       "cardinality": 1000,
       "description": "1,000 rows and 12 columns with escaping, formatting, branches, and variable-length lists",
       "warmup": 20,
-      "iterations": 200
+      "iterations": 200,
+      "negative_control": {
+        "from": "Customer Accounts",
+        "to": "Customer Accounts changed"
+      }
     },
     {
       "id": "products",
@@ -37,7 +62,11 @@
       "cardinality": 96,
       "description": "96 product cards and 480 SVG stars",
       "warmup": 50,
-      "iterations": 500
+      "iterations": 500,
+      "negative_control": {
+        "from": "All products",
+        "to": "All products changed"
+      }
     }
   ],
   "renderers": [
@@ -142,6 +171,31 @@
       "label": "Topcoat",
       "language": "Rust",
       "status": "included"
+    },
+    {
+      "id": "astro",
+      "label": "Astro",
+      "language": "JavaScript",
+      "status": "included"
+    },
+    {
+      "id": "sveltekit",
+      "label": "SvelteKit",
+      "language": "JavaScript",
+      "status": "included"
+    },
+    {
+      "id": "nextjs",
+      "label": "Next.js",
+      "language": "JavaScript",
+      "status": "included"
+    },
+    {
+      "id": "exact",
+      "label": "Exact",
+      "language": "JavaScript",
+      "status": "included",
+      "fixture": "exact-native-v1"
     }
   ],
   "parity": {
@@ -586,812 +640,1124 @@
         "payload_delta_bytes": 0,
         "byte_equal_to_proa": true
       }
+    },
+    "astro": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25108,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990507,
+        "payload_delta_bytes": 1998,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285868,
+        "payload_delta_bytes": 960,
+        "byte_equal_to_proa": false
+      }
+    },
+    "sveltekit": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25770,
+        "payload_delta_bytes": 662,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 1003248,
+        "payload_delta_bytes": 14739,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 286476,
+        "payload_delta_bytes": 1568,
+        "byte_equal_to_proa": false
+      }
+    },
+    "nextjs": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25201,
+        "payload_delta_bytes": 93,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990694,
+        "payload_delta_bytes": 2185,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285868,
+        "payload_delta_bytes": 960,
+        "byte_equal_to_proa": false
+      }
+    },
+    "exact": {
+      "cards": {
+        "status": "pass",
+        "mode": "adapted content and styles",
+        "canonical_sha256": "7ff9de5bfbbb79f8c711683832778e46cfc7f720baf9b1875c0260eb62d372a0",
+        "output_bytes": 34637,
+        "payload_delta_bytes": 9529,
+        "byte_equal_to_proa": false,
+        "fixture": "exact-native-v1",
+        "semantics_sha256": "4b8d2d67558090a00eed16154b3a7eeb56dc2626df16836c0b0b6ab1113b8351",
+        "reference_semantics_sha256": "4b8d2d67558090a00eed16154b3a7eeb56dc2626df16836c0b0b6ab1113b8351",
+        "style_checks": 132,
+        "negative_controls": "pass"
+      },
+      "table": {
+        "status": "pass",
+        "mode": "adapted content and styles",
+        "canonical_sha256": "75df043eda26b240e141b620d5bc6e802fd4e47ddef9339efd88cdc029b087ba",
+        "output_bytes": 1025844,
+        "payload_delta_bytes": 37335,
+        "byte_equal_to_proa": false,
+        "fixture": "exact-native-v1",
+        "semantics_sha256": "7384357189f23d411959216be067b00895b444867a9e350eb7ab39fe21620772",
+        "reference_semantics_sha256": "7384357189f23d411959216be067b00895b444867a9e350eb7ab39fe21620772",
+        "style_checks": 18000,
+        "negative_controls": "pass"
+      },
+      "products": {
+        "status": "pass",
+        "mode": "adapted content and styles",
+        "canonical_sha256": "eccbcd77847a1720b04da73dd143fcddb7c253310a76876a4b905f173a55207c",
+        "output_bytes": 261879,
+        "payload_delta_bytes": -23029,
+        "byte_equal_to_proa": false,
+        "fixture": "exact-native-v1",
+        "semantics_sha256": "9574deb1f2ccaf3f99bc184b0aaf62c7c59887183af42593a54ef92ab96ca329",
+        "reference_semantics_sha256": "9574deb1f2ccaf3f99bc184b0aaf62c7c59887183af42593a54ef92ab96ca329",
+        "style_checks": 577,
+        "negative_controls": "pass"
+      }
     }
   },
   "measurements": {
     "proa": {
       "cards": {
-        "p50_us": 0.875,
-        "p95_us": 0.9169999999999999,
-        "p99_us": 1.0004099999999996,
-        "mean_us": 0.8739805000000002,
-        "process_p50_min_us": 0.834,
-        "process_p50_max_us": 0.875,
+        "p50_us": 1.1159999999999999,
+        "p95_us": 1.15505,
+        "p99_us": 1.1820000000000002,
+        "mean_us": 1.1393125000000004,
+        "process_p50_min_us": 1.1039999999999999,
+        "process_p50_max_us": 1.1280000000000001,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25108,
         "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
-        "capture_id": "canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 189.375,
-        "p95_us": 198.06905,
-        "p99_us": 206.73940999999994,
-        "mean_us": 187.74523500000006,
-        "process_p50_min_us": 185.97899999999998,
-        "process_p50_max_us": 190.47899999999998,
+        "p50_us": 253.22199999999998,
+        "p95_us": 273.4186,
+        "p99_us": 283.21611999999993,
+        "mean_us": 254.983615,
+        "process_p50_min_us": 246.069,
+        "process_p50_max_us": 256.2595,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 988509,
         "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
-        "capture_id": "canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 10.5,
-        "p95_us": 12,
-        "p99_us": 13.709259999999999,
-        "mean_us": 10.920153999999982,
-        "process_p50_min_us": 10.333499999999999,
-        "process_p50_max_us": 11.708,
+        "p50_us": 12.752,
+        "p95_us": 13.1043,
+        "p99_us": 18.5605,
+        "mean_us": 12.943910000000015,
+        "process_p50_min_us": 12.6005,
+        "process_p50_max_us": 13.145499999999998,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 284908,
         "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
-        "capture_id": "canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "marko": {
       "cards": {
-        "p50_us": 7.667,
-        "p95_us": 19.558649999999986,
-        "p99_us": 42.21800999999999,
-        "mean_us": 14.328120499999999,
-        "process_p50_min_us": 7.583,
-        "process_p50_max_us": 8.625,
+        "p50_us": 10.513,
+        "p95_us": 24.13915,
+        "p99_us": 36.23023,
+        "mean_us": 26.474295999999992,
+        "process_p50_min_us": 10.344,
+        "process_p50_max_us": 10.6595,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 24038,
         "allocation_policy": "compiled Marko HTML render; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 950.4995,
-        "p95_us": 13575.752399999994,
-        "p99_us": 21167.74591999999,
-        "mean_us": 2080.6204449999996,
-        "process_p50_min_us": 931.8544999999999,
-        "process_p50_max_us": 977.8335,
+        "p50_us": 1447.645,
+        "p95_us": 4760.014049999997,
+        "p99_us": 7450.647179999962,
+        "mean_us": 2018.8711750000004,
+        "process_p50_min_us": 1378.4365,
+        "process_p50_max_us": 1513.9215,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 983187,
         "allocation_policy": "compiled Marko HTML render; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 87.9795,
-        "p95_us": 163.50209999999998,
-        "p99_us": 217.3150799999999,
-        "mean_us": 148.302518,
-        "process_p50_min_us": 87.5005,
-        "process_p50_max_us": 94.6665,
+        "p50_us": 114.436,
+        "p95_us": 190.12519999999998,
+        "p99_us": 3161.13231,
+        "mean_us": 201.79521999999997,
+        "process_p50_min_us": 107.753,
+        "process_p50_max_us": 119.6885,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 282604,
         "allocation_policy": "compiled Marko HTML render; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "react": {
       "cards": {
-        "p50_us": 72.666,
-        "p95_us": 101.75829999999999,
-        "p99_us": 176.33691,
-        "mean_us": 78.18943349999998,
-        "process_p50_min_us": 72.5,
-        "process_p50_max_us": 73.916,
+        "p50_us": 87.4555,
+        "p95_us": 603.88925,
+        "p99_us": 3170.5560499999997,
+        "mean_us": 221.57214299999987,
+        "process_p50_min_us": 83.1865,
+        "process_p50_max_us": 94.30799999999999,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25202,
         "allocation_policy": "React renderToString; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 3639.5,
-        "p95_us": 6418.5646,
-        "p99_us": 7082.847259999997,
-        "mean_us": 4144.717525000001,
-        "process_p50_min_us": 3561.0625,
-        "process_p50_max_us": 3711.4584999999997,
+        "p50_us": 10103.116999999998,
+        "p95_us": 21082.417899999997,
+        "p99_us": 34428.06042999985,
+        "mean_us": 10688.001939999996,
+        "process_p50_min_us": 9145.715,
+        "process_p50_max_us": 10881.7265,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 990695,
         "allocation_policy": "React renderToString; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 404.25,
-        "p95_us": 841.9312499999997,
-        "p99_us": 952.25125,
-        "mean_us": 445.656904,
-        "process_p50_min_us": 398.35400000000004,
-        "process_p50_max_us": 412.3125,
+        "p50_us": 470.215,
+        "p95_us": 3119.8444999999974,
+        "p99_us": 10417.362899999993,
+        "mean_us": 1194.8644960000004,
+        "process_p50_min_us": 436.243,
+        "process_p50_max_us": 511.95799999999997,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 285868,
         "allocation_policy": "React renderToString; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "vue": {
       "cards": {
-        "p50_us": 7.083,
-        "p95_us": 11.961049999999998,
-        "p99_us": 25.630409999999994,
-        "mean_us": 10.167181000000003,
-        "process_p50_min_us": 7.0205,
-        "process_p50_max_us": 7.875,
+        "p50_us": 9.8545,
+        "p95_us": 23.374899999999997,
+        "p99_us": 40.419149999999995,
+        "mean_us": 37.37534400000001,
+        "process_p50_min_us": 9.6115,
+        "process_p50_max_us": 10.5275,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25700,
         "allocation_policy": "SSR-compiled Vue template rendered with renderToString on a fresh app; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 1148.6045,
-        "p95_us": 2257.0687499999995,
-        "p99_us": 2563.128829999994,
-        "mean_us": 1281.545235,
-        "process_p50_min_us": 1138.875,
-        "process_p50_max_us": 1152.104,
+        "p50_us": 1624.6599999999999,
+        "p95_us": 5162.091349999998,
+        "p99_us": 7595.555969999974,
+        "mean_us": 2442.723084999999,
+        "process_p50_min_us": 1605.5045,
+        "process_p50_max_us": 1652.556,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 1006523,
         "allocation_policy": "SSR-compiled Vue template rendered with renderToString on a fresh app; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 83.313,
-        "p95_us": 113.71074999999985,
-        "p99_us": 267.35842,
-        "mean_us": 93.57142799999994,
-        "process_p50_min_us": 83.1455,
-        "process_p50_max_us": 84.8545,
+        "p50_us": 93.5995,
+        "p95_us": 291.24879999999933,
+        "p99_us": 5250.093459999999,
+        "mean_us": 279.388522,
+        "process_p50_min_us": 93.3825,
+        "process_p50_max_us": 103.6565,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 287420,
         "allocation_policy": "SSR-compiled Vue template rendered with renderToString on a fresh app; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "svelte": {
       "cards": {
-        "p50_us": 8.209,
-        "p95_us": 13.333,
-        "p99_us": 18.41601,
-        "mean_us": 9.349764500000015,
-        "process_p50_min_us": 8.208,
-        "process_p50_max_us": 8.292,
+        "p50_us": 9.350000000000001,
+        "p95_us": 21.736,
+        "p99_us": 46.79802999999999,
+        "mean_us": 26.873458499999998,
+        "process_p50_min_us": 9.025500000000001,
+        "process_p50_max_us": 9.888,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25748,
         "allocation_policy": "server-compiled Svelte 5 component rendered with svelte/server render() inside a static document shell; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 945.3335,
-        "p95_us": 1662.3351,
-        "p99_us": 1887.77334,
-        "mean_us": 1045.6764699999994,
-        "process_p50_min_us": 941.2705000000001,
-        "process_p50_max_us": 969.1875,
+        "p50_us": 1578.9275,
+        "p95_us": 5293.996249999999,
+        "p99_us": 7266.182699999997,
+        "mean_us": 2453.687519999999,
+        "process_p50_min_us": 1429.3935,
+        "process_p50_max_us": 1713.444,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 1003227,
         "allocation_policy": "server-compiled Svelte 5 component rendered with svelte/server render() inside a static document shell; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 70.4375,
-        "p95_us": 87.94164999999994,
-        "p99_us": 247.24091999999996,
-        "mean_us": 77.279538,
-        "process_p50_min_us": 70.2085,
-        "process_p50_max_us": 71.625,
+        "p50_us": 93.74549999999999,
+        "p95_us": 238.23729999999995,
+        "p99_us": 3128.7987099999996,
+        "mean_us": 218.24971599999998,
+        "process_p50_min_us": 91.44800000000001,
+        "process_p50_max_us": 104.49000000000001,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 286476,
         "allocation_policy": "server-compiled Svelte 5 component rendered with svelte/server render() inside a static document shell; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "rails": {
       "cards": {
-        "p50_us": 59,
-        "p95_us": 71,
-        "p99_us": 389.1299999999999,
-        "mean_us": 69.0455,
-        "process_p50_min_us": 59,
-        "process_p50_max_us": 61,
+        "p50_us": 79.928,
+        "p95_us": 108.94839999999999,
+        "p99_us": 534.5814399999999,
+        "mean_us": 93.618443,
+        "process_p50_min_us": 79.5405,
+        "process_p50_max_us": 80.7485,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 35839,
         "allocation_policy": "cached Rails template; fresh ActionView context and output buffer",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 6088.5,
-        "p95_us": 6441.45,
-        "p99_us": 6714.1,
-        "mean_us": 6008.925,
-        "process_p50_min_us": 6042.5,
-        "process_p50_max_us": 6217,
+        "p50_us": 9101.343,
+        "p95_us": 9724.49095,
+        "p99_us": 9829.94648,
+        "mean_us": 9004.021065,
+        "process_p50_min_us": 8902.1975,
+        "process_p50_max_us": 9128.177,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 1228793,
         "allocation_policy": "cached Rails template; fresh ActionView context and output buffer",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 406,
-        "p95_us": 672.05,
-        "p99_us": 2012.9399999999964,
-        "mean_us": 463.546,
-        "process_p50_min_us": 403,
-        "process_p50_max_us": 408,
+        "p50_us": 483.34,
+        "p95_us": 799.1545499999997,
+        "p99_us": 2341.284459999999,
+        "mean_us": 562.654956,
+        "process_p50_min_us": 453.6765,
+        "process_p50_max_us": 585.342,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 296823,
         "allocation_policy": "cached Rails template; fresh ActionView context and output buffer",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "jte": {
       "cards": {
-        "p50_us": 8.458,
-        "p95_us": 12.209,
-        "p99_us": 20.75333,
-        "mean_us": 9.125998,
-        "process_p50_min_us": 8.375,
-        "process_p50_max_us": 8.625,
+        "p50_us": 23.2585,
+        "p95_us": 30.61685,
+        "p99_us": 528.97746,
+        "mean_us": 54.649471,
+        "process_p50_min_us": 15.401,
+        "process_p50_max_us": 23.6015,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25109,
         "allocation_policy": "precompiled jte template; fresh Utf8ByteOutput response",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 1976.313,
-        "p95_us": 2282.30805,
-        "p99_us": 2709.22366,
-        "mean_us": 1869.010625,
-        "process_p50_min_us": 1926.8125,
-        "process_p50_max_us": 2116.896,
+        "p50_us": 7320.4605,
+        "p95_us": 18013.57405,
+        "p99_us": 27260.08028,
+        "mean_us": 8959.770755,
+        "process_p50_min_us": 6926.0145,
+        "process_p50_max_us": 7408.7975,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 988510,
         "allocation_policy": "precompiled jte template; fresh Utf8ByteOutput response",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 229.625,
-        "p95_us": 378.00835,
-        "p99_us": 426.21725,
-        "mean_us": 246.099066,
-        "process_p50_min_us": 228.3125,
-        "process_p50_max_us": 233.354,
+        "p50_us": 636.497,
+        "p95_us": 3752.72555,
+        "p99_us": 4537.76587,
+        "mean_us": 1255.170322,
+        "process_p50_min_us": 626.4545,
+        "process_p50_max_us": 646.404,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 284909,
         "allocation_policy": "precompiled jte template; fresh Utf8ByteOutput response",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "rocker": {
       "cards": {
-        "p50_us": 15.958,
-        "p95_us": 21.96105,
-        "p99_us": 30.46008,
-        "mean_us": 16.587334,
-        "process_p50_min_us": 15.834,
-        "process_p50_max_us": 16.459,
+        "p50_us": 36.642,
+        "p95_us": 46.98165,
+        "p99_us": 3008.13522,
+        "mean_us": 77.099657,
+        "process_p50_min_us": 36.4525,
+        "process_p50_max_us": 37.1255,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25109,
         "allocation_policy": "optimized Rocker template flattened to a fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 2590.5625,
-        "p95_us": 3044.5476,
-        "p99_us": 3487.85949,
-        "mean_us": 2402.338525,
-        "process_p50_min_us": 2430.5,
-        "process_p50_max_us": 2655.229,
+        "p50_us": 10765.5915,
+        "p95_us": 23322.18875,
+        "p99_us": 36981.1419,
+        "mean_us": 11184.26627,
+        "process_p50_min_us": 9593.756,
+        "process_p50_max_us": 10983.2175,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 990508,
         "allocation_policy": "optimized Rocker template flattened to a fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 363.1455,
-        "p95_us": 513.9369,
-        "p99_us": 568.69482,
-        "mean_us": 374.4678,
-        "process_p50_min_us": 360.5835,
-        "process_p50_max_us": 366.021,
+        "p50_us": 791.409,
+        "p95_us": 4141.0344,
+        "p99_us": 4849.63176,
+        "mean_us": 1649.639562,
+        "process_p50_min_us": 715.899,
+        "process_p50_max_us": 812.851,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 285869,
         "allocation_policy": "optimized Rocker template flattened to a fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "handlebars": {
       "cards": {
-        "p50_us": 19.333,
-        "p95_us": 29.214299999999994,
-        "p99_us": 66.30433999999998,
-        "mean_us": 21.355947,
-        "process_p50_min_us": 19.042,
-        "process_p50_max_us": 19.792,
+        "p50_us": 26.259500000000003,
+        "p95_us": 40.85635,
+        "p99_us": 168.46193999999997,
+        "mean_us": 50.63371599999998,
+        "process_p50_min_us": 22.612,
+        "process_p50_max_us": 33.463,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25108,
         "allocation_policy": "compiled Handlebars template; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 2312.562,
-        "p95_us": 3284.8797999999992,
-        "p99_us": 3821.74059,
-        "mean_us": 2486.792694999999,
-        "process_p50_min_us": 2296.125,
-        "process_p50_max_us": 2329.9165000000003,
+        "p50_us": 4160.865,
+        "p95_us": 7071.0997499999985,
+        "p99_us": 15100.401959999965,
+        "mean_us": 4887.962955000001,
+        "process_p50_min_us": 4080.0209999999997,
+        "process_p50_max_us": 4844.183,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 990694,
         "allocation_policy": "compiled Handlebars template; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 203.75,
-        "p95_us": 294.53954999999996,
-        "p99_us": 329.97967,
-        "mean_us": 215.49767799999998,
-        "process_p50_min_us": 201.35399999999998,
-        "process_p50_max_us": 208.9375,
+        "p50_us": 211.17000000000002,
+        "p95_us": 581.6192499999995,
+        "p99_us": 3475.9424299999973,
+        "mean_us": 424.5059559999999,
+        "process_p50_min_us": 207.1085,
+        "process_p50_max_us": 266.2765,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 285868,
         "allocation_policy": "compiled Handlebars template; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "go-html-template": {
       "cards": {
-        "p50_us": 86.292,
-        "p95_us": 147.29614999999998,
-        "p99_us": 219.66992,
-        "mean_us": 93.76852649999994,
-        "process_p50_min_us": 85.584,
-        "process_p50_max_us": 86.708,
+        "p50_us": 143.3175,
+        "p95_us": 227.02375,
+        "p99_us": 237.06849,
+        "mean_us": 163.39468450000012,
+        "process_p50_min_us": 142.33749999999998,
+        "process_p50_max_us": 145.0265,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25108,
         "allocation_policy": "fresh bytes.Buffer and owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 8607.896,
-        "p95_us": 8828.2601,
-        "p99_us": 8999.20983,
-        "mean_us": 8621.782360000005,
-        "process_p50_min_us": 8545.8125,
-        "process_p50_max_us": 8660.9585,
+        "p50_us": 14369.947,
+        "p95_us": 14932.72295,
+        "p99_us": 15561.02714,
+        "mean_us": 14389.506350000007,
+        "process_p50_min_us": 14138.3455,
+        "process_p50_max_us": 14666.9045,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 990509,
         "allocation_policy": "fresh bytes.Buffer and owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 666.75,
-        "p95_us": 809.31875,
-        "p99_us": 841.5275,
-        "mean_us": 704.3274560000002,
-        "process_p50_min_us": 663.479,
-        "process_p50_max_us": 676.2295,
+        "p50_us": 1168.1295,
+        "p95_us": 1226.6848999999997,
+        "p99_us": 1330.5613499999993,
+        "mean_us": 1174.72447,
+        "process_p50_min_us": 1148.4315000000001,
+        "process_p50_max_us": 1175.96,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 285676,
         "allocation_policy": "fresh bytes.Buffer and owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "jinja2": {
       "cards": {
-        "p50_us": 94.791,
-        "p95_us": 101.54405,
-        "p99_us": 116.84467,
-        "mean_us": 96.12116099999999,
-        "process_p50_min_us": 94.333,
-        "process_p50_max_us": 95.083,
+        "p50_us": 109.2525,
+        "p95_us": 116.607,
+        "p99_us": 121.13556,
+        "mean_us": 109.6603385,
+        "process_p50_min_us": 107.503,
+        "process_p50_max_us": 109.8955,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25108,
         "allocation_policy": "compiled Jinja2 template; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 15168.104,
-        "p95_us": 16328.62085,
-        "p99_us": 16499.432589999997,
-        "mean_us": 15390.81333,
-        "process_p50_min_us": 15130.521,
-        "process_p50_max_us": 15250.7085,
+        "p50_us": 19284.1955,
+        "p95_us": 20396.613349999974,
+        "p99_us": 23555.39574,
+        "mean_us": 19476.884680000003,
+        "process_p50_min_us": 19016.574,
+        "process_p50_max_us": 20291.4925,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 990257,
         "allocation_policy": "compiled Jinja2 template; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 1304.417,
-        "p95_us": 1349.8694,
-        "p99_us": 1389.36759,
-        "mean_us": 1310.4498899999999,
-        "process_p50_min_us": 1291.167,
-        "process_p50_max_us": 1321.104,
+        "p50_us": 1476.3425,
+        "p95_us": 1509.5002,
+        "p99_us": 1536.1779499999998,
+        "mean_us": 1476.307196,
+        "process_p50_min_us": 1423.1375,
+        "process_p50_max_us": 1492.3290000000002,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 285676,
         "allocation_policy": "compiled Jinja2 template; fresh owned string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "php": {
       "cards": {
-        "p50_us": 34,
-        "p95_us": 36.79405,
-        "p99_us": 43.12958,
-        "mean_us": 34.46618099999994,
-        "process_p50_min_us": 33.625,
-        "process_p50_max_us": 35.125,
+        "p50_us": 33.873,
+        "p95_us": 37.0153,
+        "p99_us": 41.54321,
+        "mean_us": 34.27636599999998,
+        "process_p50_min_us": 33.316500000000005,
+        "process_p50_max_us": 34.285,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25108,
         "allocation_policy": "fresh owned PHP string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 1394.2085,
-        "p95_us": 1433.2774,
-        "p99_us": 1459.59334,
-        "mean_us": 1397.3406299999995,
-        "process_p50_min_us": 1382.7915,
-        "process_p50_max_us": 1412.958,
+        "p50_us": 1837.9340000000002,
+        "p95_us": 1890.8922499999999,
+        "p99_us": 1911.88339,
+        "mean_us": 1841.1661950000007,
+        "process_p50_min_us": 1766.1770000000001,
+        "process_p50_max_us": 1847.2425,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 990694,
         "allocation_policy": "fresh owned PHP string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 84.5415,
-        "p95_us": 89.71634999999999,
-        "p99_us": 98.60633999999997,
-        "mean_us": 85.40440400000003,
-        "process_p50_min_us": 84.208,
-        "process_p50_max_us": 88.083,
+        "p50_us": 96.48599999999999,
+        "p95_us": 104.41959999999999,
+        "p99_us": 107.61452,
+        "mean_us": 98.27755400000002,
+        "process_p50_min_us": 93.56549999999999,
+        "process_p50_max_us": 100.3835,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 285868,
         "allocation_policy": "fresh owned PHP string",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "askama": {
       "cards": {
-        "p50_us": 1.542,
-        "p95_us": 1.625,
-        "p99_us": 1.917,
-        "mean_us": 1.5651309999999858,
-        "process_p50_min_us": 1.541,
-        "process_p50_max_us": 1.583,
+        "p50_us": 1.247,
+        "p95_us": 1.27,
+        "p99_us": 1.29601,
+        "mean_us": 1.2621580000000125,
+        "process_p50_min_us": 1.221,
+        "process_p50_max_us": 1.291,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 44849,
         "allocation_policy": "compiled Askama template; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 596.167,
-        "p95_us": 626.8597500000001,
-        "p99_us": 651.72908,
-        "mean_us": 601.460195,
-        "process_p50_min_us": 592.7919999999999,
-        "process_p50_max_us": 605.625,
+        "p50_us": 760.7365,
+        "p95_us": 792.7457499999999,
+        "p99_us": 806.90795,
+        "mean_us": 763.9921400000002,
+        "process_p50_min_us": 753.691,
+        "process_p50_max_us": 774.031,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 991007,
         "allocation_policy": "compiled Askama template; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 22.458000000000002,
-        "p95_us": 24.54405,
-        "p99_us": 26.918919999999996,
-        "mean_us": 22.889223999999988,
-        "process_p50_min_us": 22.208000000000002,
-        "process_p50_max_us": 22.541,
+        "p50_us": 24.2985,
+        "p95_us": 24.85825,
+        "p99_us": 31.17017,
+        "mean_us": 24.661137999999983,
+        "process_p50_min_us": 23.7085,
+        "process_p50_max_us": 24.4715,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 285676,
         "allocation_policy": "compiled Askama template; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "sailfish": {
       "cards": {
-        "p50_us": 2.334,
-        "p95_us": 2.458,
-        "p99_us": 2.959,
-        "mean_us": 2.3782755000000226,
-        "process_p50_min_us": 2.3329999999999997,
-        "process_p50_max_us": 2.417,
+        "p50_us": 1.926,
+        "p95_us": 2.02005,
+        "p99_us": 2.11902,
+        "mean_us": 1.9550504999999958,
+        "process_p50_min_us": 1.9130000000000003,
+        "process_p50_max_us": 1.987,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 44849,
         "allocation_policy": "compiled Sailfish template; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 538.875,
-        "p95_us": 561.60655,
-        "p99_us": 580.8888399999997,
-        "mean_us": 541.15082,
-        "process_p50_min_us": 534.229,
-        "process_p50_max_us": 546.729,
+        "p50_us": 627.5475,
+        "p95_us": 650.84595,
+        "p99_us": 673.4572099999998,
+        "mean_us": 629.5533499999998,
+        "process_p50_min_us": 614.0430000000001,
+        "process_p50_max_us": 630.5840000000001,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 990694,
         "allocation_policy": "compiled Sailfish template; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 24.666999999999998,
-        "p95_us": 26.7521,
-        "p99_us": 29.345659999999988,
-        "mean_us": 25.044510000000006,
-        "process_p50_min_us": 24.042,
-        "process_p50_max_us": 24.9375,
+        "p50_us": 23.559,
+        "p95_us": 24.6857,
+        "p99_us": 30.577779999999997,
+        "mean_us": 23.819600000000005,
+        "process_p50_min_us": 23.11,
+        "process_p50_max_us": 24.0365,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 285868,
         "allocation_policy": "compiled Sailfish template; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "leptos": {
       "cards": {
-        "p50_us": 21.542,
-        "p95_us": 22.33305,
-        "p99_us": 26.00042,
-        "mean_us": 21.521293000000007,
-        "process_p50_min_us": 20.75,
-        "process_p50_max_us": 22.083,
+        "p50_us": 18.6675,
+        "p95_us": 19.15605,
+        "p99_us": 24.701749999999997,
+        "mean_us": 18.849807500000047,
+        "process_p50_min_us": 18.602,
+        "process_p50_max_us": 19.607,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25219,
         "allocation_policy": "fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 1844.0625,
-        "p95_us": 1920.51105,
-        "p99_us": 1954.4288399999996,
-        "mean_us": 1856.0596050000001,
-        "process_p50_min_us": 1821.3125,
-        "process_p50_max_us": 1857.563,
+        "p50_us": 1791.6345000000001,
+        "p95_us": 1830.44095,
+        "p99_us": 1851.13877,
+        "mean_us": 1791.8393099999998,
+        "process_p50_min_us": 1761.9279999999999,
+        "process_p50_max_us": 1806.9785,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 991512,
         "allocation_policy": "fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 215.833,
-        "p95_us": 235.1059,
-        "p99_us": 242.68491999999998,
-        "mean_us": 217.32874200000003,
-        "process_p50_min_us": 212.458,
-        "process_p50_max_us": 218.583,
+        "p50_us": 270.06950000000006,
+        "p95_us": 276.61899999999997,
+        "p99_us": 282.29062000000005,
+        "mean_us": 271.001142,
+        "process_p50_min_us": 264.764,
+        "process_p50_max_us": 270.308,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 286063,
         "allocation_policy": "fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "dioxus": {
       "cards": {
-        "p50_us": 105.166,
-        "p95_us": 113.66699999999999,
-        "p99_us": 123.71358,
-        "mean_us": 106.92828399999989,
-        "process_p50_min_us": 104.917,
-        "process_p50_max_us": 106.208,
+        "p50_us": 165.10500000000002,
+        "p95_us": 174.79965,
+        "p99_us": 177.85128,
+        "mean_us": 165.6267139999999,
+        "process_p50_min_us": 160.3915,
+        "process_p50_max_us": 166.608,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25141,
         "allocation_policy": "standard empty String with no caller capacity hint; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 2268.5420000000004,
-        "p95_us": 2323.6119000000003,
-        "p99_us": 2362.3635799999997,
-        "mean_us": 2273.29649,
-        "process_p50_min_us": 2255.4584999999997,
-        "process_p50_max_us": 2315.2084999999997,
+        "p50_us": 3473.3909999999996,
+        "p95_us": 3642.12935,
+        "p99_us": 3660.08384,
+        "mean_us": 3457.535439999999,
+        "process_p50_min_us": 3401.757,
+        "process_p50_max_us": 3744.6720000000005,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 990695,
         "allocation_policy": "standard empty String with no caller capacity hint; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 306.39549999999997,
-        "p95_us": 324.26664999999997,
-        "p99_us": 337.42325,
-        "mean_us": 310.55623600000024,
-        "process_p50_min_us": 304.229,
-        "process_p50_max_us": 312,
+        "p50_us": 436.1085,
+        "p95_us": 494.9744,
+        "p99_us": 501.43568999999997,
+        "mean_us": 447.2642220000001,
+        "process_p50_min_us": 413.336,
+        "process_p50_max_us": 471.7205,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 285868,
         "allocation_policy": "standard empty String with no caller capacity hint; fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     },
     "topcoat": {
       "cards": {
-        "p50_us": 12.125,
-        "p95_us": 13,
-        "p99_us": 15.292419999999998,
-        "mean_us": 12.303117500000035,
-        "process_p50_min_us": 11.958,
-        "process_p50_max_us": 12.25,
+        "p50_us": 16.3565,
+        "p95_us": 16.890150000000002,
+        "p99_us": 21.877779999999998,
+        "mean_us": 16.271850000000004,
+        "process_p50_min_us": 16.021,
+        "process_p50_max_us": 16.3935,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
         "output_bytes": 25108,
         "allocation_policy": "fresh View construction and serialization into a fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "table": {
-        "p50_us": 1055.7085,
-        "p95_us": 1090.19585,
-        "p99_us": 1117.7378299999998,
-        "mean_us": 1059.4994099999997,
-        "process_p50_min_us": 1046.3125,
-        "process_p50_max_us": 1065.8539999999998,
+        "p50_us": 1475.5949999999998,
+        "p95_us": 1770.5104,
+        "p99_us": 1783.4826699999992,
+        "mean_us": 1555.5560150000001,
+        "process_p50_min_us": 1443.8635,
+        "process_p50_max_us": 1487.86,
         "independent_processes": 5,
         "samples_per_process": 200,
         "warmups_per_process": 20,
         "output_bytes": 988509,
         "allocation_policy": "fresh View construction and serialization into a fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       },
       "products": {
-        "p50_us": 150.875,
-        "p95_us": 159.46634999999998,
-        "p99_us": 171.88,
-        "mean_us": 152.57408399999994,
-        "process_p50_min_us": 149.292,
-        "process_p50_max_us": 153.542,
+        "p50_us": 197.5575,
+        "p95_us": 204.62864999999996,
+        "p99_us": 210.2931099999999,
+        "mean_us": 198.6558979999999,
+        "process_p50_min_us": 192,
+        "process_p50_max_us": 198.0225,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
         "output_bytes": 284908,
         "allocation_policy": "fresh View construction and serialization into a fresh owned String",
-        "capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085"
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      }
+    },
+    "astro": {
+      "cards": {
+        "p50_us": 51.289500000000004,
+        "p95_us": 89.26694999999998,
+        "p99_us": 878.2300499999998,
+        "mean_us": 114.1340199999999,
+        "process_p50_min_us": 50.1495,
+        "process_p50_max_us": 53.1075,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25108,
+        "allocation_policy": "Astro native compiled component SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      },
+      "table": {
+        "p50_us": 2897.4385,
+        "p95_us": 6906.006099999998,
+        "p99_us": 9916.780479999996,
+        "mean_us": 3764.741494999999,
+        "process_p50_min_us": 2754.3435,
+        "process_p50_max_us": 3089.9305,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990507,
+        "allocation_policy": "Astro native compiled component SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      },
+      "products": {
+        "p50_us": 291.13800000000003,
+        "p95_us": 1178.5828999999999,
+        "p99_us": 3503.41234999999,
+        "mean_us": 542.1647099999998,
+        "process_p50_min_us": 288.668,
+        "process_p50_max_us": 293.988,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285868,
+        "allocation_policy": "Astro native compiled component SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      }
+    },
+    "sveltekit": {
+      "cards": {
+        "p50_us": 12.1685,
+        "p95_us": 19.1797,
+        "p99_us": 30.92504,
+        "mean_us": 30.679515999999996,
+        "process_p50_min_us": 11.2845,
+        "process_p50_max_us": 12.442499999999999,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25770,
+        "allocation_policy": "SvelteKit production-compiled page through native Svelte SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      },
+      "table": {
+        "p50_us": 1640.0725,
+        "p95_us": 5040.070049999999,
+        "p99_us": 8021.041189999923,
+        "mean_us": 2574.08846,
+        "process_p50_min_us": 1588.3515,
+        "process_p50_max_us": 1691.059,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 1003248,
+        "allocation_policy": "SvelteKit production-compiled page through native Svelte SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      },
+      "products": {
+        "p50_us": 91.4,
+        "p95_us": 153.93979999999996,
+        "p99_us": 3441.5145999999986,
+        "mean_us": 219.26106800000008,
+        "process_p50_min_us": 89.6,
+        "process_p50_max_us": 94.8055,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 286476,
+        "allocation_policy": "SvelteKit production-compiled page through native Svelte SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      }
+    },
+    "nextjs": {
+      "cards": {
+        "p50_us": 76.86099999999999,
+        "p95_us": 131.25614999999996,
+        "p99_us": 1490.0006499999984,
+        "mean_us": 157.04943050000006,
+        "process_p50_min_us": 75.949,
+        "process_p50_max_us": 80.9865,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25201,
+        "allocation_policy": "Next production-compiled page via its bundled React DOM SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      },
+      "table": {
+        "p50_us": 5235.371999999999,
+        "p95_us": 20270.904199999994,
+        "p99_us": 32859.77925999999,
+        "mean_us": 8250.942165000002,
+        "process_p50_min_us": 5108.057,
+        "process_p50_max_us": 5562.307000000001,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990694,
+        "allocation_policy": "Next production-compiled page via its bundled React DOM SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      },
+      "products": {
+        "p50_us": 432.76250000000005,
+        "p95_us": 2506.8740999999936,
+        "p99_us": 4986.646979999995,
+        "mean_us": 826.9707320000002,
+        "process_p50_min_us": 415.7015,
+        "process_p50_max_us": 436.1195,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285868,
+        "allocation_policy": "Next production-compiled page via its bundled React DOM SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      }
+    },
+    "exact": {
+      "cards": {
+        "p50_us": 5554.705,
+        "p95_us": 18299.26605,
+        "p99_us": 30084.37812,
+        "mean_us": 7436.304578499996,
+        "process_p50_min_us": 5540.7705,
+        "process_p50_max_us": 5609.9865,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 34637,
+        "allocation_policy": "Exact production-compiled Contract with native named styles and DOM serializer; fresh owned HTML string. Fresh isolated VM/runtime initialization, prepared-input binding, DOM allocation, app construction, formatting and serialization are timed. Source/script compilation and fixture data construction precede timing. Adapted markup, not strict DOM parity.",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      },
+      "table": {
+        "p50_us": 151111.64250000002,
+        "p95_us": 665560.0396999995,
+        "p99_us": 912530.2082999995,
+        "mean_us": 238519.54213000005,
+        "process_p50_min_us": 145569.4675,
+        "process_p50_max_us": 151712.6545,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 1025844,
+        "allocation_policy": "Exact production-compiled Contract with native named styles and DOM serializer; fresh owned HTML string. Fresh isolated VM/runtime initialization, prepared-input binding, DOM allocation, app construction, formatting and serialization are timed. Source/script compilation and fixture data construction precede timing. Adapted markup, not strict DOM parity.",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
+      },
+      "products": {
+        "p50_us": 17499.214500000002,
+        "p95_us": 62255.02884999998,
+        "p99_us": 92318.07862999995,
+        "mean_us": 23159.046874000003,
+        "process_p50_min_us": 17318.7575,
+        "process_p50_max_us": 17594.191,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 261879,
+        "allocation_policy": "Exact production-compiled Contract with native named styles and DOM serializer; fresh owned HTML string. Fresh isolated VM/runtime initialization, prepared-input binding, DOM allocation, app construction, formatting and serialization are timed. Source/script compilation and fixture data construction precede timing. Adapted markup, not strict DOM parity.",
+        "capture_id": "canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929"
       }
     }
   },
+  "proa_output": "Fresh owned RenderBuffer per iteration. Allocation and rendering are timed; flattening/copying, encoding, parity, hashing and output destruction are outside the render timer.",
   "versions": {
-    "Proa": "0.4.0 @ bbbc9684335109949257eea8b4c98bb7bc8572ae / rustc 1.95.0 (59807616e 2026-04-14)",
-    "Marko": "6.0.150 / Node v24.20.0",
-    "React": "19.2.4 / Node v24.20.0",
-    "Vue": "3.5.42 / Node v24.20.0",
-    "Svelte": "5.57.2 / Node v24.20.0",
-    "Rails": "Rails 8.1.3.1 / ruby 4.0.6 (2026-07-14 revision 03b6d3f889) +PRISM [arm64-darwin25]",
-    "jte": "3.2.4 / openjdk 25.0.1 2025-10-21",
-    "Rocker": "2.4.0 / openjdk 25.0.1 2025-10-21",
-    "Handlebars": "4.7.8 / Node v24.20.0",
-    "Go html/template": "go version go1.25.5 darwin/arm64",
-    "Jinja2": "3.1.6 / Python 3.14.2",
-    "PHP": "PHP 8.5.9 (cli) (built: Jul 28 2026 13:06:52) (NTS)",
+    "Proa": "0.4.0 @ ceffd9f305acabbb0584fa181df4f4e2d7883e94 / rustc 1.95.0 (59807616e 2026-04-14)",
+    "Marko": "6.0.150 / Bun 1.4.2",
+    "React": "19.2.4 / Bun 1.4.2",
+    "Vue": "3.5.42 / Bun 1.4.2",
+    "Svelte": "5.57.2 / Bun 1.4.2",
+    "Rails": "Rails 8.1.3.1 / ruby 4.0.6 (2026-07-14 revision 03b6d3f889) +PRISM [x86_64-linux]",
+    "jte": "3.2.4 / openjdk 17.0.21.0.3 2026-10-24",
+    "Rocker": "2.4.0 / openjdk 17.0.21.0.3 2026-10-24",
+    "Handlebars": "4.7.8 / Bun 1.4.2",
+    "Go html/template": "go version go1.25.5 linux/amd64",
+    "Jinja2": "3.1.6 / Python 3.13.18",
+    "PHP": "PHP 8.3.6 (cli) (built: Oct 19 2026 15:16:58) (NTS)",
     "Askama": "0.15.6 / rustc 1.95.0 (59807616e 2026-04-14)",
     "Sailfish": "0.10.2 / rustc 1.95.0 (59807616e 2026-04-14)",
     "Leptos": "0.7.8 / rustc 1.95.0 (59807616e 2026-04-14)",
     "Dioxus": "0.6.3 + dioxus-ssr 0.6.2 / rustc 1.95.0 (59807616e 2026-04-14)",
     "Topcoat": "0.3.1 / rustc 1.95.0 (59807616e 2026-04-14)",
     "Playwright": "1.61.1",
-    "Chromium": "149.0.7827.55"
+    "Chromium": "149.0.7827.55",
+    "Astro": "7.4.8",
+    "SvelteKit": "3.1.0",
+    "Next.js": "Next.js 16.4.6 compiled page / bundled React DOM 19.3.0-canary-278794d7-20261002 / Bun 1.4.2",
+    "Exact": "94b8671f70fe2e25b307a40e7fce66dc27c9f802"
   },
   "provenance": {
-    "harness_commit": "461f84da7093d41f1e2332d1b3f8c3702ecafa4c",
-    "dirty": true,
-    "source_sha256": "75b6b3a8738007f53f34472b068aa20bcbcb7b79266063b0d52a5546a4eb5d56",
-    "os_release": "25.5.0"
+    "harness_commit": "db57c694b8a9f35be288bc5ac6cd1a4bf83a0e33",
+    "dirty": false,
+    "source_sha256": "8e3f6c791501becbcf394f3302def4bea9a27e31fb9da23ec0b496d4f7d548c1"
   },
   "commands": [
-    "./rendering/run-all --refresh-proa"
+    "bun install --frozen-lockfile (repository root, all JavaScript workspaces)",
+    "bundle check || bundle install (Rails adapter directory)",
+    "cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench",
+    "go build -trimpath -o rendering/external/go/build/canonical_suite rendering/external/go/suite_bench.go",
+    "python3 -m venv rendering/external/jinja/.venv && pip install -r rendering/external/jinja/requirements.txt",
+    "gradle --no-daemon --quiet installDist copyJteBinaryStaticContent (jte adapter directory)",
+    "gradle --no-daemon --quiet installDist (Rocker adapter directory)",
+    "\"bun\" \"rendering/canonical/run.mjs\" \"--no-setup\""
   ],
   "limitations": [
     "Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.",
     "Semantic DOM parity permits documented serializer metadata and whitespace differences; payload deltas remain visible.",
     "This capture describes one machine and these three workloads; it is not a universal application ranking.",
-    "Only Proa was rerun on 2026-11-11; every peer retains its 2026-10-21 measurement and version. These are different capture dates on the same machine. Proa returns a fresh owned RenderBuffer; its page-to-String conversion is excluded. Peer outputs and timings are unchanged."
+    "Exact uses the disclosed exact-native-v1 adaptation: named native styles, generated classes, text/list wrappers and separated table borders. Content, attributes, formatting and representative computed CSS are checked separately; strict DOM parity is not claimed. Fresh per-render VM/runtime initialization, prepared-input binding, DOM construction and HTML serialization are inside timing; source compilation and input-data construction are outside."
   ],
   "raw_artifacts": [
     {
-      "label": "Proa refresh process summaries",
-      "path": "raw/canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z/process-summaries.json"
+      "label": "Per-process summaries",
+      "path": "raw/canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929/process-summaries.json"
     },
     {
-      "label": "Original peer capture",
-      "path": "raw/canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z/baseline.json"
+      "label": "Result-table migration map",
+      "path": "../MIGRATION.md"
+    },
+    {
+      "label": "Exact adapted cards stylesheet",
+      "path": "raw/canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929/cards-exact.css"
+    },
+    {
+      "label": "Exact adapted table stylesheet",
+      "path": "raw/canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929/table-exact.css"
+    },
+    {
+      "label": "Exact adapted products stylesheet",
+      "path": "raw/canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929/products-exact.css"
+    },
+    {
+      "label": "Unchanged fixture admission checks",
+      "path": "raw/canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929/admissions.json"
     }
-  ],
-  "proa_output": "fresh owned RenderBuffer; no flattening or String conversion",
-  "refresh": {
-    "renderer": "proa",
-    "baseline_capture_id": "canonical-ssr-v1-2026-10-21-77c5c5fce085",
-    "baseline_captured_at": "2026-10-21T01:22:11.093Z",
-    "baseline_path": "raw/canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z/baseline.json",
-    "baseline_sha256": "1d28e4f1207ee5f9b47ca0d9811febfbe1889189566b544077061945e84bdbab",
-    "note": "Only Proa was rerun on 2026-11-11; every peer retains its 2026-10-21 measurement and version. These are different capture dates on the same machine. Proa returns a fresh owned RenderBuffer; its page-to-String conversion is excluded. Peer outputs and timings are unchanged."
-  },
-  "command": "./rendering/run-all --refresh-proa"
+  ]
 }

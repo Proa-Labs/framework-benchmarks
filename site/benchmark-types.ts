@@ -5,7 +5,7 @@ import type roster from "../rendering/canonical/roster.json";
 import type workloadManifest from "../rendering/canonical/workloads.json";
 import type rendering from "../rendering/results/latest.json";
 import type streaming from "../suspense-load/results/latest.json";
-import type catalog from "./catalog.json";
+import type catalog from "./data/performance/catalog.json";
 import type { Project } from "./feature-schema.ts";
 
 export type Percentiles = { p50: number; p95: number; p99: number };
@@ -28,8 +28,24 @@ export interface Renderer extends Project {
   homepage: string;
   version?: string;
   status: string;
+  renderingAdaptation?: {
+    label: string;
+    reason: string;
+    source: string;
+    details: string;
+    backend?: string;
+  };
   coverageReason?: string;
   coverageSource?: string;
+  renderingUnsupported?: Record<
+    string,
+    {
+      status?: "unsupported" | "parity-failed";
+      reason: string;
+      version: string;
+      source: string;
+    }
+  >;
 }
 export interface Workload {
   id: string;
@@ -39,6 +55,9 @@ export interface Workload {
 }
 export interface BaseRow {
   id: string;
+  source?: string;
+  captureId?: string;
+  capturedAt?: string;
   detail: string;
   errors?: number;
   p50?: number;
@@ -58,6 +77,8 @@ export interface RenderRow
   captureId: string;
   capturedAt: string;
   outputBoundary: string;
+  fixture?: string;
+  adaptation?: Renderer["renderingAdaptation"];
   samples: number[];
   runPercentiles: Percentiles[];
   outputBytes: number;
@@ -103,6 +124,7 @@ export interface StartupRow
 }
 export type ChartRow = RenderRow | HttpRow | StreamRow | StartupRow;
 export interface CaptureMeta {
+  reviewRefresh?: { note: string };
   date: string;
   capturedAt: string;
   capture: string;
@@ -149,15 +171,33 @@ export interface BenchmarkData {
   startup: CaptureMeta & { rows: StartupRow[] };
   framework: CaptureMeta & {
     rows: HttpRow[];
+    workloads: Record<string, HttpRow[]>;
+    workloadDefinitions: {
+      id: string;
+      label: string;
+      fixedRateRps: number;
+      capacityDurationSeconds: number;
+      latencyDurationSeconds: number;
+    }[];
     sourceSnapshot: string;
     methodology: FrameworkCapture["methodology"];
   };
 }
-type RenderingCapture = Omit<typeof rendering, "measurements"> & {
-  measurements: Record<
-    string,
-    Record<string, typeof rendering.measurements.proa.cards>
-  >;
+type RenderMeasurement = Omit<
+  typeof rendering.measurements.proa.cards,
+  "capture_id"
+> & { capture_id?: string };
+type RenderingCapture = Omit<
+  typeof rendering,
+  "measurements" | "refresh" | "proa_output"
+> & {
+  refresh?: {
+    renderer: string;
+    baseline_captured_at: string;
+    note?: string;
+  } | null;
+  proa_output?: string;
+  measurements: Record<string, Record<string, RenderMeasurement>>;
 };
 type HttpCapture = Omit<typeof http, "engines" | "generatorLimitedPhases"> & {
   generatorLimitedPhases?: unknown[];
@@ -178,6 +218,17 @@ export interface RawRun {
   source_capture_id?: string;
 }
 export interface Inputs {
+  reviewRefresh?: Record<
+    View,
+    {
+      note: string;
+      baseline_capture_id: string;
+      baseline_captured_at: string;
+      proa_capture_id: string;
+      proa_captured_at: string;
+      proa_revision: string;
+    }
+  >;
   rendering: RenderingCapture;
   http: HttpCapture;
   streaming: typeof streaming;

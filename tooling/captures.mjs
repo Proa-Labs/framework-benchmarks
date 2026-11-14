@@ -39,7 +39,7 @@ export function atomicWrite(path, body) {
 export function sourceDigest(root, files, prefix = "") {
   const hash = createHash("sha256");
   for (const path of files) {
-    assert.match(path, /^[a-zA-Z0-9_./+()-]+$/);
+    assert.match(path, /^[a-zA-Z0-9_./+()[\]-]+$/);
     assert.ok(!path.startsWith("/") && !path.split("/").includes(".."));
     hash.update(`${prefix}${path}\0`);
     hash.update(readFileSync(join(root, path)));

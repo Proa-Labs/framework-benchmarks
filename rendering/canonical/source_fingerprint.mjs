@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { workspaceSources } from "../../tooling/workspace-sources.mjs";
 
 const sourcePaths = [
   ".nvmrc",
@@ -9,14 +10,19 @@ const sourcePaths = [
   "scripts/proa-refresh-evidence.mjs",
   "Cargo.toml",
   "package.json",
-  "pnpm-lock.yaml",
+  "bunfig.toml",
+  "turbo.json",
   "bun.lock",
   "tooling/adapters.mjs",
   "tooling/captures.mjs",
   "tooling/verify-source.mjs",
   "tooling/string-adapter.mjs",
+  "tooling/owned-adapter.mjs",
+  "tooling/rendering-contract.mjs",
   "load/driver.mjs",
+  "suspense-load/stats.mjs",
   "rendering/Cargo.toml",
+  "rendering/build.rs",
   "rendering/canonical",
   "rendering/src",
   "fixtures/legacy-ebay-chrome",
@@ -38,7 +44,12 @@ export function renderingSourceFiles(workspaceDirectory) {
     ],
     { cwd: workspaceDirectory, encoding: "utf8" },
   );
-  return output.split("\0").filter(Boolean).sort();
+  return [
+    ...new Set([
+      ...output.split("\0").filter(Boolean),
+      ...workspaceSources(workspaceDirectory),
+    ]),
+  ].sort();
 }
 
 export function renderingSourceFingerprint(workspaceDirectory) {

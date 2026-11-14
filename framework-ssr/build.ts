@@ -1,10 +1,15 @@
 import { copyFile, mkdir } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import contract from "./contract.json";
 import { cards } from "./fixture.mjs";
+import { fixture } from "./workloads.ts";
 export const here = dirname(fileURLToPath(import.meta.url));
 export const root = dirname(here);
+export const targetDirectory = resolve(
+  root,
+  process.env.CARGO_TARGET_DIR || "target",
+);
 export const exactSource =
   process.env.EXACT_SOURCE || join(here, ".cache/exact");
 export const environment: NodeJS.ProcessEnv = {
@@ -25,28 +30,29 @@ export async function command(args: string[], cwd = root, env = environment) {
   if (code)
     throw new Error(`${args[0]} ${args.slice(1).join(" ")} failed (${code})`);
 }
+export async function buildProa() {
+  await Bun.write(
+    join(here, "adapters/proa/fixture.json"),
+    `${JSON.stringify(fixture)}\n`,
+  );
+  await Bun.write(
+    join(here, "adapters/proa/cards.json"),
+    `${JSON.stringify(cards, null, 2)}\n`,
+  );
+  await command([
+    "cargo",
+    "build",
+    "--release",
+    "--locked",
+    "--manifest-path",
+    join(here, "adapters/proa/Cargo.toml"),
+    "--target-dir",
+    targetDirectory,
+  ]);
+}
 export async function buildAll() {
   if (Bun.version !== "1.4.2") throw new Error("Use pinned Bun 1.4.2");
-  for (const engine of ["next", "astro", "exact", "proa"]) {
-    await Bun.write(
-      join(here, "adapters", engine, "cards.json"),
-      `${JSON.stringify(cards, null, 2)}\n`,
-    );
-  }
-  for (const engine of ["next", "astro"]) {
-    await command(
-      [process.execPath, "install", "--frozen-lockfile"],
-      join(here, "adapters", engine),
-    );
-  }
-  await command(
-    [process.execPath, "--bun", "node_modules/next/dist/bin/next", "build"],
-    join(here, "adapters/next"),
-  );
-  await command(
-    [process.execPath, "--bun", "node_modules/astro/bin/astro.mjs", "build"],
-    join(here, "adapters/astro"),
-  );
+  await command([process.execPath, "run", "build:framework-adapters"]);
   if (!(await Bun.file(join(exactSource, "Cargo.toml")).exists())) {
     await mkdir(dirname(exactSource), { recursive: true });
     await command([
@@ -108,16 +114,7 @@ export async function buildAll() {
     "-p",
     join(here, "tsconfig.adapters.json"),
   ]);
-  await command([
-    "cargo",
-    "build",
-    "--release",
-    "--locked",
-    "--manifest-path",
-    join(here, "adapters/proa/Cargo.toml"),
-    "--target-dir",
-    join(root, "target"),
-  ]);
-  console.log("Built all four production framework adapters");
+  await buildProa();
+  console.log("Built all five production framework adapters");
 }
 if (import.meta.main) await buildAll();

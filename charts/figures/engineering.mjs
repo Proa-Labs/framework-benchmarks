@@ -95,7 +95,7 @@ export function representative(tables, meta) {
       const col = r.control ? C.floor : isProa ? C.proa : C.peer;
       if (i === 0 && isProa) b += `<rect x="${f(PAD - 6)}" y="${f(y - rowH / 2 + 2)}" width="${f(COL + 12)}" height="${f(rowH - 4)}" rx="3" fill="${C.proa}" opacity=".055"/>`;
       if (i === 0) {
-        b += txt(PAD + gutter - 16, y + 4, key(r).replace('Memcpy control', 'memcpy floor'),
+        b += txt(PAD + gutter - 16, y + 4, (r.name === 'Exact' ? 'Exact†' : key(r).replace('Memcpy control', 'memcpy floor')),
           isProa ? 'catb end' : r.control ? 'note end' : 'cat end');
       }
       b += rule(sc(r.lo / floor.p50), y, sc(r.hi / floor.p50), y, r.control ? '#ded9f2' : isProa ? C.proaWash : C.peerWash, 3);
@@ -108,7 +108,7 @@ export function representative(tables, meta) {
   const allocation = bufferComparisonPanel(tables, bottom + 44);
   b += allocation.body;
   const notes = footnotes(PAD, allocation.bottom + 22,
-    'Full-size capacity is known before timing. Copy: warmed, reused buffers; allocation excluded. Ranges: process P50 min–max.', COL);
+    (byW[ws[0]].some(r => r.name === 'Exact') ? '† Exact: JavaScript SSR with adapted styles and markup. ' : '') + 'Full-size capacity is known before timing. Copy: warmed, reused buffers; allocation excluded. Ranges: process P50 min–max.', COL);
 
   return doc({
     w: WIDTH, h: allocation.bottom + 22 + notes.h + 12,
@@ -316,6 +316,7 @@ export function cardScaling(tables, meta) {
       isProa ? 'valb end' : 'val end', ' text-anchor="end"');
   });
 
+  if (rows.some(r => /Exact/.test(r.name))) b += txt(PAD, plotBottom + 26, '† Exact: JavaScript SSR with adapted styles and markup; strict HTML/class parity differs.', 'note');
   return doc({
     w: WIDTH, h: plotBottom + 40,
     title: `Product-grid scaling across ${rows.length} labelled renderer rows`,

@@ -84,6 +84,9 @@ test("every roster entry has explicit capability states and sourced support clai
       features.map((feature) => feature.id),
     );
     for (const capability of Object.values(row.capabilities)) {
+      const reviewedOn = capability.reviewedOn || row.reviewedOn;
+      assert.equal(new Date(reviewedOn).toISOString().slice(0, 10), reviewedOn);
+      assert.ok(reviewedOn <= (row.updatedOn || row.reviewedOn));
       assert.notEqual(capability.status, "unknown", `${row.id} needs review`);
       assert.ok(Object.hasOwn(supportStates, capability.status));
       assert.ok(capability.note);
@@ -363,7 +366,7 @@ test("navigation and security distinguish prefetch, soft visits, animation and n
   assert.equal(featureEvidence.php.softNavigation.status, "scope");
   for (const row of Object.values(featureEvidence))
     for (const key of ["softNavigation", "viewTransitions", "cspNonce"])
-      assert.equal(row[key].reviewedOn, "2026-11-11");
+      assert.match(required(row[key].reviewedOn), /^\d{4}-\d{2}-\d{2}$/);
 });
 
 test("expanded review keeps security, mutation and host-library contracts distinct", () => {
@@ -371,7 +374,7 @@ test("expanded review keeps security, mutation and host-library contracts distin
   for (const entry of Object.values(featureEvidence)) {
     for (const feature of expandedFeatures) {
       const finding = entry[feature.id];
-      assert.equal(finding.reviewedOn, "2026-11-11");
+      assert.match(required(finding.reviewedOn), /^\d{4}-\d{2}-\d{2}$/);
       assert.notEqual(finding.status, "unknown");
       assert.ok(finding.url && finding.note);
     }

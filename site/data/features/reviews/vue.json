@@ -1,0 +1,587 @@
+{
+  "id": "vue",
+  "scope": "Vue 3 documentation. Vue Router and external application/i18n packages are identified separately.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "vue/server-renderer renders a Vue application to HTML.",
+      "url": "https://vuejs.org/api/ssr.html"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "Server renderer APIs produce Node or Web streams and can pipe to writable streams. This does not establish out-of-order fallback replacement.",
+      "url": "https://vuejs.org/api/ssr.html"
+    },
+    "suspense": {
+      "status": "partial",
+      "note": "Vue's built-in Suspense coordinates async setup and async components, but remains explicitly experimental. The component documentation does not establish React-equivalent SSR fallback streaming.",
+      "url": "https://vuejs.org/guide/built-ins/suspense.html",
+      "label": "Experimental",
+      "reviewedOn": "2026-11-10"
+    },
+    "client": {
+      "status": "native",
+      "note": "createSSRApp hydrates the server-rendered application on the client.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html",
+      "label": "Hydration"
+    },
+    "ssg": {
+      "status": "community",
+      "note": "The Vue SSR guide points to application tools such as Nuxt and VitePress for static-site generation.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html",
+      "label": "Nuxt / VitePress"
+    },
+    "csr": {
+      "status": "native",
+      "note": "createApp mounts a reactive Vue application in the browser.",
+      "url": "https://vuejs.org/guide/essentials/application.html"
+    },
+    "serverOnly": {
+      "status": "scope",
+      "note": "A server-only component pipeline requires a host framework; ordinary Vue components run on both server and client.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "partialRendering": {
+      "status": "scope",
+      "note": "A prebuilt shell with request-time UI needs an application rendering pipeline.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "routing": {
+      "status": "official",
+      "note": "Vue Router is the official routing library; a production SSR application must also integrate server handling.",
+      "url": "https://vuejs.org/guide/scaling-up/routing.html",
+      "label": "Vue Router"
+    },
+    "layouts": {
+      "status": "official",
+      "note": "Nested routes and RouterView compose parent/child layout UI.",
+      "url": "https://router.vuejs.org/guide/essentials/nested-routes.html",
+      "label": "Vue Router"
+    },
+    "dynamicRoutes": {
+      "status": "official",
+      "note": "Dynamic segments expose route params, with matching constraints and catch-all patterns.",
+      "url": "https://router.vuejs.org/guide/essentials/dynamic-matching.html",
+      "label": "Vue Router"
+    },
+    "parallelRoutes": {
+      "status": "partial",
+      "note": "Named views render multiple components for one matched route. Independent URL navigation for each slot is not established.",
+      "url": "https://router.vuejs.org/guide/essentials/named-views.html",
+      "label": "Vue Router named views",
+      "reviewedOn": "2026-11-10"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "Nested routes do not establish a standardized intercepted-modal/direct-entry route contract.",
+      "url": "https://router.vuejs.org/guide/essentials/nested-routes.html"
+    },
+    "prefetch": {
+      "status": "undocumented",
+      "note": "Lazy route imports are documented; automatic hover/viewport route-data prefetch is not established.",
+      "url": "https://router.vuejs.org/guide/advanced/lazy-loading.html"
+    },
+    "softNavigation": {
+      "status": "official",
+      "note": "Vue Router intercepts RouterLink navigation and updates the matched view and browser history without a document reload. Server deployment must still support direct URLs.",
+      "url": "https://router.vuejs.org/guide/",
+      "reviewedOn": "2026-11-11",
+      "label": "Vue Router"
+    },
+    "viewTransitions": {
+      "status": "official",
+      "note": "The official RouterView slot composes with Vue Transition for route enter/leave animations, route metadata and transition modes. Authors provide CSS and reduced-motion behavior.",
+      "url": "https://router.vuejs.org/guide/advanced/transitions.html",
+      "reviewedOn": "2026-11-11",
+      "label": "Vue Router + Transition"
+    },
+    "redirects": {
+      "status": "official",
+      "note": "Routes can redirect or alias URLs; HTTP status redirects still belong to the server.",
+      "url": "https://router.vuejs.org/guide/essentials/redirect-and-alias.html",
+      "label": "Vue Router"
+    },
+    "serverData": {
+      "status": "native",
+      "note": "onServerPrefetch waits for component data during SSR. Universal state isolation and serialization remain application concerns.",
+      "url": "https://vuejs.org/api/composition-api-lifecycle.html#onserverprefetch"
+    },
+    "clientData": {
+      "status": "partial",
+      "note": "Reactive composables can encapsulate fetch/loading/error state. A shared stale-data query cache is not supplied by this recipe.",
+      "url": "https://vuejs.org/guide/reusability/composables.html",
+      "label": "Fetch composable recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "requestDedupe": {
+      "status": "undocumented",
+      "note": "The reviewed SSR/state-isolation guide does not establish automatic request-wide keyed data deduplication.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "persistentCache": {
+      "status": "scope",
+      "note": "Retaining application data or rendered pages across requests belongs to the host cache.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "invalidation": {
+      "status": "scope",
+      "note": "Application data/page invalidation belongs to the host; recompiling a template is a different cache boundary.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "isr": {
+      "status": "scope",
+      "note": "Regenerating deployed pages requires a host page cache/export pipeline.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "apiRoutes": {
+      "status": "scope",
+      "note": "The host server exposes HTTP endpoints and invokes the template renderer.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "httpErrors": {
+      "status": "scope",
+      "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html",
+      "label": "HTTP host required",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "scope",
+      "note": "Generated browser-to-server function transports are outside the template API.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "forms": {
+      "status": "partial",
+      "note": "v-model binds form controls; validation rules and server submission/feedback require application code or a form library.",
+      "url": "https://vuejs.org/guide/essentials/forms.html",
+      "label": "Form bindings",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "v-model binds form controls; validation rules and server submission/feedback require application code or a form library."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "scope",
+      "note": "Request middleware belongs to the host server.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "cookies": {
+      "status": "scope",
+      "note": "HTTP cookies and sessions belong to the host request/response layer.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "cssModules": {
+      "status": "native",
+      "note": "SFC module styles expose generated class mappings to the component.",
+      "url": "https://vuejs.org/api/sfc-css-features.html"
+    },
+    "scopedCss": {
+      "status": "native",
+      "note": "Scoped SFC style tags rewrite selectors; deep and global escapes are documented.",
+      "url": "https://vuejs.org/api/sfc-css-features.html"
+    },
+    "tailwind": {
+      "status": "scope",
+      "note": "The selected build tool can process external Tailwind styles; Vue’s SFC compiler does not supply Tailwind.",
+      "url": "https://vuejs.org/guide/scaling-up/tooling.html"
+    },
+    "cssInJs": {
+      "status": "scope",
+      "note": "SFC scoped styles and v-bind CSS are compiled CSS features; a JavaScript CSS-in-JS runtime/registry is separate tooling.",
+      "url": "https://vuejs.org/api/sfc-css-features.html"
+    },
+    "images": {
+      "status": "scope",
+      "note": "Templates emit image markup; image resizing/conversion requires a separate asset pipeline.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "fonts": {
+      "status": "scope",
+      "note": "Font downloading, subsetting, and fallback optimization require a separate asset pipeline.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "scripts": {
+      "status": "partial",
+      "note": "SSR template/app entry code integrates scripts manually; a dedicated third-party script scheduler is not established.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html",
+      "label": "Host script integration",
+      "reviewedOn": "2026-11-10"
+    },
+    "assetPipeline": {
+      "status": "community",
+      "note": "Vue’s recommended create-vue setup uses Vite, whose production asset graph hashes imported images, CSS, fonts, and scripts and updates references. This behavior comes from the external build tool, not Vue’s runtime. Files copied from public/ are unchanged.",
+      "url": "https://vite.dev/guide/assets",
+      "label": "Vite build pipeline",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "community",
+      "note": "The recommended Vite-based toolchain imports, fingerprints, and builds assets.",
+      "url": "https://vuejs.org/guide/scaling-up/tooling.html",
+      "label": "Vite"
+    },
+    "metadata": {
+      "status": "community",
+      "note": "Unhead’s Vue adapter manages typed/reactive head entries and SSR output.",
+      "url": "https://unhead.unjs.io/docs/vue/head/guides/core-concepts/titles",
+      "label": "Unhead"
+    },
+    "dynamicMetadata": {
+      "status": "community",
+      "note": "useHead accepts reactive values and keeps server/client head output synchronized.",
+      "url": "https://unhead.unjs.io/docs/vue/head/guides/core-concepts/titles",
+      "label": "Unhead"
+    },
+    "metadataInheritance": {
+      "status": "community",
+      "note": "Head entries from layouts/pages compose through semantic tag identity; this is entry composition rather than a route-specific metadata object.",
+      "url": "https://unhead.unjs.io/docs/vue/head/guides/core-concepts/handling-duplicates",
+      "label": "Unhead"
+    },
+    "metadataOverrides": {
+      "status": "community",
+      "note": "Later entries replace semantic duplicates by default; explicit keys and duplicate strategies control replacement/merging.",
+      "url": "https://unhead.unjs.io/docs/vue/head/guides/core-concepts/handling-duplicates",
+      "label": "Unhead"
+    },
+    "titleTemplates": {
+      "status": "community",
+      "note": "titleTemplate composes a shared title format with page title values.",
+      "url": "https://unhead.unjs.io/docs/vue/head/guides/core-concepts/titles",
+      "label": "Unhead"
+    },
+    "socialImages": {
+      "status": "scope",
+      "note": "Generating social-preview image bytes needs a separate image renderer/service.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "sitemaps": {
+      "status": "scope",
+      "note": "XML can be templated, but route enumeration and a sitemap generator belong to the host.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "robots": {
+      "status": "scope",
+      "note": "Text can be templated, but crawler-document publishing/configuration belongs to the host.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "markdown": {
+      "status": "scope",
+      "note": "This is text/HTML templating; Markdown parsing and content-page integration require another tool.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "collections": {
+      "status": "scope",
+      "note": "The host loads and validates structured content; the template API renders supplied values.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "draftMode": {
+      "status": "scope",
+      "note": "Editorial preview authorization and published-cache bypass belong to the host application.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "translations": {
+      "status": "community",
+      "note": "Vue I18n adds message catalogs, pluralization, fallback locales, and lazy-loading support.",
+      "url": "https://vue-i18n.intlify.dev/guide/introduction",
+      "label": "Vue I18n"
+    },
+    "localeRouting": {
+      "status": "partial",
+      "note": "A locale can be represented by a route segment; negotiation and locale redirects require application logic.",
+      "url": "https://router.vuejs.org/guide/essentials/dynamic-matching.html",
+      "label": "Router segment recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "localeFormatting": {
+      "status": "community",
+      "note": "Vue I18n documents date/time and number formatting helpers.",
+      "url": "https://vue-i18n.intlify.dev/guide/introduction",
+      "label": "Vue I18n"
+    },
+    "auth": {
+      "status": "scope",
+      "note": "Identity, login, and authorization are responsibilities of the host application.",
+      "url": "https://vuejs.org/guide/best-practices/security.html"
+    },
+    "csp": {
+      "status": "scope",
+      "note": "The HTTP host owns CSP headers/nonces. Vue’s runtime-only/precompiled build avoids the runtime template compiler’s dynamic evaluation requirement.",
+      "url": "https://vuejs.org/guide/best-practices/security.html"
+    },
+    "cspNonce": {
+      "status": "scope",
+      "note": "The HTTP application must generate a fresh nonce, set its policy and pass the value to authored tags. A template accepting attributes does not coordinate nonces for an application.",
+      "url": "https://vuejs.org/guide/best-practices/security.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "csrf": {
+      "status": "scope",
+      "note": "Vue’s security guide assigns CSRF protection to the backend; Vue rendering/escaping is not a CSRF policy.",
+      "url": "https://vuejs.org/guide/best-practices/security.html"
+    },
+    "environment": {
+      "status": "scope",
+      "note": "Server/client secret configuration belongs to the host application, not template evaluation.",
+      "url": "https://vuejs.org/guide/best-practices/security.html"
+    },
+    "types": {
+      "status": "native",
+      "note": "Vue supports TypeScript and SFC type checking through Vue tooling; editor/build setup matters.",
+      "url": "https://vuejs.org/guide/typescript/overview.html"
+    },
+    "hmr": {
+      "status": "official",
+      "note": "Official create-vue projects use the Vue Vite plugin for SFC hot updates.",
+      "url": "https://vuejs.org/guide/scaling-up/tooling.html",
+      "label": "create-vue / Vite plugin"
+    },
+    "cli": {
+      "status": "official",
+      "note": "create-vue scaffolds official Vite-based projects with optional router/testing/type tooling.",
+      "url": "https://vuejs.org/guide/scaling-up/tooling.html",
+      "label": "create-vue"
+    },
+    "bundleAnalysis": {
+      "status": "undocumented",
+      "note": "The reviewed official tooling guide does not establish a bundled production module-size visualization.",
+      "url": "https://vuejs.org/guide/scaling-up/tooling.html"
+    },
+    "unitTests": {
+      "status": "official",
+      "note": "Vue Test Utils supplies official component test helpers; Vitest is the recommended external runner.",
+      "url": "https://vuejs.org/guide/scaling-up/testing.html",
+      "label": "Vue Test Utils"
+    },
+    "e2eTests": {
+      "status": "community",
+      "note": "The official testing guide documents Cypress and other browser end-to-end runners.",
+      "url": "https://vuejs.org/guide/scaling-up/testing.html",
+      "label": "Cypress"
+    },
+    "observability": {
+      "status": "native",
+      "note": "app.config.errorHandler and performance hooks expose errors/timings; reporting backends require application integration.",
+      "url": "https://vuejs.org/api/application.html#app-config-errorhandler",
+      "label": "Application hooks"
+    },
+    "errorHandling": {
+      "status": "native",
+      "note": "onErrorCaptured catches descendant failures and can switch UI into an application-authored fallback state.",
+      "url": "https://vuejs.org/api/composition-api-lifecycle.html#onerrorcaptured"
+    },
+    "serverHosting": {
+      "status": "partial",
+      "note": "The SSR guide wires Vue’s renderer into a Node HTTP server; production routing/middleware are host responsibilities.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html",
+      "label": "Custom SSR server",
+      "reviewedOn": "2026-11-10"
+    },
+    "subpathProxy": {
+      "status": "scope",
+      "note": "The reviewed UI library does not own production HTTP routing, asset mounting or reverse-proxy origin handling. A router/build tool and host framework must coordinate a subpath deployment; client-side route base support alone is not the complete server deployment contract.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html",
+      "label": "Host framework required",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "partial",
+      "note": "Client builds emit deployable static assets through the selected build tool. This is distinct from prerendered HTML site export.",
+      "url": "https://vuejs.org/guide/best-practices/production-deployment.html",
+      "label": "CSR static build",
+      "reviewedOn": "2026-11-10"
+    },
+    "containers": {
+      "status": "scope",
+      "note": "A container packages the host application and renderer together; the template API has no container workflow.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "edgeHosting": {
+      "status": "scope",
+      "note": "Edge deployment depends on the host runtime and its adapter, not template syntax.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html"
+    },
+    "orm": {
+      "status": "scope",
+      "note": "ORM / query builder belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://vuejs.org"
+    },
+    "migrations": {
+      "status": "scope",
+      "note": "Schema migrations belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://vuejs.org"
+    },
+    "transactions": {
+      "status": "scope",
+      "note": "Transactions belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://vuejs.org"
+    },
+    "jobs": {
+      "status": "scope",
+      "note": "Background jobs belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://vuejs.org"
+    },
+    "mail": {
+      "status": "scope",
+      "note": "Email belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://vuejs.org"
+    },
+    "uploads": {
+      "status": "scope",
+      "note": "File uploads & storage belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://vuejs.org"
+    },
+    "realtime": {
+      "status": "scope",
+      "note": "Real-time delivery belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://vuejs.org"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Vue escapes ordinary text and attribute bindings using browser APIs/server encoding. v-html and untrusted URLs/styles need separate controls; templates themselves must be trusted.",
+      "url": "https://vuejs.org/guide/best-practices/security.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://vuejs.org/guide/best-practices/security.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://vuejs.org/guide/best-practices/security.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://vuejs.org/guide/best-practices/security.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "scope",
+      "note": "Progressive forms requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://vuejs.org/guide/essentials/forms.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "optimisticUi": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific optimistic updates contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://vuejs.org/guide/reusability/composables.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "partial",
+      "note": "onWatcherCleanup lets an authored watcher abort its prior fetch when its source changes. The application must create/pass AbortController and register cleanup; Vue does not automatically cancel arbitrary requests.",
+      "url": "https://vuejs.org/guide/essentials/watchers.html#side-effect-cleanup",
+      "reviewedOn": "2026-11-11",
+      "label": "Watcher cleanup recipe"
+    },
+    "typedLinks": {
+      "status": "official",
+      "note": "Vue Router supports typed route maps that check route names and required parameters. Configure the map or use its documented file-based type generation; raw string paths and type assertions can bypass that checking. This is router tooling, not Vue runtime validation of arbitrary URLs.",
+      "url": "https://router.vuejs.org/guide/advanced/typed-routes.html",
+      "reviewedOn": "2026-11-13",
+      "label": "Vue Router typed route maps"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://router.vuejs.org/guide/",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "official",
+      "note": "Vue KeepAlive can retain selected component instances/state across route switches when composed with RouterView; Nuxt also exposes page keepalive configuration. It is opt-in and limited by include/exclude/cache eviction.",
+      "url": "https://router.vuejs.org/guide/advanced/router-view-slot.html",
+      "reviewedOn": "2026-11-11",
+      "label": "KeepAlive"
+    },
+    "scrollRestoration": {
+      "status": "official",
+      "note": "Vue Router scrollBehavior receives saved positions for history traversal and lets the app return scrolling behavior. Nuxt configures it through its router integration; the app can customize it.",
+      "url": "https://router.vuejs.org/guide/advanced/scroll-behavior.html",
+      "reviewedOn": "2026-11-11",
+      "label": "Vue Router"
+    },
+    "navigationBlocking": {
+      "status": "official",
+      "note": "Navigation guards can return false or prompt before leaving a route, including in-component beforeRouteLeave. Full-document unload is a separate browser mechanism.",
+      "url": "https://router.vuejs.org/guide/advanced/navigation-guards.html",
+      "reviewedOn": "2026-11-11",
+      "label": "Vue Router guards"
+    },
+    "navigationAccessibility": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessible navigation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "a11yChecks": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "native",
+      "note": "Vue 3.5 async components accept hydration strategies such as visibility, idle, media query and interaction; interaction hydration can replay the triggering event. Async component loading and SSR hydration timing are separate controls.",
+      "url": "https://vuejs.org/guide/components/async.html#lazy-hydration",
+      "reviewedOn": "2026-11-11",
+      "label": "Async hydration strategies"
+    },
+    "codeSplitting": {
+      "status": "official",
+      "note": "Vue Router’s lazy route-component workflow combines with Vite/webpack to emit and load route chunks on demand. Configure that build integration; arbitrary dynamic import syntax alone is not the whole route pipeline, and shared imports still affect downloads.",
+      "url": "https://router.vuejs.org/guide/advanced/lazy-loading.html",
+      "reviewedOn": "2026-11-13",
+      "label": "Vue Router + bundler"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "scope",
+      "note": "Scheduled tasks requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://vuejs.org",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "scope",
+      "note": "Multi-channel notifications requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://vuejs.org",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "scope",
+      "note": "Search indexing requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://vuejs.org",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "scope",
+      "note": "Encrypted model fields requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://vuejs.org",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://vuejs.org/guide/scaling-up/testing.html",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

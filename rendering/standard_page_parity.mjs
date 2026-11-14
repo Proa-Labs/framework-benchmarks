@@ -202,7 +202,7 @@ const workspacePackageJson = JSON.parse(
 const playwrightPackagePath = require.resolve("playwright/package.json");
 const playwrightPackage = JSON.parse(readFileSync(playwrightPackagePath, "utf8"));
 // Resolve Playwright's private dependency from Playwright itself. npm happened
-// to hoist playwright-core to the workspace root; pnpm correctly keeps the
+// to hoist playwright-core to the workspace root; isolated installs keep the
 // transitive package behind Playwright's dependency boundary.
 const requireFromPlaywright = createRequire(playwrightPackagePath);
 const playwrightCorePackagePath = requireFromPlaywright.resolve(
@@ -211,7 +211,12 @@ const playwrightCorePackagePath = requireFromPlaywright.resolve(
 const playwrightCorePackage = JSON.parse(
   readFileSync(playwrightCorePackagePath, "utf8"),
 );
-const declaredPlaywright = workspacePackageJson.dependencies?.playwright;
+const playwrightSpec = workspacePackageJson.dependencies?.playwright;
+// Catalogs keep the exact shared pin in the root manifest, rather than
+// repeating its version in each workspace dependency declaration.
+const declaredPlaywright = playwrightSpec === "catalog:"
+  ? workspacePackageJson.catalog?.playwright
+  : playwrightSpec;
 if (declaredPlaywright !== playwrightPackage.version) {
   throw new Error(
     `installed Playwright ${playwrightPackage.version} does not match the exact package.json pin ${declaredPlaywright ?? "<missing>"}`,

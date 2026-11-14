@@ -1,0 +1,596 @@
+{
+  "id": "tanstack-start",
+  "scope": "TanStack Start v1 React documentation, with TanStack Router. Experimental Server Components are qualified separately; this is not the Solid adapter review.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "Start integrates React SSR, streaming, hydration and Suspense with its router. This does not imply experimental React Server Components are enabled.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "Start integrates React SSR, streaming, hydration and Suspense with its router. This does not imply experimental React Server Components are enabled.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "suspense": {
+      "status": "native",
+      "note": "Start integrates React SSR, streaming, hydration and Suspense with its router. This does not imply experimental React Server Components are enabled.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "client": {
+      "status": "native",
+      "note": "Start integrates React SSR, streaming, hydration and Suspense with its router. This does not imply experimental React Server Components are enabled.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "ssg": {
+      "status": "native",
+      "note": "The build plugin can crawl/enumerate routes and generate static HTML. Dynamic server functions are unavailable on static-only hosting.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/static-prerendering"
+    },
+    "csr": {
+      "status": "native",
+      "note": "Route-level ssr:false disables server rendering; normal client navigation still loads and renders through the router.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/selective-ssr"
+    },
+    "serverOnly": {
+      "status": "partial",
+      "note": "Server Components require an explicit experimental RSC plugin setup. Ordinary server functions are supported without enabling RSC.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-components",
+      "label": "Experimental RSC",
+      "reviewedOn": "2026-11-10"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start rendering guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/selective-ssr"
+    },
+    "routing": {
+      "status": "native",
+      "note": "Start integrates TanStack Router's nested routes/layouts, parameters, navigation and loader prefetching.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/routing"
+    },
+    "layouts": {
+      "status": "native",
+      "note": "Start integrates TanStack Router's nested routes/layouts, parameters, navigation and loader prefetching.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/routing"
+    },
+    "dynamicRoutes": {
+      "status": "native",
+      "note": "Start integrates TanStack Router's nested routes/layouts, parameters, navigation and loader prefetching.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/routing"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start routing guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/routing"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start routing guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/routing"
+    },
+    "prefetch": {
+      "status": "native",
+      "note": "Start integrates TanStack Router's nested routes/layouts, parameters, navigation and loader prefetching.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/routing"
+    },
+    "softNavigation": {
+      "status": "native",
+      "note": "The integrated TanStack Router updates route UI and browser history without a reload; reloadDocument explicitly requests document navigation. Pending state, loaders and preloading have separate controls.",
+      "url": "https://tanstack.com/router/latest/docs/guide/navigation",
+      "reviewedOn": "2026-11-11",
+      "label": "TanStack Router"
+    },
+    "viewTransitions": {
+      "status": "native",
+      "note": "Router viewTransition/defaultViewTransition coordinate document.startViewTransition during navigation, including transition types. It is opt-in and depends on browser support; animation CSS and reduced-motion behavior remain app-owned.",
+      "url": "https://tanstack.com/router/latest/docs/api/router/RouterOptionsType#defaultviewtransition-property",
+      "reviewedOn": "2026-11-13",
+      "label": "TanStack Router"
+    },
+    "redirects": {
+      "status": "native",
+      "note": "Start integrates TanStack Router's nested routes/layouts, parameters, navigation and loader prefetching.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/routing"
+    },
+    "serverData": {
+      "status": "native",
+      "note": "createServerFn provides typed server handlers callable from route loaders and clients, with middleware and input validation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions"
+    },
+    "clientData": {
+      "status": "native",
+      "note": "Router loaders cache and deduplicate reads, preload destinations and invalidate route data. The route cache is coarser than TanStack Query and is not a durable server cache.",
+      "url": "https://tanstack.com/router/latest/docs/framework/react/guide/data-loading"
+    },
+    "requestDedupe": {
+      "status": "native",
+      "note": "Router loaders cache and deduplicate reads, preload destinations and invalidate route data. The route cache is coarser than TanStack Query and is not a durable server cache.",
+      "url": "https://tanstack.com/router/latest/docs/framework/react/guide/data-loading"
+    },
+    "persistentCache": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start data guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions"
+    },
+    "invalidation": {
+      "status": "native",
+      "note": "Router loaders cache and deduplicate reads, preload destinations and invalidate route data. The route cache is coarser than TanStack Query and is not a durable server cache.",
+      "url": "https://tanstack.com/router/latest/docs/framework/react/guide/data-loading"
+    },
+    "isr": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start data guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions"
+    },
+    "apiRoutes": {
+      "status": "native",
+      "note": "Server routes handle HTTP methods and standard Request/Response bodies, including multipart data. Durable file storage is application/provider-owned.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-routes"
+    },
+    "httpErrors": {
+      "status": "native",
+      "note": "Start combines Router notFound handling with server routes and response-status helpers. Use an explicit Response or setResponseStatus for application HTTP errors rather than relying on a rendered error component alone. Decide failures before the SSR response headers are sent; errors discovered later in a stream cannot replace the committed HTTP status.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions",
+      "label": "Router / server response status",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "native",
+      "note": "createServerFn provides typed server handlers callable from route loaders and clients, with middleware and input validation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions"
+    },
+    "forms": {
+      "status": "native",
+      "note": "Server functions accept form data and input validation, with ordinary form submission as a documented transport.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Server functions accept form data and input validation, with ordinary form submission as a documented transport."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "native",
+      "note": "Composable request and server-function middleware supports shared checks and typed context.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/middleware"
+    },
+    "cookies": {
+      "status": "native",
+      "note": "Request-scoped getCookie/setCookie/deleteCookie helpers support session-token cookies. Identity storage, lookup and revocation are application/auth-library responsibilities.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/authentication-server-primitives"
+    },
+    "cssModules": {
+      "status": "native",
+      "note": "Start discovers route CSS Modules in the build graph and links their scoped stylesheets during SSR and client navigation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/css-styling"
+    },
+    "scopedCss": {
+      "status": "native",
+      "note": "Start discovers route CSS Modules in the build graph and links their scoped stylesheets during SSR and client navigation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/css-styling"
+    },
+    "tailwind": {
+      "status": "community",
+      "note": "The guide integrates Tailwind's external build plugin and generated stylesheet.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/tailwind-integration",
+      "label": "Tailwind"
+    },
+    "cssInJs": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start styling guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "images": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start assets guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo"
+    },
+    "fonts": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start assets guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo"
+    },
+    "scripts": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start assets guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo"
+    },
+    "assetPipeline": {
+      "status": "native",
+      "note": "TanStack Start integrates a bundler-managed client asset graph, including hashed production chunks and SSR asset URL mapping. Its CDN asset URL hook can remap generated URLs. Assets must enter the build graph; copying a file to public/ does not automatically fingerprint it.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/cdn-asset-urls",
+      "label": "Bundler-managed assets",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "native",
+      "note": "Files in public are served at their public paths; imported build assets are processed by the configured bundler. For example, the SEO guide documents automatic serving of public/robots.txt. Public files do not gain hashed filenames merely by being copied.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo",
+      "reviewedOn": "2026-11-13",
+      "label": "Public directory / bundler"
+    },
+    "metadata": {
+      "status": "native",
+      "note": "A route head function returns titles, metadata and links and can read loader data; HeadContent renders matched-route head output.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo",
+      "assessment": {
+        "summary": "Typed route head output with explicit nested-route deduplication and loader-data access.",
+        "strengths": [
+          "A child title or same-name/property meta tag replaces the inherited entry.",
+          "Head output is loaded and unloaded with route visibility."
+        ],
+        "tradeoffs": [
+          "Composition happens at tag level, rather than merging structured SEO objects.",
+          "Title templates and more complex inherited arrays require application composition."
+        ]
+      }
+    },
+    "dynamicMetadata": {
+      "status": "native",
+      "note": "A route head function returns titles, metadata and links and can read loader data; HeadContent renders matched-route head output.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo"
+    },
+    "metadataInheritance": {
+      "status": "native",
+      "note": "Nested-route head entries deduplicate titles and meta tags by semantic name/property; the last/deepest matching tag wins. This is tag-level composition, not recursive SEO-object merging.",
+      "url": "https://tanstack.com/router/latest/docs/framework/react/guide/document-head-management"
+    },
+    "metadataOverrides": {
+      "status": "native",
+      "note": "Nested-route head entries deduplicate titles and meta tags by semantic name/property; the last/deepest matching tag wins. This is tag-level composition, not recursive SEO-object merging.",
+      "url": "https://tanstack.com/router/latest/docs/framework/react/guide/document-head-management"
+    },
+    "titleTemplates": {
+      "status": "partial",
+      "note": "Titles can be composed from matched route data. An inherited template/absolute-reset field API is not established; composition is application code.",
+      "url": "https://tanstack.com/router/latest/docs/framework/react/guide/document-head-management",
+      "label": "Route-data composition",
+      "reviewedOn": "2026-11-10"
+    },
+    "socialImages": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo"
+    },
+    "sitemaps": {
+      "status": "native",
+      "note": "Build-plugin sitemap generation integrates with prerender crawling and an explicit canonical host.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo"
+    },
+    "robots": {
+      "status": "native",
+      "note": "A documented public/robots.txt convention serves crawler directives automatically, or a server route can generate the response. The application authors the directives; a typed directive-builder API is not required by this feature definition.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo",
+      "label": "Static convention / server route",
+      "reviewedOn": "2026-11-13"
+    },
+    "markdown": {
+      "status": "official",
+      "note": "The documented TanStack Markdown React renderer works during SSR and browser navigation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/rendering-markdown",
+      "label": "TanStack Markdown"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start content guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start content guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo"
+    },
+    "translations": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start i18n guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/routing"
+    },
+    "localeRouting": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start i18n guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/routing"
+    },
+    "localeFormatting": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start i18n guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/routing"
+    },
+    "auth": {
+      "status": "community",
+      "note": "The guide integrates named providers/libraries such as Better Auth, Clerk and WorkOS; applications choose and configure one.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/authentication",
+      "label": "Auth integration"
+    },
+    "csp": {
+      "status": "native",
+      "note": "Router ssr.nonce lets generated SSR tags carry an application-supplied request nonce; HeadContent also applies it to inlined styles. The application must generate the nonce and matching CSP response header.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/css-styling",
+      "reviewedOn": "2026-11-11",
+      "label": "Application-configured CSP"
+    },
+    "cspNonce": {
+      "status": "native",
+      "note": "Router ssr.nonce lets generated SSR tags carry an application-supplied request nonce; HeadContent also applies it to inlined styles. The application must generate the nonce and matching CSP response header.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/css-styling",
+      "reviewedOn": "2026-11-11",
+      "label": "SSR nonce option"
+    },
+    "csrf": {
+      "status": "native",
+      "note": "createCsrfMiddleware enforces browser-origin checks for server functions. It is automatic without a custom src/start.ts; custom start configuration must register it explicitly.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions"
+    },
+    "environment": {
+      "status": "native",
+      "note": "Server/client environment boundaries and runtime-aware per-request secret reads are documented; returned values can still expose secrets.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/environment-variables"
+    },
+    "types": {
+      "status": "native",
+      "note": "TypeScript routes/server functions and the Vite/Rsbuild workflow support typed application development and hot updates.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "hmr": {
+      "status": "native",
+      "note": "TypeScript routes/server functions and the Vite/Rsbuild workflow support typed application development and hot updates.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "cli": {
+      "status": "native",
+      "note": "TypeScript routes/server functions and the Vite/Rsbuild workflow support typed application development and hot updates.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "bundleAnalysis": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start tooling guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "unitTests": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start testing guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/observability"
+    },
+    "e2eTests": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start testing guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/observability"
+    },
+    "observability": {
+      "status": "community",
+      "note": "The guide documents Sentry instrumentation; request middleware can also add app-owned logging.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/observability",
+      "label": "Sentry"
+    },
+    "errorHandling": {
+      "status": "native",
+      "note": "Router error components and default/per-route boundaries render fallback UI for failed routes.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/error-boundaries"
+    },
+    "serverHosting": {
+      "status": "native",
+      "note": "The overview documents deployment to server and worker runtimes; runtime-specific dependencies must match the target.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "subpathProxy": {
+      "status": "partial",
+      "note": "TanStack Router’s basepath rebases route matching and generated navigation. Start’s bundler asset base and deployment adapter must be configured consistently, including the public origin behind a proxy. Router basepath alone does not establish that assets and server endpoints are all mounted correctly.",
+      "url": "https://tanstack.com/router/latest/docs/api/router/RouterOptionsType#basepath-property",
+      "label": "Router base; deployment setup",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "native",
+      "note": "The build plugin can crawl/enumerate routes and generate static HTML. Dynamic server functions are unavailable on static-only hosting.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/static-prerendering"
+    },
+    "containers": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed TanStack Start deployment guide. External integrations or application code may provide this behavior.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "edgeHosting": {
+      "status": "native",
+      "note": "The overview documents deployment to server and worker runtimes; runtime-specific dependencies must match the target.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
+    },
+    "orm": {
+      "status": "community",
+      "note": "The database guide points to external libraries such as Drizzle and Prisma. Their query, migration and transaction APIs belong to those libraries.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/databases",
+      "label": "Drizzle / Prisma",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "An ORM/query API establishes a data-access surface, not identical relationship loading, N+1 detection, migration or encryption behavior.",
+        "strengths": [
+          "The database guide points to external libraries such as Drizzle and Prisma. Their query, migration and transaction APIs belong to those libraries."
+        ],
+        "tradeoffs": [
+          "Review eager loading, query counts and transaction semantics for the selected driver. Schema migrations, transactions and encrypted fields are compared separately."
+        ]
+      }
+    },
+    "migrations": {
+      "status": "community",
+      "note": "The database guide points to external libraries such as Drizzle and Prisma. Their query, migration and transaction APIs belong to those libraries.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/databases",
+      "label": "Drizzle / Prisma"
+    },
+    "transactions": {
+      "status": "community",
+      "note": "The database guide points to external libraries such as Drizzle and Prisma. Their query, migration and transaction APIs belong to those libraries.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/databases",
+      "label": "Drizzle / Prisma"
+    },
+    "jobs": {
+      "status": "undocumented",
+      "note": "The reviewed TanStack Start server/data guides do not establish an owned background jobs API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions"
+    },
+    "mail": {
+      "status": "undocumented",
+      "note": "The reviewed TanStack Start server/data guides do not establish an owned email API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions"
+    },
+    "uploads": {
+      "status": "partial",
+      "note": "Routes can read Request.formData and receive uploads. A framework storage lifecycle or upload service is not established.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-routes",
+      "label": "Multipart endpoints",
+      "reviewedOn": "2026-11-10"
+    },
+    "realtime": {
+      "status": "undocumented",
+      "note": "The reviewed TanStack Start server/data guides do not establish an owned real-time delivery API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Its integrated UI renderer supplies this policy. Normal text values are rendered as text; dangerouslySetInnerHTML bypasses this path and requires trusted/sanitized HTML. Do not infer arbitrary URL/CSS safety from text escaping.",
+      "url": "https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/css-styling",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/css-styling",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/css-styling",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "native",
+      "note": "The server-functions guide documents native HTML forms using a server function’s .url. Return an appropriate Response/redirect and validate the request on the server. A JavaScript-only event handler is a different submission path.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions#progressive-enhancement",
+      "reviewedOn": "2026-11-13",
+      "label": "Server-function URL forms"
+    },
+    "optimisticUi": {
+      "status": "native",
+      "note": "React useOptimistic overlays pending mutation UI and reconciles against the supplied confirmed state through Actions/transitions. Application code must define the update and failure feedback; this is not a durable offline write queue.",
+      "url": "https://react.dev/reference/react/useOptimistic",
+      "reviewedOn": "2026-11-11",
+      "label": "React useOptimistic"
+    },
+    "requestCancellation": {
+      "status": "native",
+      "note": "Router loaders receive an AbortController that is canceled when a load is superseded. Loaders must pass its signal into cancelable I/O; server mutations are not rolled back by aborting the browser request.",
+      "url": "https://tanstack.com/router/latest/docs/guide/data-loading",
+      "reviewedOn": "2026-11-11",
+      "label": "Loader abortController"
+    },
+    "typedLinks": {
+      "status": "native",
+      "note": "TanStack Router checks route paths, params and navigation destinations from the registered route tree. The registration/type pipeline is required; casting a string can bypass its checks.",
+      "url": "https://tanstack.com/router/latest/docs/guide/type-safety",
+      "reviewedOn": "2026-11-11",
+      "label": "TanStack Router"
+    },
+    "searchParams": {
+      "status": "native",
+      "note": "validateSearch parses/validates URL state into typed search values, with schema adapters and explicit malformed-input fallbacks/errors. TypeScript annotations alone are not runtime validation.",
+      "url": "https://tanstack.com/router/latest/docs/guide/search-params",
+      "reviewedOn": "2026-11-11",
+      "label": "validateSearch"
+    },
+    "stateRestoration": {
+      "status": "native",
+      "note": "Persistent nested route components retain parent state while child matches change. Unmounted page state is not a general snapshot service; application/URL state is needed where retention is required.",
+      "url": "https://tanstack.com/router/latest/docs/routing/route-trees",
+      "reviewedOn": "2026-11-11",
+      "label": "Nested route retention"
+    },
+    "scrollRestoration": {
+      "status": "native",
+      "note": "Router scroll restoration tracks document and registered scrollable regions and restores before paint. scrollRestoration must be enabled; cache keys and virtualized scrollers may require configuration.",
+      "url": "https://tanstack.com/router/latest/docs/guide/scroll-restoration",
+      "reviewedOn": "2026-11-11",
+      "label": "TanStack Router"
+    },
+    "navigationBlocking": {
+      "status": "native",
+      "note": "useBlocker/Blocker can pause navigation for custom confirmation and provide proceed/reset. beforeunload covers browser exits separately and inherits browser restrictions.",
+      "url": "https://tanstack.com/router/latest/docs/guide/navigation-blocking",
+      "reviewedOn": "2026-11-11",
+      "label": "TanStack Router"
+    },
+    "navigationAccessibility": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessible navigation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview",
+      "reviewedOn": "2026-11-11"
+    },
+    "a11yChecks": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "native",
+      "note": "The Router build integration automatically splits route components and noncritical exports while leaving matching-critical work available. Correct bundler/plugin configuration and shared chunks affect the output.",
+      "url": "https://tanstack.com/router/latest/docs/guide/automatic-code-splitting",
+      "reviewedOn": "2026-11-11",
+      "label": "Router build plugin"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/overview",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/databases",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/observability",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

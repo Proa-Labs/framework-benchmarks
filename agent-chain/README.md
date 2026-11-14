@@ -33,7 +33,7 @@ and 10 Mbps delivery.
 Install the repository dependencies:
 
 ```sh
-pnpm install --frozen-lockfile
+bun install --frozen-lockfile
 ```
 
 Start both fixture servers:

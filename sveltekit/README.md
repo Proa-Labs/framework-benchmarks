@@ -38,6 +38,11 @@ sequentially, with other heavy host activity stopped.
 mode, HTTP throughput against retained completion counts, raw browser metrics
 against their summaries, identical DOM hashes, JavaScript-disabled controls,
 and source hashes for all five underlying suites.
+The historical report pins all five inputs in `comparison-captures.json` and
+links their immutable archives. Updating a suite’s `latest.json` does not mix
+a new machine into this comparison. To publish a new comparison, rerun its
+complete inputs on one host and update the manifest together; the report keeps
+rejecting mismatched hosts.
 It also verifies the generated SVG. Raw samples and phase summaries are kept in
 `results/latest.json`; no selected “best run” is substituted for the protocol.
 The raw capture includes a buffered validation control that is not plotted.
