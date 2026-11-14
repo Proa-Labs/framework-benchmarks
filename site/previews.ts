@@ -33,14 +33,21 @@ export function thumbnailHtml(html: string) {
       );
     node.childNodes = node.childNodes.filter((child) => {
       if (!("tagName" in child)) return true;
+      const card = child.attrs.some(
+        ({ name, value }) =>
+          name === "class" && value.split(/\s+/).includes("card"),
+      );
       const limit =
         child.tagName === "tr"
           ? 10
-          : child.tagName === "article" || (grid && child.tagName === "a")
+          : card ||
+              child.tagName === "article" ||
+              (grid && child.tagName === "a")
             ? 8
             : Infinity;
-      counts[child.tagName] = (counts[child.tagName] || 0) + 1;
-      return counts[child.tagName] <= limit;
+      const key = card ? "card" : child.tagName;
+      counts[key] = (counts[key] || 0) + 1;
+      return counts[key] <= limit;
     });
     for (const child of node.childNodes) trim(child);
   }

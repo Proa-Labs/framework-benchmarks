@@ -90,7 +90,7 @@ export function createChartMarkup(model: DashboardModel) {
           .filter(isVisible)
           .map((r) => required(r.p50)),
       ) * 1.04;
-    output.html = `<div class="fw-table-scroll" tabindex="0" role="region" aria-label="SSR render latency comparison"><table class="fw-comparison" data-renderer-comparison><caption class="sr-only">Prepared data to freshly owned HTML. Every measured cell reports median render latency in microseconds. HTTP request timings are in the Framework SSR experiment.</caption><thead><tr><th scope="col">Framework / renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" aria-label="${esc(w.label)}${state.workload === w.id ? " ↓" : ""} µs: sort by render latency">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>µs</small></button></th>`).join("")}</tr></thead><tbody>${ids
+    output.html = `<div class="fw-table-scroll" tabindex="0" role="region" aria-label="SSR render latency comparison"><table class="fw-comparison" role="table" style="--fw-workload-count:${workloads.length}" data-renderer-comparison><caption class="sr-only">Prepared data to freshly owned HTML. Every measured cell reports median render latency in microseconds. HTTP request timings are in the Framework SSR experiment.</caption><thead><tr><th scope="col">Framework / renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" aria-label="${esc(w.label)}${state.workload === w.id ? " ↓" : ""} µs: sort by render latency">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>µs</small></button></th>`).join("")}</tr></thead><tbody>${ids
       .map(
         (id) =>
           `<tr ${measuredIds.has(id) ? "data-renderer-row" : "data-renderer-pending"} style="--brand:${required(renderer(id)).color}" class="${state.focus === id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" ${renderer(id)?.renderingAdaptation ? `data-render-adaptation="${id}" data-support-workload="${state.workload}"` : ""} data-focus="${id}" aria-pressed="${state.focus === id}">${label(id, false)}</button></th>${workloads
@@ -113,11 +113,11 @@ export function createChartMarkup(model: DashboardModel) {
       .join("")}</tbody></table></div>`;
     if (ids.some((id) => renderer(id)?.renderingAdaptation))
       output.html +=
-        '<p class="mt-4 text-[11px] leading-relaxed text-muted" data-adaptation-note>† Exact uses adapted native styles and markup. Hover, focus or tap its name or timing for details.</p>';
+        '<p class="mt-4 text-sm leading-relaxed text-muted" data-adaptation-note>† Exact uses adapted native styles and markup. Hover, focus or tap its name or timing for details.</p>';
     const missing = ids.filter((id) => !measuredIds.has(id));
     if (missing.length)
       output.html +=
-        '<p class="mt-4 text-[11px] leading-relaxed text-muted" data-renderer-coverage>Strict rows pass the unchanged HTML fixture; adapted rows are explicitly marked. Hover, focus or tap a status for details. HTTP results are in <a href="?view=framework" class="underline underline-offset-2">Framework SSR ↗</a>.</p>';
+        '<p class="mt-4 text-sm leading-relaxed text-muted" data-renderer-coverage>Strict rows pass the unchanged HTML fixture; adapted rows are explicitly marked. Hover, focus or tap a status for details. HTTP results are in <a href="?view=framework" class="underline underline-offset-2">Framework SSR ↗</a>.</p>';
     output.note =
       "Median SSR render latency · µs · lower is better · prepared data → freshly owned HTML · sort by any workload heading · bars scale within each column";
   }

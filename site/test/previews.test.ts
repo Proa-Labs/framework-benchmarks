@@ -22,3 +22,14 @@ test("thumbnail images serialize inert XHTML with escaped values", () => {
   assert.match(svg, /title="&quot;&amp;"/);
   assert.doesNotMatch(svg, /<script/);
 });
+
+test("thumbnail cards are bounded for div-based and article-based fixtures", () => {
+  for (const tag of ["div", "article"]) {
+    const html = `<main class="card-grid"><div class="spacer"></div>${Array.from({ length: 32 }, (_, i) => `<${tag} class="card" data-card="${i}"><h2>Card ${i}</h2></${tag}>`).join("")}</main>`;
+    const thumbnail = thumbnailHtml(html);
+    assert.equal((thumbnail.match(/data-card=/g) || []).length, 8);
+    assert.match(thumbnail, /data-card="7"/);
+    assert.doesNotMatch(thumbnail, /data-card="8"/);
+    assert.equal((html.match(/data-card=/g) || []).length, 32);
+  }
+});

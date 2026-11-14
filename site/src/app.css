@@ -1178,13 +1178,32 @@
   }
   #frameworks-explorer .fw-comparison {
     @apply [width:100%] [min-width:36rem] border-collapse table-fixed text-sm tabular-nums;
+    --fw-name-column: 25%;
+    display: block;
+  }
+  #frameworks-explorer .fw-comparison thead,
+  #frameworks-explorer .fw-comparison tbody {
+    display: block;
+  }
+  #frameworks-explorer .fw-comparison tr {
+    display: grid;
+    grid-template-columns: var(--fw-name-column) repeat(
+        var(--fw-workload-count),
+        minmax(0, 1fr)
+      );
+    align-items: center;
+    border-bottom: 1px solid var(--fw-line);
+  }
+  #frameworks-explorer .fw-comparison tbody tr {
+    content-visibility: auto;
+    contain-intrinsic-block-size: auto 45px;
   }
   #frameworks-explorer .fw-comparison th:first-child {
-    @apply [width:25%] text-left;
+    @apply text-left;
   }
   #frameworks-explorer .fw-comparison th,
   #frameworks-explorer .fw-comparison td {
-    @apply [padding:8px_12px] [border-bottom:1px_solid_var(--fw-line)] font-normal text-right [vertical-align:middle];
+    @apply [padding:8px_12px] font-normal text-right [vertical-align:middle];
   }
   #frameworks-explorer .fw-comparison th:first-child {
     @apply [padding-left:0];
@@ -1266,8 +1285,8 @@
     #frameworks-explorer .fw-workload-tabs button {
       @apply [padding:7px_8px] text-sm text-center;
     }
-    #frameworks-explorer .fw-comparison th:first-child {
-      @apply [width:32%];
+    #frameworks-explorer .fw-comparison {
+      --fw-name-column: 32%;
     }
     #frameworks-explorer .fw-comparison th,
     #frameworks-explorer .fw-comparison td {
