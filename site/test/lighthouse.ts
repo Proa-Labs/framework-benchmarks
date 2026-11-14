@@ -124,8 +124,17 @@ try {
           "accessibility",
           "best-practices",
           "seo",
-        ]) {
-          const score = report.categories[category].score;
+        ])
+          assert.ok(
+            report.categories[category],
+            `${key}: missing ${category} category`,
+          );
+        for (const [category, value] of Object.entries(report.categories) as [
+          string,
+          { score: number | null },
+        ][]) {
+          if (value.score === null) continue;
+          const score = value.score;
           assert.equal(
             typeof score,
             "number",

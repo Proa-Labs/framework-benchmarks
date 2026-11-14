@@ -28,6 +28,7 @@ import type { BenchmarkData } from "../benchmark-types.ts";
 declare global {
   interface Window {
     reactNavigationProbe?: string;
+    initialComparisonProbe?: Element;
     axe: typeof axe;
   }
 }
@@ -90,6 +91,27 @@ try {
     if (response.status() >= 400)
       errors.push(`${response.status()} ${response.url()}`);
   });
+  await page.addInitScript(() => {
+    const observer = new MutationObserver(() => {
+      const table = document.querySelector("[data-renderer-comparison]");
+      if (table) {
+        window.initialComparisonProbe = table;
+        observer.disconnect();
+      }
+    });
+    observer.observe(document, { childList: true, subtree: true });
+  });
+  await navigate(server.url);
+  assert.equal(
+    await page.evaluate(
+      () =>
+        window.initialComparisonProbe ===
+        document.querySelector("[data-renderer-comparison]"),
+    ),
+    true,
+    "Hydration must preserve the server-rendered comparison table",
+  );
+  checks.push("server-rendered comparison nodes survive hydration");
   await navigate(`${server.url}/?chart=bars`);
   await page.locator(".fw-row").first().waitFor();
   assert.equal(await page.locator(".fw-row").count(), renderCount);

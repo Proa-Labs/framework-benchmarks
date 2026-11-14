@@ -21,6 +21,9 @@ export function ChartMarkup({
       : markup.draw(model.visibleRows()));
   return (
     <div
+      data-initial-chart={
+        slot === "results" ? JSON.stringify(model.state) : undefined
+      }
       {...(slot === "catalog"
         ? { "data-catalog": "" }
         : { "data-results": "", "aria-live": "off" })}

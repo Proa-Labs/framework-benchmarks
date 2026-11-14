@@ -92,9 +92,18 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   const markup = createChartMarkup(model);
   const { lineKey, pointMarker } = markup;
   function showChart(rows: ChartRow[], mode: ChartMode) {
-    const width = $("[data-results]").getBoundingClientRect().width || 720;
+    const target = $("[data-results]");
+    // Comparison tables already have the exact server-rendered state and use
+    // CSS for sizing. Preserve those nodes instead of parsing and laying out
+    // the whole table again during hydration. SVG plots need viewport sizing.
+    const reuse =
+      mode === "compare" &&
+      target.dataset.initialChart === JSON.stringify(state);
+    delete target.dataset.initialChart;
+    const width =
+      mode === "compare" ? 720 : target.getBoundingClientRect().width || 720;
     const chart = markup.draw(rows, mode, width);
-    $("[data-results]").innerHTML = chart.html;
+    if (!reuse) target.innerHTML = chart.html;
     $("[data-chart-note]").textContent = chart.note;
     return chart;
   }
