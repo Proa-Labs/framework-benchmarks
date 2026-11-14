@@ -1,4 +1,18 @@
 <script lang="ts">
+import {
+  date,
+  headers,
+  money,
+  products,
+  rows,
+  score,
+  sections,
+  starIndexes,
+  starPath,
+  timestamp,
+  titles,
+} from "../../../../../workloads.ts";
+
 let { data } = $props();
 </script>
 <svelte:head><title>{titles[data.workload]}</title></svelte:head>

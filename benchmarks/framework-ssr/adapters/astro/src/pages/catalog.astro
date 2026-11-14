@@ -1,4 +1,5 @@
 ---
+import cards from "../../cards.json";
 export const prerender = false;
 const request = Astro.url.searchParams.get("request") || "";
 Astro.response.headers.set("cache-control", "no-store");

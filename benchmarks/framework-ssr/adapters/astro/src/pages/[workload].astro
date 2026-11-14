@@ -1,5 +1,18 @@
 ---
-import { titles, type Workload } from "../../../../workloads.ts";
+import {
+  date,
+  headers,
+  money,
+  products,
+  rows,
+  score,
+  sections,
+  starIndexes,
+  starPath,
+  timestamp,
+  titles,
+  type Workload,
+} from "../../../../workloads.ts";
 export const prerender = false;
 const workload = Astro.params.workload as Workload;
 if (!Object.hasOwn(titles, workload))
