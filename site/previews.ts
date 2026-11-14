@@ -23,9 +23,9 @@ const chart = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"><re
 // for a 32px thumbnail; the full admitted fixture remains available on demand.
 export function thumbnailHtml(html: string) {
   const document = parse(html);
+  const counts: Record<string, number> = {};
   function trim(node: DefaultTreeAdapterMap["node"]) {
     if (!("childNodes" in node)) return;
-    const counts: Record<string, number> = {};
     const grid =
       "attrs" in node &&
       node.attrs.some(
@@ -45,7 +45,7 @@ export function thumbnailHtml(html: string) {
               (grid && child.tagName === "a")
             ? 8
             : Infinity;
-      const key = card ? "card" : child.tagName;
+      const key = card || child.tagName === "article" ? "card" : child.tagName;
       counts[key] = (counts[key] || 0) + 1;
       return counts[key] <= limit;
     });

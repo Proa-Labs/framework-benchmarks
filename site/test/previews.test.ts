@@ -25,7 +25,7 @@ test("thumbnail images serialize inert XHTML with escaped values", () => {
 
 test("thumbnail cards are bounded for div-based and article-based fixtures", () => {
   for (const tag of ["div", "article"]) {
-    const html = `<main class="card-grid"><div class="spacer"></div>${Array.from({ length: 32 }, (_, i) => `<${tag} class="card" data-card="${i}"><h2>Card ${i}</h2></${tag}>`).join("")}</main>`;
+    const html = `<main>${Array.from({ length: 4 }, (_, group) => `<section><h2>Group ${group}</h2><div class="card-grid"><div class="spacer"></div>${Array.from({ length: 8 }, (_, i) => `<${tag} class="card" data-card="${group * 8 + i}"><h3>Card ${i}</h3></${tag}>`).join("")}</div></section>`).join("")}</main>`;
     const thumbnail = thumbnailHtml(html);
     assert.equal((thumbnail.match(/data-card=/g) || []).length, 8);
     assert.match(thumbnail, /data-card="7"/);
