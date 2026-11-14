@@ -1,6 +1,6 @@
 // Run after changes: bun site/test/lighthouse.ts --runs 3
 // Uses a real production build, standard Lighthouse mobile/desktop presets,
-// all four scored categories, and a pinned Lighthouse CLI outside app dependencies.
+// every scored category, and a pinned Lighthouse CLI outside app dependencies.
 import assert from "node:assert/strict";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createServer, request } from "node:http";
@@ -16,6 +16,7 @@ const { values } = parseArgs({
     runs: { type: "string", default: "1" },
     pages: { type: "string", default: "/,/features,/about,/methodology" },
     device: { type: "string", default: "both" },
+    "save-assets": { type: "boolean", default: false },
   },
 });
 const runs = Number(values.runs);
@@ -101,6 +102,7 @@ try {
             "--quiet",
             "--chrome-flags=--headless --no-sandbox",
             "--output=json",
+            ...(values["save-assets"] ? ["--save-assets"] : []),
             `--output-path=${output}`,
             ...(device === "desktop" ? ["--preset=desktop"] : []),
           ],

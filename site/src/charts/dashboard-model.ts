@@ -61,7 +61,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       data.ecosystem.find((r) => r.id === id),
     name = (id: string) => renderer(id)?.label || id;
   const logo = (id: string) =>
-    `<span class="fw-logo-mark" style="--logo-mask:url('${id === "jte" ? "/logos/jte-mark.svg" : `/${required(renderer(id)).logo}`}')" aria-hidden="true"><img class="fw-logo" data-logo="${id}" src="/${required(renderer(id)).logo}" width="18" height="18" alt=""></span>`;
+    `<span class="fw-logo-mark" style="--logo-mask:url('${id === "jte" ? "/logos/jte-mark.svg" : `/${required(renderer(id)).logo}`}')" aria-hidden="true"><img class="fw-logo" data-logo="${id}" src="/${required(renderer(id)).logo}" width="18" height="18" decoding="async" alt=""></span>`;
   const frameworkUsesJsSsr = () =>
     /\bBun\b/.test(data.framework.versions.exact || "");
   const label = (
