@@ -64,7 +64,13 @@ test("build preserves source bytes, emits provenance and serves a self-contained
     );
     assert.doesNotMatch(await fixtureResponse.text(), /<script[\s>]/i);
     let socialImagePath = "";
-    for (const path of ["/", "/features", "/about", "/methodology"]) {
+    for (const path of [
+      "/",
+      "/features",
+      "/?section=ecosystem",
+      "/about",
+      "/methodology",
+    ]) {
       const document = await (await fetch(new URL(path, server.url))).text();
       assert.match(
         document,

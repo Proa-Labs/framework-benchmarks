@@ -492,7 +492,7 @@ export function PerformancePage({
           </section>
         </div>
       </main>
-      <section
+      <main
         data-ecosystem=""
         hidden={state.section !== "ecosystem"}
         aria-label="Ecosystem directory"
@@ -501,7 +501,7 @@ export function PerformancePage({
         <p className="fw-chart-note">
           <Link to="/features">Compare documented features ↗</Link>
         </p>
-      </section>
+      </main>
       <Footer comparisonActions />
       <dialog className="fw-fixture-dialog" aria-labelledby="fixture-title">
         <div className="fw-fixture-toolbar">

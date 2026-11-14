@@ -306,10 +306,33 @@ try {
   );
   await navigate(server.url);
   await page.locator('[data-section="ecosystem"]').click();
+  assert.equal(await page.getByRole("main").count(), 1);
+  assert.equal(await page.getByRole("main").getAttribute("data-ecosystem"), "");
   assert.equal(
     await page.locator(".fw-catalog-row").count(),
     benchmarkData.ecosystem.length,
   );
+  for (const width of [360, 390]) {
+    await page.setViewportSize({ width, height: 1000 });
+    assert.equal(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+      true,
+    );
+    assert.equal(
+      await page
+        .locator(".fw-catalog-row > small:nth-of-type(2)")
+        .evaluateAll((nodes) =>
+          nodes.every(
+            (node) => node.getBoundingClientRect().right <= innerWidth,
+          ),
+        ),
+      true,
+    );
+  }
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  checks.push("Ecosystem main landmark and readable mobile directory columns");
   await navigate(
     `${server.url}/?view=http&chart=table&workload=table&http=rss&selected=react,marko`,
   );

@@ -1055,7 +1055,10 @@
       @apply [min-height:45px];
     }
     #frameworks-explorer .fw-catalog-row {
-      @apply [grid-template-columns:minmax(105px,_1.2fr)_1fr_48px] [gap:6px];
+      @apply [grid-template-columns:minmax(0,_1.1fr)_minmax(0,_1fr)] [gap:6px];
+    }
+    #frameworks-explorer .fw-catalog-row > small:nth-of-type(2) {
+      @apply [padding-left:27px];
     }
     #frameworks-explorer .fw-catalog-row a {
       @apply [grid-column:2_/_-1] text-left;

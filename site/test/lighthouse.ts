@@ -14,7 +14,10 @@ import { startServer } from "../dev.ts";
 const { values } = parseArgs({
   options: {
     runs: { type: "string", default: "1" },
-    pages: { type: "string", default: "/,/features,/about,/methodology" },
+    pages: {
+      type: "string",
+      default: "/,/features,/?section=ecosystem,/about,/methodology",
+    },
     device: { type: "string", default: "both" },
     "save-assets": { type: "boolean", default: false },
   },
@@ -25,7 +28,11 @@ assert.ok(["both", "mobile", "desktop"].includes(values.device || ""));
 const devices =
   values.device === "both" ? ["mobile", "desktop"] : [values.device];
 const paths = (values.pages || "/").split(",");
-assert.ok(paths.every((path) => /^\/[a-z/]*$/.test(path)));
+assert.ok(
+  paths.every(
+    (path) => /^\/[a-z/]*$/.test(path) || path === "/?section=ecosystem",
+  ),
+);
 const directory = join(siteRoot, "test-results/lighthouse");
 // A failed or interrupted run must not leave a previous passing summary selected.
 await rm(directory, { recursive: true, force: true });
@@ -158,7 +165,7 @@ try {
       assert.ok(!report.runtimeError, report.runtimeError?.message);
       const url = new URL(report.requestedUrl);
       assert.equal(url.origin, origin);
-      assert.ok(paths.includes(url.pathname));
+      assert.ok(paths.includes(url.pathname + url.search));
       assert.equal(
         report.configSettings.disableStorageReset,
         false,
@@ -178,7 +185,7 @@ try {
         ),
         "Every audit must download its application entry script",
       );
-      const path = url.pathname;
+      const path = url.pathname + url.search;
       const run = (counts.get(path) || 0) + 1;
       counts.set(path, run);
       const key = `${device} ${path}`;
