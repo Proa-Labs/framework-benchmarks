@@ -1,0 +1,6 @@
+# Captures remain checked in and hash-verified. Collapse machine-generated raw
+# evidence in GitHub reviews; selected results and source changes stay visible.
+**/results/archive/** linguist-generated=true
+**/results/raw/** linguist-generated=true
+docs/figures/*.svg linguist-generated=true
+experiments/sveltekit-streaming/browser.svg linguist-generated=true

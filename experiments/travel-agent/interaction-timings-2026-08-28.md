@@ -89,7 +89,7 @@ harness overhead, not a page phase to add to the site cost.
 ### Main-frame documents
 
 This is initial HTML plus every later full-document navigation. A route
-change absent from this table was client-side and used tooling/maintenance/APIs instead.
+change absent from this table was client-side and used scripts/APIs instead.
 
 | Surface | Role / initiating step | Document | n | Offset | Total | DNS | Connect | TLS | Request → first byte | Download | Body |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -292,7 +292,7 @@ harness overhead, not a page phase to add to the site cost.
 ### Main-frame documents
 
 This is initial HTML plus every later full-document navigation. A route
-change absent from this table was client-side and used tooling/maintenance/APIs instead.
+change absent from this table was client-side and used scripts/APIs instead.
 
 | Surface | Role / initiating step | Document | n | Offset | Total | DNS | Connect | TLS | Request → first byte | Download | Body |
 |---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|

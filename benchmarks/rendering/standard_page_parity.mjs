@@ -14,12 +14,13 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { cpus, release as osRelease, totalmem } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join } from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import { repositoryRoot } from "../../tooling/repository.mjs";
 
 const benchDir = dirname(fileURLToPath(import.meta.url));
-const workspaceDir = resolve(benchDir, "..");
+const workspaceDir = repositoryRoot(import.meta.url);
 const resultDir = join(benchDir, "results");
 const require = createRequire(import.meta.url);
 const frameworks = [
@@ -99,6 +100,7 @@ const frameworks = [
   },
 ];
 const fixtureFiles = [
+  "tooling/repository.mjs",
   "Cargo.toml",
   "benchmarks/rendering/Cargo.toml",
   "rust-toolchain.toml",
