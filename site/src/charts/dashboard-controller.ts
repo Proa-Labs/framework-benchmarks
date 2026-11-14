@@ -415,7 +415,10 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     () => {
       if (
         popupAnchor?.isConnected &&
-        (popupPinned || popupAnchor.matches(":hover, :focus-visible"))
+        (popupPinned ||
+          popupAnchor.matches(":hover, :focus-visible") ||
+          percentilePopup.matches(":hover") ||
+          percentilePopup.contains(document.activeElement))
       )
         placePercentiles(null, popupAnchor);
       else hidePercentiles();

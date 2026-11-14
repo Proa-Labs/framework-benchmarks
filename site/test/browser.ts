@@ -463,7 +463,20 @@ try {
     } else
       assert.ok(required(await popup.textContent()).includes(support.version));
     await popup.hover();
+    // Scrolling while reading a linked explanation must preserve the popup,
+    // including when the pointer has already left its original table cell.
+    await page.evaluate(() => window.scrollBy(0, 32));
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        ),
+    );
     assert.equal(await popup.isVisible(), true);
+    assert.equal(
+      await cell.getAttribute("aria-describedby"),
+      "fw-percentile-popover",
+    );
     await cell.focus();
     await cell.press("Escape");
     // Let the hidden popup uncover any other cell beneath the stationary mouse.
