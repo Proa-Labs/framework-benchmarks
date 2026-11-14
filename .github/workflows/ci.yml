@@ -114,7 +114,7 @@ jobs:
           set -euo pipefail
           bun install --frozen-lockfile
           bun run test
-          bun test rendering/external/sveltekit/stream-validator.test.mjs sveltekit/benchmark.test.mjs
+          bun test rendering/external/sveltekit/stream-validator.test.mjs sveltekit/benchmark.test.mjs compare/compare.test.mjs
           bun sveltekit/report.mjs --check
           bash -n scripts/refresh-proa.sh rendering/run_all.sh framework-ssr/cloud/*.sh tooling/cloud/*.sh
 
