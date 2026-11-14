@@ -1,0 +1,98 @@
+# Figures
+
+Nine figures covering the evidence reports: [`scoreboard.md`](../reports/scoreboard.md), [`http-capacity.md`](../reports/http-capacity.md), [`engineering.md`](../reports/engineering.md), and [`sveltekit.md`](../reports/sveltekit.md).
+
+Each one is **generated from the evidence pages' own tables** — no measurement is
+retyped here. Re-run the capture, let it regenerate its page, then run the build and
+the figures follow. Figure 03 uses the current canonical rendering table and the latest matched copy controls, including their capture dates; it never reads the archived core matrix. `bun run refresh` updates it through the same build pipeline as the other figures.
+
+```sh
+node tooling/charts/build.mjs     # regenerate every figure from the evidence pages
+node tooling/charts/verify.mjs    # check them against the source, and against each other
+```
+
+## What is in here
+
+| File | Draws | From the table under |
+| --- | --- | --- |
+| [`build.mjs`](../../tooling/charts/build.mjs) | every figure | — |
+| [`verify.mjs`](../../tooling/charts/verify.mjs) | nothing; checks the output | — |
+| [`lib/tables.mjs`](../../tooling/charts/lib/tables.mjs) | the Markdown table parser and unit readers | — |
+| [`lib/svg.mjs`](../../tooling/charts/lib/svg.mjs) | scales, marks, axes, document chrome | — |
+| [`lib/theme.mjs`](../../tooling/charts/lib/theme.mjs) | palette, type scale, number formatting | — |
+
+## The figures
+
+### Current canonical capture
+
+| | Figure | Source |
+| ---: | --- | --- |
+| 01 | [Server-render latency relative to Proa](01-canonical-scoreboard.svg) | [Current result](../reports/scoreboard.md#current-result) |
+| 02 | [Median against tail: P50 → P95](02-canonical-tail-dispersion.svg) | [Detailed measurements](../reports/scoreboard.md#detailed-measurements) |
+
+### Engineering evidence
+
+| | Figure | Source |
+| ---: | --- | --- |
+| 03 | [Render time vs memcpy, including full-size Proa allocation](03-representative-matrix.svg) | [Current canonical measurements](../reports/scoreboard.md#detailed-measurements) and [matched memcpy controls](../reports/engineering.md#proa-output-buffer-allocation) |
+| 04 | [Criterion micro-benchmarks](04-criterion-microbenchmarks.svg) | [Representative core matrix](../reports/engineering.md#representative-core-matrix-seven-renderers-plus-a-memcpy-floor) |
+| 05 | [Full-response product-card scaling across seventeen renderers](05-product-card-scaling.svg) | [Product-grid scaling capture](../reports/engineering.md#product-grid-scaling-capture) |
+
+### Application and browser
+
+| | Figure | Source |
+| ---: | --- | --- |
+| 06 | [The linked showcase corpus](06-showcase-corpus.svg) | [Linked proa_showcase corpus](../reports/engineering.md#linked-proa_showcase-corpus) |
+| 07 | [Four-engine Suspense HTTP throughput, latency, RSS, and failures](07-suspense-load.svg) | [Retained Marko/React capture](../reports/http-capacity.md#suspense-streaming-over-http-one-core-each) overlaid with [fresh Proa/SvelteKit measurements](../reports/sveltekit.md#http-streaming-capacity-and-latency) |
+| 08 | [Canonical pages over real HTTP on one core](08-canonical-pages-http.svg) | [Canonical pages over HTTP](../reports/http-capacity.md#canonical-pages-over-http-one-core-each) |
+| 09 | [Cold start to first response](09-cold-start.svg) | [Cold start to first response](../reports/http-capacity.md#cold-start-to-first-response) |
+
+## How they are built
+
+`build.mjs` reads the evidence reports, parses every Markdown
+table in them, and hands the
+parsed rows to one function per figure. A figure asks for its table by the exact
+signature of its header row and fails the build if that signature matches anything
+other than exactly one table — so a renamed column stops the build instead of
+silently drawing the wrong data.
+
+Numbers are read with unit-aware helpers rather than by string slicing. Durations
+normalise to microseconds, bracketed ranges and confidence intervals are parsed
+with a pattern that tolerates thousands separators, and slash triples keep their
+`lower / point / upper` order.
+
+`verify.mjs` then checks the result. Some checks confirm the figures match their
+source; others check the evidence pages against themselves. Scoreboard ratios and times are
+recomputed from the detailed P50 table, and zero payload deltas must reproduce
+the recorded exact-byte match counts. The memcpy ratios reproduce from retained
+process measurements and the figure must match its source tables exactly.
+
+## Conventions
+
+Every figure is a static SVG, so there is no hover layer and no tooltip. Values
+are therefore direct-labelled or readable from the axis, and the table beside the
+figure on its evidence page is the table view.
+
+- **Keep visible text short.** Use a brief title, one subtitle, and labels or
+  legends for units, scales, and marks. Keep at most one short footer for context
+  needed to interpret a comparison. Methodology and commentary belong on the
+  evidence page; the SVG's accessible description retains the measured values.
+- **Proa is the primary accent.** Multi-engine load curves use distinct colors
+  so overlapping series remain readable; other comparisons use neutral peers.
+  A figure with no Proa row accents nothing.
+- **Logarithmic axes are labelled as such**, and are used wherever a panel spans
+  more than about one order of magnitude.
+- **Two measures never share one axis.** Where a figure shows both time and
+  response size, they are two aligned panels.
+- **Superseded captures say so in the deck**, in the same words the evidence page uses.
+- **Contrary cells are kept.** Every peer value remains plotted even when it beats Proa. PROA-only refreshes disclose both capture dates; historical engineering rows keep their original evidence.
+
+The palette is checked against the light chart surface for lightness band, chroma,
+colour-vision separation and contrast; the pairings in use are recorded at the top
+of [`lib/theme.mjs`](../../tooling/charts/lib/theme.mjs).
+
+Figures are written as XML, not HTML: GitHub serves `.svg` as `image/svg+xml` and
+parses it strictly, so `build.mjs` validates each document before writing it. A
+figure that a browser would tolerate but an XML parser would reject fails the build.
+
+Chart 07 overlays all four engines on shared throughput and memory plots, with four latency panels on the same log scale. It uses the fresh Proa/SvelteKit capture and retained Marko/React capture, with dates labeled. SvelteKit response end excludes hydration and browser rendering. Failure totals appear beside each latency panel; failures by rate remain in the source tables. The additional [browser-completion figure](../../experiments/sveltekit-streaming/browser.svg), generated and checked by `node experiments/sveltekit-streaming/report.mjs [--check]`, measures first-panel and complete-DOM timing from retained browser samples.

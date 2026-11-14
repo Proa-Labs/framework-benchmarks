@@ -1,7 +1,0 @@
-{
-  "stream": "sveltekit/results/archive/retained-719ec008c43dc06f4201e488.json",
-  "canonical": "rendering/results/archive/canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z.json",
-  "scaling": "rendering/results/archive/product-scaling-v1-proa-2026-11-11T18-37-57-269Z.json",
-  "pages": "page-load/results/archive/retained-ab83bbaa90793486a44213c7.json",
-  "cold": "cold-start/results/archive/retained-28efb77c8e12de21553fe758.json"
-}

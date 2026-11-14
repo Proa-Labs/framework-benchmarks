@@ -1,0 +1,62 @@
+#!/usr/bin/env node
+import { repositoryRoot } from "../../tooling/repository.mjs";
+
+import { brotliCompressSync, constants, gzipSync } from "node:zlib";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { readFile, writeFile } from "node:fs/promises";
+
+import { build } from "esbuild";
+
+const scriptPath = fileURLToPath(import.meta.url);
+const showcaseDirectory = dirname(scriptPath);
+
+export async function measureReactHydrationPayload() {
+  const workspaceDirectory = repositoryRoot(import.meta.url);
+  const result = await build({
+    entryPoints: [join(workspaceDirectory, "experiments/agent-chain", "client.mjs")],
+    bundle: true,
+    minify: true,
+    write: false,
+    format: "esm",
+    platform: "browser",
+    target: ["es2020"],
+    legalComments: "none",
+    outfile: "react-hydration.js",
+    define: { "process.env.NODE_ENV": '"production"' },
+  });
+  if (
+    result.outputFiles.length !== 1 ||
+    !result.outputFiles[0].path.endsWith("react-hydration.js")
+  ) {
+    throw new Error(
+      `React hydration reference expected one JavaScript asset; esbuild produced ${result.outputFiles.length}`,
+    );
+  }
+  const source = result.outputFiles[0].contents;
+  return {
+    label: "React 19 SSR hydration fixture",
+    source: "experiments/agent-chain/client.mjs",
+    js_requests: 1,
+    raw_bytes: source.byteLength,
+    gzip_9_bytes: gzipSync(source, { level: 9 }).byteLength,
+    brotli_11_bytes: brotliCompressSync(source, {
+      params: { [constants.BROTLI_PARAM_QUALITY]: 11 },
+    }).byteLength,
+    boundary:
+      "production esbuild ESM containing React hydrateRoot and the agent-chain application; no synthetic padding",
+  };
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === scriptPath) {
+  const measured = await measureReactHydrationPayload();
+  if (process.argv.includes("--write")) {
+    const path = join(showcaseDirectory, "../../docs/reports/engineering.md");
+    const text = await readFile(path, "utf8");
+    const row = `| ${measured.label} | ${measured.js_requests} | ${measured.raw_bytes.toLocaleString("en-US")} | ${measured.gzip_9_bytes.toLocaleString("en-US")} | ${measured.brotli_11_bytes.toLocaleString("en-US")} |`;
+    const pattern = /^\| React 19 SSR hydration fixture \|.*$/gm;
+    if ([...text.matchAll(pattern)].length !== 1) throw new Error("Expected one hydration reference row");
+    await writeFile(path, text.replace(pattern, row));
+  }
+  console.log(JSON.stringify(measured, null, 2));
+}

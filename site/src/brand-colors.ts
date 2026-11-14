@@ -35,7 +35,13 @@ export function readableBrand(color: string, background: string) {
   }
   throw new Error(`No readable shade for ${color}`);
 }
+const brandStyles = new Map<string, string>();
 export function brandStyle(color = "var(--fw-fg)") {
   if (color === "var(--fw-fg)") return "--brand:var(--fw-fg)";
-  return `--brand:${color};--brand-hover:light-dark(${readableBrand(color, "#eaf0f7")},${readableBrand(color, "#0e1116")})`;
+  let style = brandStyles.get(color);
+  if (!style) {
+    style = `--brand:${color};--brand-hover:light-dark(${readableBrand(color, "#eaf0f7")},${readableBrand(color, "#0e1116")})`;
+    brandStyles.set(color, style);
+  }
+  return style;
 }

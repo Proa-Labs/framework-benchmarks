@@ -36,7 +36,7 @@ data/
   UI, downloadable evidence and validation.
 - **Change measurements:** update the owning benchmark contract, adapter and
   capture under its suite, following [CONTRIBUTING.md](../../CONTRIBUTING.md).
-  Suite discovery lives in `tooling/suites.json` at the repository root. The
+  Suite discovery lives in `benchmarks/suites.json` at the repository root. The
   site reads validated captures directly; do not copy timings or workload
   definitions into this directory. Review selections are separate from captures
   and still block publication until a complete comparison campaign replaces them.

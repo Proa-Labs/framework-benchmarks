@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { validateProaPair } from "../../tooling/proa-refresh.mjs";
+import { validateProaPair } from "../../tooling/capture/proa-refresh.mjs";
 import { loadInputs, normalize, repositoryRoot } from "../data.ts";
 import { createDashboardModel } from "../src/charts/dashboard-model.ts";
 
@@ -64,7 +64,11 @@ reviewTest(
     const read = async (id: string) =>
       JSON.parse(
         await readFile(
-          join(repositoryRoot, "rendering/results/archive", `${id}.json`),
+          join(
+            repositoryRoot,
+            "benchmarks/rendering/results/archive",
+            `${id}.json`,
+          ),
           "utf8",
         ),
       );

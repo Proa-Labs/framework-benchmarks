@@ -10,7 +10,7 @@
     "test": "bun prepare-data.ts && bun test test",
     "test:browser": "bun test/browser.ts",
     "deploy:check": "bun run build && wrangler deploy --dry-run",
-    "deploy": "bun ../tooling/publication.mjs && bun run build && wrangler deploy",
+    "deploy": "bun ../tooling/checks/publication.mjs && bun run build && wrangler deploy",
     "typecheck": "bun prepare-data.ts && tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {

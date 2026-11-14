@@ -14,7 +14,7 @@ import {
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
-import { verifyPublication } from "../publication.mjs";
+import { verifyPublication } from "../checks/publication.mjs";
 import {
   jobManifest,
   suiteIds,
@@ -238,7 +238,7 @@ async function runSuite(suite) {
   } else {
     // Transfer trusted orchestration separately from the immutable measured checkout.
     for (const [local, remote] of [
-      ["framework-ssr/cloud/bootstrap.sh", "bootstrap.sh"],
+      ["benchmarks/framework-ssr/cloud/bootstrap.sh", "bootstrap.sh"],
       ["tooling/cloud/run-suite.sh", "run-suite.sh"],
     ]) {
       await exec(["bash", "-c", `cat > /work/${remote}`], {
