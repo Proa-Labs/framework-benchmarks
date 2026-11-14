@@ -63,7 +63,7 @@
     "language": "Java",
     "setup": "jte",
     "cwd": "benchmarks/rendering/external/jte",
-    "command": "{root}/rendering/external/jte/build/install/proa-jte-bench/bin/proa-jte-bench",
+    "command": "{root}/benchmarks/rendering/external/jte/build/install/proa-jte-bench/bin/proa-jte-bench",
     "args": []
   },
   "rocker": {
@@ -72,7 +72,7 @@
     "language": "Java",
     "setup": "rocker",
     "cwd": "benchmarks/rendering/external/rocker",
-    "command": "{root}/rendering/external/rocker/build/install/proa-rocker-bench/bin/proa-rocker-bench",
+    "command": "{root}/benchmarks/rendering/external/rocker/build/install/proa-rocker-bench/bin/proa-rocker-bench",
     "args": []
   },
   "handlebars": {
@@ -91,7 +91,7 @@
     "language": "Go",
     "setup": "go",
     "cwd": "benchmarks/rendering/external/go",
-    "command": "{root}/rendering/external/go/build/canonical_suite",
+    "command": "{root}/benchmarks/rendering/external/go/build/canonical_suite",
     "args": []
   },
   "jinja2": {
@@ -100,7 +100,7 @@
     "language": "Python",
     "setup": "jinja2",
     "cwd": "benchmarks/rendering/external/jinja",
-    "command": "{root}/rendering/external/jinja/.venv/bin/python3",
+    "command": "{root}/benchmarks/rendering/external/jinja/.venv/bin/python3",
     "args": ["suite_bench.py"]
   },
   "php": {
