@@ -311,10 +311,52 @@ try {
       size.content <= size.viewport + 1,
       `${width}px viewport overflows: ${size.content}`,
     );
+    for (const selector of [
+      ".fw-renderer",
+      ".fw-number",
+      ".fw-workload-choice button[data-workload]",
+    ]) {
+      const sizes = await page
+        .locator(`${selector}:visible`)
+        .evaluateAll((elements) =>
+          elements.map((el) =>
+            Number.parseFloat(getComputedStyle(el).fontSize),
+          ),
+        );
+      assert.ok(
+        sizes.length > 0 && sizes.every((size) => size >= 14),
+        `${width}px: ${selector} must remain readable`,
+      );
+    }
     await page.screenshot({
       path: join(siteRoot, `test-results/mobile-${width}.png`),
       fullPage: true,
     });
+    await navigate(
+      `${server.url}/?view=streaming&chart=lines&stream=completion`,
+    );
+    const charts = await page.locator(".fw-chart").evaluateAll((elements) =>
+      elements.map((element) => {
+        const svg = element as SVGSVGElement;
+        const text = svg.querySelector("text");
+        return {
+          width: svg.getBoundingClientRect().width,
+          drawing: svg.viewBox.baseVal.width,
+          textHeight: text?.getBoundingClientRect().height || 0,
+        };
+      }),
+    );
+    assert.equal(charts.length, 2);
+    for (const chart of charts) {
+      assert.ok(
+        Math.abs(chart.width - chart.drawing) < 1,
+        `${width}px: SVG labels must not shrink with the chart`,
+      );
+      assert.ok(
+        chart.textHeight >= 12,
+        `${width}px: plotted labels must remain readable`,
+      );
+    }
     checks.push(`responsive/${width}`);
   }
   await navigate(server.url);
@@ -662,7 +704,7 @@ try {
   );
   await navigate(`${server.url}/?chart=bars`);
   const miniature = await page
-    .locator(".fw-workload-thumb iframe")
+    .locator(".fw-workload-thumb img")
     .first()
     .elementHandle();
   assert.ok(miniature);
@@ -682,7 +724,7 @@ try {
     popupBefore,
   );
   assert.equal(await page.locator("[data-percentile-popup]").isVisible(), true);
-  checks.push("workload iframe identity and stable row/popover geometry");
+  checks.push("workload thumbnail identity and stable row/popover geometry");
   await firstRow.press("Escape");
   const jte = page.locator('.fw-row[data-focus="jte"]');
   await jte.hover();
@@ -1331,7 +1373,7 @@ try {
   await page.locator('[data-section="ecosystem"]').click();
   await page.locator("[data-ecosystem]").waitFor({ state: "visible" });
   await page
-    .getByRole("link", { name: "Frameworks home", exact: true })
+    .getByRole("link", { name: "frameworks.run home", exact: true })
     .click();
   await page.locator("[data-performance]").waitFor({ state: "visible" });
   assert.equal(

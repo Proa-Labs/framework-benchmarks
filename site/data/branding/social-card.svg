@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <title>frameworks.run — Web frameworks. Measured.</title>
+  <desc>Reproducible benchmarks, features with sources, by Proa Labs.</desc>
+  <rect width="1200" height="630" fill="#111820"/>
+  <path d="M1020 0v630M0 500h1200" stroke="#293441"/>
+  <g transform="translate(70 62) scale(1.5)" fill="#e9eef5">
+    <path d="M4 4h4v24H4z" opacity=".5"/>
+    <path d="M4 4h24v6H4zm0 10h18v6H4zm0 10h6v4H4z"/>
+  </g>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="132" y="102" fill="#e9eef5" font-size="32" font-weight="600">frameworks<tspan fill="#a5b4c6" font-weight="400">.run</tspan></text>
+    <text x="70" y="252" fill="#f7f9fc" font-size="76" font-weight="600" letter-spacing="-3">Web frameworks.</text>
+    <text x="70" y="342" fill="#a8c4e8" font-size="76" font-weight="600" letter-spacing="-3">Measured.</text>
+    <text x="74" y="414" fill="#bac6d5" font-size="27">Reproducible benchmarks. Features with sources.</text>
+    <text x="74" y="559" fill="#dbe4ef" font-size="24">Performance <tspan fill="#687f9a"> / </tspan> Features <tspan fill="#687f9a"> / </tspan> Evidence</text>
+    <text x="1126" y="559" text-anchor="end" fill="#91a1b5" font-size="21">By Proa Labs</text>
+  </g>
+  <g fill="#6382a9" opacity=".45">
+    <rect x="1072" y="196" width="66" height="12"/>
+    <rect x="1072" y="228" width="44" height="12"/>
+    <rect x="1072" y="260" width="54" height="12"/>
+    <rect x="1072" y="292" width="24" height="12"/>
+    <rect x="1072" y="324" width="38" height="12"/>
+  </g>
+</svg>

@@ -12,7 +12,7 @@ export function Footer({
       <div className="grid grid-cols-2 gap-x-8 gap-y-9 pb-10 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:gap-x-14">
         <div className="col-span-2 sm:col-span-1">
           <Wordmark
-            label="Frameworks home in footer"
+            label="frameworks.run home in footer"
             className="inline-flex items-center gap-2.5 text-base font-semibold tracking-tight text-ink no-underline [&_svg]:size-6"
           />
           <p className="mt-4 max-w-72 leading-relaxed">
@@ -74,7 +74,7 @@ export function Footer({
           )}
         </nav>
       </div>
-      <div className="flex flex-col gap-3 border-t border-line pt-5 text-xs leading-relaxed sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 border-t border-line pt-5 text-sm leading-relaxed sm:flex-row sm:items-center sm:justify-between">
         <span>© 2026 frameworks.run</span>
         <span>
           Maintained by{" "}
@@ -92,7 +92,7 @@ export function Footer({
           data-share-status=""
           role="status"
           aria-live="polite"
-          className="block text-xs empty:hidden"
+          className="block text-sm empty:hidden"
         />
       )}
     </footer>

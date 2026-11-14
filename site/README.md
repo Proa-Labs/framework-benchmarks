@@ -77,3 +77,24 @@ bun run --cwd site deploy        # Publish production when authorized
 The browser suite checks the built app through Cloudflare's local runtime. It includes JavaScript-disabled requests for comparison tables, selected workload bars, Framework SSR, streaming panels and filtered feature matrices, plus hydration and interaction checks.
 
 Old `.html` document URLs redirect through `public/_redirects`; they do not need application routes.
+
+## Mobile and sharing checks
+
+The UI uses Tailwind's `text-sm` (14px) minimum for labels and numeric data,
+with a 16px base. Narrow layouts scroll comparison tables instead of shrinking
+their text. Inert SVG thumbnails contain only the first visible rows/cards;
+opening a workload creates a sandboxed frame for the full fixture. Preview-only `no-transform`
+headers prevent Cloudflare from injecting analytics into sandboxed documents.
+
+`src/page-meta.ts` supplies each route's canonical URL, Open Graph fields and
+large Twitter card. The shared 1200×630 PNG and Apple touch icon are committed
+assets; Vite fingerprints the social PNG so updated cards have a new image URL. Edit `data/branding/social-card.svg`, then run
+`bun site/generate-brand-assets.ts` from the repository root to regenerate them.
+
+Run `bun site/test/lighthouse.ts --runs 3` after installing Playwright Chromium.
+It audits all four main routes on standard mobile and desktop presets using
+Lighthouse 13.6.0, retaining JSON reports under ignored `site/test-results/lighthouse/`.
+It requires a median 100 in performance, accessibility, best practices and SEO.
+The local audit proxy forwards the production Host and applies Brotli transport
+compression, matching the indexing and compression policy at Cloudflare; it does
+not rewrite content, disable audits or change the preview's noindex policy.

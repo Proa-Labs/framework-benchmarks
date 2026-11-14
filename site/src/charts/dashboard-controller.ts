@@ -92,7 +92,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   const markup = createChartMarkup(model);
   const { lineKey, pointMarker } = markup;
   function showChart(rows: ChartRow[], mode: ChartMode) {
-    const chart = markup.draw(rows, mode);
+    const width = $("[data-results]").getBoundingClientRect().width || 720;
+    const chart = markup.draw(rows, mode, width);
     $("[data-results]").innerHTML = chart.html;
     $("[data-chart-note]").textContent = chart.note;
     return chart;
@@ -450,8 +451,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         state.view === "framework"
           ? !frameworkWorkloads().some((w) => w.id === button.dataset.workload)
           : button.dataset.workload === "catalog";
-      const miniature = choice.querySelector<HTMLIFrameElement>("iframe");
-      const src = `/previews/${state.view === "framework" && frameworkWorkloads().some((w) => w.id === button.dataset.workload) ? "framework-" : ""}${button.dataset.workload}.html`;
+      const miniature = choice.querySelector<HTMLImageElement>("img");
+      const src = `/thumbnails/${state.view === "framework" && frameworkWorkloads().some((w) => w.id === button.dataset.workload) ? "framework-" : ""}${button.dataset.workload}.svg`;
       if (miniature && miniature.getAttribute("src") !== src)
         miniature.src = src;
       choice.dataset.active = String(selected);
@@ -1134,6 +1135,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     if (event.key === "Escape" && infoPopup.matches(":popover-open"))
       infoPopup.hidePopover();
   });
+  $(".fw-fixture-dialog").addEventListener(
+    "close",
+    () => $("[data-fixture-mount]").replaceChildren(),
+    { signal: lifecycle.signal },
+  );
   listen(root, "click", (e) => {
     const sectionLink = closest(e, "a[data-section]");
     if (sectionLink) {
@@ -1168,8 +1174,16 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         (w) => w.id === el.dataset.preview,
       );
       $("#fixture-title").textContent = required(w).label;
-      $<HTMLIFrameElement>("[data-fixture-frame]").src =
-        `previews/${state.view === "framework" ? "framework-" : ""}${required(w).id}.html`;
+      const previewUrl = `previews/${state.view === "framework" ? "framework-" : ""}${required(w).id}.html`;
+      let frame = root.querySelector<HTMLIFrameElement>("[data-fixture-frame]");
+      if (!frame) {
+        frame = document.createElement("iframe");
+        frame.dataset.fixtureFrame = "";
+        frame.setAttribute("sandbox", "");
+        frame.title = "Rendered workload";
+        frame.src = previewUrl;
+        $("[data-fixture-mount]").replaceChildren(frame);
+      } else frame.src = previewUrl;
       $<HTMLAnchorElement>("[data-preview-link]").href =
         `previews/${state.view === "framework" ? "framework-" : ""}${required(w).id}.html`;
       $<HTMLDialogElement>(".fw-fixture-dialog").showModal();

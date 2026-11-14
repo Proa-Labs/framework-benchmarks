@@ -1,10 +1,17 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Fragment, useLayoutEffect, useMemo, useRef } from "react";
+import {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import benchmarkData from "../../.generated/results.json";
 import type { BenchmarkData } from "../../benchmark-types.ts";
 import { required } from "../../required.ts";
 import { createChartMarkup } from "../charts/chart-markup.ts";
-import { mountDashboard } from "../charts/dashboard-controller.ts";
+import type { mountDashboard } from "../charts/dashboard-controller.ts";
 import type { DashboardModel } from "../charts/dashboard-model.ts";
 import { createDashboardModel } from "../charts/dashboard-model.ts";
 import {
@@ -37,15 +44,38 @@ export function PerformancePage({
   const experimentDescription = model.experimentDescription();
   const root = useRef<HTMLElement>(null);
   const controller = useRef<ReturnType<typeof mountDashboard> | null>(null);
-  useLayoutEffect(() => {
-    const dispose = mountDashboard(required(root.current), data);
-    controller.current = dispose;
-    required(root.current).dataset.appReady = "true";
-    return dispose;
+  const [initializationError, setInitializationError] = useState<Error | null>(
+    null,
+  );
+  // SSR already contains the complete results. Load D3 and interaction handlers
+  // separately so the page can paint without downloading the controller first.
+  useEffect(() => {
+    let active = true;
+    let dispose: (() => void) | undefined;
+    import("../charts/dashboard-controller.ts")
+      .then(({ mountDashboard }) => {
+        if (!active) return;
+        const mounted = mountDashboard(required(root.current), data);
+        dispose = mounted;
+        controller.current = mounted;
+        required(root.current).dataset.appReady = "true";
+      })
+      .catch((error) => {
+        if (active)
+          setInitializationError(
+            error instanceof Error ? error : new Error(String(error)),
+          );
+      });
+    return () => {
+      active = false;
+      dispose?.();
+      controller.current = null;
+    };
   }, [data]);
   useLayoutEffect(() => {
     controller.current?.setLocation(location.searchStr);
   }, [location.searchStr]);
+  if (initializationError) throw initializationError;
   return (
     <section
       ref={root}
@@ -189,7 +219,7 @@ export function PerformancePage({
               </div>
             </div>
             <p
-              className="mb-4 text-xs leading-relaxed text-muted"
+              className="mb-4 text-sm leading-relaxed text-muted"
               data-experiment-description
               hidden={!experimentDescription}
             >
@@ -301,7 +331,7 @@ export function PerformancePage({
             <p
               data-review-note
               hidden={!capture.reviewRefresh}
-              className="mt-4 text-xs leading-relaxed text-muted"
+              className="mt-4 text-sm leading-relaxed text-muted"
             >
               Proa uses the newer PR #86 run; peers retain the previous
               campaign. Separate runs on matching C4 machines.{" "}
@@ -318,7 +348,7 @@ export function PerformancePage({
             </div>
             <footer className="fw-footer block">
               <details className="group">
-                <summary className="cursor-interaction m-0 flex w-full flex-col gap-3 text-left text-xs sm:flex-row sm:items-center sm:justify-between [&::-webkit-details-marker]:hidden">
+                <summary className="cursor-interaction m-0 flex w-full flex-col gap-3 text-left text-sm sm:flex-row sm:items-center sm:justify-between [&::-webkit-details-marker]:hidden">
                   <span className="inline-flex shrink-0 items-center gap-2">
                     <svg
                       viewBox="0 0 20 20"
@@ -334,7 +364,7 @@ export function PerformancePage({
                     </svg>
                     <span>Method &amp; data</span>
                   </span>
-                  <span className="fw-capture-metadata flex-none justify-start text-left font-mono text-[11px] text-muted sm:flex-1 sm:justify-end sm:text-right">
+                  <span className="fw-capture-metadata flex-none justify-start text-left font-mono text-sm text-muted sm:flex-1 sm:justify-end sm:text-right">
                     <span data-capture="">{`${capture.host?.cloud || capture.host?.cpu_model || capture.host?.cpuModel || "Recorded host"} · ${capture.date}`}</span>
                     <span
                       data-cpu-context
@@ -508,11 +538,7 @@ export function PerformancePage({
           , intentionally test that dynamic data is escaped safely. Preview
           labels, styling and images are illustrative.
         </p>
-        <iframe
-          data-fixture-frame=""
-          sandbox=""
-          title="Rendered workload"
-        ></iframe>
+        <div data-fixture-mount="" />
       </dialog>
       <div
         id="rendering-info"

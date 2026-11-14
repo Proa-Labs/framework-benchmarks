@@ -58,6 +58,35 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       null,
       "Static fixture must remain embeddable",
     );
+    assert.match(
+      fixtureResponse.headers.get("cache-control") || "",
+      /no-transform/,
+    );
+    assert.doesNotMatch(await fixtureResponse.text(), /<script[\s>]/i);
+    let socialImagePath = "";
+    for (const path of ["/", "/features", "/about", "/methodology"]) {
+      const document = await (await fetch(new URL(path, server.url))).text();
+      assert.match(
+        document,
+        /property="og:image" content="https:\/\/frameworks.run\/assets\/frameworks-og-[\w-]+\.png"/,
+      );
+      assert.match(document, /property="og:image:width" content="1200"/);
+      assert.match(document, /property="og:image:height" content="630"/);
+      assert.match(
+        document,
+        /name="twitter:card" content="summary_large_image"/,
+      );
+      assert.match(document, /name="twitter:image:alt"/);
+      socialImagePath = new URL(
+        required(document.match(/property="og:image" content="([^"]+)"/)?.[1]),
+      ).pathname;
+    }
+    const socialImage = await fetch(`${server.url}${socialImagePath}`);
+    assert.equal(socialImage.status, 200);
+    assert.match(socialImage.headers.get("content-type") || "", /image\/png/);
+    const png = Buffer.from(await socialImage.arrayBuffer());
+    assert.equal(png.readUInt32BE(16), 1200);
+    assert.equal(png.readUInt32BE(20), 630);
     const viteManifest: Manifest = JSON.parse(
       await readFile(join(outputDirectory, ".vite/manifest.json"), "utf8"),
     );
@@ -150,6 +179,11 @@ test("build preserves source bytes, emits provenance and serves a self-contained
     ]) {
       const response = await fetch(server.url + path);
       assert.equal(response.status, 200, path);
+      if (versionedAssets.includes(path))
+        assert.match(
+          response.headers.get("cache-control") || "",
+          /max-age=31536000, immutable/,
+        );
       assert.ok((await response.arrayBuffer()).byteLength > 0, path);
     }
     assert.equal((await fetch(`${server.url}/not-a-page`)).status, 404);

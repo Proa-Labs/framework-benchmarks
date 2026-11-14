@@ -397,26 +397,33 @@ export function CoverageBar({
   onSelect: (selection: Selection) => void;
 }) {
   const { counts, total } = summarizeCapabilities(row, group);
-  return SUPPORTED_STATES.filter((status) => counts[status] > 0).map(
-    (status) => {
-      const label = `${row.label}: ${counts[status]} of ${total} ${supportStates[status].label.toLowerCase()}`;
-      return (
-        <button
+  const states = SUPPORTED_STATES.filter((status) => counts[status] > 0);
+  const breakdown = states
+    .map(
+      (status) =>
+        `${counts[status]} ${supportStates[status].label.toLowerCase()}`,
+    )
+    .join(", ");
+  return (
+    <button
+      type="button"
+      className="fw-coverage-open"
+      aria-label={`${row.label}: ${breakdown || "no documented support"}. View all findings`}
+      onClick={() => onSelect({ row: row.id })}
+    >
+      {states.map((status) => (
+        <span
           key={status}
-          type="button"
           data-coverage={status}
-          data-coverage-detail={`${row.id}/${status}`}
           style={{ "--coverage-width": `${(counts[status] / total) * 100}%` }}
-          aria-label={`${label}. View findings`}
-          title={label}
-          onClick={() => onSelect({ row: row.id, status })}
+          aria-hidden="true"
         >
           {counts[status] / total >= 0.075 && (
             <span className="fw-coverage-count">{counts[status]}</span>
           )}
-        </button>
-      );
-    },
+        </span>
+      ))}
+    </button>
   );
 }
 
@@ -865,7 +872,7 @@ export function FeaturesPage({
                 hidden={display !== "overview"}
               >
                 <p className="fw-feature-summary-note">
-                  Bar length shows supported features. Select a segment for
+                  Bar length shows supported features. Select a bar for
                   evidence.
                 </p>
                 <div className="fw-coverage-key">
