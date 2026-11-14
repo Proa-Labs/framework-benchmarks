@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import {verifyProaRefresh} from './refresh-proa.mjs';
+import comparisonCaptures from './comparison-captures.json' with { type: 'json' };
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
@@ -108,7 +109,15 @@ function figure(result) {
   return body+`<text x="30" y="329" class="muted">${result.refresh ? `Proa refreshed ${result.capturedAt.slice(0,10)}; SvelteKit retained ${result.refresh.baseline_captured_at.slice(0,10)}. Same completed DOM; see methodology.` : "Eight delayed panels (5–90 ms), 12 cards each. HTTP response end excludes SvelteKit browser rendering; see methodology."}</text></svg>\n`;
 }
 
+export function validateComparisonHosts(stream, captures) {
+  for (const capture of captures) {
+    const host = capture.host;
+    if ((host.cpuModel ?? host.cpu_model) !== stream.host.cpuModel || (host.arch ?? host.architecture) !== stream.host.arch || (host.logicalCpuCount ?? host.logical_cpus) !== stream.host.logicalCpuCount) throw new Error('Comparison captures came from different hosts');
+  }
+}
+
 export function render(result, canonical, scaling, pages, cold) {
+  validateComparisonHosts(result, [canonical, scaling, pages, cold]);
   validateStreaming(result); validatePages(pages); validateCold(cold);
   const framework = result.http.find(p=>p.engine==='sveltekit-data').health.framework;
   const failureTypes = comparisonIds.map(id => {
@@ -124,7 +133,9 @@ export function render(result, canonical, scaling, pages, cold) {
   const coldRows = cold.engines.filter(e=>['proa','sveltekit'].includes(e.id)).map(e=>`| ${e.label} | ${ms(e.summary.firstResponseMs.p50)} | ${ms(e.summary.firstResponseMs.p95)} | ${mib(e.summary.rssAfterFirstResponseBytes.p50)} |`).join('\n');
   return `# Proa versus SvelteKit
 
-${result.refresh ? "> **PROA-only refresh.** " + result.refresh.note + "\n\n" : ""}Generated from captures on **${result.host.cpuModel}**, ${result.capturedAt.slice(0,10)} UTC. Proa revision **${result.source.proaRevision.slice(0,8)}**, **${framework}**, Node **${result.host.node}**. Full production builds, no development server, proxy, response cache, or compression.
+${result.refresh ? "> **PROA-only refresh.** " + result.refresh.note + "\n\n" : ""}**Historical comparison.** Its five inputs are pinned in [the capture manifest](sveltekit/comparison-captures.json). Updating the main scoreboard or HTTP suites does not change this report; the current renderer publication is shown on [the main scoreboard](scoreboard.md).
+
+Generated from captures on **${result.host.cpuModel}**, ${result.capturedAt.slice(0,10)} UTC. Proa revision **${result.source.proaRevision.slice(0,8)}**, **${framework}**, Node **${result.host.node}**. Full production builds, no development server, proxy, response cache, or compression.
 
 The static 96-card HTML page sustained **${n(capacity('proa'))} responses/s for Proa** and **${n(capacity('sveltekit'))} for SvelteKit**. In the native streaming browser tests, all 96 cards reached the DOM at median **${ms(browserReady('desktop','proa'))} / ${ms(browserReady('desktop','sveltekit-data'))} on desktop** and **${ms(browserReady('mobile4x','proa'))} / ${ms(browserReady('mobile4x','sveltekit-data'))} on mobile4x** (Proa / SvelteKit). Proa’s first mobile panel arrived at **${ms(browserFirst('mobile4x','proa'))}**, versus **${ms(browserFirst('mobile4x','sveltekit-data'))}** for SvelteKit. The complete tables below retain first-panel timing, transfer size, CPU, overload failures, and every rate in the sweep.
 
@@ -169,7 +180,7 @@ Recorded failure messages across the full phases: ${failureTypes}. Overload incl
 
 ## Static pages over HTTP
 
-These are complete server-rendered pages on both sides. SvelteKit uses the production [Node adapter](https://svelte.dev/docs/kit/adapter-node), ordinary filesystem routing, and \`csr=false\`, avoiding an unnecessary hydration payload for the static-page workload. Every served response must hash to its engine's production dump; SvelteKit's full document also passes the canonical Svelte DOM gate and a changed-text negative control. Capacity uses 64 closed-loop connections, five-second windows, three fresh-process repeats. Equal-load latency uses the existing fixed rates below each engine's capacity, with three repeats. The [full five-engine capture](http-capacity.md#canonical-pages-over-http-one-core-each) also refreshes React, Marko, and Go.
+These are complete server-rendered pages on both sides. SvelteKit uses the production [Node adapter](https://svelte.dev/docs/kit/adapter-node), ordinary filesystem routing, and \`csr=false\`, avoiding an unnecessary hydration payload for the static-page workload. Every served response must hash to its engine's production dump; SvelteKit's full document also passes the canonical Svelte DOM gate and a changed-text negative control. Capacity uses 64 closed-loop connections, five-second windows, three fresh-process repeats. Equal-load latency uses the existing fixed rates below each engine's capacity, with three repeats. The [retained five-engine capture](${comparisonCaptures.pages}) also includes React, Marko, and Go.
 
 | Workload | Engine | Capacity responses/s | CPU/response | Peak RSS | Equal-load rps | P50 | P99 |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -215,7 +226,7 @@ node sveltekit/report.mjs --check
 
 Implementation: [production SvelteKit app](rendering/external/sveltekit/), [load runner](sveltekit/run.mjs), [browser observer](sveltekit/browser.mjs), and [promise-value validator](rendering/external/sveltekit/stream-validator.mjs).
 
-Raw evidence: [streaming + browser samples](sveltekit/results/latest.json), [HTTP](page-load/results/latest.json), [cold starts](cold-start/results/latest.json), [renderer-only](rendering/results/latest.json), [scaling](rendering/results/product-scaling.json). Each capture retains timestamps, framework/host metadata and a measured-source SHA-256. The comparison generator refuses incomplete, smoke, stale-source, missing-phase, unsupported-throughput, browser-parity, and inconsistent-summary captures.
+Raw evidence: [streaming + browser samples](${comparisonCaptures.stream}), [HTTP](${comparisonCaptures.pages}), [cold starts](${comparisonCaptures.cold}), [renderer-only](${comparisonCaptures.canonical}), [scaling](${comparisonCaptures.scaling}). Each capture retains timestamps, framework/host metadata and a measured-source SHA-256. The comparison generator refuses incomplete, smoke, stale-source, missing-phase, unsupported-throughput, browser-parity, and inconsistent-summary captures.
 
 The retained capture also includes a buffered control for validation; it is excluded from the comparison charts and tables.
 
@@ -225,13 +236,9 @@ The Proa-only writer/memcpy and allocation microbenchmarks, linked showcase corp
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const read = async path=>JSON.parse(await readFile(join(root,path),'utf8'));
-  const [stream, canonical, scaling, pages, cold] = await Promise.all(['sveltekit/results/latest.json','rendering/results/latest.json','rendering/results/product-scaling.json','page-load/results/latest.json','cold-start/results/latest.json'].map(read));
+  const [stream, canonical, scaling, pages, cold] = await Promise.all(['stream', 'canonical', 'scaling', 'pages', 'cold'].map(id => read(comparisonCaptures[id])));
   verifyProaRefresh(stream);
   if (stream.source?.sourceSha256 !== await sourceSha256(root,sourceFiles)) verifyRetainedSource(join(root, 'sveltekit/results'), stream, { verify: verifyProaRefresh });
-  for (const capture of [canonical,scaling,pages,cold]) {
-    const host = capture.host;
-    if ((host.cpuModel ?? host.cpu_model) !== stream.host.cpuModel || (host.arch ?? host.architecture) !== stream.host.arch || (host.logicalCpuCount ?? host.logical_cpus) !== stream.host.logicalCpuCount) throw new Error('Comparison captures came from different hosts');
-  }
   const fingerprint = renderingSourceFingerprint(root);
   for(const capture of [canonical,scaling]) {
     if(capture.status !== 'pass') throw new Error('Invalid renderer/scaling capture');

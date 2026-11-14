@@ -12,6 +12,8 @@ fetch_checked() {
 fetch_checked https://github.com/oven-sh/bun/releases/download/bun-v1.4.2/bun-linux-x64.zip 36368faef7527875d5ffa52e53cd48021741f2a83eb6208a8dd64068d422a913 /work/tools/bun.zip
 unzip -q -o /work/tools/bun.zip -d /work/tools
 ln -sf /work/tools/bun-linux-x64/bun /work/tools/bin/bun
+fetch_checked https://nodejs.org/dist/v24.20.0/node-v24.20.0-linux-x64.tar.xz 2f2c0da162318f0de47665410c7c8c2ed3d36c8f3105de4bbc61176c70a7cbf2 /work/tools/node.tar.xz
+tar -xJf /work/tools/node.tar.xz -C /work/tools
 fetch_checked https://go.dev/dl/go1.25.5.linux-amd64.tar.gz 9e9b755d63b36acf30c12a9a3fc379243714c1c6d3dd72861da637f336ebb35b /work/tools/go.tgz
 tar -xzf /work/tools/go.tgz -C /work/tools
 fetch_checked https://services.gradle.org/distributions/gradle-9.2.0-bin.zip df67a32e86e3276d011735facb1535f64d0d88df84fa87521e90becc2d735444 /work/tools/gradle.zip
@@ -22,7 +24,7 @@ fetch_checked https://github.com/ruby/ruby-builder/releases/download/ruby-4.0.6/
 sudo mkdir -p /opt/hostedtoolcache/Ruby/4.0.6/x64
 sudo tar -xzf /work/tools/ruby.tgz --strip-components=1 -C /opt/hostedtoolcache/Ruby/4.0.6/x64
 cat > /work/env.sh <<'ENV'
-export PATH="/work/tools/bin:/work/tools/go/bin:/work/tools/python/bin:/work/tools/gradle-9.2.0/bin:/opt/hostedtoolcache/Ruby/4.0.6/x64/bin:/home/runner/.cargo/bin:$PATH"
+export PATH="/work/tools/bin:/work/tools/node-v24.20.0-linux-x64/bin:/work/tools/go/bin:/work/tools/python/bin:/work/tools/gradle-9.2.0/bin:/opt/hostedtoolcache/Ruby/4.0.6/x64/bin:/home/runner/.cargo/bin:$PATH"
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 export CANONICAL_SUITE_RUBY=/opt/hostedtoolcache/Ruby/4.0.6/x64/bin/ruby
 export EXACT_FEEDBACK=0

@@ -1,0 +1,631 @@
+{
+  "id": "proa",
+  "scope": "Published Proa documentation and named first-party or external integrations. Individual findings retain their review dates; capabilities are not inferred from benchmark rank.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "Typed Rust templates render HTML on the server.",
+      "url": "https://proa.so/docs/core/html-rendering"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "The streaming substrate supports in-order and out-of-order delivery through framework response adapters.",
+      "url": "https://proa.so/docs/core/streaming-ssr"
+    },
+    "suspense": {
+      "status": "native",
+      "note": "Suspense holds async children and fallback UI, with priority and timeout options.",
+      "url": "https://proa.so/docs/core/streaming-ssr"
+    },
+    "client": {
+      "status": "native",
+      "note": "RSJS islands activate immediately or through visible, idle, interaction, and media strategies.",
+      "url": "https://proa.so/docs/rsjs/hydration",
+      "label": "RSJS islands"
+    },
+    "ssg": {
+      "status": "undocumented",
+      "note": "The reviewed deployment workflow produces a Rust server and public assets; a route-to-static-HTML export command is not established.",
+      "url": "https://proa.so/docs/framework/deployment"
+    },
+    "csr": {
+      "status": "undocumented",
+      "note": "RSJS activates server-authored islands and updates DOM; a standalone client-rendered application root is not established.",
+      "url": "https://proa.so/docs/rsjs/hydration"
+    },
+    "serverOnly": {
+      "status": "native",
+      "note": "Ordinary Rust components stay on the server; only analyzed RSJS graphs become browser JavaScript. This is not the React RSC protocol.",
+      "url": "https://proa.so/docs/rsjs/server-only",
+      "label": "Rust / RSJS boundary"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "Suspense streams request-time HTML; a prebuilt static shell with dynamic request holes is not established.",
+      "url": "https://proa.so/docs/core/streaming-ssr"
+    },
+    "routing": {
+      "status": "official",
+      "note": "The framework's route/page layer integrates request handling with Axum.",
+      "url": "https://proa.so/docs/framework/routing",
+      "label": "Framework / Axum"
+    },
+    "layouts": {
+      "status": "native",
+      "note": "Role-marked layouts nest around a selected Page. The handler composes them explicitly rather than using filesystem layout discovery.",
+      "url": "https://proa.so/docs/framework/layouts-and-pages"
+    },
+    "dynamicRoutes": {
+      "status": "official",
+      "note": "The Axum integration reads route parameters through the request context.",
+      "url": "https://proa.so/docs/framework/routing",
+      "label": "Axum integration"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "The reviewed router/layout API does not establish independently navigable named route slots.",
+      "url": "https://proa.so/docs/framework/routing"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "The reviewed routing guide does not establish intercepted-modal/direct-entry route semantics.",
+      "url": "https://proa.so/docs/framework/routing"
+    },
+    "prefetch": {
+      "status": "community",
+      "note": "The documented optional Turbo integration prefetches eligible links on hover and supports explicit preloads. Plain rel=prefetch is a browser hint, not a Proa scheduler; Turbo must be installed separately.",
+      "url": "https://proa.so/docs/framework/linking",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo Drive"
+    },
+    "softNavigation": {
+      "status": "community",
+      "note": "The documented Turbo Drive integration enhances ordinary server-rendered anchors with HTML swaps and browser history. Turbo is installed separately; normal document navigation remains the baseline.",
+      "url": "https://proa.so/docs/framework/linking",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo Drive integration"
+    },
+    "viewTransitions": {
+      "status": "community",
+      "note": "Turbo Drive can start browser View Transitions when both documents opt in with the view-transition meta tag. CSS controls the animation; unsupported browsers continue ordinary Turbo navigation. Apps must honor reduced-motion preferences.",
+      "url": "https://turbo.hotwired.dev/handbook/drive#view-transitions",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo Drive"
+    },
+    "redirects": {
+      "status": "official",
+      "note": "Framework handlers use Axum redirects and explicit response status; this source does not establish a rewrite configuration API.",
+      "url": "https://proa.so/docs/framework/errors",
+      "label": "Redirects via Axum"
+    },
+    "serverData": {
+      "status": "native",
+      "note": "Keyed loaders share typed asynchronous results and feed streamed components.",
+      "url": "https://proa.so/docs/framework/data-loading"
+    },
+    "clientData": {
+      "status": "native",
+      "note": "RSJS queries seed from server data, expose fetch state, and support invalidating mutations against explicit URLs.",
+      "url": "https://proa.so/docs/rsjs/queries-mutations"
+    },
+    "requestDedupe": {
+      "status": "native",
+      "note": "Request-scoped keyed resolution deduplicates equivalent loads; cross-request policy is separate.",
+      "url": "https://proa.so/docs/framework/caching"
+    },
+    "persistentCache": {
+      "status": "native",
+      "note": "StandardDataLoader is an explicit process-local keyed cache with TTL, invalidate and clear. Share that loader across requests to reuse entries. Cross-instance storage and coordination require application-owned Redis/database/upstream integration; request-scoped DataResolver alone does not persist values.",
+      "url": "https://proa.so/docs/framework/caching",
+      "reviewedOn": "2026-11-13",
+      "label": "StandardDataLoader / process local"
+    },
+    "invalidation": {
+      "status": "native",
+      "note": "StandardDataLoader exposes key invalidation and clear; RSJS queries support explicit refresh/invalidation. Cache Trace records render dependencies for the application to consume. Recording a tag does not automatically purge a CDN or invalidate cached HTML.",
+      "url": "https://proa.so/docs/framework/caching",
+      "reviewedOn": "2026-11-13",
+      "label": "Explicit keys; app-owned CDN purge"
+    },
+    "isr": {
+      "status": "partial",
+      "note": "PageCache configures stale-while-revalidate/CDN behavior. There is no in-process page cache; without a CDN the page still renders.",
+      "url": "https://proa.so/docs/framework/page-caching",
+      "label": "CDN-dependent",
+      "reviewedOn": "2026-11-10"
+    },
+    "apiRoutes": {
+      "status": "native",
+      "note": "Route::endpoint registers Axum handlers for JSON, forms, raw bodies, and webhooks.",
+      "url": "https://proa.so/docs/framework/route-handlers",
+      "label": "Axum integration",
+      "reviewedOn": "2026-11-13"
+    },
+    "httpErrors": {
+      "status": "native",
+      "note": "Axum handlers and managed Page/layout head hooks can set error statuses before the response is published. Managed status mutations report failure after headers are committed. Framework render/encoding failures have documented 500 responses when a replacement response is still possible; a late streaming error cannot replace the status already sent. A custom “not found” page must explicitly select 404.",
+      "url": "https://proa.so/docs/framework/errors",
+      "label": "Pre-commit status / Axum",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "partial",
+      "note": "RSJS query/mutation helpers call explicit server URLs. The reviewed form guide uses an authored Axum POST handler, rather than a generated server-function RPC.",
+      "url": "https://proa.so/docs/rsjs/queries-mutations",
+      "label": "Explicit endpoints",
+      "reviewedOn": "2026-11-10"
+    },
+    "forms": {
+      "status": "partial",
+      "note": "Native forms submit to explicit Axum handlers; Wellformed validates inputs. Typed client actions are not generated server RPC.",
+      "url": "https://proa.so/docs/guides/forms-actions",
+      "label": "Forms + Wellformed",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Native forms submit to explicit Axum handlers; Wellformed validates inputs. Typed client actions are not generated server RPC."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "native",
+      "note": "Axum handlers/layers compose around endpoints; framework security layers apply to registered endpoints.",
+      "url": "https://proa.so/docs/framework/route-handlers",
+      "label": "Axum layers",
+      "reviewedOn": "2026-11-13"
+    },
+    "cookies": {
+      "status": "partial",
+      "note": "ResponseContext stages Set-Cookie values through append_set_cookie before headers are committed. Request parsing and session/identity policy remain host/application-owned.",
+      "url": "https://proa.so/docs/framework/errors",
+      "label": "Host HTTP integration",
+      "reviewedOn": "2026-11-10"
+    },
+    "cssModules": {
+      "status": "undocumented",
+      "note": "The reviewed linked asset pipeline does not establish CSS Modules selector/class-map compilation.",
+      "url": "https://proa.so/docs/framework/static-assets"
+    },
+    "scopedCss": {
+      "status": "undocumented",
+      "note": "ClassList and authored styles do not establish automatic component-local CSS selector rewriting.",
+      "url": "https://proa.so/docs/core/html-rendering"
+    },
+    "tailwind": {
+      "status": "community",
+      "note": "The official guide configures external Tailwind tooling for Rust-authored classes; it is not a required styling runtime.",
+      "url": "https://proa.so/docs/guides/tailwind-intellisense",
+      "label": "Tailwind tooling recipe"
+    },
+    "cssInJs": {
+      "status": "undocumented",
+      "note": "The reviewed client/asset pipeline does not establish a CSS-in-JS compiler and SSR style registry.",
+      "url": "https://proa.so/docs/rsjs/runtime"
+    },
+    "images": {
+      "status": "partial",
+      "note": "No image transformation pipeline is provided. The app prepares variants and authors srcset/sizes itself.",
+      "url": "https://proa.so/docs/framework/images",
+      "label": "Manual variants",
+      "reviewedOn": "2026-11-10"
+    },
+    "fonts": {
+      "status": "official",
+      "note": "proa_fonts vendors self-hosted fonts, hashes assets, emits preload CSS, and provides metric-matched fallbacks.",
+      "url": "https://proa.so/docs/framework/fonts",
+      "label": "proa_fonts"
+    },
+    "scripts": {
+      "status": "official",
+      "note": "proa_third_party supports consent-aware analytics and deferred scripts; browser execution still requires CSP authorization.",
+      "url": "https://proa.so/docs/framework/third-party",
+      "label": "proa_third_party"
+    },
+    "assetPipeline": {
+      "status": "partial",
+      "note": "proa_fonts emits content-hashed font files, but the documented static-file setup does not provide a general image/CSS fingerprinting pipeline. Applications supply the static router, build tooling, URL references, and cache headers. Serving image.svg alone does not automatically give it a new URL when its contents change.",
+      "url": "https://proa.so/docs/framework/static-assets",
+      "label": "Fonts; app-owned pipeline",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "native",
+      "note": "FrameworkBuilder mounts an application-supplied static router; disk/embedded service and cache headers are explicit.",
+      "url": "https://proa.so/docs/framework/static-assets",
+      "label": "Static router",
+      "reviewedOn": "2026-11-13"
+    },
+    "metadata": {
+      "status": "native",
+      "note": "Managed head builders produce structured title, canonical, social, and named metadata at one head outlet.",
+      "url": "https://proa.so/docs/framework/metadata",
+      "label": "Explicit, composable API",
+      "assessment": {
+        "label": "Explicit, composable API",
+        "summary": "Structured metadata with field-level inheritance and clear operations; setup and document ordering are explicit.",
+        "strengths": [
+          "Shared request loaders can feed both render_head and the page body.",
+          "Layout defaults, field patches, explicit clears, and absolute titles are documented."
+        ],
+        "tradeoffs": [
+          "Requires managed-head setup, role-marked components, and a head outlet; direct body rendering skips the metadata hook.",
+          "Metadata seals before the selected page body; it cannot be treated as unrestricted late head mutation."
+        ]
+      }
+    },
+    "dynamicMetadata": {
+      "status": "native",
+      "note": "Async render_head can use the same keyed loader as the body; metadata seals before the selected Page body starts.",
+      "url": "https://proa.so/docs/framework/metadata"
+    },
+    "metadataInheritance": {
+      "status": "native",
+      "note": "Layout hooks supply defaults; child hooks change only the fields they write. Handlers must compose role-marked components.",
+      "url": "https://proa.so/docs/framework/metadata#inherit-layout-defaults"
+    },
+    "metadataOverrides": {
+      "status": "native",
+      "note": "Children can patch or clear inherited fields. Image arrays replace the inherited list; images([]) removes it.",
+      "url": "https://proa.so/docs/framework/metadata-reference#replace-inherited-images",
+      "label": "Field patches / clears"
+    },
+    "titleTemplates": {
+      "status": "native",
+      "note": "title_template composes inherited titles; absolute_title bypasses it and clear_title_template resets it.",
+      "url": "https://proa.so/docs/framework/metadata-reference"
+    },
+    "socialImages": {
+      "status": "official",
+      "note": "Optional proa_og generates images using WPE WebKit on Linux and requires native libraries; metadata itself only emits image URLs.",
+      "url": "https://proa.so/docs/framework/images#open-graph-images",
+      "label": "proa_og / Linux"
+    },
+    "sitemaps": {
+      "status": "native",
+      "note": "Typed and asynchronous generators support individual sitemap documents and a multi-sitemap index.",
+      "url": "https://proa.so/docs/framework/sitemaps"
+    },
+    "robots": {
+      "status": "native",
+      "note": "Structured generators support user-agent groups, sitemap links, and asynchronous generation.",
+      "url": "https://proa.so/docs/framework/robots"
+    },
+    "markdown": {
+      "status": "native",
+      "note": "md! / md_sync! render typed Markdown output. This is not itself a filesystem Markdown-to-HTML content pipeline.",
+      "url": "https://proa.so/docs/core/markdown",
+      "label": "Typed Markdown output"
+    },
+    "collections": {
+      "status": "official",
+      "note": "Proa Docs compiles frontmatter schemas, file-routed Markdown, search/navigation data, and a static Rust page registry. It is documentation-content tooling.",
+      "url": "https://proa.so/docs/proa-docs",
+      "label": "Proa Docs"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "Application cache hints/bypass can implement previews, but a dedicated authenticated editorial draft API is not established.",
+      "url": "https://proa.so/docs/framework/page-caching"
+    },
+    "translations": {
+      "status": "undocumented",
+      "note": "The reviewed published rendering API does not establish locale message catalogs, interpolation keys, and pluralization.",
+      "url": "https://proa.so/docs/core/html-rendering"
+    },
+    "localeRouting": {
+      "status": "undocumented",
+      "note": "Application routes can carry a locale segment; automatic language negotiation/locale URL policy is not established.",
+      "url": "https://proa.so/docs/framework/routing"
+    },
+    "localeFormatting": {
+      "status": "undocumented",
+      "note": "The reviewed published renderer does not establish locale-aware date/number formatter APIs.",
+      "url": "https://proa.so/docs/core/html-rendering"
+    },
+    "auth": {
+      "status": "partial",
+      "note": "Axum extractors/middleware can authenticate requests. Identity storage, login, and session policy require application/library code.",
+      "url": "https://proa.so/docs/framework/route-handlers",
+      "label": "Host authentication hooks",
+      "reviewedOn": "2026-11-10"
+    },
+    "csp": {
+      "status": "native",
+      "note": "Configured CSP can assign a fresh per-response nonce to generated scripts; CSP and HSTS are opt-in.",
+      "url": "https://proa.so/docs/framework/security-headers"
+    },
+    "cspNonce": {
+      "status": "native",
+      "note": "Opt-in strict CSP generates a fresh 128-bit nonce per response and applies it to framework bootstraps, import maps and streaming scripts. Authored scripts must use the request nonce too; nonce-bearing HTML must not be reused as a shared cached response.",
+      "url": "https://proa.so/docs/framework/security-headers",
+      "reviewedOn": "2026-11-11",
+      "label": "Strict CSP / streaming nonces"
+    },
+    "csrf": {
+      "status": "native",
+      "note": "Default outer hardening rejects unsafe browser cross-origin writes unless trusted, covering pages and endpoints. This is origin-based protection, not a CSRF-token service; same-origin XSS and stolen sessions require other defenses.",
+      "url": "https://proa.so/docs/framework/cross-origin",
+      "label": "Origin checks; no tokens"
+    },
+    "environment": {
+      "status": "partial",
+      "note": "The application defines and validates runtime environment configuration. Only explicitly selected values should enter browser props.",
+      "url": "https://proa.so/docs/framework/environment",
+      "label": "Application-owned config",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Only analyzed RSJS client graphs become JavaScript; runtime configuration and serialization policy remain explicit application work.",
+        "strengths": [
+          "The documented server-only boundary keeps ordinary server implementation out of browser modules."
+        ],
+        "tradeoffs": [
+          "The application must validate environment configuration and select safe browser props/query seeds. A typed value can still contain a secret."
+        ]
+      }
+    },
+    "types": {
+      "status": "native",
+      "note": "Rust type checking and template macros validate typed server templates at compile time.",
+      "url": "https://proa.so/docs/core/html-rendering"
+    },
+    "hmr": {
+      "status": "native",
+      "note": "proa dev watches files and rebuilds assets/server. This source does not promise React-style state-preserving hot updates.",
+      "url": "https://proa.so/docs/framework/project-config",
+      "label": "Watch / rebuild"
+    },
+    "cli": {
+      "status": "native",
+      "note": "proa dev and proa build coordinate project assets and compilation through proa.config.json.",
+      "url": "https://proa.so/docs/framework/project-config"
+    },
+    "bundleAnalysis": {
+      "status": "partial",
+      "note": "Linked asset/descriptor diagnostics help inspect generated client artifacts; a module-size visualization is not established.",
+      "url": "https://proa.so/docs/rsjs/runtime",
+      "label": "Linked artifact diagnostics",
+      "reviewedOn": "2026-11-10"
+    },
+    "unitTests": {
+      "status": "native",
+      "note": "Rust library tests use cargo test; linked RSJS integration targets use proa test.",
+      "url": "https://proa.so/docs/guides/testing",
+      "label": "Rust / proa test"
+    },
+    "e2eTests": {
+      "status": "partial",
+      "note": "The guide recommends browser automation for behavior/accessibility workflows, but does not supply a dedicated browser runner.",
+      "url": "https://proa.so/docs/guides/testing",
+      "label": "Application browser tests",
+      "reviewedOn": "2026-11-10"
+    },
+    "observability": {
+      "status": "native",
+      "note": "Cache Trace exposes render/cache dependency diagnostics, and host tracing supplies production logging. Exporters and monitoring dashboards remain application-owned; those are not required by this instrumentation category.",
+      "url": "https://proa.so/docs/framework/caching",
+      "label": "Cache traces / host logging"
+    },
+    "errorHandling": {
+      "status": "partial",
+      "note": "The published guide documents HTTP errors, fallback responses, and logging. A documented general component recovery-boundary contract is not established here.",
+      "url": "https://proa.so/docs/framework/errors",
+      "label": "HTTP fallback handling",
+      "reviewedOn": "2026-11-10"
+    },
+    "serverHosting": {
+      "status": "native",
+      "note": "Deploy a release binary plus public assets on your own server.",
+      "url": "https://proa.so/docs/framework/deployment"
+    },
+    "subpathProxy": {
+      "status": "native",
+      "note": "Proa has built-in base-path support through FrameworkBuilder::with_base_path. Configure the public prefix at startup for a proxy that strips it before forwarding. BasePath-aware URL helpers and linked RSJS asset serving keep generated links, runtime imports and island loads aligned. Incoming routes remain unprefixed; authored links, forms, images and redirects use cx.url or app_url. The prefix is explicit, not inferred from forwarded headers.",
+      "url": "https://proa.so/docs/framework/deployment#serving-behind-a-url-path-prefix",
+      "label": "Built-in BasePath support",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "undocumented",
+      "note": "Compiled static article fragments still run inside the Rust request handler. A complete static-site export workflow is not established.",
+      "url": "https://proa.so/docs/framework/deployment"
+    },
+    "containers": {
+      "status": "native",
+      "note": "The documented Docker build packages the Rust binary and required assets for a production runtime.",
+      "url": "https://proa.so/docs/framework/railway"
+    },
+    "edgeHosting": {
+      "status": "undocumented",
+      "note": "Cloudflare can cache/proxy origin responses, but the reviewed deployment guide does not establish running Proa SSR inside Workers.",
+      "url": "https://proa.so/docs/framework/deployment"
+    },
+    "orm": {
+      "status": "community",
+      "note": "The database guide integrates external SQLx, Diesel and Toasty behind DataLoader. Proa ships no database driver or ORM; these libraries supply queries and models, with their own installation and configuration.",
+      "url": "https://proa.so/docs/framework/databases",
+      "reviewedOn": "2026-11-13",
+      "label": "SQLx / Diesel / Toasty"
+    },
+    "migrations": {
+      "status": "community",
+      "note": "proa add database scaffolds SQLx/SQLite and proa db runs the external library’s migrations. This is an integrated CLI workflow for SQLx, not a Proa-owned schema/migration engine.",
+      "url": "https://proa.so/docs/framework/databases",
+      "reviewedOn": "2026-11-13",
+      "label": "SQLx via Proa CLI"
+    },
+    "transactions": {
+      "status": "community",
+      "note": "The documented SQLx data-layer integration can use SQLx transactions, with commit, rollback and rollback-on-drop supplied by that external library. Proa provides no transaction manager; database lifetime, loader boundaries and retry policy remain application-owned.",
+      "url": "https://docs.rs/sqlx/0.8.6/sqlx/struct.Transaction.html",
+      "label": "SQLx data-layer integration",
+      "reviewedOn": "2026-11-13"
+    },
+    "jobs": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned background jobs API. Host libraries and application integrations may provide it.",
+      "url": "https://proa.so"
+    },
+    "mail": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned email API. Host libraries and application integrations may provide it.",
+      "url": "https://proa.so"
+    },
+    "uploads": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned file uploads & storage API. Host libraries and application integrations may provide it.",
+      "url": "https://proa.so"
+    },
+    "realtime": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned real-time delivery API. Host libraries and application integrations may provide it.",
+      "url": "https://proa.so"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Dynamic template values are encoded for their HTML context, including separate URL policy. UnsafeRaw bypasses output protection; it does not sanitize user-authored rich HTML.",
+      "url": "https://proa.so/docs/core/escaping",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The reviewed escaping API encodes output and offers UnsafeRaw, but does not establish a maintained allowlist-based sanitizer. UnsafeRaw is a trust bypass, not a way to clean untrusted rich HTML.",
+      "url": "https://proa.so/docs/core/escaping",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://proa.so/docs/framework/security-headers",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://proa.so/docs/framework/security-headers",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "official",
+      "note": "The documented native HTML form submits to an explicit Axum handler that validates and writes data. This path works without client handlers; RSJS actions enhance controls but are not generated server RPC or automatic form rollback.",
+      "url": "https://proa.so/docs/guides/forms-actions",
+      "reviewedOn": "2026-11-11",
+      "label": "Native forms / Axum"
+    },
+    "optimisticUi": {
+      "status": "undocumented",
+      "note": "The reviewed query/mutation guide establishes pending/error state and invalidation, but not an optimistic overlay with reconciliation/rollback. An authored signal update alone is not evidence of that contract.",
+      "url": "https://proa.so/docs/rsjs/queries-mutations",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "native",
+      "note": "RSJS query observers move to the cache entry for a new structural key, so an old entry’s request stays with that entry. Full page-generation teardown cancels scheduled work and in-flight queries and invalidates old handles. This does not mean every key change aborts the previous shared request or undoes a server mutation.",
+      "url": "https://proa.so/docs/rsjs/queries-mutations",
+      "reviewedOn": "2026-11-13",
+      "label": "Query ownership / generation teardown"
+    },
+    "typedLinks": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific typed links & parameters contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://proa.so/docs/framework/linking",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://proa.so/docs/framework/linking",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "community",
+      "note": "Requires the documented optional Turbo integration, not Proa's plain document navigation. Turbo Drive caches page snapshots for restoration visits and supports data-turbo-permanent elements. Snapshots are DOM state, not a guarantee to serialize arbitrary JavaScript state; applications must implement lifecycle cleanup.",
+      "url": "https://turbo.hotwired.dev/handbook/building",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo snapshots"
+    },
+    "scrollRestoration": {
+      "status": "community",
+      "note": "Requires the documented optional Turbo integration, not Proa's plain document navigation. Turbo restoration visits restore the recorded page scroll position. This establishes window/document restoration, not arbitrary nested scrollport state.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo Drive"
+    },
+    "navigationBlocking": {
+      "status": "community",
+      "note": "Requires the documented optional Turbo integration, not Proa's plain document navigation. turbo:before-visit can cancel an application visit. This does not intercept every browser history restoration or tab close; beforeunload remains a separate browser mechanism.",
+      "url": "https://turbo.hotwired.dev/reference/events#turbo-before-visit",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo visit events"
+    },
+    "navigationAccessibility": {
+      "status": "community",
+      "note": "Requires the documented optional Turbo integration, not Proa's plain document navigation. Turbo documents aria-busy during requests, focus of autofocus elements and updating the document title. It does not promise the same route-announcement/live-region contract as SvelteKit.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo focus / busy state"
+    },
+    "a11yChecks": {
+      "status": "native",
+      "note": "The HTML compiler checks statically visible accessibility requirements, including required attributes and supported ARIA contracts. Runtime focus/contrast and cross-component context still need integration checks; these diagnostics do not certify accessibility.",
+      "url": "https://proa.so/docs/guides/accessibility",
+      "reviewedOn": "2026-11-11",
+      "label": "Compile-time checks"
+    },
+    "lazyActivation": {
+      "status": "native",
+      "note": "RSJS final owners activate immediately or on visible, idle, interaction or media triggers. Server HTML is present first; runtime planning decides owner assets and query wiring. A delayed strategy is not a claim of zero browser runtime.",
+      "url": "https://proa.so/docs/rsjs/hydration",
+      "reviewedOn": "2026-11-11",
+      "label": "RSJS strategies"
+    },
+    "codeSplitting": {
+      "status": "native",
+      "note": "RSJS emits linked per-owner island modules, and a page runtime plan selects modules for rendered owners. Shared runtime dependencies may be needed; this differs from route-level SPA chunking.",
+      "url": "https://proa.so/docs/rsjs/runtime",
+      "reviewedOn": "2026-11-11",
+      "label": "RSJS owner modules"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://proa.so/docs/framework/deployment",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://proa.so",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://proa.so",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://proa.so",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://proa.so",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://proa.so/docs/guides/testing",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

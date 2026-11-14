@@ -1,5 +1,8 @@
 import type { Capture, Phase } from "../framework-ssr/report.ts";
-import { validateResult } from "../framework-ssr/report.ts";
+import {
+  validateResult,
+  workloadDefinitions,
+} from "../framework-ssr/report.ts";
 import { summarize } from "../suspense-load/stats.mjs";
 import type { Percentiles } from "./benchmark-types.ts";
 
@@ -11,11 +14,22 @@ const percentiles = (phases: Phase[], key: "complete" | "scheduledComplete") =>
       median(phases.map((v) => v.latencyMs[key][p])),
     ]),
   ) as Percentiles;
-export function frameworkRows(capture: Capture) {
+export function frameworkRows(
+  capture: Capture,
+  workload = capture.scenario.workloads?.[0].id || "catalog",
+) {
   validateResult(capture);
   return capture.engines.map((engine) => {
-    const closed = engine.phases.filter((p) => p.mode === "closed");
-    const open = engine.phases.filter((p) => p.mode === "open");
+    const phases = engine.phases.filter(
+      (p) => !p.workload || p.workload === workload,
+    );
+    const closed = phases.filter((p) => p.mode === "closed");
+    const open = phases.filter((p) => p.mode === "open");
+    const rate = workloadDefinitions(capture).find(
+      (w) => w.id === workload,
+    )?.fixedRateRps;
+    if (!rate) throw new Error(`Missing Framework SSR workload: ${workload}`);
+    const parity = engine.parityByWorkload?.[workload] || engine.parity;
     const seriesSamples = {
       throughput: closed.map((p) => p.completionThroughputRps),
       cpu: closed.map((p) => p.cpu.cpuMsPerSuccessfulRequest),
@@ -37,9 +51,9 @@ export function frameworkRows(capture: Capture) {
         capacity: closed.map((p) => p.latencyMs.complete),
         equalLoad: open.map((p) => p.latencyMs.scheduledComplete),
       },
-      equalLoadRps: capture.methodology.fixedRateRps,
-      errors: engine.phases.reduce((sum, p) => sum + p.errorCount, 0),
-      detail: `${engine.framework}; ${engine.runtime}; ${engine.parity.responseBytes} response bytes. Production HTTP → complete SSR HTML; ${capture.methodology.concurrency} connections at capacity; equal load ${capture.methodology.fixedRateRps} requests/s.`,
+      equalLoadRps: rate,
+      errors: phases.reduce((sum, p) => sum + p.errorCount, 0),
+      detail: `${engine.framework}; ${engine.runtime}; ${parity.responseBytes} response bytes. Production HTTP → complete SSR HTML; ${capture.methodology.concurrency} connections at capacity; equal load ${rate} requests/s.`,
     };
   });
 }

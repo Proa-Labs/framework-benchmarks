@@ -1,0 +1,600 @@
+{
+  "id": "dioxus",
+  "scope": "Dioxus 0.7 documentation, including the optional Fullstack and Router packages.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "official",
+      "note": "Dioxus Fullstack renders initial HTML and hydrates the application in the browser.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming/",
+      "label": "Fullstack"
+    },
+    "streaming": {
+      "status": "official",
+      "note": "Fullstack can opt into out-of-order HTML streaming. The default waits for suspense boundaries before sending the page.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming/",
+      "label": "Fullstack"
+    },
+    "suspense": {
+      "status": "native",
+      "note": "Suspense boundaries coordinate asynchronous UI; Fullstack can stream their resolved HTML.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming/"
+    },
+    "client": {
+      "status": "official",
+      "note": "Fullstack supports hydration of the server-rendered application.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming/",
+      "label": "Hydration"
+    },
+    "ssg": {
+      "status": "official",
+      "note": "Fullstack SSG runs the app, enumerates its sitemap, and retains HTML for static hosting.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/static_site_generation/",
+      "label": "Fullstack SSG"
+    },
+    "csr": {
+      "status": "native",
+      "note": "The web target renders and updates UI in the browser through the WASM runtime.",
+      "url": "https://dioxuslabs.com/learn/0.7/guides/platforms/web"
+    },
+    "serverOnly": {
+      "status": "partial",
+      "note": "Server-only blocks and server functions stay on the server; normal Fullstack components also execute during browser hydration.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/static_site_generation",
+      "label": "Server blocks / functions",
+      "reviewedOn": "2026-11-10"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "The reviewed static/incremental renderer does not establish a prebuilt shell with per-request dynamic UI holes.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/static_site_generation"
+    },
+    "routing": {
+      "status": "official",
+      "note": "The fullstack server integrates an Axum router and registers server functions.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/axum/",
+      "label": "Fullstack / Axum"
+    },
+    "layouts": {
+      "status": "official",
+      "note": "The official Router nests routes inside layout components with Outlet.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/layouts",
+      "label": "Dioxus Router"
+    },
+    "dynamicRoutes": {
+      "status": "official",
+      "note": "Routable derives typed dynamic, catch-all, query, and hash route segments.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/routes",
+      "label": "Dioxus Router"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "Nested Outlet layouts are documented, but not independently navigable named route slots.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/layouts"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "The reviewed navigation guide does not define intercepted-modal and direct-link rendering semantics.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/navigation"
+    },
+    "prefetch": {
+      "status": "undocumented",
+      "note": "Link and Navigator navigation are documented; automatic route/data prefetch is not established by the reviewed guide.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/navigation"
+    },
+    "softNavigation": {
+      "status": "official",
+      "note": "dioxus-router Link/Navigator update internal routed UI and history without fetching a new document. External navigation can leave the application; the router also serves non-browser targets.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/navigation",
+      "reviewedOn": "2026-11-11",
+      "label": "dioxus-router"
+    },
+    "viewTransitions": {
+      "status": "undocumented",
+      "note": "The reviewed routing API does not establish this navigation capability. Application code or another package may provide it; this finding is not proof of absence.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/axum/",
+      "reviewedOn": "2026-11-11"
+    },
+    "redirects": {
+      "status": "official",
+      "note": "Navigator and router callbacks can replace/redirect navigation; server responses can separately set HTTP redirects.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/navigation",
+      "label": "Dioxus Router"
+    },
+    "serverData": {
+      "status": "official",
+      "note": "use_loader resolves data during SSR and serializes its result for the initial client render.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/ssr",
+      "label": "Fullstack use_loader"
+    },
+    "clientData": {
+      "status": "native",
+      "note": "Reactive resources expose pending/result state and can restart when dependencies change. This is not a shared query cache.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/basics/resources",
+      "label": "Resources"
+    },
+    "requestDedupe": {
+      "status": "undocumented",
+      "note": "The resource lifecycle guide does not establish a request-wide keyed cache shared across separate components.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/basics/resources"
+    },
+    "persistentCache": {
+      "status": "official",
+      "note": "The incremental renderer retains generated HTML in its configured static directory. This is an HTML cache, not an application data cache.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/static_site_generation",
+      "label": "Fullstack incremental renderer"
+    },
+    "invalidation": {
+      "status": "native",
+      "note": "Reactive resources expose restart to re-run their asynchronous work, and reactive dependencies can trigger refresh. This is resource-level invalidation; it does not establish automatic tag/path purging of retained HTML or a shared server cache.",
+      "url": "https://docs.rs/dioxus-hooks/latest/dioxus_hooks/struct.Resource.html#method.restart",
+      "reviewedOn": "2026-11-13",
+      "label": "Resource restart / dependency refresh"
+    },
+    "isr": {
+      "status": "partial",
+      "note": "Incremental rendering can retain generated pages; freshness, regeneration triggers, and deployment behavior require renderer configuration.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/static_site_generation",
+      "label": "Incremental HTML renderer",
+      "reviewedOn": "2026-11-10"
+    },
+    "apiRoutes": {
+      "status": "official",
+      "note": "Fullstack’s Axum router can register custom HTTP handlers alongside generated server functions.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/axum",
+      "label": "Fullstack / Axum"
+    },
+    "httpErrors": {
+      "status": "official",
+      "note": "Fullstack maps errors bubbling to the root into HTTP statuses, with unknown errors defaulting to 500. A custom ErrorBoundary must explicitly call FullstackContext::commit_error_status to preserve the intended error status when it catches an error. Rendering a fallback alone does not set that status; response decisions must precede committed headers.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/errors/",
+      "label": "Fullstack error statuses",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "official",
+      "note": "Fullstack registers server functions that browser code can call.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/axum/",
+      "label": "Fullstack"
+    },
+    "forms": {
+      "status": "official",
+      "note": "Form<T> deserializes typed form inputs; MultipartFormData handles uploads. Business validation remains application code.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/forms",
+      "label": "Fullstack forms",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Form<T> deserializes typed form inputs; MultipartFormData handles uploads. Business validation remains application code."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "official",
+      "note": "Tower/Axum middleware and per-server-function middleware are supported.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/middleware",
+      "label": "Fullstack / Axum"
+    },
+    "cookies": {
+      "status": "official",
+      "note": "Axum extractors and response headers provide request cookie integration; session policy requires application code.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/axum",
+      "label": "Axum integration"
+    },
+    "cssModules": {
+      "status": "undocumented",
+      "note": "The reviewed CSS/SCSS and stylesheet guide does not document CSS Modules class-name compilation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/styling"
+    },
+    "scopedCss": {
+      "status": "undocumented",
+      "note": "Stylesheets and inline styles are documented; automatic component-local selector rewriting is not established.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/styling"
+    },
+    "tailwind": {
+      "status": "official",
+      "note": "Dioxus 0.7 integrates automatic Tailwind processing in its CLI workflow. Tailwind remains the external CSS compiler, but Dioxus supplies the build integration rather than requiring only an application-authored standalone recipe.",
+      "url": "https://dioxuslabs.com/blog/release-070/",
+      "label": "Integrated Tailwind workflow",
+      "reviewedOn": "2026-11-13"
+    },
+    "cssInJs": {
+      "status": "undocumented",
+      "note": "Inline styles do not establish a CSS-in-JS compiler or SSR style registry in the reviewed guide.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/styling"
+    },
+    "images": {
+      "status": "official",
+      "note": "Manganis asset processing supports build-time image resizing and format conversion.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/assets",
+      "label": "Manganis"
+    },
+    "fonts": {
+      "status": "partial",
+      "note": "Font files can be bundled as assets; automatic font subsetting and fallback-metric optimization are not established.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/assets",
+      "label": "Bundled font files",
+      "reviewedOn": "2026-11-10"
+    },
+    "scripts": {
+      "status": "undocumented",
+      "note": "document::eval and browser bindings execute app-authored JavaScript. This is not an optimized third-party script scheduling API.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/advanced/breaking_out",
+      "label": "Document eval"
+    },
+    "assetPipeline": {
+      "status": "official",
+      "note": "The Dioxus CLI processes assets declared with asset!, hashes their output names, and resolves Asset handles to the built URLs. This includes images and other files; hashing can be explicitly disabled. Arbitrary literal URLs do not gain this behavior.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/assets/",
+      "label": "Manganis / asset!",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "official",
+      "note": "asset! bundles and fingerprints files through Manganis.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/assets",
+      "label": "Manganis"
+    },
+    "metadata": {
+      "status": "native",
+      "note": "Document head components expose titles/meta/links. SEO-critical head content must resolve in the initial stream chunk.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming",
+      "label": "Document components"
+    },
+    "dynamicMetadata": {
+      "status": "partial",
+      "note": "Head components accept reactive values; metadata rendered after the first chunk may only appear after client hydration.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming",
+      "label": "Initial-chunk constraint",
+      "reviewedOn": "2026-11-10"
+    },
+    "metadataInheritance": {
+      "status": "undocumented",
+      "note": "The reviewed head component guide does not define metadata-object inheritance through nested route layouts.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming"
+    },
+    "metadataOverrides": {
+      "status": "undocumented",
+      "note": "The reviewed document API does not establish a standard nested metadata-field merge/clear contract.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming"
+    },
+    "titleTemplates": {
+      "status": "undocumented",
+      "note": "Title components are documented, but an ancestor title-formatting/absolute-title API is not established.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming"
+    },
+    "socialImages": {
+      "status": "undocumented",
+      "note": "Image asset transforms are documented; a route-aware generated social-card renderer is not established.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/assets"
+    },
+    "sitemaps": {
+      "status": "undocumented",
+      "note": "The SSG workflow enumerates app routes through a sitemap for prerendering. This is not evidence of a crawler XML sitemap generator.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/static_site_generation",
+      "label": "SSG route enumeration"
+    },
+    "robots": {
+      "status": "official",
+      "note": "The CLI’s public asset directory can publish an application-authored robots.txt at its unchanged public path. The file’s directive contents and deployment policy are application-owned; this is not a typed crawler-directive generator.",
+      "url": "https://dioxuslabs.com/learn/0.7/guides/tools/configure/",
+      "reviewedOn": "2026-11-13",
+      "label": "Public asset file"
+    },
+    "markdown": {
+      "status": "undocumented",
+      "note": "The reviewed asset guide does not establish a Markdown page/compiler integration; add a parser/content package.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/assets"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "Asset bundling does not establish typed content collection schemas, loaders, and queries.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/assets"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "Application middleware can authorize previews; a dedicated draft-preview/cache-bypass API is not established.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/middleware"
+    },
+    "translations": {
+      "status": "community",
+      "note": "dioxus-i18n provides Fluent messages and locale configuration; its documentation declares Dioxus 0.7 support.",
+      "url": "https://docs.rs/dioxus-i18n/latest/dioxus_i18n/",
+      "label": "dioxus-i18n"
+    },
+    "localeRouting": {
+      "status": "partial",
+      "note": "The typed dynamic-route guide demonstrates a locale segment; negotiation and language redirects are application policy.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/routes",
+      "label": "Typed locale segment",
+      "reviewedOn": "2026-11-10"
+    },
+    "localeFormatting": {
+      "status": "undocumented",
+      "note": "The guide introduces dioxus-i18n messages but does not establish a number/date formatter API for this comparison.",
+      "url": "https://dioxuslabs.com/learn/0.7/guides/utilities/internationalization"
+    },
+    "auth": {
+      "status": "community",
+      "note": "The guide explicitly leaves authentication to libraries/application code and demonstrates axum_session_auth.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/authentication",
+      "label": "axum_session_auth"
+    },
+    "csp": {
+      "status": "undocumented",
+      "note": "Application middleware can supply headers; automatic CSP nonce/hash coordination is not established by the reviewed Fullstack guide.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/middleware"
+    },
+    "cspNonce": {
+      "status": "undocumented",
+      "note": "The reviewed security/rendering API does not establish coordinated per-response CSP nonces for generated scripts and styles. Hash-based CSP and application-authored headers are different mechanisms.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/middleware",
+      "reviewedOn": "2026-11-11"
+    },
+    "csrf": {
+      "status": "undocumented",
+      "note": "Typed form parsing does not establish CSRF tokens or origin enforcement; the reviewed forms guide does not document that protection.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/forms"
+    },
+    "environment": {
+      "status": "partial",
+      "note": "Server-function bodies and extractors stay on the server. Application code must keep secrets out of serialized results and client modules.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/server_functions",
+      "label": "Server-function boundary",
+      "reviewedOn": "2026-11-10"
+    },
+    "types": {
+      "status": "native",
+      "note": "Rust checks component/route types; Routable derives typed route parameters.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/routes"
+    },
+    "hmr": {
+      "status": "native",
+      "note": "RSX and CSS support hot reload; some Rust changes rebuild, and Rust hotpatching is experimental.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/hotreload"
+    },
+    "cli": {
+      "status": "official",
+      "note": "The dx toolchain configures, serves, and bundles Dioxus applications.",
+      "url": "https://dioxuslabs.com/learn/0.7/guides/tools/configure",
+      "label": "Dioxus CLI"
+    },
+    "bundleAnalysis": {
+      "status": "undocumented",
+      "note": "The reviewed bundling configuration does not establish an interactive production module-size analyzer.",
+      "url": "https://dioxuslabs.com/learn/0.7/guides/tools/configure"
+    },
+    "unitTests": {
+      "status": "partial",
+      "note": "The guide uses Rust tests and dioxus_ssr snapshots; hook testing requires manually driving a VirtualDom.",
+      "url": "https://dioxuslabs.com/learn/0.7/guides/testing/web",
+      "label": "Rust / SSR test recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "e2eTests": {
+      "status": "community",
+      "note": "The official browser-testing guide configures Playwright against a served web app.",
+      "url": "https://dioxuslabs.com/learn/0.7/guides/testing/web",
+      "label": "Playwright"
+    },
+    "observability": {
+      "status": "official",
+      "note": "The first-party logger connects tracing to native or web logging destinations. Metrics/tracing backends require additional configuration.",
+      "url": "https://dioxuslabs.com/learn/0.7/guides/utilities/logging",
+      "label": "Dioxus logger"
+    },
+    "errorHandling": {
+      "status": "native",
+      "note": "ErrorBoundary captures component errors and renders fallback UI.",
+      "url": "https://docs.rs/dioxus/latest/dioxus/prelude/fn.ErrorBoundary.html"
+    },
+    "serverHosting": {
+      "status": "official",
+      "note": "The production Fullstack integration runs an Axum application server.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/axum",
+      "label": "Fullstack / Axum"
+    },
+    "subpathProxy": {
+      "status": "partial",
+      "note": "The CLI documents web.app.base_path for subdirectory builds. Its web.proxy setting is a development API proxy, not production reverse-proxy support. Production Fullstack routing, server-function URLs, browser routing and forwarded origin must also agree with the deployment; the CLI setting alone does not establish that complete contract.",
+      "url": "https://dioxuslabs.com/learn/0.7/guides/tools/configure/",
+      "label": "Build base; host setup",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "official",
+      "note": "SSG emits retained HTML for static hosting; dynamic server functions still require a server.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/static_site_generation",
+      "label": "Fullstack SSG"
+    },
+    "containers": {
+      "status": "undocumented",
+      "note": "The reviewed bundle/configuration guide does not document a web-server container image workflow.",
+      "url": "https://dioxuslabs.com/learn/0.7/guides/tools/configure"
+    },
+    "edgeHosting": {
+      "status": "undocumented",
+      "note": "The reviewed Fullstack host is Axum; a worker/edge runtime adapter is not established.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/axum"
+    },
+    "orm": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned orm / query builder API. Host libraries and application integrations may provide it.",
+      "url": "https://dioxuslabs.com"
+    },
+    "migrations": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned schema migrations API. Host libraries and application integrations may provide it.",
+      "url": "https://dioxuslabs.com"
+    },
+    "transactions": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned transactions API. Host libraries and application integrations may provide it.",
+      "url": "https://dioxuslabs.com"
+    },
+    "jobs": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned background jobs API. Host libraries and application integrations may provide it.",
+      "url": "https://dioxuslabs.com"
+    },
+    "mail": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned email API. Host libraries and application integrations may provide it.",
+      "url": "https://dioxuslabs.com"
+    },
+    "uploads": {
+      "status": "partial",
+      "note": "Fullstack server functions accept FileStream upload arguments. A durable file/storage lifecycle is not supplied by this transport alone.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/server_functions",
+      "label": "FileStream transport",
+      "reviewedOn": "2026-11-10"
+    },
+    "realtime": {
+      "status": "official",
+      "note": "Dioxus 0.7 Fullstack server functions support typed WebSockets with a use_websocket client hook. This supplies a real-time transport; applications still own authorization, message semantics and distributed pub/sub.",
+      "url": "https://dioxuslabs.com/blog/release-070/",
+      "reviewedOn": "2026-11-13",
+      "label": "Fullstack typed WebSockets"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "RSX text interpolation renders text; dangerous_inner_html is the explicit raw-HTML bypass. Treat its input as trusted or sanitize it outside the renderer.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/rsx/",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/middleware",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/middleware",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/middleware",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "undocumented",
+      "note": "The linked server API review does not establish the specific progressive forms contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/forms",
+      "reviewedOn": "2026-11-11"
+    },
+    "optimisticUi": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific optimistic updates contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/basics/resources",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "native",
+      "note": "use_resource reruns reactive asynchronous work and exposes cancellation/restart. Fetch cancellation depends on the future/transport; canceling UI work does not roll back a remote mutation.",
+      "url": "https://docs.rs/dioxus-hooks/latest/dioxus_hooks/fn.use_resource.html",
+      "reviewedOn": "2026-11-11",
+      "label": "use_resource"
+    },
+    "typedLinks": {
+      "status": "official",
+      "note": "The Routable derive generates typed route variants and parameters used by Link/navigation. A string URL can bypass that typed route API; Router is an optional package.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/routes/",
+      "reviewedOn": "2026-11-11",
+      "label": "dioxus-router / Routable"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/navigation",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific navigation state retention contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/navigation",
+      "reviewedOn": "2026-11-11"
+    },
+    "scrollRestoration": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific scroll restoration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/navigation",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationBlocking": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/router/navigation",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationAccessibility": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessible navigation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming/",
+      "reviewedOn": "2026-11-11"
+    },
+    "a11yChecks": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming/",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming/",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "official",
+      "note": "Dioxus 0.7’s WASM-Split/CLI integration supports split WebAssembly bundles and lazy loading. Use the documented splitting workflow; this is not a claim that every Rust dependency or all routes split automatically.",
+      "url": "https://dioxuslabs.com/blog/release-070/",
+      "reviewedOn": "2026-11-13",
+      "label": "Dioxus CLI / WASM-Split"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/axum",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://dioxuslabs.com/learn/0.7/guides/testing/web",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

@@ -1,11 +1,10 @@
 //! The new shared catalog fixture over Proa's normal production Axum SSR route.
+mod workloads;
 use axum::{extract::Query, routing::get, Json};
 use proa_core::{DataLoader, WebContext, WebRenderSync, WriteError};
-use proa_framework_axum::manifest::IslandManifest;
 use proa_framework_axum::{router_from_spec, Route, RouteContextLayer, RouteResponse};
 use proa_macros::{html_sync, text};
 use serde::{Deserialize, Serialize};
-use std::sync::Arc;
 
 #[derive(Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -80,7 +79,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cards: &'static [Card] = Box::leak(
         serde_json::from_str::<Vec<Card>>(include_str!("../cards.json"))?.into_boxed_slice(),
     );
-    let routes = vec![
+    let fixture: &'static workloads::Fixture = Box::leak(Box::new(serde_json::from_str(
+        include_str!("../fixture.json"),
+    )?));
+    let mut routes = vec![
         Route::endpoint(
             "/catalog",
             get(move |Query(parameters): Query<Parameters>| async move {
@@ -99,29 +101,54 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Json(Health {
                     status: "ok",
                     engine: "proa",
-                    framework: "Proa 7ffb8a19ecfa",
+                    framework: "Proa bbbc96843351",
                     worker_threads: 1,
                 })
             }),
         ),
-        Route::endpoint(
-            "/metrics",
-            get(|| async { Json(proa_bench::http_load::process_metrics()) }),
-        ),
+        Route::endpoint("/metrics", get(|| async { Json(process_metrics()) })),
     ];
-    let manifest = Arc::new(IslandManifest {
-        islands: Default::default(),
-        assets: Default::default(),
-        import_map: Default::default(),
-        ssr_bundle: Default::default(),
-    });
+    for (workload, path) in [
+        ("cards", "/cards"),
+        ("products", "/products"),
+        ("table", "/table"),
+    ] {
+        routes.push(Route::endpoint(
+            path,
+            get(move |Query(parameters): Query<Parameters>| async move {
+                (
+                    [(axum::http::header::CACHE_CONTROL, "no-store")],
+                    RouteResponse::ssr(workloads::Page {
+                        fixture,
+                        workload,
+                        request: parameters.request.unwrap_or_default(),
+                    }),
+                )
+            }),
+        ));
+    }
     let (router, metadata) = router_from_spec(routes);
     let port: u16 = std::env::var("PORT")?.parse()?;
     let listener = tokio::net::TcpListener::bind(("127.0.0.1", port)).await?;
-    axum::serve(
-        listener,
-        router.layer(RouteContextLayer::new(manifest, metadata)),
-    )
-    .await?;
+    axum::serve(listener, router.layer(RouteContextLayer::new(metadata))).await?;
     Ok(())
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct Metrics {
+    cpu_time_micros: u64,
+}
+fn process_metrics() -> Metrics {
+    let mut usage = std::mem::MaybeUninit::<libc::rusage>::uninit();
+    // SAFETY: getrusage initializes the output on success; failure never reads it.
+    if unsafe { libc::getrusage(libc::RUSAGE_SELF, usage.as_mut_ptr()) } != 0 {
+        return Metrics { cpu_time_micros: 0 };
+    }
+    // SAFETY: the successful call initialized the whole rusage above.
+    let usage = unsafe { usage.assume_init() };
+    Metrics {
+        cpu_time_micros: (usage.ru_utime.tv_sec + usage.ru_stime.tv_sec) as u64 * 1_000_000
+            + (usage.ru_utime.tv_usec + usage.ru_stime.tv_usec) as u64,
+    }
 }

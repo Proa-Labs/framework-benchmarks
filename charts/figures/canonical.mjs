@@ -37,7 +37,7 @@ function rosterLabel(s, name, r, isProa, wash = true) {
   if (isProa && wash) {
     out += `<rect x="${f(PAD - 6)}" y="${f(y - s.rowH / 2 + 1)}" width="${f(COL + 12)}" height="${f(s.rowH - 2)}" rx="3" fill="${C.proa}" opacity=".055"/>`;
   }
-  out += txt(PAD + GUTTER - 16, y + 4, name, isProa ? 'catb end' : 'cat end');
+  out += txt(PAD + GUTTER - 16, y + 4, name === 'Exact' ? 'Exact†' : name, isProa ? 'catb end' : 'cat end');
   return out;
 }
 
@@ -68,7 +68,7 @@ export function scoreboard(tables, meta) {
     const sc = log10(0.68, ratioMax, r0, r1);
     b += eyebrow(r0, s.eyeY, w);
     b += txt(r0, s.shapeY, SHAPE[w], 'note');
-    for (const v of [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000].filter((v) => v <= ratioMax)) {
+    for (const v of thin(logTicks(1, ratioMax).map(tick => tick.v), sc, 34)) {
       const X = sc(v), ref = v === 1;
       b += rule(X, s.tickY + 4, X, s.bottom, ref ? C.proaWash : C.grid, ref ? 1.5 : 1);
       b += txt(X, s.tickY, v + '×', 'tick mid');
@@ -96,10 +96,12 @@ export function scoreboard(tables, meta) {
     }
   });
 
+  const adapted = /Exact/.test(JSON.stringify(t.objs));
+  if (adapted) b += txt(PAD, s.bottom + 22, '† Exact: JavaScript SSR with adapted styles and markup; strict HTML/class parity differs.', 'note');
   return doc({
-    w: WIDTH, h: s.bottom + 24,
+    w: WIDTH, h: s.bottom + (adapted ? 40 : 24),
     title: `Server-render latency relative to Proa — ${meta.date} canonical capture`,
-    desc: `Renderer-only latency, excluding HTTP and hydration. ${meta.proaNativeOutput ? "Proa returns fresh owned RenderBuffer pages without String conversion; peers retain their owned String outputs. " : ""}Each dot is the median of five process P50s on a logarithmic axis. All cells passed DOM parity. ${roster.length} renderers across three workloads as a multiple of Proa's P50. ` +
+    desc: `Renderer-only latency, excluding HTTP and hydration. ${meta.proaNativeOutput ? "Proa returns fresh owned RenderBuffer pages without String conversion; peers retain their owned String outputs. " : ""}Each dot is the median of five process P50s on a logarithmic axis. ${adapted ? "Strict rows pass DOM parity; Exact uses an explicitly adapted content/style gate." : "All cells passed DOM parity."} ${roster.length} renderers across three workloads as a multiple of Proa's P50. ` +
       roster.map((r) => `${r.name} — ` + WORKLOADS.map((w, i) => `${w}: ${dur(r.cells[i].us)}, ${r.cells[i].x}×`).join('; ')).join('. ') + '.',
     body: b,
   });
@@ -159,8 +161,10 @@ export function tails(tables, meta) {
     });
   });
 
+  const adapted = /Exact/.test(JSON.stringify(t.objs));
+  if (adapted) b += txt(PAD, s.bottom + 22, '† Exact: JavaScript SSR with adapted styles and markup; strict HTML/class parity differs.', 'note');
   return doc({
-    w: WIDTH, h: s.bottom + 24,
+    w: WIDTH, h: s.bottom + (adapted ? 40 : 24),
     title: 'P50 to P95 dispersion per renderer and workload',
     desc: Object.entries(byW).map(([w, l]) =>
       `${w} — ` + l.map((r) => `${r.name}: P50 ${dur(r.p50)}, P95 ${dur(r.p95)}`).join('; ')).join('. ') + '.',

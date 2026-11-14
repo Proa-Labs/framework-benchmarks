@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { parse } from "parse5";
 import { cards, price } from "./fixture.mjs";
+import { validateWorkloadHtml } from "./workload-parity.ts";
 
 const attr = (node, name) => node.attrs?.find((a) => a.name === name)?.value;
 const descendants = (node) => [
@@ -13,7 +14,9 @@ const text = (node) =>
     ? node.value
     : (node.childNodes || []).map(text).join("");
 export const sha256 = (body) => createHash("sha256").update(body).digest("hex");
-export function validateSemanticHtml(body, request) {
+export function validateSemanticHtml(body, request, workload = "catalog") {
+  if (workload !== "catalog")
+    return validateWorkloadHtml(body, request, workload);
   const nodes = descendants(parse(String(body)));
   const roots = nodes.filter((n) => attr(n, "data-bench-page") === "catalog");
   assert.equal(roots.length, 1, "one catalog landmark required");

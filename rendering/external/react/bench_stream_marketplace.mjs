@@ -9,7 +9,7 @@
  *
  * Run with:
  *   cd rendering/external/react
- *   npm ci
+ *   bun install --frozen-lockfile # from repository root
  *   node bench_stream_marketplace.mjs --iterations 25
  */
 

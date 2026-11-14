@@ -1,0 +1,70 @@
+name: Parallel GCP benchmark campaign
+
+on:
+  workflow_dispatch:
+    inputs:
+      revision:
+        description: Immutable full commit SHA to measure
+        required: true
+        type: string
+      parallel:
+        description: Maximum isolated workers (1–5)
+        default: "5"
+        type: choice
+        options: ["5", "4", "3", "2", "1"]
+      smoke:
+        description: Exercise orchestration without publishable measurements
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gcp-benchmark-campaign
+  cancel-in-progress: false
+
+jobs:
+  campaign:
+    # Controller code is trusted main; the requested revision only runs in
+    # credential-free disposable workers. Never run this on pull_request.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ${{ vars.CI_RUNNER }}
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: main
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      - name: Install pinned Kubernetes controller client
+        run: |
+          bash tooling/cloud/install-kubectl.sh "$RUNNER_TEMP/benchmark-bin"
+          echo "$RUNNER_TEMP/benchmark-bin" >> "$GITHUB_PATH"
+      - name: Run isolated suites and validate the collected campaign
+        env:
+          BENCH_REVISION: ${{ inputs.revision }}
+          BENCH_PARALLEL: ${{ inputs.parallel }}
+          BENCH_SMOKE: ${{ inputs.smoke }}
+        run: |
+          set -euo pipefail
+          bun install --frozen-lockfile
+          source tooling/cloud/in-cluster-config.sh
+          args=()
+          if [[ "$BENCH_SMOKE" == true ]]; then args+=(--smoke); fi
+          bun tooling/cloud/campaign.mjs --revision "$BENCH_REVISION" \
+            --parallel "$BENCH_PARALLEL" --out cloud-results "${args[@]}"
+      - name: Retain campaign status, raw results and failure logs
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: benchmark-campaign-${{ github.run_id }}
+          path: |
+            cloud-results/campaign.json
+            cloud-results/*.tar.gz
+            cloud-results/*-progress.log
+          if-no-files-found: warn
+          retention-days: 30

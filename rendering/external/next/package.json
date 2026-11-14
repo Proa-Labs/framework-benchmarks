@@ -1,0 +1,13 @@
+{
+  "name": "canonical-next-admission",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "scripts": {
+    "build": "bun build.mjs"
+  }
+}

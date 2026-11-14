@@ -12,3 +12,8 @@ adapters/exact/.exact/
 results/*.partial
 results/smoke.json
 results/smoke.md
+
+adapters/*/fixture.json
+adapters/sveltekit/build/
+adapters/sveltekit/.svelte-kit/
+adapters/next/*.tsbuildinfo

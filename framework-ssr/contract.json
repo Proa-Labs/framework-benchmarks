@@ -1,23 +1,48 @@
 {
-  "schemaVersion": 1,
-  "id": "framework_catalog_v1",
-  "label": "Framework SSR · 32-card catalog",
+  "schemaVersion": 2,
+  "id": "framework_workloads_v2",
+  "label": "Framework SSR \u00b7 three shared workloads",
   "runtime": "Bun 1.4.2",
   "exactCommit": "94b8671f70fe2e25b307a40e7fce66dc27c9f802",
-  "engines": ["proa", "exact", "nextjs", "astro"],
+  "engines": ["proa", "exact", "nextjs", "astro", "sveltekit"],
   "publication": {
     "repeats": 3,
     "concurrency": 64,
-    "fixedRateRps": 50,
     "warmupRequests": 24,
     "preRollSeconds": 1,
-    "durationSeconds": 5
+    "durationSeconds": 10,
+    "requestTimeoutMs": 60000
   },
   "boundary": "Production HTTP request, routing, SSR and framework response serialization to complete uncompressed HTML over loopback. Static fixture input is available locally; no database or external I/O. Full-document caching is disabled.",
-  "parity": "Same main landmark, heading, 32 ordered article identities and exact title/category/description/formatted price/conditional stock/tag values and roles. A request-specific URL value must be reflected. Generated CSS classes, presentational text wrappers and framework scripts/checkpoints outside business content may differ; full response bytes are retained and validated.",
+  "parity": "Same semantic business content for 4 sections, 32 cards and 160 feature items; 96 products and 480 SVG stars; and 1,000 rows with 12 cells, formatting, branches, escaping and variable-length tag lists. Every URL carries a request-specific freshness value. Generated wrappers/classes and framework scripts outside the business root may differ. Complete response bytes are retained and checked on every timed request.",
   "limitations": [
     "Different framework shells and hydration protocols produce different payload sizes.",
     "This workload does not measure browser hydration, application startup, database I/O or developer experience.",
-    "A separate contract and capture from the synchronous pure-renderer suite; numbers must not be combined."
+    "A separate contract and capture from the synchronous pure-renderer suite; numbers must not be combined.",
+    "Equal-load rates are fixed per workload (10/5/1 requests per second), identical across frameworks. These rates avoid forcing the largest workload into overload; raw latency sample counts are retained.",
+    "Capacity windows are 10 seconds for cards/products and 60 seconds for the table, identical across frameworks. The longer table window captures repeated completion batches from the slowest adapter. Equal-load latency windows are 10 seconds; low-rate tail percentiles have few samples."
+  ],
+  "workloads": [
+    {
+      "id": "cards",
+      "label": "Component page",
+      "cardinality": 32,
+      "fixedRateRps": 10,
+      "capacityDurationSeconds": 10
+    },
+    {
+      "id": "products",
+      "label": "Product grid",
+      "cardinality": 96,
+      "fixedRateRps": 5,
+      "capacityDurationSeconds": 10
+    },
+    {
+      "id": "table",
+      "label": "1,000-row table",
+      "cardinality": 1000,
+      "fixedRateRps": 1,
+      "capacityDurationSeconds": 60
+    }
   ]
 }

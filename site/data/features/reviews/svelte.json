@@ -1,0 +1,633 @@
+{
+  "id": "svelte",
+  "scope": "Svelte 5 documentation, with SvelteKit functionality shown as an official companion.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "svelte/server render produces HTML; async rendering requires the documented async configuration.",
+      "url": "https://svelte.dev/docs/svelte/svelte-server"
+    },
+    "streaming": {
+      "status": "partial",
+      "note": "SvelteKit streams promises as data for client resolution. This source does not establish resolved-HTML streaming equivalent to React or Marko.",
+      "url": "https://svelte.dev/docs/kit/load#Streaming-with-promises",
+      "label": "Kit data stream",
+      "reviewedOn": "2026-11-10"
+    },
+    "suspense": {
+      "status": "partial",
+      "note": "await expressions with svelte:boundary pending UI require experimental.async in Svelte 5.",
+      "url": "https://svelte.dev/docs/svelte/await-expressions",
+      "label": "Experimental async",
+      "reviewedOn": "2026-11-10"
+    },
+    "client": {
+      "status": "native",
+      "note": "Svelte supplies hydration for server-rendered components.",
+      "url": "https://svelte.dev/docs/svelte/imperative-component-api#hydrate",
+      "label": "Hydration"
+    },
+    "ssg": {
+      "status": "official",
+      "note": "SvelteKit's adapter-static prerenders the application for static hosting.",
+      "url": "https://svelte.dev/docs/kit/adapter-static",
+      "label": "SvelteKit"
+    },
+    "csr": {
+      "status": "native",
+      "note": "mount creates a component in the browser; hydrate activates server-rendered output.",
+      "url": "https://svelte.dev/docs/svelte/imperative-component-api"
+    },
+    "serverOnly": {
+      "status": "undocumented",
+      "note": "The reviewed API excludes server modules or function bodies from browser builds, but does not establish server-only UI components whose implementation is omitted from hydration bundles. These are different capabilities.",
+      "url": "https://svelte.dev/docs/kit/server-only-modules",
+      "label": "Server modules / functions only"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "Prerender/SSR/CSR options apply to pages; the reviewed API does not establish a prebuilt shell with request-time dynamic holes.",
+      "url": "https://svelte.dev/docs/kit/page-options"
+    },
+    "routing": {
+      "status": "official",
+      "note": "SvelteKit supplies filesystem-based page and endpoint routes.",
+      "url": "https://svelte.dev/docs/kit/routing",
+      "label": "SvelteKit"
+    },
+    "layouts": {
+      "status": "official",
+      "note": "SvelteKit +layout components nest by route hierarchy and survive child navigation.",
+      "url": "https://svelte.dev/docs/kit/routing",
+      "label": "SvelteKit"
+    },
+    "dynamicRoutes": {
+      "status": "official",
+      "note": "SvelteKit maps parameterized filenames and catch-all segments into route params.",
+      "url": "https://svelte.dev/docs/kit/routing",
+      "label": "SvelteKit"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "Route groups and layout resets are documented; independent named route-slot navigation is not established.",
+      "url": "https://svelte.dev/docs/kit/advanced-routing"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "The reviewed routing guide does not establish intercepted-modal/direct-entry route semantics.",
+      "url": "https://svelte.dev/docs/kit/advanced-routing"
+    },
+    "prefetch": {
+      "status": "official",
+      "note": "data-sveltekit-preload-data/code controls hover/tap/viewport preloading.",
+      "url": "https://svelte.dev/docs/kit/link-options",
+      "label": "SvelteKit"
+    },
+    "softNavigation": {
+      "status": "official",
+      "note": "SvelteKit enhances internal links and goto() with client-side page navigation, URL/history updates and persistent layouts. data-sveltekit-reload opts back into full document navigation.",
+      "url": "https://svelte.dev/docs/kit/link-options",
+      "reviewedOn": "2026-11-11",
+      "label": "SvelteKit router"
+    },
+    "viewTransitions": {
+      "status": "official",
+      "note": "SvelteKit onNavigate waits for an application callback before committing navigation, explicitly supporting document.startViewTransition. This is a lifecycle integration, not a bundled animation preset; CSS, feature detection and reduced-motion behavior are application-owned.",
+      "url": "https://svelte.dev/docs/kit/$app-navigation#onNavigate",
+      "reviewedOn": "2026-11-11",
+      "label": "onNavigate integration"
+    },
+    "redirects": {
+      "status": "official",
+      "note": "redirect sends a typed redirect response during loading/actions. Rewrites/proxy policy require host configuration.",
+      "url": "https://svelte.dev/docs/kit/load",
+      "label": "SvelteKit"
+    },
+    "serverData": {
+      "status": "official",
+      "note": "Server and universal load functions fetch page data and share layout data with pages.",
+      "url": "https://svelte.dev/docs/kit/load",
+      "label": "SvelteKit"
+    },
+    "clientData": {
+      "status": "official",
+      "note": "Universal load runs on navigation and supports dependency tracking; remote queries add reactive client/server data calls.",
+      "url": "https://svelte.dev/docs/kit/load",
+      "label": "SvelteKit"
+    },
+    "requestDedupe": {
+      "status": "partial",
+      "note": "SSR fetch responses are captured for hydration reuse; this is not a general request-wide cache for arbitrary equivalent application loads.",
+      "url": "https://svelte.dev/docs/kit/load",
+      "label": "Hydration fetch reuse",
+      "reviewedOn": "2026-11-10"
+    },
+    "persistentCache": {
+      "status": "partial",
+      "note": "setHeaders configures HTTP cache policy for the hosting layer; a universal cross-request data cache is not established.",
+      "url": "https://svelte.dev/docs/kit/load",
+      "label": "HTTP cache policy",
+      "reviewedOn": "2026-11-10"
+    },
+    "invalidation": {
+      "status": "official",
+      "note": "invalidate targets load dependencies; refreshAll reruns active loads/queries. These are client data refreshes, not a universal CDN purge API.",
+      "url": "https://svelte.dev/docs/kit/load",
+      "label": "SvelteKit"
+    },
+    "isr": {
+      "status": "official",
+      "note": "The official Vercel adapter exposes ISR configuration; regeneration is deployment-specific.",
+      "url": "https://svelte.dev/docs/kit/adapter-vercel",
+      "label": "SvelteKit Vercel adapter"
+    },
+    "apiRoutes": {
+      "status": "official",
+      "note": "SvelteKit +server modules define HTTP method handlers.",
+      "url": "https://svelte.dev/docs/kit/routing",
+      "label": "SvelteKit"
+    },
+    "httpErrors": {
+      "status": "official",
+      "note": "SvelteKit maps missing routes and error(status, ...) failures to HTTP responses, and unexpected failures to 500. A Svelte component boundary by itself does not set HTTP status. Error/status decisions must happen before the server starts streaming; rejected streamed promises cannot replace headers already sent.",
+      "url": "https://svelte.dev/docs/kit/errors",
+      "label": "SvelteKit HTTP errors",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "partial",
+      "note": "The SvelteKit companion exposes typed query/form/command remote functions, but they remain experimental and opt-in. They are not a stable server-function transport supplied by the Svelte compiler. Stable Kit form actions are reviewed separately.",
+      "url": "https://svelte.dev/docs/kit/remote-functions",
+      "label": "Experimental SvelteKit remote functions",
+      "reviewedOn": "2026-11-13"
+    },
+    "forms": {
+      "status": "official",
+      "note": "Server form actions return validation failures; use:enhance preserves progressive enhancement. Applications define validation rules.",
+      "url": "https://svelte.dev/docs/kit/form-actions",
+      "label": "SvelteKit",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Server form actions return validation failures; use:enhance preserves progressive enhancement. Applications define validation rules."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "official",
+      "note": "SvelteKit handle hooks wrap requests and share server context.",
+      "url": "https://svelte.dev/docs/kit/hooks",
+      "label": "SvelteKit"
+    },
+    "cookies": {
+      "status": "official",
+      "note": "Request cookies can be read/set through Kit’s cookie API; session/identity policy remains application-owned.",
+      "url": "https://svelte.dev/docs/kit/load",
+      "label": "SvelteKit cookies"
+    },
+    "cssModules": {
+      "status": "undocumented",
+      "note": "Svelte compiles scoped selectors; a CSS Modules imported class-map API is not established in the reviewed core styling docs.",
+      "url": "https://svelte.dev/docs/svelte/scoped-styles"
+    },
+    "scopedCss": {
+      "status": "native",
+      "note": "Component style selectors receive generated scoping classes.",
+      "url": "https://svelte.dev/docs/svelte/scoped-styles"
+    },
+    "tailwind": {
+      "status": "community",
+      "note": "The official sv addon installs/configures the external Tailwind compiler. The setup integration is first-party; CSS compilation itself comes from Tailwind rather than the Svelte runtime.",
+      "url": "https://svelte.dev/docs/cli/tailwind",
+      "label": "Tailwind via sv addon",
+      "reviewedOn": "2026-11-13"
+    },
+    "cssInJs": {
+      "status": "scope",
+      "note": "Compiled Svelte styles do not supply a JavaScript CSS-in-JS runtime/SSR registry; additional tooling would own it.",
+      "url": "https://svelte.dev/docs/svelte/scoped-styles"
+    },
+    "images": {
+      "status": "official",
+      "note": "@sveltejs/enhanced-img optimizes local build-time images and responsive sources; dynamic images need a service/provider.",
+      "url": "https://svelte.dev/docs/kit/images",
+      "label": "@sveltejs/enhanced-img"
+    },
+    "fonts": {
+      "status": "partial",
+      "note": "Fonts can be published from static and preloaded through authored markup; automatic subsetting/fallback optimization is not established.",
+      "url": "https://svelte.dev/docs/kit/project-structure",
+      "label": "Static font files",
+      "reviewedOn": "2026-11-10"
+    },
+    "scripts": {
+      "status": "partial",
+      "note": "app.html and component scripts configure application scripts; a dedicated third-party scheduling/consent API is not established.",
+      "url": "https://svelte.dev/docs/kit/project-structure",
+      "label": "App shell / components",
+      "reviewedOn": "2026-11-10"
+    },
+    "assetPipeline": {
+      "status": "official",
+      "note": "The official SvelteKit companion uses Vite to fingerprint imported assets and update their URLs in production. Svelte’s compiler alone does not supply this pipeline. Files copied from the static directory remain unchanged.",
+      "url": "https://svelte.dev/docs/kit/images#Vite-s-built-in-handling",
+      "label": "SvelteKit / Vite",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "official",
+      "note": "Kit serves static files and Vite processes imported assets.",
+      "url": "https://svelte.dev/docs/kit/project-structure",
+      "label": "SvelteKit / Vite"
+    },
+    "metadata": {
+      "status": "partial",
+      "note": "svelte:head emits page head elements. The application composes tags; this is not a typed metadata-object merge API.",
+      "url": "https://svelte.dev/docs/svelte/svelte-head",
+      "label": "Element-level support",
+      "assessment": {
+        "label": "Element-level support",
+        "summary": "Reactive head markup offers direct control; application code owns the metadata composition policy.",
+        "strengths": [
+          "svelte:head allows title and metadata values to follow component state."
+        ],
+        "tradeoffs": [
+          "A typed metadata-object API and general child-override policy are not established by this source.",
+          "Head markup support alone does not establish generated social images or automatic layout merging."
+        ]
+      },
+      "reviewedOn": "2026-11-10"
+    },
+    "dynamicMetadata": {
+      "status": "native",
+      "note": "Reactive values in svelte:head update title and metadata elements.",
+      "url": "https://svelte.dev/docs/svelte/svelte-head"
+    },
+    "metadataInheritance": {
+      "status": "undocumented",
+      "note": "svelte:head emits component head content; automatic route metadata-field inheritance is not established.",
+      "url": "https://svelte.dev/docs/svelte/svelte-head"
+    },
+    "metadataOverrides": {
+      "status": "undocumented",
+      "note": "The reviewed head element does not define a uniform nested metadata-object merge/clear contract.",
+      "url": "https://svelte.dev/docs/svelte/svelte-head"
+    },
+    "titleTemplates": {
+      "status": "undocumented",
+      "note": "Layouts can format title values manually; an inherited title-template/absolute-title API is not established.",
+      "url": "https://svelte.dev/docs/svelte/svelte-head"
+    },
+    "socialImages": {
+      "status": "undocumented",
+      "note": "The reviewed SEO guide does not establish a generated social-card image renderer.",
+      "url": "https://svelte.dev/docs/kit/seo"
+    },
+    "sitemaps": {
+      "status": "partial",
+      "note": "The SEO guide provides a sitemap.xml endpoint recipe; the application supplies URL enumeration/XML.",
+      "url": "https://svelte.dev/docs/kit/seo",
+      "label": "Endpoint recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "robots": {
+      "status": "official",
+      "note": "An app-authored robots.txt can be published from static.",
+      "url": "https://svelte.dev/docs/kit/project-structure",
+      "label": "Static file"
+    },
+    "markdown": {
+      "status": "community",
+      "note": "The official sv addon configures the external mdsvex Markdown/Svelte compiler.",
+      "url": "https://svelte.dev/docs/cli/mdsvex",
+      "label": "mdsvex"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "Filesystem routes and Markdown integrations do not establish a typed content collection schema/query registry.",
+      "url": "https://svelte.dev/docs/kit/project-structure"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "Hooks can authorize application previews, but a dedicated draft-preview/cache-bypass mode is not established.",
+      "url": "https://svelte.dev/docs/kit/auth"
+    },
+    "translations": {
+      "status": "community",
+      "note": "The Svelte package directory lists i18n integrations, including Paraglide JS and Wuchale.",
+      "url": "https://svelte.dev/packages",
+      "label": "i18n packages"
+    },
+    "localeRouting": {
+      "status": "community",
+      "note": "The Paraglide addon configures locale-aware app routing and messages through an external package.",
+      "url": "https://svelte.dev/docs/cli/paraglide",
+      "label": "Paraglide"
+    },
+    "localeFormatting": {
+      "status": "undocumented",
+      "note": "The reviewed Kit SEO/i18n surface does not establish a first-party locale-aware number/date formatting API.",
+      "url": "https://svelte.dev/docs/kit/seo"
+    },
+    "auth": {
+      "status": "community",
+      "note": "Kit documents cookie/session integration and external authentication libraries, including Better Auth.",
+      "url": "https://svelte.dev/docs/kit/auth",
+      "label": "Better Auth / app sessions"
+    },
+    "csp": {
+      "status": "official",
+      "note": "CSP configuration generates hashes/nonces for framework inline scripts and applies configured directives.",
+      "url": "https://svelte.dev/docs/kit/configuration",
+      "label": "SvelteKit CSP"
+    },
+    "cspNonce": {
+      "status": "official",
+      "note": "CSP configuration generates hashes/nonces for framework inline scripts and applies configured directives.",
+      "url": "https://svelte.dev/docs/kit/configuration",
+      "reviewedOn": "2026-11-11",
+      "label": "SvelteKit CSP"
+    },
+    "csrf": {
+      "status": "official",
+      "note": "Kit checks origins on mutative form-like requests; current configuration allows trusted origins. It is not a general token service.",
+      "url": "https://svelte.dev/docs/kit/configuration",
+      "label": "SvelteKit origin checks"
+    },
+    "environment": {
+      "status": "official",
+      "note": "Kit blocks imports of private environment/server-only modules into client code.",
+      "url": "https://svelte.dev/docs/kit/server-only-modules",
+      "label": "SvelteKit private modules",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "SvelteKit separates private environment/server modules from code imported into browser builds.",
+        "strengths": [
+          "Private environment modules and .server files are guarded against client imports."
+        ],
+        "tradeoffs": [
+          "Values intentionally serialized by server load/functions can still be disclosed. Import guards do not replace authorization or output review."
+        ]
+      }
+    },
+    "types": {
+      "status": "official",
+      "note": "Svelte supports TypeScript; svelte-check and generated Kit route types add build-time checking.",
+      "url": "https://svelte.dev/docs/svelte/typescript",
+      "label": "svelte-check / Kit types"
+    },
+    "hmr": {
+      "status": "official",
+      "note": "The official Vite-based toolchain hot-updates Svelte components during development.",
+      "url": "https://svelte.dev/docs/kit/creating-a-project",
+      "label": "Svelte Vite plugin"
+    },
+    "cli": {
+      "status": "official",
+      "note": "sv provides create/add/check-style project tooling; Kit/Vite handles dev/build.",
+      "url": "https://svelte.dev/docs/cli/overview",
+      "label": "sv"
+    },
+    "bundleAnalysis": {
+      "status": "undocumented",
+      "note": "Production builds are documented; a built-in graphical module-size analyzer is not established.",
+      "url": "https://svelte.dev/docs/kit/building-your-app"
+    },
+    "unitTests": {
+      "status": "community",
+      "note": "The guide documents Vitest and Testing Library for component behavior.",
+      "url": "https://svelte.dev/docs/svelte/testing",
+      "label": "Vitest / Testing Library"
+    },
+    "e2eTests": {
+      "status": "community",
+      "note": "The testing guide uses Playwright for browser end-to-end workflows.",
+      "url": "https://svelte.dev/docs/svelte/testing",
+      "label": "Playwright"
+    },
+    "observability": {
+      "status": "official",
+      "note": "SvelteKit documents optional server-side OpenTelemetry tracing; instrumentation setup/exporters are separate.",
+      "url": "https://svelte.dev/docs/kit/observability",
+      "label": "SvelteKit tracing"
+    },
+    "errorHandling": {
+      "status": "partial",
+      "note": "svelte:boundary provides failed/pending snippets and reset behavior. Server rendering and event/async failures have documented limits.",
+      "url": "https://svelte.dev/docs/svelte/svelte-boundary",
+      "label": "Svelte boundary",
+      "reviewedOn": "2026-11-10"
+    },
+    "serverHosting": {
+      "status": "official",
+      "note": "adapter-node produces a standalone production Node server.",
+      "url": "https://svelte.dev/docs/kit/adapter-node",
+      "label": "SvelteKit adapter-node"
+    },
+    "subpathProxy": {
+      "status": "official",
+      "note": "SvelteKit provides paths.base and base-aware link/asset helpers. Its Node adapter documents explicit public-origin and trusted forwarded-header configuration behind a proxy. Keep the proxy mount aligned with the configured base; the Svelte compiler alone does not provide HTTP deployment behavior.",
+      "url": "https://svelte.dev/docs/kit/adapter-node#Environment-variables-PROTOCOL_HEADER-HOST_HEADER-and-PORT_HEADER",
+      "label": "SvelteKit / adapter-node",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "official",
+      "note": "adapter-static prerenders pages; dynamic routes and fallback mode require deliberate configuration.",
+      "url": "https://svelte.dev/docs/kit/adapter-static",
+      "label": "adapter-static"
+    },
+    "containers": {
+      "status": "undocumented",
+      "note": "A production Node output is documented; a maintained container recipe is not established by the reviewed adapter guide.",
+      "url": "https://svelte.dev/docs/kit/adapter-node"
+    },
+    "edgeHosting": {
+      "status": "official",
+      "note": "The official Cloudflare adapter builds for Workers; Node-only dependencies and platform APIs require care.",
+      "url": "https://svelte.dev/docs/kit/adapter-cloudflare",
+      "label": "SvelteKit Cloudflare adapter"
+    },
+    "orm": {
+      "status": "scope",
+      "note": "ORM / query builder belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://svelte.dev"
+    },
+    "migrations": {
+      "status": "scope",
+      "note": "Schema migrations belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://svelte.dev"
+    },
+    "transactions": {
+      "status": "scope",
+      "note": "Transactions belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://svelte.dev"
+    },
+    "jobs": {
+      "status": "scope",
+      "note": "Background jobs belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://svelte.dev"
+    },
+    "mail": {
+      "status": "scope",
+      "note": "Email belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://svelte.dev"
+    },
+    "uploads": {
+      "status": "scope",
+      "note": "File uploads & storage belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://svelte.dev"
+    },
+    "realtime": {
+      "status": "scope",
+      "note": "Real-time delivery belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://svelte.dev"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Ordinary interpolated text is escaped; @html explicitly inserts raw HTML. Svelte directs authors to escape or sanitize untrusted HTML before using that bypass.",
+      "url": "https://svelte.dev/docs/svelte/@html",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://svelte.dev/docs/kit/configuration",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://svelte.dev/docs/kit/configuration",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://svelte.dev/docs/kit/configuration",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "official",
+      "note": "Requires the SvelteKit application framework, not Svelte core. Form actions support native server POST plus use:enhance. The server submission/validation path works without JavaScript; enhancement supplies pending/reset/update behavior, not a separate endpoint.",
+      "url": "https://svelte.dev/docs/kit/form-actions",
+      "reviewedOn": "2026-11-11",
+      "label": "Form actions / use:enhance"
+    },
+    "optimisticUi": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific optimistic updates contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://svelte.dev/docs/kit/load",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific stale request handling contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://svelte.dev/docs/kit/load",
+      "reviewedOn": "2026-11-11"
+    },
+    "typedLinks": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific typed links & parameters contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://svelte.dev/docs/kit/link-options",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://svelte.dev/docs/kit/link-options",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "official",
+      "note": "Requires the SvelteKit application framework, not Svelte core. Snapshots capture/restore configured local state across history traversal, with serialization and sessionStorage limitations. Persistent layouts and snapshot state are distinct; large values and sensitive data need care.",
+      "url": "https://svelte.dev/docs/kit/snapshots",
+      "reviewedOn": "2026-11-11",
+      "label": "Snapshots"
+    },
+    "scrollRestoration": {
+      "status": "official",
+      "note": "Requires the SvelteKit application framework, not Svelte core. The client router restores history scroll and controls navigation resets through goto/link options. disableScrollHandling transfers that responsibility to the app; arbitrary nested-scrollport restoration is not established here.",
+      "url": "https://svelte.dev/docs/kit/$app-navigation",
+      "reviewedOn": "2026-11-11",
+      "label": "Kit router"
+    },
+    "navigationBlocking": {
+      "status": "official",
+      "note": "Requires the SvelteKit application framework, not Svelte core. beforeNavigate can cancel client navigation and request browser confirmation for document exits. Browser unload prompts are restricted and do not provide arbitrary custom UI.",
+      "url": "https://svelte.dev/docs/kit/$app-navigation#beforeNavigate",
+      "reviewedOn": "2026-11-11",
+      "label": "beforeNavigate"
+    },
+    "navigationAccessibility": {
+      "status": "official",
+      "note": "Requires the SvelteKit application framework, not Svelte core. Kit announces route titles through a live region and resets focus after navigation/enhanced forms, with documented exceptions. Authors supply meaningful titles and remain responsible for app accessibility.",
+      "url": "https://svelte.dev/docs/kit/accessibility",
+      "reviewedOn": "2026-11-11",
+      "label": "Focus / route announcer"
+    },
+    "a11yChecks": {
+      "status": "native",
+      "note": "The Svelte compiler emits accessibility warnings for detectable markup/ARIA/keyboard patterns. Warnings can be suppressed, and static checks do not establish complete keyboard or screen-reader correctness.",
+      "url": "https://svelte.dev/docs/svelte/compiler-warnings",
+      "reviewedOn": "2026-11-11",
+      "label": "Compiler warnings"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://svelte.dev/docs/svelte/imperative-component-api#hydrate",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "official",
+      "note": "Requires the SvelteKit application framework, not Svelte core. Kit builds route-specific browser bundles and loads the code needed for navigation. Shared dependencies and component imports still affect what each page downloads.",
+      "url": "https://svelte.dev/docs/kit/performance",
+      "reviewedOn": "2026-11-11",
+      "label": "Route bundles"
+    },
+    "offline": {
+      "status": "official",
+      "note": "Requires the SvelteKit application framework, not Svelte core. Kit bundles/registers an authored service worker and exposes versioned build/static/prerender manifests for caching. The app owns fetch strategies, updates and offline data behavior; server actions still need a server.",
+      "url": "https://svelte.dev/docs/kit/service-workers",
+      "reviewedOn": "2026-11-11",
+      "label": "Service-worker integration"
+    },
+    "scheduling": {
+      "status": "scope",
+      "note": "Scheduled tasks requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://svelte.dev",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "scope",
+      "note": "Multi-channel notifications requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://svelte.dev",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "scope",
+      "note": "Search indexing requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://svelte.dev",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "scope",
+      "note": "Encrypted model fields requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://svelte.dev",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://svelte.dev/docs/svelte/testing",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

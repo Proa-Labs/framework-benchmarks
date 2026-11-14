@@ -1,11 +1,14 @@
 // Presentation adapters only. Benchmark execution, fixtures, and statistics stay
 // in their existing suites. Never add measurements to the site's source files.
 import { createHash } from "node:crypto";
+import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { workloadDefinitions } from "../framework-ssr/report.ts";
 import { validateCanonicalResult } from "../rendering/canonical/report.mjs";
 import { summarize } from "../suspense-load/stats.mjs";
+import { capturedRenderingContract } from "../tooling/rendering-contract.mjs";
 import suites from "../tooling/suites.json" with { type: "json" };
 import type {
   BenchmarkData,
@@ -15,8 +18,11 @@ import type {
   Renderer,
   View,
 } from "./benchmark-types.ts";
-import featureProjects from "./feature-projects.json" with { type: "json" };
+import featureProjects from "./data/features/projects.json" with {
+  type: "json",
+};
 import { frameworkRows } from "./framework-data.ts";
+import { applyProaRefresh } from "./proa-refresh.ts";
 import { required } from "./required.ts";
 
 export const repositoryRoot = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -116,24 +122,29 @@ const meta = (
   };
 };
 
-export async function loadInputs(root = repositoryRoot) {
+export async function loadInputs(
+  root = repositoryRoot,
+  { refresh = true } = {},
+) {
   const buffers = {} as Record<View, Buffer>;
   const input = {} as Inputs;
-  await Promise.all(
+  const files = await Promise.all(
     Object.entries(captures).map(async ([id, path]) => {
       const buffer = await readFile(join(root, path));
-      buffers[id as View] = buffer;
-      input[id as View] = JSON.parse(buffer.toString());
+      return [id as View, buffer] as const;
     }),
   );
-  input.roster = JSON.parse(
-    await readFile(join(root, "rendering/canonical/roster.json"), "utf8"),
-  );
-  input.workloadManifest = JSON.parse(
-    await readFile(join(root, "rendering/canonical/workloads.json"), "utf8"),
-  );
+  // Preserve registry order regardless of which concurrent disk read finishes
+  // first. Otherwise metadata changes on every preparation and triggers HMR.
+  for (const [id, buffer] of files) {
+    buffers[id] = buffer;
+    input[id] = JSON.parse(buffer.toString());
+  }
+  const contract = capturedRenderingContract(root, input.rendering);
+  input.roster = contract.roster;
+  input.workloadManifest = contract.workloads;
   input.catalog = JSON.parse(
-    await readFile(join(root, "site/catalog.json"), "utf8"),
+    await readFile(join(root, "site/data/performance/catalog.json"), "utf8"),
   );
   const processArtifact = input.rendering.raw_artifacts.find((artifact) =>
     /process summaries/i.test(artifact.label),
@@ -148,6 +159,11 @@ export async function loadInputs(root = repositoryRoot) {
       "utf8",
     ),
   );
+  if (
+    refresh &&
+    existsSync(join(root, "site/data/performance/proa-refresh.json"))
+  )
+    applyProaRefresh(root, input, buffers);
   input.digests = Object.fromEntries(
     Object.entries(buffers).map(([id, buffer]) => [
       id,
@@ -170,6 +186,31 @@ export function normalize(input: Inputs): BenchmarkData {
     processSummaries,
     digests,
   } = input;
+  const projectIds = [...catalog, ...featureProjects].map(
+    (project) => project.id,
+  );
+  requireValue(
+    new Set(projectIds).size === projectIds.length,
+    "project metadata must have unique IDs across the rendering catalog and additional projects",
+  );
+  for (const project of catalog) {
+    for (const [workload, support] of Object.entries(
+      project.renderingUnsupported || {},
+    )) {
+      requireValue(
+        workloadManifest.workloads.some((w) => w.id === workload),
+        `${project.id}: unsupported status has an unknown workload`,
+      );
+      requireValue(
+        ["unsupported", "parity-failed"].includes(support.status),
+        `${project.id}/${workload}: invalid support status`,
+      );
+      requireValue(
+        Boolean(support.reason && support.version && support.source),
+        `${project.id}/${workload}: support explanation is incomplete`,
+      );
+    }
+  }
   validateCanonicalResult(rendering, roster, workloadManifest);
   publication(http, "HTTP", 1);
   publication(streaming, "streaming", 3);
@@ -183,9 +224,25 @@ export function normalize(input: Inputs): BenchmarkData {
     .map<Renderer>((r) => {
       const display = catalog.find((item) => item.id === r.id);
       requireValue(display, `missing display metadata for ${r.id}`);
+      if ("fixture" in r)
+        requireValue(
+          r.id === "exact" &&
+            r.fixture === "exact-native-v1" &&
+            display.renderingAdaptation?.reason &&
+            display.renderingAdaptation?.source &&
+            display.renderingAdaptation?.details,
+          `${r.id}: adapted timings require a linked disclosure`,
+        );
+      const { renderingUnsupported, ...presentation } = display;
       return {
+        ...presentation,
         ...r,
-        ...display,
+        ...(renderingUnsupported
+          ? {
+              renderingUnsupported:
+                renderingUnsupported as Renderer["renderingUnsupported"],
+            }
+          : {}),
         logo: `logos/${r.id}.svg`,
         version: (rendering.versions as Record<string, string>)[r.label],
       };
@@ -198,7 +255,7 @@ export function normalize(input: Inputs): BenchmarkData {
     .sort((a, b) => a.label.localeCompare(b.label));
   // A project admitted to HTTP/startup need not be in the pure-renderer roster.
   const measuredIds = new Set(
-    [http, streaming, startup].flatMap((capture) =>
+    [http, streaming, startup, framework].flatMap((capture) =>
       capture.engines.map((e) => e.id),
     ),
   );
@@ -210,12 +267,12 @@ export function normalize(input: Inputs): BenchmarkData {
       ...project,
       status: "unmeasured",
       coverageReason:
-        "Measured in HTTP/startup; no capture in the pure-renderer contract.",
+        "Measured in application-server suites; no renderer-only capture.",
       coverageSource: project.homepage,
     });
   }
   renderers.sort((a, b) => a.label.localeCompare(b.label));
-  for (const capture of [http, streaming, startup]) {
+  for (const capture of [http, streaming, startup, framework]) {
     requireValue(capture.engines.length > 0, "capture has no engines");
     for (const engine of capture.engines)
       requireValue(
@@ -251,6 +308,13 @@ export function normalize(input: Inputs): BenchmarkData {
     framework: {
       ...meta(framework, digests.framework, "framework"),
       rows: frameworkRows(framework),
+      workloads: Object.fromEntries(
+        workloadDefinitions(framework).map((w) => [
+          w.id,
+          frameworkRows(framework, w.id),
+        ]),
+      ),
+      workloadDefinitions: workloadDefinitions(framework),
       methodology: framework.methodology,
       sourceSnapshot: "data/sources/framework.tar.gz",
     },
@@ -308,6 +372,13 @@ export function normalize(input: Inputs): BenchmarkData {
             p99: r.p99_us,
           })),
           outputBytes: m.output_bytes,
+          ...("fixture" in renderer
+            ? {
+                fixture: String(renderer.fixture),
+                adaptation: renderers.find((r) => r.id === renderer.id)
+                  ?.renderingAdaptation,
+              }
+            : {}),
           detail: `${m.output_bytes.toLocaleString("en-US")} output bytes. ${m.allocation_policy}.`,
         };
       });
@@ -470,5 +541,43 @@ export function normalize(input: Inputs): BenchmarkData {
     };
   });
   output.startup.note = `Host load average: ${startup.host.loadAverage1m}. Startup is sensitive to other activity.`;
+  for (const view of [
+    "rendering",
+    "framework",
+    "http",
+    "streaming",
+    "startup",
+  ] as const) {
+    const refresh = input.reviewRefresh?.[view];
+    if (!refresh) continue;
+    output[view].reviewRefresh = refresh;
+    output[view].source = "site/data/performance/proa-refresh.json";
+    output[view].note += ` ${refresh.note}`;
+    output[view].host = {
+      ...output[view].host,
+      cloud: "GCP C4 · Proa refresh and retained peer campaign",
+    };
+    const rows =
+      view === "startup"
+        ? output.startup.rows
+        : view === "framework"
+          ? [
+              ...output.framework.rows,
+              ...Object.values(output.framework.workloads).flat(),
+            ]
+          : Object.values(output[view].rows).flat();
+    for (const row of rows) {
+      row.captureId =
+        row.id === "proa"
+          ? refresh.proa_capture_id
+          : refresh.baseline_capture_id;
+      row.capturedAt =
+        row.id === "proa"
+          ? refresh.proa_captured_at
+          : refresh.baseline_captured_at;
+      const directory = suites[view === "http" ? "http" : view].directory;
+      row.source = `${directory}/results/archive/${row.captureId}.json`;
+    }
+  }
   return output;
 }

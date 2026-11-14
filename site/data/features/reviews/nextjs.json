@@ -1,0 +1,625 @@
+{
+  "id": "nextjs",
+  "scope": "Next.js App Router documentation, including its React integration.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "App Router renders Server Components and initial page HTML on the server.",
+      "url": "https://nextjs.org/docs/app/getting-started/server-and-client-components"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "loading.js and Suspense stream HTML as route segments or components resolve.",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/loading"
+    },
+    "suspense": {
+      "status": "native",
+      "note": "React Suspense boundaries display fallback UI while App Router streams resolved content.",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/loading"
+    },
+    "client": {
+      "status": "native",
+      "note": "React hydration activates Client Components; Suspense enables selective hydration.",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/loading",
+      "label": "React hydration"
+    },
+    "ssg": {
+      "status": "native",
+      "note": "Static export generates an HTML file per route. Server-dependent features are unavailable in a static-only deployment.",
+      "url": "https://nextjs.org/docs/app/guides/static-exports"
+    },
+    "csr": {
+      "status": "native",
+      "note": "Client Components render subsequent navigations in the browser. Initial visits still receive prerendered HTML.",
+      "url": "https://nextjs.org/docs/app/getting-started/server-and-client-components"
+    },
+    "serverOnly": {
+      "status": "native",
+      "note": "React Server Components keep server implementation and dependencies out of the client bundle. Serialized props still reach the browser.",
+      "url": "https://nextjs.org/docs/app/getting-started/server-and-client-components",
+      "label": "React Server Components"
+    },
+    "partialRendering": {
+      "status": "native",
+      "note": "Cache Components combines a prerendered shell with request-time streaming. Existing apps must enable the documented configuration.",
+      "url": "https://nextjs.org/docs/app/getting-started/caching",
+      "label": "Cache Components"
+    },
+    "routing": {
+      "status": "native",
+      "note": "App Router uses files, nested layouts, page segments, and route handlers.",
+      "url": "https://nextjs.org/docs/app/getting-started/layouts-and-pages"
+    },
+    "layouts": {
+      "status": "native",
+      "note": "Filesystem layout segments compose automatically and persist across navigation.",
+      "url": "https://nextjs.org/docs/app/getting-started/layouts-and-pages"
+    },
+    "dynamicRoutes": {
+      "status": "native",
+      "note": "Bracketed segments support parameters, catch-all routes, and optional catch-all routes.",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/dynamic-routes"
+    },
+    "parallelRoutes": {
+      "status": "native",
+      "note": "Named @slots have independent navigation state, loading UI, and defaults for unmatched routes.",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/parallel-routes"
+    },
+    "interceptedRoutes": {
+      "status": "native",
+      "note": "Interception conventions support routed modals with different soft-navigation and direct-link behavior.",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/intercepting-routes"
+    },
+    "prefetch": {
+      "status": "native",
+      "note": "Link prefetching and router.prefetch can prepare route data and UI. Static and dynamic routes have different prefetch behavior.",
+      "url": "https://nextjs.org/docs/app/guides/prefetching"
+    },
+    "softNavigation": {
+      "status": "native",
+      "note": "App Router Link/router navigation updates the URL and replaces route segments without a full reload. Shared layouts stay mounted; loading UI and prefetching can cover server waits, but do not guarantee a latency target.",
+      "url": "https://nextjs.org/docs/app/getting-started/linking-and-navigating",
+      "reviewedOn": "2026-11-11",
+      "label": "App Router"
+    },
+    "viewTransitions": {
+      "status": "partial",
+      "note": "Next.js documents an experimental React View Transitions integration. This review does not treat that experimental flag as a stable, automatically animated navigation API; application boundaries, CSS and browser support still matter.",
+      "url": "https://nextjs.org/blog/next-15-2#react-view-transitions-experimental",
+      "reviewedOn": "2026-11-11",
+      "label": "Experimental integration"
+    },
+    "redirects": {
+      "status": "native",
+      "note": "Proxy can redirect or internally rewrite requests; configuration and render-time redirect APIs provide other boundaries.",
+      "url": "https://nextjs.org/docs/app/getting-started/proxy"
+    },
+    "serverData": {
+      "status": "native",
+      "note": "Async Server Components load from fetch, databases, or other asynchronous I/O.",
+      "url": "https://nextjs.org/docs/app/getting-started/fetching-data"
+    },
+    "clientData": {
+      "status": "community",
+      "note": "The guide recommends query libraries such as SWR or React Query. A client query cache is not supplied by Next.js itself.",
+      "url": "https://nextjs.org/docs/app/guides/client-side-data-fetching",
+      "label": "SWR / React Query"
+    },
+    "requestDedupe": {
+      "status": "native",
+      "note": "The guide documents fetch memoization and React.cache for sharing equivalent reads during rendering.",
+      "url": "https://nextjs.org/docs/app/getting-started/fetching-data"
+    },
+    "persistentCache": {
+      "status": "native",
+      "note": "use cache retains function or component results with explicit lifetimes. Storage and coordination depend on deployment.",
+      "url": "https://nextjs.org/docs/app/getting-started/caching",
+      "label": "use cache"
+    },
+    "invalidation": {
+      "status": "native",
+      "note": "Path/tag invalidation and cache lifetime controls support different freshness semantics.",
+      "url": "https://nextjs.org/docs/app/getting-started/revalidating"
+    },
+    "isr": {
+      "status": "native",
+      "note": "Regenerates cached pages by time or on demand; static-only export does not provide ISR.",
+      "url": "https://nextjs.org/docs/app/guides/incremental-static-regeneration"
+    },
+    "apiRoutes": {
+      "status": "native",
+      "note": "route.ts handlers use Web Request/Response and support multiple HTTP methods.",
+      "url": "https://nextjs.org/docs/app/getting-started/route-handlers"
+    },
+    "httpErrors": {
+      "status": "native",
+      "note": "notFound renders the not-found UI with 404 for a non-streamed response. Once streaming has started, that UI can arrive with HTTP 200 and noindex metadata instead. Check missing resources before the response starts when a true 404 is required; a displayed error boundary cannot rewrite already-sent status headers.",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/loading#status-codes",
+      "label": "Pre-stream status decisions",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "native",
+      "note": "Server Functions marked with use server can be called from Client Components and used as form actions.",
+      "url": "https://nextjs.org/docs/app/getting-started/mutating-data",
+      "label": "Server Functions"
+    },
+    "forms": {
+      "status": "native",
+      "note": "Server Actions receive FormData and support pending/error feedback. Application validation or an external schema library is still required.",
+      "url": "https://nextjs.org/docs/app/guides/forms",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Server Actions receive FormData and support pending/error feedback. Application validation or an external schema library is still required."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "native",
+      "note": "Proxy runs before request completion for redirects, rewrites, and header logic. It is not a replacement for authorization in handlers.",
+      "url": "https://nextjs.org/docs/app/getting-started/proxy",
+      "label": "Proxy"
+    },
+    "cookies": {
+      "status": "native",
+      "note": "cookies() reads request cookies and writes them from Server Functions or Route Handlers. Session management remains application/library work.",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/cookies",
+      "label": "Cookie API"
+    },
+    "cssModules": {
+      "status": "native",
+      "note": "Imports .module.css files with generated local class names.",
+      "url": "https://nextjs.org/docs/app/getting-started/css"
+    },
+    "scopedCss": {
+      "status": "official",
+      "note": "styled-jsx provides locally scoped styles; the App Router guide documents the required style registry.",
+      "url": "https://nextjs.org/docs/app/guides/css-in-js",
+      "label": "styled-jsx"
+    },
+    "tailwind": {
+      "status": "community",
+      "note": "Official setup instructions integrate the external Tailwind compiler and PostCSS package.",
+      "url": "https://nextjs.org/docs/app/getting-started/css",
+      "label": "Tailwind CSS"
+    },
+    "cssInJs": {
+      "status": "partial",
+      "note": "Supported libraries need Client Components and server style insertion setup; not every CSS-in-JS library supports Server Components.",
+      "url": "https://nextjs.org/docs/app/guides/css-in-js",
+      "label": "Library-dependent",
+      "reviewedOn": "2026-11-10"
+    },
+    "images": {
+      "status": "native",
+      "note": "Image generates responsive, size-optimized output. Remote sources and deployment image services require configuration.",
+      "url": "https://nextjs.org/docs/app/getting-started/images",
+      "label": "next/image"
+    },
+    "fonts": {
+      "status": "native",
+      "note": "next/font self-hosts local or downloaded fonts and configures optimized loading and fallback behavior.",
+      "url": "https://nextjs.org/docs/app/getting-started/fonts",
+      "label": "next/font"
+    },
+    "scripts": {
+      "status": "native",
+      "note": "Script supports beforeInteractive, afterInteractive, and lazyOnload. Worker offloading is experimental.",
+      "url": "https://nextjs.org/docs/app/guides/scripts",
+      "label": "next/script"
+    },
+    "assetPipeline": {
+      "status": "native",
+      "note": "Next.js fingerprints build-managed JS, CSS, fonts, and statically imported images. Their content-based URLs can be cached for a year with immutable headers. Files placed directly in public/ retain their original names and default to max-age=0; they are not automatically fingerprinted.",
+      "url": "https://nextjs.org/docs/app/guides/cdn-caching",
+      "label": "Hashed build assets",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "native",
+      "note": "Files in public are served from the URL root; cache policy differs from fingerprinted build assets.",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/public-folder"
+    },
+    "metadata": {
+      "status": "native",
+      "note": "Typed Metadata covers canonical/alternate links, social cards, robots, icons, and title fields.",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/generate-metadata",
+      "label": "Extensive, integrated API",
+      "assessment": {
+        "label": "Extensive, integrated API",
+        "summary": "Strong coverage of route-aware metadata and generated SEO assets, with explicit composition needed for nested objects.",
+        "strengths": [
+          "Typed static metadata and async generateMetadata.",
+          "Automatic route-segment inheritance, title templates, and access to resolved parent metadata.",
+          "File conventions integrate generated social images and crawler documents."
+        ],
+        "tradeoffs": [
+          "Nested objects merge shallowly. Replacing openGraph can discard an inherited description or image list.",
+          "Title templates have segment-specific rules; asynchronous metadata interacts with caching and rendering."
+        ]
+      }
+    },
+    "dynamicMetadata": {
+      "status": "native",
+      "note": "generateMetadata can await data and resolved parent metadata; eligible fetches are memoized.",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+    },
+    "metadataInheritance": {
+      "status": "native",
+      "note": "Layouts and pages merge root-to-leaf. Merge is shallow: a child openGraph object replaces the parent object.",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/generate-metadata#merging"
+    },
+    "metadataOverrides": {
+      "status": "native",
+      "note": "Child keys replace ancestor keys. To retain parent OG images, read parent metadata and explicitly compose the array.",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/generate-metadata#overwriting-fields",
+      "label": "Shallow replacement"
+    },
+    "titleTemplates": {
+      "status": "native",
+      "note": "Ancestor templates format child titles; title.absolute bypasses a template. A template does not format the same segment’s own page title.",
+      "url": "https://nextjs.org/docs/app/api-reference/functions/generate-metadata#title"
+    },
+    "socialImages": {
+      "status": "native",
+      "note": "ImageResponse generates OG/Twitter images using a supported subset of CSS; file conventions publish them.",
+      "url": "https://nextjs.org/docs/app/getting-started/metadata-and-og-images"
+    },
+    "sitemaps": {
+      "status": "native",
+      "note": "Structured sitemap generators support image/video entries, locales, and multiple sitemap files.",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap"
+    },
+    "robots": {
+      "status": "native",
+      "note": "Static robots.txt or a typed robots generator defines user-agent rules and sitemap URLs.",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots"
+    },
+    "markdown": {
+      "status": "official",
+      "note": "@next/mdx integrates Markdown/MDX with the App Router; remark/rehype plugins and component mapping are configurable.",
+      "url": "https://nextjs.org/docs/app/guides/mdx",
+      "label": "@next/mdx"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "The reviewed MDX guide covers file/content rendering and remote sources, not a typed collection loader/schema/query registry. Add application/CMS tooling for that contract.",
+      "url": "https://nextjs.org/docs/app/guides/mdx"
+    },
+    "draftMode": {
+      "status": "native",
+      "note": "Draft Mode bypasses cached/published content for preview requests. The application must secure the enabling endpoint.",
+      "url": "https://nextjs.org/docs/app/guides/draft-mode"
+    },
+    "translations": {
+      "status": "partial",
+      "note": "The official guide demonstrates app-owned dictionaries and lists external translation libraries; it does not supply a message-catalog engine.",
+      "url": "https://nextjs.org/docs/app/guides/internationalization",
+      "label": "Dictionary recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "localeRouting": {
+      "status": "partial",
+      "note": "The App Router guide uses a [lang] segment plus application proxy logic for language detection and redirects.",
+      "url": "https://nextjs.org/docs/app/guides/internationalization",
+      "label": "Routing recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "localeFormatting": {
+      "status": "community",
+      "note": "next-intl provides locale-aware number and date/time formatters for Next.js applications; it is a separate package.",
+      "url": "https://next-intl.dev/docs/usage/numbers",
+      "label": "next-intl"
+    },
+    "auth": {
+      "status": "community",
+      "note": "The guide recommends an authentication library and shows application-owned session and authorization patterns. No complete identity service is bundled.",
+      "url": "https://nextjs.org/docs/app/guides/authentication",
+      "label": "Auth library / recipe"
+    },
+    "csp": {
+      "status": "native",
+      "note": "Nonce-aware script handling works with application-configured CSP. Per-request nonces require dynamic rendering.",
+      "url": "https://nextjs.org/docs/app/guides/content-security-policy"
+    },
+    "cspNonce": {
+      "status": "native",
+      "note": "The application generates a nonce and matching CSP header; Next applies it to framework-generated scripts and supports nonce props. Per-request nonces require dynamic rendering and limit static generation, ISR and partial-prerendered shells.",
+      "url": "https://nextjs.org/docs/app/guides/content-security-policy",
+      "reviewedOn": "2026-11-11",
+      "label": "Dynamic rendering required"
+    },
+    "csrf": {
+      "status": "native",
+      "note": "Server Actions enforce POST and compare Origin with Host; allowed origins are configurable. This is not universal CSRF protection for custom endpoints.",
+      "url": "https://nextjs.org/docs/app/guides/data-security#allowed-origins-advanced",
+      "label": "Server Actions only"
+    },
+    "environment": {
+      "status": "native",
+      "note": "Loads .env files; NEXT_PUBLIC_ values are inlined into browser bundles. Runtime server secrets remain separate.",
+      "url": "https://nextjs.org/docs/app/guides/environment-variables",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Environment visibility and enforced server-only import boundaries are separate safeguards.",
+        "strengths": [
+          "Unprefixed environment values remain server-only by default; NEXT_PUBLIC values are public.",
+          "server-only imports produce a build error when consumed by client code."
+        ],
+        "tradeoffs": [
+          "Explicitly returned props/action results can still leak sensitive data. Authorization and minimal DTOs remain application responsibilities."
+        ]
+      }
+    },
+    "types": {
+      "status": "native",
+      "note": "TypeScript integration includes generated route-aware helpers and typed configuration. Type coverage is not a guarantee of runtime input validation.",
+      "url": "https://nextjs.org/docs/app/api-reference/config/typescript"
+    },
+    "hmr": {
+      "status": "native",
+      "note": "Fast Refresh usually preserves component state; some edits trigger full reloads.",
+      "url": "https://nextjs.org/docs/architecture/fast-refresh"
+    },
+    "cli": {
+      "status": "native",
+      "note": "create-next-app scaffolds projects; next provides development and production lifecycle commands.",
+      "url": "https://nextjs.org/docs/app/api-reference/cli"
+    },
+    "bundleAnalysis": {
+      "status": "native",
+      "note": "The Turbopack analyzer inspects modules and import chains; Webpack uses the optional @next/bundle-analyzer package.",
+      "url": "https://nextjs.org/docs/app/guides/package-bundling"
+    },
+    "unitTests": {
+      "status": "community",
+      "note": "The documented Vitest/React Testing Library setup covers synchronous components. Async Server Components need a different strategy.",
+      "url": "https://nextjs.org/docs/app/guides/testing/vitest",
+      "label": "Vitest / Jest"
+    },
+    "e2eTests": {
+      "status": "community",
+      "note": "The official recipe runs Playwright against a production build, including browser navigation tests.",
+      "url": "https://nextjs.org/docs/app/guides/testing/playwright",
+      "label": "Playwright"
+    },
+    "observability": {
+      "status": "native",
+      "note": "Next.js emits OpenTelemetry spans; an SDK/exporter or monitoring backend must be configured separately.",
+      "url": "https://nextjs.org/docs/app/guides/open-telemetry",
+      "label": "OpenTelemetry hooks"
+    },
+    "errorHandling": {
+      "status": "native",
+      "note": "Nested error and global-error boundaries provide fallback/retry UI; expected mutation failures are returned explicitly.",
+      "url": "https://nextjs.org/docs/app/getting-started/error-handling"
+    },
+    "serverHosting": {
+      "status": "native",
+      "note": "Production Node server hosting supports the full feature set, subject to the documented infrastructure configuration.",
+      "url": "https://nextjs.org/docs/app/getting-started/deploying",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Self-hosting is supported, with explicit requirements for streaming and consistent multi-instance deployments.",
+        "strengths": [
+          "A production Next server can run the framework's server features without requiring Vercel.",
+          "deploymentId detects version skew; custom cache handlers can use shared storage."
+        ],
+        "tradeoffs": [
+          "Rolling deployments need compatible assets/action encryption keys and deployment IDs.",
+          "Shared cache/tag invalidation and proxy buffering need configuration; a container alone does not supply this coordination."
+        ]
+      }
+    },
+    "subpathProxy": {
+      "status": "native",
+      "note": "basePath prefixes framework navigation for subpath deployments and is fixed at build time. Asset references such as next/image sources may need the prefix explicitly. Self-hosting behind a reverse proxy is documented; configure the proxy’s public host/protocol and streaming behavior. assetPrefix alone is for assets, not mounting the application.",
+      "url": "https://nextjs.org/docs/app/api-reference/config/next-config-js/basePath",
+      "label": "basePath / proxy setup",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "native",
+      "note": "Static export serves generated files without a server; request-time features and ISR are unavailable.",
+      "url": "https://nextjs.org/docs/app/guides/static-exports"
+    },
+    "containers": {
+      "status": "native",
+      "note": "The deployment guide supports Docker and provides production container examples.",
+      "url": "https://nextjs.org/docs/app/getting-started/deploying"
+    },
+    "edgeHosting": {
+      "status": "partial",
+      "note": "An optional Edge Runtime has restricted Node APIs and no ISR. Actual edge placement depends on the hosting platform.",
+      "url": "https://nextjs.org/docs/app/api-reference/edge",
+      "label": "Restricted runtime",
+      "reviewedOn": "2026-11-10"
+    },
+    "orm": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned orm / query builder API. Host libraries and application integrations may provide it.",
+      "url": "https://nextjs.org"
+    },
+    "migrations": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned schema migrations API. Host libraries and application integrations may provide it.",
+      "url": "https://nextjs.org"
+    },
+    "transactions": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned transactions API. Host libraries and application integrations may provide it.",
+      "url": "https://nextjs.org"
+    },
+    "jobs": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned background jobs API. Host libraries and application integrations may provide it.",
+      "url": "https://nextjs.org"
+    },
+    "mail": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned email API. Host libraries and application integrations may provide it.",
+      "url": "https://nextjs.org"
+    },
+    "uploads": {
+      "status": "partial",
+      "note": "Server Actions and route handlers can receive FormData; durable storage, upload policy and size limits remain application/provider responsibilities.",
+      "url": "https://nextjs.org/docs/app/guides/forms",
+      "label": "FormData transport",
+      "reviewedOn": "2026-11-10"
+    },
+    "realtime": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned real-time delivery API. Host libraries and application integrations may provide it.",
+      "url": "https://nextjs.org"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Its integrated UI renderer supplies this policy. Normal text values are rendered as text; dangerouslySetInnerHTML bypasses this path and requires trusted/sanitized HTML. Do not infer arbitrary URL/CSS safety from text escaping.",
+      "url": "https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nextjs.org/docs/app/guides/content-security-policy",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "partial",
+      "note": "The data-security guide requires application authorization/ownership checks in each exposed action or DAL. Server Action identifiers, closure encryption and authentication do not constitute a resource-policy engine.",
+      "url": "https://nextjs.org/docs/app/guides/data-security",
+      "reviewedOn": "2026-11-11",
+      "label": "Application checks"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nextjs.org/docs/app/guides/content-security-policy",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "native",
+      "note": "Server Component forms with Server Actions can submit without JavaScript. Client Component action forms may queue until hydration; onSubmit-only client behavior is not a progressive submission path.",
+      "url": "https://nextjs.org/docs/app/guides/forms",
+      "reviewedOn": "2026-11-11",
+      "label": "Server Action forms"
+    },
+    "optimisticUi": {
+      "status": "native",
+      "note": "React useOptimistic overlays pending mutation UI and reconciles against the supplied confirmed state through Actions/transitions. Application code must define the update and failure feedback; this is not a durable offline write queue.",
+      "url": "https://react.dev/reference/react/useOptimistic",
+      "reviewedOn": "2026-11-11",
+      "label": "React useOptimistic"
+    },
+    "requestCancellation": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific stale request handling contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nextjs.org/docs/app/guides/client-side-data-fetching",
+      "reviewedOn": "2026-11-11"
+    },
+    "typedLinks": {
+      "status": "native",
+      "note": "typedRoutes generates route types used by Link and navigation helpers to check destinations. It does not supply schema validation of arbitrary query strings, and nonliteral constructed paths may require type assertions.",
+      "url": "https://nextjs.org/docs/app/api-reference/config/next-config-js/typedRoutes",
+      "reviewedOn": "2026-11-11",
+      "label": "typedRoutes"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nextjs.org/docs/app/getting-started/linking-and-navigating",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "native",
+      "note": "Shared layouts preserve state across soft navigation; Cache Components can retain recent pages through React Activity. Retention/eviction and resets are version/configuration dependent and do not guarantee every visited page survives.",
+      "url": "https://nextjs.org/docs/app/guides/preserving-ui-state",
+      "reviewedOn": "2026-11-11",
+      "label": "Layouts / Activity"
+    },
+    "scrollRestoration": {
+      "status": "native",
+      "note": "Link/navigation controls scroll resets and App Router restores scroll for back/forward visits. scroll=false is an opt-out; this does not promise independent restoration of arbitrary nested scrollers.",
+      "url": "https://nextjs.org/docs/app/api-reference/components/link#scroll",
+      "reviewedOn": "2026-11-11",
+      "label": "App Router"
+    },
+    "navigationBlocking": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nextjs.org/docs/app/getting-started/linking-and-navigating",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationAccessibility": {
+      "status": "native",
+      "note": "Next.js includes route announcements based on title, heading or pathname, and documents accessible page naming. Authors remain responsible for focus behavior and accessible controls.",
+      "url": "https://nextjs.org/docs/architecture/accessibility",
+      "reviewedOn": "2026-11-11",
+      "label": "Route announcer"
+    },
+    "a11yChecks": {
+      "status": "community",
+      "note": "The accessibility guide recommends eslint-plugin-jsx-a11y for static JSX checks. It is a separately configured linter; do not infer that every current Next build runs ESLint automatically.",
+      "url": "https://nextjs.org/docs/architecture/accessibility",
+      "reviewedOn": "2026-11-11",
+      "label": "eslint-plugin-jsx-a11y"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nextjs.org/docs/app/api-reference/file-conventions/loading",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "native",
+      "note": "App Router splits route code, while next/dynamic and React.lazy defer Client Components. Server Components stay outside browser bundles; lazy importing a Server Component does not itself defer a client runtime.",
+      "url": "https://nextjs.org/docs/app/guides/lazy-loading",
+      "reviewedOn": "2026-11-11",
+      "label": "Route bundles / next/dynamic"
+    },
+    "offline": {
+      "status": "partial",
+      "note": "The PWA guide demonstrates a service worker and web manifest; production cache strategies/offline data and retry UX remain application-owned. Installing a manifest does not make mutations work offline.",
+      "url": "https://nextjs.org/docs/app/guides/progressive-web-apps",
+      "reviewedOn": "2026-11-11",
+      "label": "PWA recipe"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nextjs.org",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nextjs.org",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nextjs.org",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nextjs.org",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nextjs.org/docs/app/guides/testing/vitest",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

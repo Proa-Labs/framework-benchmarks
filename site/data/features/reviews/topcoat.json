@@ -1,0 +1,651 @@
+{
+  "id": "topcoat",
+  "scope": "Topcoat 0.12.1 documentation and source, including explicitly enabled first-party features and named external integrations. The framework remains experimental; rendering benchmarks separately retain Topcoat 0.3.1.",
+  "reviewedOn": "2026-11-13",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "Async Rust view components render markup on the server.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "live!() and emit!() send initial HTML and later region updates over the original HTTP response. Available since 0.7; verified in 0.12.1. Optional WebSocket updates can continue after the initial page load.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view/live.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "suspense": {
+      "status": "native",
+      "note": "The built-in suspense component shows fallback UI while async child content loads, then streams the result into place. Available since 0.7; verified in 0.12.1.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view/live.md#suspense-and-error-boundaries",
+      "reviewedOn": "2026-11-13"
+    },
+    "client": {
+      "status": "native",
+      "note": "Reactive Rust expressions compile to JavaScript that activates server-rendered UI; shards can replace server-rendered fragments.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "label": "Compiled JS",
+      "reviewedOn": "2026-11-13"
+    },
+    "ssg": {
+      "status": "planned",
+      "note": "Static export and prerendering remain unchecked roadmap items in Topcoat 0.12.1.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Roadmap"
+    },
+    "csr": {
+      "status": "partial",
+      "note": "Compiled reactive expressions update server-authored UI. A standalone CSR application root is not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+      "label": "Server-authored runtime",
+      "reviewedOn": "2026-11-13"
+    },
+    "serverOnly": {
+      "status": "native",
+      "note": "Rust view/component code renders on the server; explicitly reactive expressions compile to JavaScript.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "The 0.12.1 README still lists static export and prerendering as roadmap work. live!/emit! stream runtime updates; that does not establish a retained prerendered shell with request-time holes.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "routing": {
+      "status": "native",
+      "note": "Pages, layouts, and API routes support manual or auto-discovered routers.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "layouts": {
+      "status": "native",
+      "note": "Module layouts wrap routed pages and compose app-level structure.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "dynamicRoutes": {
+      "status": "native",
+      "note": "Page/API route macros support typed path and query parameters.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "The reviewed module router does not establish independently navigable named slots.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "The reviewed router does not define intercepted-modal and direct-entry rendering semantics.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "prefetch": {
+      "status": "native",
+      "note": "Runtime links prefetch on intent by default, with viewport and never modes configurable per link/context. Prefetch is best effort and may be skipped for data-saving or concurrent-load policy; plain anchors keep normal navigation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime/link.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Runtime link prefetch"
+    },
+    "softNavigation": {
+      "status": "native",
+      "note": "runtime::link and link_attrs navigate server-rendered pages without a full reload. Shared signals can survive reconciliation; external targets, downloads and incompatible responses use normal document navigation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime/link.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Runtime links"
+    },
+    "viewTransitions": {
+      "status": "undocumented",
+      "note": "The reviewed routing API does not establish this navigation capability. Application code or another package may provide it; this finding is not proof of absence.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "redirects": {
+      "status": "native",
+      "note": "Router errors/helpers support temporary and permanent redirects, 303 POST/Redirect/GET and internal rewrite redispatch. These are HTTP/router APIs; proxy deployment still requires explicit mount/origin configuration.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/error.md",
+      "label": "Redirect / rewrite helpers",
+      "reviewedOn": "2026-11-13"
+    },
+    "serverData": {
+      "status": "native",
+      "note": "Async view functions load data directly and share request/app context.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "clientData": {
+      "status": "partial",
+      "note": "Procedures/shards can request server results and replace UI. A browser query cache with retry/stale-data policy is not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+      "label": "Procedures / shards",
+      "reviewedOn": "2026-11-13"
+    },
+    "requestDedupe": {
+      "status": "native",
+      "note": "#[memoize] shares a request-context function result by arguments within one request.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "persistentCache": {
+      "status": "undocumented",
+      "note": "Request memoization is documented; an across-request data/page cache is not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "invalidation": {
+      "status": "undocumented",
+      "note": "The reviewed memoization lifecycle ends with the request; cross-request dependency/tag invalidation is not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "isr": {
+      "status": "undocumented",
+      "note": "The reviewed route API does not establish retained static-page regeneration.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "apiRoutes": {
+      "status": "native",
+      "note": "Route macros register HTTP API handlers alongside pages.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "httpErrors": {
+      "status": "native",
+      "note": "Topcoat 0.12.1 maps router errors to their HTTP status and other unhandled errors to 500. A fallback view can explicitly select StatusCode::NOT_FOUND. Error-boundary documentation states that handlers can change status only before the response starts streaming; a late fallback cannot retroactively change it.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md#errors",
+      "label": "Router errors / status in views",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "native",
+      "note": "Procedures are documented as async server functions callable from the browser.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "label": "Procedures",
+      "reviewedOn": "2026-11-13"
+    },
+    "forms": {
+      "status": "native",
+      "note": "Route Form<T> extraction deserializes native query/form submissions into typed values, and documented examples use POST/Redirect/GET. Parsing failures map to HTTP errors; business validation and field-error feedback remain application-owned. A general validation framework is still roadmap work.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/content.md",
+      "label": "Typed native form submissions",
+      "reviewedOn": "2026-11-13"
+    },
+    "middleware": {
+      "status": "native",
+      "note": "Router layers wrap request handling with body, context and Next, and can apply across route prefixes. Optional TowerLayer/TowerRoute bridge external middleware/services. A helper function alone is not the complete middleware API.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md#layers",
+      "label": "Router layers",
+      "reviewedOn": "2026-11-13"
+    },
+    "cookies": {
+      "status": "native",
+      "note": "Cookie helpers support signed/encrypted and prefixed cookies; sessions accept app-supplied storage.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/cookie.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "cssModules": {
+      "status": "undocumented",
+      "note": "The reviewed view/style APIs do not document CSS Modules class-map compilation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "scopedCss": {
+      "status": "undocumented",
+      "note": "Views accept authored classes/styles; component-local selector rewriting is not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "tailwind": {
+      "status": "native",
+      "note": "The optional Tailwind integration runs the external compiler and bundles generated CSS.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/tailwind.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "cssInJs": {
+      "status": "undocumented",
+      "note": "Compiled reactive style expressions do not establish a CSS-in-JS compiler/SSR registry.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "images": {
+      "status": "planned",
+      "note": "Image optimization/resizing remains an unchecked roadmap item in 0.12.1; asset hashing and downloading do not transform images.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Roadmap"
+    },
+    "fonts": {
+      "status": "native",
+      "note": "Font utilities download/bundle Fontsource fonts as application assets; this does not imply every font has automatic subsetting.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/font.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "scripts": {
+      "status": "undocumented",
+      "note": "Topcoat manages generated client expressions; arbitrary third-party script scheduling is application-owned.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+      "label": "Compiled client runtime",
+      "reviewedOn": "2026-11-13"
+    },
+    "assetPipeline": {
+      "status": "native",
+      "note": "Topcoat 0.12.1’s asset! macro produces a typed asset URL. The asset bundler hashes file contents, emits fingerprinted filenames and a manifest, and the router serves the matching bundle. Deploy the binary and asset bundle from the same build. Assets outside this pipeline remain application-owned.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
+      "label": "asset! / asset bundle",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "native",
+      "note": "asset! discovers, copies/downloads, and fingerprints application assets.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "metadata": {
+      "status": "native",
+      "note": "The built-in Metadata API supplies structured title, description, canonical, robots, Open Graph and X fields; metadata::tags renders the combined document head. The feature is enabled by default.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/metadata.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Structured Metadata API"
+    },
+    "dynamicMetadata": {
+      "status": "native",
+      "note": "Metadata::from_fn loads request-dependent metadata asynchronously through Cx before the outer layout renders. Request memoization can share data with the page body.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/metadata.md#loading-metadata-for-a-request",
+      "label": "Async Metadata::from_fn",
+      "reviewedOn": "2026-11-13"
+    },
+    "metadataInheritance": {
+      "status": "native",
+      "note": "Router defaults, outer-to-inner layouts and page metadata combine field by field. Unset fields inherit; request child contexts can override the combined values. An Open Graph image list is replaced as one field.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/metadata.md#setting-metadata",
+      "reviewedOn": "2026-11-13",
+      "label": "Field-level inheritance"
+    },
+    "metadataOverrides": {
+      "status": "native",
+      "note": "Page/inner metadata replaces fields independently, and no_* removal methods block inheritance for selected fields. Open Graph image lists replace as a whole rather than merging every item.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/metadata.md#setting-metadata",
+      "reviewedOn": "2026-11-13",
+      "label": "Overrides / explicit removals"
+    },
+    "titleTemplates": {
+      "status": "undocumented",
+      "note": "Title text can be rendered by application views; an ancestor title-template API is not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "socialImages": {
+      "status": "undocumented",
+      "note": "Asset downloads/fingerprints do not establish dynamic social-card image generation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "sitemaps": {
+      "status": "native",
+      "note": "The optional sitemap feature supplies Sitemap and SitemapUrl response types with last-modified, frequency and priority. Relative URLs resolve with BaseUrl; application code chooses/enumerates entries.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/content/sitemap.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Sitemap response types"
+    },
+    "robots": {
+      "status": "native",
+      "note": "With the fs feature, public_dir serves an application public directory at the site root, allowing an authored robots.txt to retain its required public URL. A fingerprinted asset! URL alone is not the robots.txt convention; directive contents remain application-owned.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/crates/topcoat-router/src/route/directory.rs#L242-L259",
+      "label": "Unchanged public file",
+      "reviewedOn": "2026-11-13"
+    },
+    "markdown": {
+      "status": "planned",
+      "note": "Markdown support remains a roadmap item in 0.12.1; rendering authored HTML or an email plain-text alternative is a different feature.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Markdown support planned"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "Assets are bundled; typed content collection schemas/loaders/query APIs are not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "Request functions can authorize a preview; a dedicated draft/cache-bypass mode is not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "translations": {
+      "status": "native",
+      "note": "The optional first-party l10n/Fluent features load message catalogs, interpolate arguments and apply locale fallback. topcoat l10n check validates message keys/variables; applications choose supported locales.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/l10n.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Fluent catalogs / l10n"
+    },
+    "localeRouting": {
+      "status": "native",
+      "note": "Locale implements route parameter parsing, and the localization guide composes a locale segment with request layers and Accept-Language negotiation. The application chooses supported locales and redirect/fallback policy.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/l10n.md",
+      "label": "Locale parameters / negotiation",
+      "reviewedOn": "2026-11-13"
+    },
+    "localeFormatting": {
+      "status": "native",
+      "note": "The l10n-number and l10n-datetime features format numbers and dates for the request locale. Documented limitations include no currency/percent formatting and limited date/time styles; enable the relevant features.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/l10n.md#formatting",
+      "reviewedOn": "2026-11-13",
+      "label": "Optional locale formatters"
+    },
+    "auth": {
+      "status": "planned",
+      "note": "Authentication remains a roadmap item in 0.12.1. Cookie/session primitives require application-owned account lookup, credential verification and identity storage.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Roadmap"
+    },
+    "csp": {
+      "status": "undocumented",
+      "note": "The reviewed generated-JavaScript runtime does not document coordinated CSP nonce/hash policy.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "cspNonce": {
+      "status": "undocumented",
+      "note": "The reviewed security/rendering API does not establish coordinated per-response CSP nonces for generated scripts and styles. Hash-based CSP and application-authored headers are different mechanisms.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "csrf": {
+      "status": "native",
+      "note": "OriginPolicy rejects cross-origin browser mutations and cross-origin WebSocket handshakes before request layers by default. Trusted origins or explicit disabling are configurable. This is origin enforcement, not a token service or authentication.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md#cross-origin-requests",
+      "reviewedOn": "2026-11-13",
+      "label": "Default OriginPolicy"
+    },
+    "environment": {
+      "status": "partial",
+      "note": "Server context can hold configuration; explicitly compiled client expressions must not expose secrets. A public/private environment namespace is not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+      "label": "Request / app context",
+      "reviewedOn": "2026-11-13"
+    },
+    "types": {
+      "status": "native",
+      "note": "Rust checks server components and the typed expressions accepted by the reactive compiler.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "hmr": {
+      "status": "partial",
+      "note": "Development hooks notify the dev server about rebuild/readiness and display status; this does not establish state-preserving hot replacement.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "label": "Dev rebuild integration",
+      "reviewedOn": "2026-11-13"
+    },
+    "cli": {
+      "status": "partial",
+      "note": "Existing tooling bundles assets; project scaffolding via topcoat new is still on the roadmap.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
+      "label": "Asset tooling",
+      "reviewedOn": "2026-11-13"
+    },
+    "bundleAnalysis": {
+      "status": "undocumented",
+      "note": "Asset discovery/bundling is documented; a production module-size analysis view is not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "unitTests": {
+      "status": "native",
+      "note": "Views/helpers use Rust tests with a fresh Cx::new() populated through Cx::with. This supplies context construction, not a browser test runner; application tests must arrange their own dependencies.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Rust tests / explicit context"
+    },
+    "e2eTests": {
+      "status": "undocumented",
+      "note": "The reviewed runtime docs do not provide a browser end-to-end test integration.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "observability": {
+      "status": "undocumented",
+      "note": "Request context exposes headers/extensions; a maintained tracing/metrics integration is not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "errorHandling": {
+      "status": "native",
+      "note": "The built-in error_boundary component catches child view failures and renders a supplied fallback; returning Err propagates upward. A fallback must explicitly choose an HTTP error status before streaming begins.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/crates/topcoat/src/view/error_boundary.rs",
+      "label": "View error_boundary",
+      "reviewedOn": "2026-11-13"
+    },
+    "serverHosting": {
+      "status": "native",
+      "note": "serve/serve_until run a router from a TCP listener with graceful shutdown.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "subpathProxy": {
+      "status": "partial",
+      "note": "Topcoat 0.12.1 provides a public BaseUrl with an optional path prefix and helpers for absolute URLs; assets can use a separately configured external base. These helpers do not establish automatic rebasing of every route, relative link and live request. The proxy mount and application URL use must be coordinated explicitly.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/crates/topcoat-core/src/base_url.rs",
+      "label": "BaseUrl; proxy-owned mount",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "planned",
+      "note": "A complete static export remains an unchecked roadmap item in 0.12.1; publishing bundled assets alone is not an exported application.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Roadmap"
+    },
+    "containers": {
+      "status": "undocumented",
+      "note": "Deployment documentation is an unchecked roadmap item; a maintained container recipe is not established.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "edgeHosting": {
+      "status": "native",
+      "note": "A published 0.12.1 example runs Router::handle from a Cloudflare Worker fetch handler without the native serve feature. It buffers request bodies and does not support runtime WebSocket connections on Workers.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/examples/cloudflare-worker/README.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Cloudflare Worker example"
+    },
+    "orm": {
+      "status": "official",
+      "note": "The recommended scaffold and todo example integrate the first-party Toasty ORM with SQLite. Enable/install that integration; Topcoat’s renderer does not itself supply the database or query engine.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/getting_started.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Toasty integration"
+    },
+    "migrations": {
+      "status": "official",
+      "note": "The recommended Toasty scaffold documents generating and applying versioned migrations through the application CLI. Migration execution/history belongs to Toasty rather than the view renderer.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/getting_started.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Toasty migrations"
+    },
+    "transactions": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned transactions API. Host libraries and application integrations may provide it.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "jobs": {
+      "status": "planned",
+      "note": "A durable background-job system remains roadmap work in 0.12.1.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Background jobs planned"
+    },
+    "mail": {
+      "status": "native",
+      "note": "The optional mail feature provides typed mail builders, HTML/plain-text bodies, attachments and transport APIs. SMTP needs mail-smtp and transport configuration; acceptance by a transport is not inbox delivery or a durable job queue.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/mail.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Mail builders / transports"
+    },
+    "uploads": {
+      "status": "partial",
+      "note": "The optional multipart extractor streams form fields/files and enforces configured body limits. Durable storage, file validation and cloud-object lifecycle remain application/library work.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/content/multipart.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Multipart transport"
+    },
+    "realtime": {
+      "status": "native",
+      "note": "Optional WebSocket and SSE response types provide real-time transports, and connected live views can continue over a runtime WebSocket. Applications still own authentication, fan-out/storage and distributed pub/sub.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view/live.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Live views / WebSocket / SSE"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "view! escapes interpolated values. Explicit raw/unescaped APIs require trusted content and do not sanitize rich HTML; compiled browser-expression captures must still exclude secrets.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view/view.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Escaped view interpolation"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "rateLimiting": {
+      "status": "planned",
+      "note": "The roadmap still lists easier-to-use middleware such as rate limiting. Runtime WebSocket render limits are a narrower resource cap, not a general request-rate limiter.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Rate-limiting middleware planned"
+    },
+    "progressiveEnhancement": {
+      "status": "native",
+      "note": "The Toasty todo example submits ordinary HTML forms to server handlers, mutates the database and redirects. That submission path works without the client runtime; reactive procedures/shards are separate enhancements.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/examples/toasty-todo/README.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Native POST / redirect forms"
+    },
+    "optimisticUi": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific optimistic updates contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "requestCancellation": {
+      "status": "native",
+      "note": "When shard arguments change, a new request aborts the earlier pending request so the latest arguments win. This is client request/stale-result handling; a server mutation may already have taken effect.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime/shard.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Latest shard request wins"
+    },
+    "typedLinks": {
+      "status": "native",
+      "note": "href!(handler, named_parameter: value) constructs route-aware links with generated parameter bindings, encoding and compile-time checking of required arguments. The API also accepts raw paths, which do not gain equivalent route-name guarantees.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/href.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Typed href! helpers"
+    },
+    "searchParams": {
+      "status": "native",
+      "note": "query_params derives a typed deserializer and caches the parsed request query. Malformed inputs return a QueryParamsError or a configured HTTP error/redirect. This is server request state, not a browser query-state synchronization library.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/query_params.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Typed query_params"
+    },
+    "stateRestoration": {
+      "status": "native",
+      "note": "Runtime navigation preserves signals shared by both pages, and shard updates retain matching signal/input state. Preservation depends on identity; this is not durable restoration after reload or a guarantee that every departed page remains mounted.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime/link.md#navigation-behavior",
+      "reviewedOn": "2026-11-13",
+      "label": "Shared-signal retention"
+    },
+    "scrollRestoration": {
+      "status": "native",
+      "note": "Runtime navigation scrolls new pages to the top or fragment and restores saved scroll on back/forward. The documented behavior covers page navigation, not arbitrary independently scrolling containers.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime/link.md#navigation-behavior",
+      "reviewedOn": "2026-11-13",
+      "label": "Runtime history scroll"
+    },
+    "navigationBlocking": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "navigationAccessibility": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessible navigation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "a11yChecks": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "lazyActivation": {
+      "status": "planned",
+      "note": "Islands remain a roadmap item; reactive expressions and streaming alone do not establish configurable idle/visible/interaction activation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13",
+      "label": "Islands planned"
+    },
+    "codeSplitting": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific route / island splitting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+      "reviewedOn": "2026-11-13"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+      "reviewedOn": "2026-11-13"
+    }
+  }
+}

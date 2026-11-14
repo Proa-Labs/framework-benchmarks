@@ -5,10 +5,11 @@ import { mkdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { canonicalDocument } from '../../canonical/dom.mjs';
 import { chromium } from 'playwright';
+import { workspaceSources } from '../../../tooling/workspace-sources.mjs';
 
 export const directory = fileURLToPath(new URL('./', import.meta.url));
 export const sourceFiles = [
-  'package.json', 'package-lock.json', 'vite.config.js', 'dump.mjs', 'benchmark.mjs', 'stream-validator.mjs',
+  'package.json', 'vite.config.js', 'dump.mjs', 'benchmark.mjs', 'stream-validator.mjs',
   'src/app.html', 'src/hooks.server.js', 'src/lib/fixtures.js',
   'src/lib/server/scenario.js', 'src/lib/Hero.svelte', 'src/lib/FallbackPanel.svelte',
   'src/lib/ProductCard.svelte', 'src/lib/ReadyPanel.svelte',
@@ -20,6 +21,7 @@ export const sourceFiles = [
   'src/routes/buffered/+page.js', 'src/routes/buffered/+page.svelte',
 ].map(path => `rendering/external/sveltekit/${path}`);
 sourceFiles.push('rendering/canonical/dom.mjs', 'rendering/external/svelte/suite_cards.svelte', 'rendering/external/svelte/suite_table.svelte', 'rendering/external/svelte/suite_products.svelte');
+sourceFiles.push(...workspaceSources(fileURLToPath(new URL('../../../', import.meta.url))));
 
 const execute = promisify(execFile);
 export async function build() {

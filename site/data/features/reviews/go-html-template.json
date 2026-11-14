@@ -1,0 +1,538 @@
+{
+  "id": "go-html-template",
+  "scope": "Standalone templating API; adding a host framework can provide separate application features.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "Generates HTML from a template and supplied values on the server.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "streaming": {
+      "status": "partial",
+      "note": "Execute writes incrementally to an io.Writer; execution errors may leave partial output. HTTP flush policy and Suspense are not provided.",
+      "url": "https://pkg.go.dev/html/template",
+      "label": "io.Writer",
+      "reviewedOn": "2026-11-10"
+    },
+    "suspense": {
+      "status": "scope",
+      "note": "The reviewed rendering API has no pending-UI/replacement protocol; the host application would need to provide one.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "client": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "ssg": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "csr": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "serverOnly": {
+      "status": "native",
+      "note": "The server evaluates templates and sends rendered output rather than the renderer implementation. This is not React Server Components.",
+      "url": "https://pkg.go.dev/html/template",
+      "label": "Server templates"
+    },
+    "partialRendering": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "routing": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "layouts": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "dynamicRoutes": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "parallelRoutes": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "interceptedRoutes": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "prefetch": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "softNavigation": {
+      "status": "scope",
+      "note": "This standalone template/runtime renders content; navigation and page-transition lifecycle belong to a browser router or host application. Compatibility with a generic JavaScript library is not a built-in integration.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "viewTransitions": {
+      "status": "scope",
+      "note": "This standalone template/runtime renders content; navigation and page-transition lifecycle belong to a browser router or host application. Compatibility with a generic JavaScript library is not a built-in integration.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "redirects": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "serverData": {
+      "status": "scope",
+      "note": "This API consumes supplied template values; application data loading happens outside it.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "clientData": {
+      "status": "scope",
+      "note": "Browser query lifecycle/cache APIs belong to a client library or application framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "requestDedupe": {
+      "status": "scope",
+      "note": "Template/compilation caching is distinct from request-scoped application data deduplication.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "persistentCache": {
+      "status": "scope",
+      "note": "Retaining application data or rendered pages across requests belongs to the host cache.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "invalidation": {
+      "status": "scope",
+      "note": "Application data/page invalidation belongs to the host; recompiling a template is a different cache boundary.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "isr": {
+      "status": "scope",
+      "note": "Regenerating deployed pages requires a host page cache/export pipeline.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "apiRoutes": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "httpErrors": {
+      "status": "scope",
+      "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+      "url": "https://pkg.go.dev/html/template",
+      "label": "HTTP host required",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "forms": {
+      "status": "scope",
+      "note": "Templates can emit form markup; submission, validation, and feedback policy belong to the host application.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "middleware": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "cookies": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "cssModules": {
+      "status": "scope",
+      "note": "CSS class-name compilation is a separate asset-build concern.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "scopedCss": {
+      "status": "scope",
+      "note": "The renderer emits authored classes/styles; component-local CSS selector rewriting is a separate build concern.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "tailwind": {
+      "status": "scope",
+      "note": "Tailwind can process authored templates through application configuration; the template renderer does not own that build.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "cssInJs": {
+      "status": "scope",
+      "note": "Runtime CSS-in-JS compilation is outside this server template API.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "images": {
+      "status": "scope",
+      "note": "Templates emit image markup; image resizing/conversion requires a separate asset pipeline.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "fonts": {
+      "status": "scope",
+      "note": "Font downloading, subsetting, and fallback optimization require a separate asset pipeline.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "scripts": {
+      "status": "scope",
+      "note": "Templates emit script markup; script scheduling and lifecycle policy belong to the host application.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "assetPipeline": {
+      "status": "scope",
+      "note": "The reviewed standalone template API does not own an asset build or deployment pipeline. The host application or a separate build tool must version files, update template references, and configure browser/CDN cache headers.",
+      "url": "https://pkg.go.dev/html/template",
+      "label": "Host / build tool required",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "scope",
+      "note": "Serving files and assigning cache headers belong to the host web server.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "metadata": {
+      "status": "scope",
+      "note": "Head tags can be templated directly; there is no structured metadata registry in the reviewed standalone API.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "dynamicMetadata": {
+      "status": "scope",
+      "note": "Supplied values can populate head tags; request data loading and metadata composition remain application-owned.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "metadataInheritance": {
+      "status": "scope",
+      "note": "Template inheritance/content composition is separate from a metadata-field inheritance contract.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "metadataOverrides": {
+      "status": "scope",
+      "note": "A host head component or template block can override markup; structured field merge/clear rules are application-owned.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "titleTemplates": {
+      "status": "scope",
+      "note": "Titles can use template expressions; ancestor metadata/title-template policy belongs to the application.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "socialImages": {
+      "status": "scope",
+      "note": "Generating social-preview image bytes needs a separate image renderer/service.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "sitemaps": {
+      "status": "scope",
+      "note": "XML can be templated, but route enumeration and a sitemap generator belong to the host.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "robots": {
+      "status": "scope",
+      "note": "Text can be templated, but crawler-document publishing/configuration belongs to the host.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "markdown": {
+      "status": "scope",
+      "note": "This is text/HTML templating; Markdown parsing and content-page integration require another tool.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "collections": {
+      "status": "scope",
+      "note": "The host loads and validates structured content; the template API renders supplied values.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "draftMode": {
+      "status": "scope",
+      "note": "Editorial preview authorization and published-cache bypass belong to the host application.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "translations": {
+      "status": "scope",
+      "note": "Applications can supply translated strings/helpers; the reviewed renderer does not supply message catalogs.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "localeRouting": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "localeFormatting": {
+      "status": "scope",
+      "note": "The host supplies locale-aware values or formatter helpers.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "auth": {
+      "status": "scope",
+      "note": "Identity, login, and authorization are responsibilities of the host application.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "csp": {
+      "status": "scope",
+      "note": "The host configures HTTP CSP headers and any nonce values passed into templates.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "cspNonce": {
+      "status": "scope",
+      "note": "The HTTP application must generate a fresh nonce, set its policy and pass the value to authored tags. A template accepting attributes does not coordinate nonces for an application.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "csrf": {
+      "status": "scope",
+      "note": "HTML escaping does not establish CSRF protection; the host must protect mutation endpoints.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "environment": {
+      "status": "scope",
+      "note": "Server/client secret configuration belongs to the host application, not template evaluation.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "types": {
+      "status": "undocumented",
+      "note": "The Go host is statically typed, but html/template resolves template paths/data at execution time. The reviewed template API does not establish compile-time template type checking.",
+      "url": "https://pkg.go.dev/html/template",
+      "label": "Runtime template checks"
+    },
+    "hmr": {
+      "status": "scope",
+      "note": "Application rebuild/browser refresh orchestration is outside the renderer API.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "cli": {
+      "status": "scope",
+      "note": "This renderer integrates with its language/build toolchain rather than supplying an application CLI.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "bundleAnalysis": {
+      "status": "scope",
+      "note": "Production browser/server bundle inspection belongs to the host build toolchain.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "unitTests": {
+      "status": "scope",
+      "note": "Applications test rendered output with their language test runner; no application test framework is supplied here.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "e2eTests": {
+      "status": "scope",
+      "note": "Browser tests run against a host application, not a standalone template.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "observability": {
+      "status": "scope",
+      "note": "Production request traces/metrics/logging belong to the host application.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "errorHandling": {
+      "status": "scope",
+      "note": "Template errors are returned to the caller; application fallback/recovery UI is host-owned.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "serverHosting": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "subpathProxy": {
+      "status": "scope",
+      "note": "The reviewed standalone template/runtime API does not coordinate a public URL prefix across routing, assets, links and proxy headers. That deployment behavior belongs to the host application or web framework.",
+      "url": "https://pkg.go.dev/html/template",
+      "label": "Host framework required",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "containers": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "edgeHosting": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "orm": {
+      "status": "scope",
+      "note": "ORM / query builder belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "migrations": {
+      "status": "scope",
+      "note": "Schema migrations belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "transactions": {
+      "status": "scope",
+      "note": "Transactions belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "jobs": {
+      "status": "scope",
+      "note": "Background jobs belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "mail": {
+      "status": "scope",
+      "note": "Email belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "uploads": {
+      "status": "scope",
+      "note": "File uploads & storage belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "realtime": {
+      "status": "scope",
+      "note": "Real-time delivery belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://pkg.go.dev/html/template"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "html/template performs contextual autoescaping for HTML, attributes, URLs, CSS and JavaScript. Trusted template.HTML/JS/URL types bypass parts of that policy; the template author is trusted.",
+      "url": "https://pkg.go.dev/html/template#hdr-Contexts",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "scope",
+      "note": "Authorization policies requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "scope",
+      "note": "Rate limiting requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "scope",
+      "note": "Progressive forms requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "optimisticUi": {
+      "status": "scope",
+      "note": "Optimistic updates requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "scope",
+      "note": "Stale request handling requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "typedLinks": {
+      "status": "scope",
+      "note": "Typed links & parameters requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchParams": {
+      "status": "scope",
+      "note": "Validated URL state requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "scope",
+      "note": "Navigation state retention requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "scrollRestoration": {
+      "status": "scope",
+      "note": "Scroll restoration requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationBlocking": {
+      "status": "scope",
+      "note": "Unsaved-change guards requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationAccessibility": {
+      "status": "scope",
+      "note": "Accessible navigation requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "a11yChecks": {
+      "status": "scope",
+      "note": "Accessibility checks requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "scope",
+      "note": "Deferred activation requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "scope",
+      "note": "Route / island splitting requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "offline": {
+      "status": "scope",
+      "note": "Offline integration requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "scope",
+      "note": "Scheduled tasks requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "scope",
+      "note": "Multi-channel notifications requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "scope",
+      "note": "Search indexing requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "scope",
+      "note": "Encrypted model fields requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "scope",
+      "note": "HTTP integration tests requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://pkg.go.dev/html/template",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import "../../scripts/proa-refresh-evidence.test.mjs";
+import { capturedRenderingContract } from "../../tooling/rendering-contract.mjs";
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import {
@@ -235,7 +236,7 @@ test("README synchronization rejects manually changed public values", () => {
       roster,
       workloads,
       historicalFixture,
-    )
+    ),
   );
   assert.throws(
     () =>
@@ -258,8 +259,7 @@ test("README synchronization rejects a second manual result table", () => {
     workloads,
     historicalFixture,
   );
-  const duplicate =
-    `${current}\n| Renderer | Component page | 1,000-row table | Product grid |\n| --- | ---: | ---: | ---: |\n| Proa | 99 µs · 1.00× | 99 µs · 1.00× | 99 µs · 1.00× |\n`;
+  const duplicate = `${current}\n| Renderer | Component page | 1,000-row table | Product grid |\n| --- | ---: | ---: | ---: |\n| Proa | 99 µs · 1.00× | 99 µs · 1.00× | 99 µs · 1.00× |\n`;
   assert.throws(
     () =>
       assertReadmeCurrent(
@@ -276,7 +276,10 @@ test("README synchronization rejects a second manual result table", () => {
 test("README embeds canonical details and historical result tables", () => {
   const details = renderReadmeDetails(fixture(), roster, workloads);
   assert.match(details, /### Detailed measurements/);
-  assert.match(details, /\| Renderer \| Workload \| P50 \| P95 \| P99 \| Mean \|/);
+  assert.match(
+    details,
+    /\| Renderer \| Workload \| P50 \| P95 \| P99 \| Mean \|/,
+  );
   assert.match(details, /### Renderer and runtime versions/);
   assert.match(details, /\| React \| Component page \|/);
 
@@ -288,7 +291,10 @@ test("README embeds canonical details and historical result tables", () => {
 test("the retained latest artifact is complete when present", () => {
   const latestPath = join(renderingDirectory, "results", "latest.json");
   const latest = JSON.parse(readFileSync(latestPath, "utf8"));
-  assert.doesNotThrow(() => validateCanonicalResult(latest, roster, workloads));
+  const captured = capturedRenderingContract(workspaceDirectory, latest);
+  assert.doesNotThrow(() =>
+    validateCanonicalResult(latest, captured.roster, captured.workloads),
+  );
   // generate-report.mjs joins scoreboard.md and engineering.md with this
   // break, replaces every marker pair, and splits them again to write.
   const pages = ["scoreboard.md", "engineering.md"]
@@ -299,7 +305,13 @@ test("the retained latest artifact is complete when present", () => {
     "utf8",
   );
   assert.doesNotThrow(() =>
-    assertReadmeCurrent(pages, latest, roster, workloads, historicalReport)
+    assertReadmeCurrent(
+      pages,
+      latest,
+      captured.roster,
+      captured.workloads,
+      historicalReport,
+    ),
   );
 });
 
@@ -308,7 +320,8 @@ test("the retained capture has one parity pass per roster/workload cell", () => 
   const latest = JSON.parse(readFileSync(latestPath, "utf8"));
   const passes = latest.renderers.reduce(
     (count, renderer) =>
-      count + Object.values(latest.parity[renderer.id] ?? {}).filter(
+      count +
+      Object.values(latest.parity[renderer.id] ?? {}).filter(
         ({ status }) => status === "pass",
       ).length,
     0,
@@ -352,5 +365,50 @@ test("source fingerprints ignore generated files but include source edits", () =
     assert.notEqual(renderingSourceFingerprint(sandbox), initial);
   } finally {
     rmSync(sandbox, { recursive: true, force: true });
+  }
+});
+
+test("only the declared Exact adaptation can bypass strict DOM/class equality", () => {
+  const data = fixture();
+  const exact = data.renderers.find((r) => r.id === "exact");
+  Object.assign(exact, { status: "included", fixture: "exact-native-v1" });
+  delete exact.reason;
+  data.versions.Exact = "94b8671f70fe / Bun 1.4.2";
+  data.measurements.exact = structuredClone(data.measurements.react);
+  data.parity.exact = structuredClone(data.parity.react);
+  for (const cell of Object.values(data.parity.exact))
+    Object.assign(cell, {
+      fixture: "exact-native-v1",
+      mode: "adapted content and styles",
+      canonical_sha256: "b".repeat(64),
+      semantics_sha256: "c".repeat(64),
+      reference_semantics_sha256: "c".repeat(64),
+      style_checks: 100,
+      negative_controls: "pass",
+    });
+  validateCanonicalResult(data, roster, workloads);
+  for (const mutate of [
+    (d) => {
+      delete d.renderers.find((r) => r.id === "exact").fixture;
+    },
+    (d) => {
+      d.parity.exact.cards.mode = "semantic DOM";
+    },
+    (d) => {
+      d.parity.exact.cards.semantics_sha256 = "d".repeat(64);
+    },
+    (d) => {
+      d.parity.exact.cards.style_checks = 0;
+    },
+    (d) => {
+      d.parity.exact.cards.negative_controls = "fail";
+    },
+    (d) => {
+      d.parity.react.cards = structuredClone(d.parity.exact.cards);
+    },
+  ]) {
+    const changed = structuredClone(data);
+    mutate(changed);
+    assert.throws(() => validateCanonicalResult(changed, roster, workloads));
   }
 });

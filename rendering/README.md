@@ -46,7 +46,7 @@ node suspense-load/run.mjs --engines proa --out suspense-load/results/proa-pr83.
 node scripts/merge-proa-refresh.mjs
 node sveltekit/refresh-proa.mjs
 node sveltekit/report.mjs
-pnpm run refresh
+bun run refresh
 ```
 
 Use pinned Node 24.20.0. These commands keep the full default sampling protocols. The refresh refuses a different host or a changed DOM/response size. It retains the original capture and peer versions, with explicit dates rather than relabeling peer measurements as new. A refresh cannot use another refresh as its baseline; restore the retained original capture before repeating it.

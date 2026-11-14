@@ -1,0 +1,580 @@
+{
+  "id": "remix",
+  "scope": "Remix 3.1 documentation and package APIs. This is the new Remix component/Fetch architecture, not React-based Remix v2 or React Router framework mode.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "The closure-based component runtime renders server HTML, selectively hydrates clientEntry components, and can create browser roots. It does not use React.",
+      "url": "https://docs.remix.run/api/component/"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "Frame can stream fallback HTML first and reconcile a route-owned HTML region when it resolves. Frames can also reload through separate browser requests; components themselves are synchronous.",
+      "url": "https://docs.remix.run/streaming-ui-with-frames/",
+      "label": "Streaming Frames"
+    },
+    "suspense": {
+      "status": "native",
+      "note": "Frame can stream fallback HTML first and reconcile a route-owned HTML region when it resolves. Frames can also reload through separate browser requests; components themselves are synchronous.",
+      "url": "https://docs.remix.run/streaming-ui-with-frames/",
+      "label": "Streaming Frames"
+    },
+    "client": {
+      "status": "native",
+      "note": "The closure-based component runtime renders server HTML, selectively hydrates clientEntry components, and can create browser roots. It does not use React.",
+      "url": "https://docs.remix.run/api/component/"
+    },
+    "ssg": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix rendering guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "csr": {
+      "status": "native",
+      "note": "The closure-based component runtime renders server HTML, selectively hydrates clientEntry components, and can create browser roots. It does not use React.",
+      "url": "https://docs.remix.run/api/component/"
+    },
+    "serverOnly": {
+      "status": "native",
+      "note": "Only explicitly declared client entries hydrate; ordinary server component code need not become a browser entry.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix rendering guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "routing": {
+      "status": "native",
+      "note": "Typed routes and Fetch controllers match URLs, handle HTTP methods, compose middleware and return standard Responses including redirects.",
+      "url": "https://docs.remix.run/request-handling/"
+    },
+    "layouts": {
+      "status": "native",
+      "note": "Shared Document/layout components receive nested children explicitly. This satisfies layout composition without a filesystem-selected layout convention.",
+      "url": "https://docs.remix.run/rendering-ui/",
+      "label": "Explicit layouts"
+    },
+    "dynamicRoutes": {
+      "status": "native",
+      "note": "Typed routes and Fetch controllers match URLs, handle HTTP methods, compose middleware and return standard Responses including redirects.",
+      "url": "https://docs.remix.run/request-handling/"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix routing guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/routing-and-controllers/"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix routing guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/routing-and-controllers/"
+    },
+    "prefetch": {
+      "status": "native",
+      "note": "The link mixin supports navigation prefetching; frame navigation reconciles route HTML.",
+      "url": "https://docs.remix.run/api/component/"
+    },
+    "softNavigation": {
+      "status": "native",
+      "note": "Remix 3.1's run() runtime handles eligible links/forms as frame navigation and reconciles server HTML, with navigation/scroll/focus handling. This is the new Remix frame runtime, not Remix v2's React Router integration.",
+      "url": "https://docs.remix.run/api/component/",
+      "reviewedOn": "2026-11-11",
+      "label": "Remix 3 frames"
+    },
+    "viewTransitions": {
+      "status": "undocumented",
+      "note": "Remix 3.1 documents component enter/exit/list animation helpers, but the reviewed guide does not establish a coordinated page-navigation animation API. Remix v2 React Router viewTransition examples do not establish support in Remix 3.",
+      "url": "https://docs.remix.run/animation/",
+      "reviewedOn": "2026-11-11"
+    },
+    "redirects": {
+      "status": "native",
+      "note": "Typed routes and Fetch controllers match URLs, handle HTTP methods, compose middleware and return standard Responses including redirects.",
+      "url": "https://docs.remix.run/request-handling/"
+    },
+    "serverData": {
+      "status": "native",
+      "note": "Route actions load and validate data before passing props into synchronous components.",
+      "url": "https://docs.remix.run/data-and-validation/"
+    },
+    "clientData": {
+      "status": "partial",
+      "note": "Named Frames reload and reconcile server HTML, preserving matching client state. This is not an application query cache.",
+      "url": "https://docs.remix.run/streaming-ui-with-frames/",
+      "label": "Frame reloads",
+      "reviewedOn": "2026-11-10"
+    },
+    "requestDedupe": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix data guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/data-and-validation/"
+    },
+    "persistentCache": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix data guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/data-and-validation/"
+    },
+    "invalidation": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix data guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/data-and-validation/"
+    },
+    "isr": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix data guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/data-and-validation/"
+    },
+    "apiRoutes": {
+      "status": "native",
+      "note": "Typed routes and Fetch controllers match URLs, handle HTTP methods, compose middleware and return standard Responses including redirects.",
+      "url": "https://docs.remix.run/request-handling/"
+    },
+    "httpErrors": {
+      "status": "native",
+      "note": "Unmatched routes return 404; route actions return explicit error Responses for missing records and other expected failures. Unexpected router exceptions need a server-boundary catch or the Node adapter’s onError hook to produce 500 before bytes are sent. Stream render errors use explicit hooks; after publication they cannot replace the response status.",
+      "url": "https://docs.remix.run/errors-and-cancellation/",
+      "label": "Fetch statuses; server boundary",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "partial",
+      "note": "Controller actions handle named HTTP routes and enhanced forms. A generated arbitrary function-call RPC boundary is not established.",
+      "url": "https://docs.remix.run/forms-and-mutations/",
+      "label": "Controller actions",
+      "reviewedOn": "2026-11-10"
+    },
+    "forms": {
+      "status": "native",
+      "note": "Route form helpers, form-data middleware and data-schema validation support ordinary and enhanced submissions.",
+      "url": "https://docs.remix.run/forms-and-mutations/",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Route form helpers, form-data middleware and data-schema validation support ordinary and enhanced submissions."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "native",
+      "note": "Typed routes and Fetch controllers match URLs, handle HTTP methods, compose middleware and return standard Responses including redirects.",
+      "url": "https://docs.remix.run/request-handling/"
+    },
+    "cookies": {
+      "status": "native",
+      "note": "Cookie/session, authentication and CSRF middleware are provided as Remix modules; applications must configure stores, strategies and protection on their routes. The narrative chapter is unfinished; linked package APIs are the authority.",
+      "url": "https://docs.remix.run/auth-sessions-security/"
+    },
+    "cssModules": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix styling guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "scopedCss": {
+      "status": "native",
+      "note": "The css mixin supplies component-scoped styles, nested selectors, dynamic values and cascade layers.",
+      "url": "https://docs.remix.run/api/component/"
+    },
+    "tailwind": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix styling guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "cssInJs": {
+      "status": "native",
+      "note": "The css mixin supplies component-scoped styles, nested selectors, dynamic values and cascade layers.",
+      "url": "https://docs.remix.run/api/component/"
+    },
+    "images": {
+      "status": "community",
+      "note": "The documented transform pipeline uses optional Sharp for image resizing/encoding; Sharp is installed separately.",
+      "url": "https://docs.remix.run/api/assets/",
+      "label": "Sharp transforms"
+    },
+    "fonts": {
+      "status": "partial",
+      "note": "Font files can be served and preloaded through asset URLs. Automatic subsetting and fallback metrics are not established.",
+      "url": "https://docs.remix.run/files-and-assets/",
+      "label": "Asset files / preloads",
+      "reviewedOn": "2026-11-10"
+    },
+    "scripts": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix assets guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/files-and-assets/"
+    },
+    "assetPipeline": {
+      "status": "native",
+      "note": "Remix 3’s asset server compiles scripts and styles and serves file assets. Content-based fingerprinted URLs are optional; stable URLs use ETags and revalidation by default. Enable fingerprinting and its URL generation for long-lived caching; this is the Remix 3 API, not the older React-based Remix build pipeline.",
+      "url": "https://docs.remix.run/api/assets/",
+      "label": "Optional fingerprinted URLs",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "native",
+      "note": "The asset server compiles browser source on demand, exposes controlled files/packages, supports fingerprinting and live code updates.",
+      "url": "https://docs.remix.run/api/assets/"
+    },
+    "metadata": {
+      "status": "partial",
+      "note": "An application-owned Document component receives title/data and authors head tags. No structured metadata field-merging registry is established.",
+      "url": "https://docs.remix.run/rendering-ui/",
+      "label": "Document props",
+      "reviewedOn": "2026-11-10"
+    },
+    "dynamicMetadata": {
+      "status": "partial",
+      "note": "An application-owned Document component receives title/data and authors head tags. No structured metadata field-merging registry is established.",
+      "url": "https://docs.remix.run/rendering-ui/",
+      "label": "Document props",
+      "reviewedOn": "2026-11-10"
+    },
+    "metadataInheritance": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "metadataOverrides": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "titleTemplates": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "socialImages": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "sitemaps": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "robots": {
+      "status": "native",
+      "note": "staticFiles serves an authored robots.txt; directive generation is application-owned.",
+      "url": "https://docs.remix.run/files-and-assets/",
+      "label": "Static file"
+    },
+    "markdown": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix content guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/files-and-assets/"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix content guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/files-and-assets/"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix content guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/files-and-assets/"
+    },
+    "translations": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix i18n guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "localeRouting": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix i18n guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "localeFormatting": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix i18n guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/rendering-ui/"
+    },
+    "auth": {
+      "status": "native",
+      "note": "Authentication primitives include credentials, external providers and extensible strategies. Account persistence and authorization remain application policy.",
+      "url": "https://docs.remix.run/api/auth/"
+    },
+    "csp": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix security guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/auth-sessions-security/"
+    },
+    "cspNonce": {
+      "status": "undocumented",
+      "note": "The reviewed security/rendering API does not establish coordinated per-response CSP nonces for generated scripts and styles. Hash-based CSP and application-authored headers are different mechanisms.",
+      "url": "https://docs.remix.run/auth-sessions-security/",
+      "reviewedOn": "2026-11-11"
+    },
+    "csrf": {
+      "status": "native",
+      "note": "csrf middleware supports token sources and origin validation. Register it on the relevant routes and follow the cookie/session caveats.",
+      "url": "https://docs.remix.run/api/middleware/csrf/"
+    },
+    "environment": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix security guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/auth-sessions-security/"
+    },
+    "types": {
+      "status": "native",
+      "note": "Typed APIs and remix commands support project development, asset inspection and database lifecycle operations. Compilation does not replace TypeScript type checking.",
+      "url": "https://docs.remix.run/cli-and-tooling/"
+    },
+    "hmr": {
+      "status": "native",
+      "note": "The asset server compiles browser source on demand, exposes controlled files/packages, supports fingerprinting and live code updates.",
+      "url": "https://docs.remix.run/api/assets/"
+    },
+    "cli": {
+      "status": "native",
+      "note": "Typed APIs and remix commands support project development, asset inspection and database lifecycle operations. Compilation does not replace TypeScript type checking.",
+      "url": "https://docs.remix.run/cli-and-tooling/"
+    },
+    "bundleAnalysis": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix tooling guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/cli-and-tooling/"
+    },
+    "unitTests": {
+      "status": "native",
+      "note": "Remix's test tooling exercises Fetch controllers, components and application behavior; the reviewed guide links runnable package examples.",
+      "url": "https://docs.remix.run/testing/"
+    },
+    "e2eTests": {
+      "status": "native",
+      "note": "remix/test has an e2e runner and server lifecycle helpers driven through Playwright; browser component tests run in isolated browser frames.",
+      "url": "https://docs.remix.run/testing/"
+    },
+    "observability": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix testing guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/testing/"
+    },
+    "errorHandling": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix testing guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/testing/"
+    },
+    "serverHosting": {
+      "status": "native",
+      "note": "The documented Node Fetch adapter serves router.fetch. The production chapter is unfinished, so deployment configuration and operations remain application-owned.",
+      "url": "https://docs.remix.run/production/"
+    },
+    "subpathProxy": {
+      "status": "partial",
+      "note": "The Node Fetch adapter can opt in to trusted forwarding headers for public origin/client information. Typed route patterns and application middleware supply routing, but the application must coordinate a mount prefix with links, asset-server URLs and the proxy. The adapter’s proxy support alone is not automatic whole-app rebasing.",
+      "url": "https://docs.remix.run/api/node-fetch-server/",
+      "label": "Fetch adapter; app-owned mount",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix deployment guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/production/"
+    },
+    "containers": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix deployment guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/production/"
+    },
+    "edgeHosting": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Remix deployment guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.remix.run/production/"
+    },
+    "orm": {
+      "status": "native",
+      "note": "data-table supplies typed relational queries, transactional operations, and journaled up/down SQL migrations. Database drivers are separate dependencies.",
+      "url": "https://docs.remix.run/api/data-table/",
+      "label": "data-table",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "An ORM/query API establishes a data-access surface, not identical relationship loading, N+1 detection, migration or encryption behavior.",
+        "strengths": [
+          "data-table supplies typed relational queries, transactional operations, and journaled up/down SQL migrations. Database drivers are separate dependencies."
+        ],
+        "tradeoffs": [
+          "Review eager loading, query counts and transaction semantics for the selected driver. Schema migrations, transactions and encrypted fields are compared separately."
+        ]
+      }
+    },
+    "migrations": {
+      "status": "native",
+      "note": "data-table supplies typed relational queries, transactional operations, and journaled up/down SQL migrations. Database drivers are separate dependencies.",
+      "url": "https://docs.remix.run/api/data-table/",
+      "label": "data-table"
+    },
+    "transactions": {
+      "status": "native",
+      "note": "data-table supplies typed relational queries, transactional operations, and journaled up/down SQL migrations. Database drivers are separate dependencies.",
+      "url": "https://docs.remix.run/api/data-table/",
+      "label": "data-table"
+    },
+    "jobs": {
+      "status": "undocumented",
+      "note": "The reviewed Remix server/data guides do not establish an owned background jobs API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://docs.remix.run/files-and-assets/"
+    },
+    "mail": {
+      "status": "undocumented",
+      "note": "The reviewed Remix server/data guides do not establish an owned email API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://docs.remix.run/files-and-assets/"
+    },
+    "uploads": {
+      "status": "native",
+      "note": "Multipart parsing, streaming uploads, size limits and file-storage APIs include local and S3-compatible storage.",
+      "url": "https://docs.remix.run/files-and-assets/"
+    },
+    "realtime": {
+      "status": "undocumented",
+      "note": "The reviewed Remix server/data guides do not establish an owned real-time delivery API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://docs.remix.run/files-and-assets/"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "remix/html-template escapes interpolated values and composes branded SafeHtml without double escaping. html.raw is an explicit trusted-output bypass; this HTML-encoding policy does not establish arbitrary script/URL safety or rich-HTML sanitization.",
+      "url": "https://docs.remix.run/api/html-template/",
+      "reviewedOn": "2026-11-11",
+      "label": "HTML templates / trusted raw bypass"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/auth-sessions-security/",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/auth-sessions-security/",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/auth-sessions-security/",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "native",
+      "note": "The router guide demonstrates ordinary HTML forms posted to server handlers, followed by useful HTML responses. Enhanced component forms are separate; a browser-only handler must not replace the real submission path if no-JS behavior is required.",
+      "url": "https://docs.remix.run/api/router/#links-and-form-actions",
+      "reviewedOn": "2026-11-11",
+      "label": "Native form handlers"
+    },
+    "optimisticUi": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific optimistic updates contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/streaming-ui-with-frames/",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "native",
+      "note": "A newer frame reload cancels earlier client work for that frame, including pending requests and streamed content. Server work may already have happened; cancellation is not mutation rollback.",
+      "url": "https://docs.remix.run/api/component/jsx-runtime/",
+      "reviewedOn": "2026-11-13",
+      "label": "Frame reload cancellation"
+    },
+    "typedLinks": {
+      "status": "native",
+      "note": "Typed route maps expose href construction with route parameter inference for links and form destinations. This is Remix 3's Fetch/router API, not React Router type generation.",
+      "url": "https://docs.remix.run/api/router/#links-and-form-actions",
+      "reviewedOn": "2026-11-11",
+      "label": "Typed route maps"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/api/component/",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "native",
+      "note": "Frame reconciliation preserves matching client component state while updating server HTML. State survives only while component identity is retained; durable restoration after reload or replacement is application-owned.",
+      "url": "https://docs.remix.run/api/component/jsx-runtime/",
+      "reviewedOn": "2026-11-13",
+      "label": "Frame reconciliation"
+    },
+    "scrollRestoration": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific scroll restoration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/api/component/",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationBlocking": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/api/component/",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationAccessibility": {
+      "status": "native",
+      "note": "The frame navigation runtime resets focus and scroll by default and provides explicit resetFocus/resetScroll controls. This is focus behavior, not a documented SvelteKit-style route announcer or a general accessibility guarantee.",
+      "url": "https://docs.remix.run/api/component/jsx-runtime/",
+      "reviewedOn": "2026-11-13",
+      "label": "Navigation focus controls"
+    },
+    "a11yChecks": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/api/component/",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/api/component/",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific route / island splitting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/api/component/",
+      "reviewedOn": "2026-11-11"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/production/",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/files-and-assets/",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/files-and-assets/",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/files-and-assets/",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.remix.run/api/data-table/",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "native",
+      "note": "Fetch-style handlers can be called with Request objects and their Responses asserted without an HTTP listener. This is the documented Fetch-handler boundary, not an attributed Rails-style session test DSL.",
+      "url": "https://docs.remix.run/testing/",
+      "reviewedOn": "2026-11-11",
+      "label": "Fetch handler tests"
+    }
+  }
+}

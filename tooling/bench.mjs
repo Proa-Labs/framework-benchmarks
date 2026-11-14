@@ -174,6 +174,7 @@ async function main() {
       run(["run", task]);
     for (const key of Object.keys(suites))
       run(["tooling/bench.mjs", "validate", key]);
+    run(["sveltekit/report.mjs", "--check"]);
     run(["site/build.ts"]);
   } else {
     console.log(

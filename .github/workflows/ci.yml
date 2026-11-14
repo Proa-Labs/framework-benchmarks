@@ -114,10 +114,9 @@ jobs:
           set -euo pipefail
           bun install --frozen-lockfile
           bun run test
-          npm --prefix rendering/external/sveltekit ci
           bun test rendering/external/sveltekit/stream-validator.test.mjs sveltekit/benchmark.test.mjs
           bun sveltekit/report.mjs --check
-          bash -n scripts/refresh-proa.sh rendering/run_all.sh
+          bash -n scripts/refresh-proa.sh rendering/run_all.sh framework-ssr/cloud/*.sh tooling/cloud/*.sh
 
       - name: Check Rust formatting
         if: matrix.suite == 'quality'
@@ -129,13 +128,13 @@ jobs:
           PROA_FRAMEWORK_TOKEN: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
         run: |
           set -euo pipefail
-          if [[ -z "${PROA_FRAMEWORK_TOKEN:-}" ]]; then
-            echo "PROA_FRAMEWORK_TOKEN must provide read-only access to Proa-Labs/proa" >&2
-            exit 1
+          # Fork PRs do not receive repository secrets. Proa is public, so
+          # anonymous fetches must work too; retain optional authenticated access.
+          if [[ -n "${PROA_FRAMEWORK_TOKEN:-}" ]]; then
+            git config --global \
+              url."https://x-access-token:${PROA_FRAMEWORK_TOKEN}@github.com/Proa-Labs/proa".insteadOf \
+              "https://github.com/Proa-Labs/proa"
           fi
-          git config --global \
-            url."https://x-access-token:${PROA_FRAMEWORK_TOKEN}@github.com/Proa-Labs/proa".insteadOf \
-            "https://github.com/Proa-Labs/proa"
 
       - name: Fetch pinned benchmark dependencies
         if: matrix.suite == 'rendering'
@@ -154,11 +153,6 @@ jobs:
         run: |
           set -euo pipefail
           bun install --frozen-lockfile
-          bun install --cwd rendering/external/react --frozen-lockfile
-          bun install --cwd rendering/external/marko --frozen-lockfile
-          bun install --cwd rendering/external/vue --frozen-lockfile
-          bun install --cwd rendering/external/svelte --frozen-lockfile
-          npm --prefix rendering/external/sveltekit ci
           bun node_modules/playwright/cli.js install --with-deps chromium
 
       - name: Run Clippy correctness lints
@@ -210,6 +204,17 @@ jobs:
           bun page-load/run.mjs --duration 1 --repeats 1 --warmup-requests 4 --concurrency 8 \
             --tolerate-generator-limits --out page-load/results/smoke.json
           bun run bench:cold-start:smoke
+
+      - name: Build and gate all full-framework SSR workloads
+        if: matrix.suite == 'rendering'
+        run: |
+          bun framework-ssr/build.ts
+          bun framework-ssr/run.ts --no-build --smoke --workers 2
+
+      - name: Verify unchanged-fixture exclusion evidence
+        if: matrix.suite == 'rendering'
+        run: |
+          bun rendering/external/exact/check-admission.mjs
 
       - name: Show compiler cache stats
         if: always() && matrix.suite == 'rendering'

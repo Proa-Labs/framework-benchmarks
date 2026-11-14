@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "benchmark_version": "product-scaling-v1",
+  "capture_id": "product-scaling-v1-2026-11-13T20-58-08-676Z-e24e7516",
+  "capture_kind": "engineering",
+  "status": "pass",
+  "captured_at": "2026-11-13T20:58:08.676Z",
+  "completed_at": "2026-11-13T20:58:11.657Z",
+  "host": {
+    "machineId": "28653bc9a7aa6d1057ffe318b9b2bd44e20660dc9c9e0a27636c7d0f43b40dda",
+    "campaignId": "publication-23ab862c-d2de-441e-9c25-e90aef62e86b",
+    "campaignProtocol": "proa-only-v1",
+    "machineClass": "c4-standard-16-lssd",
+    "sourceRevision": "42539a429e2eb61aae8916e7c069cd3edb473a4c",
+    "nodeName": "gke-proa-ci-runners-c4-19143b73-7vgw",
+    "platform": "linux",
+    "release": "6.12.105+",
+    "arch": "x64",
+    "cpuModel": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
+    "logicalCpuCount": 16,
+    "totalMemoryBytes": 63200755712,
+    "node": "v26.3.0",
+    "javascriptRuntime": "Bun 1.4.2",
+    "serverCpuAffinity": "0",
+    "cpu_model": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
+    "cloud": "GCP C4 c4-standard-16-lssd · gke-proa-ci-runners-c4-19143b73-7vgw · isolated Proa-only diagnostic",
+    "server_cpu_affinity": "0",
+    "logical_cpus": 16,
+    "memory_bytes": 63200755712,
+    "architecture": "x64",
+    "os_name": "linux",
+    "os_release": "6.12.105+"
+  },
+  "counts": [
+    12,
+    96,
+    768
+  ],
+  "renderers": [
+    {
+      "id": "proa",
+      "label": "Proa",
+      "language": "Rust"
+    }
+  ],
+  "parity": {
+    "proa": {
+      "12": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "cedfa2bdfa342851075aad871140281e8e7bb9a12063db87be58c2150c06a9b8",
+        "output_bytes": 35762,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "96": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 284908,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "768": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "c017778d3d9d5022c3794d0b82b45ff76397ec774f7b84088c2d9ce6c43adaf9",
+        "output_bytes": 2278716,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      }
+    }
+  },
+  "measurements": {
+    "proa": {
+      "12": {
+        "p50_us": 1.645,
+        "p95_us": 1.7470499999999998,
+        "p99_us": 1.8240100000000001,
+        "mean_us": 1.6962914999999978,
+        "process_p50_min_us": 1.633,
+        "process_p50_max_us": 1.899,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 35762,
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion"
+      },
+      "96": {
+        "p50_us": 12.4505,
+        "p95_us": 12.7538,
+        "p99_us": 18.568269999999988,
+        "mean_us": 12.561610000000005,
+        "process_p50_min_us": 12.3945,
+        "process_p50_max_us": 12.6395,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 284908,
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion"
+      },
+      "768": {
+        "p50_us": 117.469,
+        "p95_us": 131.99035,
+        "p99_us": 133.62526000000003,
+        "mean_us": 119.27152999999994,
+        "process_p50_min_us": 116.9865,
+        "process_p50_max_us": 117.741,
+        "independent_processes": 5,
+        "samples_per_process": 100,
+        "warmups_per_process": 10,
+        "output_bytes": 2278716,
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion"
+      }
+    }
+  },
+  "versions": {
+    "Proa": "0.4.0 @ ceffd9f305acabbb0584fa181df4f4e2d7883e94 / rustc 1.95.0 (59807616e 2026-04-14)",
+    "Playwright": "1.61.1",
+    "Chromium": "149.0.7827.55"
+  },
+  "provenance": {
+    "harness_commit": "42539a429e2eb61aae8916e7c069cd3edb473a4c",
+    "dirty": true,
+    "source_sha256": "4502f003a397b87d2c668ca1f30c6a7f4a9cf01746176227c045b171623c4868"
+  },
+  "command": "./rendering/run-all --product-scaling",
+  "limitations": [
+    "Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.",
+    "Every row builds a fresh independently owned response; fixture data construction is outside the timed region.",
+    "This engineering capture describes one machine and one scaling workload; it is not a universal application ranking."
+  ],
+  "raw_artifact": "raw/product-scaling-v1-2026-11-13T20-58-08-676Z-e24e7516/process-summaries.json"
+}

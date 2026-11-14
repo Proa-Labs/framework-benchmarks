@@ -25,18 +25,30 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
     fail("captured_at is invalid");
   }
   if (result.status !== "pass") fail("status must be pass");
-  if (!new Set(["canonical", "historical_partial", "proa_refresh"]).has(result.capture_kind)) {
+  if (
+    !new Set(["canonical", "historical_partial", "proa_refresh"]).has(
+      result.capture_kind,
+    )
+  ) {
     fail("capture_kind must be canonical or historical_partial");
   }
   if (
     ["canonical", "proa_refresh"].includes(result.capture_kind) &&
-    (!result.completed_at || Number.isNaN(Date.parse(result.completed_at)) ||
+    (!result.completed_at ||
+      Number.isNaN(Date.parse(result.completed_at)) ||
       Date.parse(result.completed_at) < Date.parse(result.captured_at))
   ) {
     fail("completed_at is missing or invalid");
   }
 
-  if (result.capture_kind === "proa_refresh" && (result.refresh?.renderer !== "proa" || !result.refresh.baseline_capture_id || !result.refresh.baseline_captured_at || !/^[a-f0-9]{64}$/.test(result.refresh.baseline_sha256 ?? ""))) fail("PROA refresh provenance is missing");
+  if (
+    result.capture_kind === "proa_refresh" &&
+    (result.refresh?.renderer !== "proa" ||
+      !result.refresh.baseline_capture_id ||
+      !result.refresh.baseline_captured_at ||
+      !/^[a-f0-9]{64}$/.test(result.refresh.baseline_sha256 ?? ""))
+  )
+    fail("PROA refresh provenance is missing");
   const expectedRendererIds = roster.renderers.map(({ id }) => id);
   const expectedWorkloadIds = workloadManifest.workloads.map(({ id }) => id);
   const resultWorkloadIds = (result.workloads ?? []).map(({ id }) => id);
@@ -68,11 +80,11 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
     fail("the public Proa label must be exactly `Proa`");
   }
 
-  const missingRenderers = expectedRendererIds.filter((id) =>
-    !rendererIds.includes(id)
+  const missingRenderers = expectedRendererIds.filter(
+    (id) => !rendererIds.includes(id),
   );
-  const unexpectedRenderers = rendererIds.filter((id) =>
-    !expectedRendererIds.includes(id)
+  const unexpectedRenderers = rendererIds.filter(
+    (id) => !expectedRendererIds.includes(id),
   );
   if (missingRenderers.length > 0) {
     fail(`roster entries missing: ${missingRenderers.join(", ")}`);
@@ -90,6 +102,7 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
     }
   }
 
+  const definitionFor = (id) => roster.renderers.find((row) => row.id === id);
   const statuses = new Set(["included", "in_progress", "excluded"]);
   for (const renderer of result.renderers) {
     if (!statuses.has(renderer.status)) {
@@ -100,7 +113,10 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
         `${renderer.id} ${renderer.status} status requires a concrete reason`,
       );
     }
-    if (["canonical", "proa_refresh"].includes(result.capture_kind) && renderer.status !== "included") {
+    if (
+      ["canonical", "proa_refresh"].includes(result.capture_kind) &&
+      renderer.status !== "included"
+    ) {
       fail(`${renderer.id} is not included in a canonical capture`);
     }
     const measurements = result.measurements?.[renderer.id] ?? {};
@@ -111,23 +127,26 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
         if (!measurement) {
           fail(`${renderer.id}/${workloadId} measurement is missing`);
         }
-        if (measurement.capture_id !== (result.capture_kind === "proa_refresh" && renderer.id !== "proa" ? result.refresh?.baseline_capture_id : result.capture_id)) {
+        if (
+          measurement.capture_id !==
+          (result.capture_kind === "proa_refresh" && renderer.id !== "proa"
+            ? result.refresh?.baseline_capture_id
+            : result.capture_id)
+        ) {
           fail(`${renderer.id}/${workloadId} comes from a different capture`);
         }
-        for (
-          const field of [
-            "p50_us",
-            "p95_us",
-            "p99_us",
-            "mean_us",
-            "process_p50_min_us",
-            "process_p50_max_us",
-            "output_bytes",
-            "independent_processes",
-            "samples_per_process",
-            "warmups_per_process",
-          ]
-        ) {
+        for (const field of [
+          "p50_us",
+          "p95_us",
+          "p99_us",
+          "mean_us",
+          "process_p50_min_us",
+          "process_p50_max_us",
+          "output_bytes",
+          "independent_processes",
+          "samples_per_process",
+          "warmups_per_process",
+        ]) {
           if (!Number.isFinite(measurement[field])) {
             fail(
               `${renderer.id}/${workloadId} ${field} is missing or non-numeric`,
@@ -142,7 +161,26 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
         if (parity[workloadId]?.status !== "pass") {
           fail(`${renderer.id}/${workloadId} parity pass is missing`);
         }
-        if (parity[workloadId].mode !== "semantic DOM") {
+        const adapted =
+          definitionFor(renderer.id)?.fixture === "exact-native-v1";
+        if (
+          adapted &&
+          (renderer.id !== "exact" ||
+            renderer.fixture !== "exact-native-v1" ||
+            parity[workloadId].fixture !== "exact-native-v1" ||
+            parity[workloadId].semantics_sha256 !==
+              parity[workloadId].reference_semantics_sha256 ||
+            !/^[a-f0-9]{64}$/.test(parity[workloadId].semantics_sha256 ?? "") ||
+            !(parity[workloadId].style_checks > 0) ||
+            parity[workloadId].negative_controls !== "pass")
+        )
+          fail(
+            `${renderer.id}/${workloadId}: incomplete adapted-fixture evidence`,
+          );
+        if (
+          parity[workloadId].mode !==
+          (adapted ? "adapted content and styles" : "semantic DOM")
+        ) {
           fail(`${renderer.id}/${workloadId} parity mode is not semantic DOM`);
         }
         if (!/^[a-f0-9]{64}$/.test(parity[workloadId].canonical_sha256 ?? "")) {
@@ -167,24 +205,24 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
           );
         }
       }
-      const extraMeasurements = Object.keys(measurements).filter((id) =>
-        !expectedWorkloadIds.includes(id)
+      const extraMeasurements = Object.keys(measurements).filter(
+        (id) => !expectedWorkloadIds.includes(id),
       );
       if (extraMeasurements.length > 0) {
         fail(
-          `${renderer.id} has unexpected workloads: ${
-            extraMeasurements.join(", ")
-          }`,
+          `${renderer.id} has unexpected workloads: ${extraMeasurements.join(
+            ", ",
+          )}`,
         );
       }
-      const extraParity = Object.keys(parity).filter((id) =>
-        !expectedWorkloadIds.includes(id)
+      const extraParity = Object.keys(parity).filter(
+        (id) => !expectedWorkloadIds.includes(id),
       );
       if (extraParity.length > 0) {
         fail(
-          `${renderer.id} has unexpected parity workloads: ${
-            extraParity.join(", ")
-          }`,
+          `${renderer.id} has unexpected parity workloads: ${extraParity.join(
+            ", ",
+          )}`,
         );
       }
     } else if (Object.keys(measurements).length > 0) {
@@ -203,11 +241,12 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
     }
   }
 
-  const proaRows = expectedWorkloadIds.filter((id) =>
-    result.measurements?.proa?.[id]
+  const proaRows = expectedWorkloadIds.filter(
+    (id) => result.measurements?.proa?.[id],
   );
   if (
-    proa.status === "included" && proaRows.length !== expectedWorkloadIds.length
+    proa.status === "included" &&
+    proaRows.length !== expectedWorkloadIds.length
   ) {
     fail("Proa must have exactly one complete public row");
   }
@@ -215,17 +254,19 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
     if (proa.status !== "included") break;
     const baseline = result.parity.proa[workloadId];
     if (
-      baseline.payload_delta_bytes !== 0 || baseline.byte_equal_to_proa !== true
+      baseline.payload_delta_bytes !== 0 ||
+      baseline.byte_equal_to_proa !== true
     ) {
       fail(`Proa/${workloadId} must be its own exact-byte baseline`);
     }
-    for (
-      const renderer of result.renderers.filter(({ status }) =>
-        status === "included"
-      )
-    ) {
+    for (const renderer of result.renderers.filter(
+      ({ status }) => status === "included",
+    )) {
       const cell = result.parity[renderer.id][workloadId];
-      if (cell.canonical_sha256 !== baseline.canonical_sha256) {
+      if (
+        definitionFor(renderer.id)?.fixture !== "exact-native-v1" &&
+        cell.canonical_sha256 !== baseline.canonical_sha256
+      ) {
         fail(
           `${renderer.id}/${workloadId} canonical DOM digest differs from Proa`,
         );
@@ -237,8 +278,10 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
     }
   }
   if (
-    !result.host?.cpu_model || !result.host?.os_name ||
-    !result.host?.os_release || !result.host?.architecture ||
+    !result.host?.cpu_model ||
+    !result.host?.os_name ||
+    !result.host?.os_release ||
+    !result.host?.architecture ||
     !Number.isInteger(result.host?.logical_cpus) ||
     !Number.isFinite(result.host?.memory_bytes)
   ) {
@@ -247,11 +290,9 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
   if (!result.versions || Object.keys(result.versions).length === 0) {
     fail("version metadata is missing");
   }
-  for (
-    const renderer of result.renderers.filter(({ status }) =>
-      status === "included"
-    )
-  ) {
+  for (const renderer of result.renderers.filter(
+    ({ status }) => status === "included",
+  )) {
     if (!result.versions[renderer.label]) {
       fail(`${renderer.id} framework/runtime version is missing`);
     }
@@ -261,7 +302,8 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
   }
   if (!Array.isArray(result.limitations)) fail("limitations are missing");
   if (
-    !Array.isArray(result.raw_artifacts) || result.raw_artifacts.length === 0
+    !Array.isArray(result.raw_artifacts) ||
+    result.raw_artifacts.length === 0
   ) {
     fail("raw artifact links are missing");
   }
@@ -272,9 +314,9 @@ function orderedIncluded(result, roster) {
   const byId = new Map(
     result.renderers.map((renderer) => [renderer.id, renderer]),
   );
-  return roster.renderers.map(({ id }) => byId.get(id)).filter(({ status }) =>
-    status === "included"
-  );
+  return roster.renderers
+    .map(({ id }) => byId.get(id))
+    .filter(({ status }) => status === "included");
 }
 
 function prettyDate(value) {
@@ -313,23 +355,23 @@ export function renderTakeaway(result, roster, workloadManifest) {
   const peerId = includedIds.has("react")
     ? "react"
     : roster.renderers.find(({ id }) => id !== "proa" && includedIds.has(id))
-      ?.id;
+        ?.id;
   if (!peerId || !includedIds.has("proa")) {
-    return `On these workloads, the ${
-      prettyDate(result.captured_at)
-    } capture on ${result.host.cpu_model} contains no eligible Proa-to-peer ratio.`;
+    return `On these workloads, the ${prettyDate(
+      result.captured_at,
+    )} capture on ${result.host.cpu_model} contains no eligible Proa-to-peer ratio.`;
   }
   const peer = result.renderers.find(({ id }) => id === peerId);
   const comparisons = workloadManifest.workloads.map(({ id, label }) => {
     const proaValue = result.measurements.proa[id].p50_us;
     const peerValue = result.measurements[peerId][id].p50_us;
-    return `the ${label.toLowerCase()} ${
-      ratio(peerValue / proaValue)
-    } faster than ${peer.label}`;
+    return `the ${label.toLowerCase()} ${ratio(
+      peerValue / proaValue,
+    )} faster than ${peer.label}`;
   });
-  return `On these workloads, the ${
-    prettyDate(result.captured_at)
-  } capture on ${result.host.cpu_model} measured Proa rendering ${
+  return `On these workloads, the ${prettyDate(
+    result.captured_at,
+  )} capture on ${result.host.cpu_model} measured Proa rendering ${
     comparisons[0]
   }, ${comparisons[1]}, and ${
     comparisons[2]
@@ -340,13 +382,15 @@ export function renderScoreboard(result, roster, workloadManifest) {
   validateCanonicalResult(result, roster, workloadManifest);
   const renderers = orderedIncluded(result, roster);
   const units = Object.fromEntries(
-    workloadManifest.workloads.map((
-      { id },
-    ) => [id, unitForWorkload(result, renderers, id)]),
+    workloadManifest.workloads.map(({ id }) => [
+      id,
+      unitForWorkload(result, renderers, id),
+    ]),
   );
   const headings = workloadManifest.workloads.map(({ label }) => label);
   const lines = [`${SCOREBOARD_START}`];
-  if (result.refresh) lines.push("", `> **PROA-only refresh.** ${result.refresh.note}`);
+  if (result.refresh)
+    lines.push("", `> **PROA-only refresh.** ${result.refresh.note}`);
   if (result.capture_kind === "historical_partial") {
     lines.push(
       "",
@@ -355,13 +399,15 @@ export function renderScoreboard(result, roster, workloadManifest) {
   }
   lines.push(
     "",
-    `**${
-      prettyDate(result.captured_at)
-    } · ${result.host.cpu_model} · ${result.host.os_name}**`,
+    `**${prettyDate(
+      result.captured_at,
+    )} · ${result.host.cpu_model} · ${result.host.os_name}**`,
     "",
     renderTakeaway(result, roster, workloadManifest),
     "",
-    "> Lower is better. Every listed renderer produced an equivalent page and passed the parity gate.",
+    result.renderers.some((r) => r.fixture)
+      ? "> Lower is better. Strict rows pass unchanged DOM/class parity. Exact† uses an explicitly adapted fixture with equivalent content and native styles; its HTML differs. See [adaptation details](rendering/external/exact/README.md)."
+      : "> Lower is better. Every listed renderer produced an equivalent page and passed the parity gate.",
     "",
     "Each cell is `P50 render time · relative to Proa`.",
     "",
@@ -372,11 +418,13 @@ export function renderScoreboard(result, roster, workloadManifest) {
     const cells = workloadManifest.workloads.map(({ id }) => {
       const measurement = result.measurements[renderer.id][id];
       const baseline = result.measurements.proa[id].p50_us;
-      return `${duration(measurement.p50_us, units[id])} · ${
-        ratio(measurement.p50_us / baseline)
-      }`;
+      return `${duration(measurement.p50_us, units[id])} · ${ratio(
+        measurement.p50_us / baseline,
+      )}`;
     });
-    lines.push(`| ${renderer.label} | ${cells.join(" | ")} |`);
+    lines.push(
+      `| ${renderer.label}${renderer.fixture ? "†" : ""} | ${cells.join(" | ")} |`,
+    );
   }
   lines.push(
     "",
@@ -403,9 +451,12 @@ export function renderCoverage(result, roster, workloadManifest) {
       in_progress: "In progress",
       excluded: "Excluded",
     }[renderer.status];
-    const detail = renderer.status === "included"
-      ? `All ${workloadManifest.workloads.length} workloads passed parity in this capture.`
-      : renderer.reason;
+    const detail =
+      renderer.status === "included"
+        ? renderer.fixture
+          ? `All ${workloadManifest.workloads.length} adapted workloads passed content and style checks; HTML differs. See the Exact adaptation notes.`
+          : `All ${workloadManifest.workloads.length} workloads passed parity in this capture.`
+        : renderer.reason;
     lines.push(`| ${renderer.label} | ${status} | ${detail} |`);
   }
   lines.push(COVERAGE_END);
@@ -420,15 +471,17 @@ function replaceSection(markdown, start, end, replacement) {
       `README markers ${start} / ${end} are missing or out of order`,
     );
   }
-  return `${markdown.slice(0, startIndex)}${replacement.trimEnd()}${
-    markdown.slice(endIndex + end.length)
-  }`;
+  return `${markdown.slice(0, startIndex)}${replacement.trimEnd()}${markdown.slice(
+    endIndex + end.length,
+  )}`;
 }
 
 export function renderReadmeDetails(result, roster, workloadManifest) {
   const report = renderDetailedReport(result, roster, workloadManifest);
   const lines = report.split("\n");
-  const metadataStart = lines.findIndex((line) => line.startsWith("- Capture:"));
+  const metadataStart = lines.findIndex((line) =>
+    line.startsWith("- Capture:"),
+  );
   const scoreboardStart = lines.indexOf("## Public scoreboard");
   const detailsStart = lines.indexOf("## Detailed measurements");
   if (metadataStart === -1 || scoreboardStart === -1 || detailsStart === -1) {
@@ -462,12 +515,14 @@ export function renderHistoricalResults(historicalReport) {
   if (sectionStart === -1) {
     throw new Error("historical report has no raw-results section");
   }
-  const body = historicalReport.slice(sectionStart).trim().split("\n").map(
-    (line) => {
+  const body = historicalReport
+    .slice(sectionStart)
+    .trim()
+    .split("\n")
+    .map((line) => {
       const demoted = /^(#{2,5}) /.test(line) ? `#${line}` : line;
       return demoted.replace(/\]\(\.\.\//g, "](");
-    },
-  );
+    });
   const supersededMatrix = body.indexOf(
     "##### Representative core matrix: seven renderers plus a memcpy floor",
   );
@@ -530,18 +585,16 @@ export function assertReadmeCurrent(
   workloadManifest,
   historicalReport,
 ) {
-  for (
-    const marker of [
-      SCOREBOARD_START,
-      SCOREBOARD_END,
-      COVERAGE_START,
-      COVERAGE_END,
-      DETAILS_START,
-      DETAILS_END,
-      HISTORY_START,
-      HISTORY_END,
-    ]
-  ) {
+  for (const marker of [
+    SCOREBOARD_START,
+    SCOREBOARD_END,
+    COVERAGE_START,
+    COVERAGE_END,
+    DETAILS_START,
+    DETAILS_END,
+    HISTORY_START,
+    HISTORY_END,
+  ]) {
     if (readme.split(marker).length !== 2) {
       throw new Error(`README must contain exactly one ${marker} marker`);
     }
@@ -566,8 +619,10 @@ export function assertReadmeCurrent(
   if (proaRows.length !== 1) {
     throw new Error("the headline table must contain exactly one Proa row");
   }
-  const expectedHeader = `| Renderer | ${workloadManifest.workloads.map(w => w.label).join(" | ")} |`;
-  const scoreboardHeaders = readme.split("\n").filter(line => line === expectedHeader);
+  const expectedHeader = `| Renderer | ${workloadManifest.workloads.map((w) => w.label).join(" | ")} |`;
+  const scoreboardHeaders = readme
+    .split("\n")
+    .filter((line) => line === expectedHeader);
   if (scoreboardHeaders.length !== 1) {
     throw new Error(
       "README must contain exactly one public rendering scoreboard",
@@ -612,19 +667,25 @@ export function renderDetailedReport(result, roster, workloadManifest) {
     "",
     renderTakeaway(result, roster, workloadManifest),
     "",
-    "> Lower is better. Every listed renderer produced an equivalent page and passed the parity gate.",
+    result.renderers.some((r) => r.fixture)
+      ? "> Lower is better. Strict rows pass unchanged DOM/class parity. Exact† uses an explicitly adapted fixture with equivalent content and native styles; its HTML differs. See [adaptation details](rendering/external/exact/README.md)."
+      : "> Lower is better. Every listed renderer produced an equivalent page and passed the parity gate.",
     "",
   ];
   const scoreboard = renderScoreboard(result, roster, workloadManifest)
     .split("\n")
-    .filter((line) =>
-      !line.startsWith("<!--") && !line.startsWith("> **Historical") &&
-      !line.startsWith("**") && !line.startsWith("On these") &&
-      !line.startsWith("> Lower") && !line.startsWith("Each cell") &&
-      !line.startsWith("Rows use")
+    .filter(
+      (line) =>
+        !line.startsWith("<!--") &&
+        !line.startsWith("> **Historical") &&
+        !line.startsWith("**") &&
+        !line.startsWith("On these") &&
+        !line.startsWith("> Lower") &&
+        !line.startsWith("Each cell") &&
+        !line.startsWith("Rows use"),
     );
-  const compactScoreboard = scoreboard.filter((line, index, all) =>
-    line !== "" || (index > 0 && all[index - 1] !== "")
+  const compactScoreboard = scoreboard.filter(
+    (line, index, all) => line !== "" || (index > 0 && all[index - 1] !== ""),
   );
   while (compactScoreboard[0] === "") compactScoreboard.shift();
   while (compactScoreboard.at(-1) === "") compactScoreboard.pop();
@@ -639,26 +700,25 @@ export function renderDetailedReport(result, roster, workloadManifest) {
     for (const workload of workloadManifest.workloads) {
       const measurement = result.measurements[renderer.id][workload.id];
       const parity = result.parity[renderer.id][workload.id];
-      const range = Number.isFinite(measurement.process_p50_min_us) &&
-          Number.isFinite(measurement.process_p50_max_us)
-        ? `${detailedDuration(measurement.process_p50_min_us)}–${
-          detailedDuration(measurement.process_p50_max_us)
-        }`
-        : "not retained";
+      const range =
+        Number.isFinite(measurement.process_p50_min_us) &&
+        Number.isFinite(measurement.process_p50_max_us)
+          ? `${detailedDuration(measurement.process_p50_min_us)}–${detailedDuration(
+              measurement.process_p50_max_us,
+            )}`
+          : "not retained";
       lines.push(
-        `| ${renderer.label} | ${workload.label} | ${
-          detailedDuration(measurement.p50_us)
-        } | ${
-          detailedDuration(measurement.p95_us)
-        } | ${
-          detailedDuration(measurement.p99_us)
-        } | ${
-          detailedDuration(measurement.mean_us)
-        } | ${range} | ${measurement.independent_processes} | ${measurement.samples_per_process} | ${measurement.warmups_per_process} | ${
-          measurement.output_bytes.toLocaleString("en-US")
-        } | ${parity.payload_delta_bytes >= 0 ? "+" : ""}${
-          parity.payload_delta_bytes.toLocaleString("en-US")
-        } | ${parity.mode} pass |`,
+        `| ${renderer.label} | ${workload.label} | ${detailedDuration(
+          measurement.p50_us,
+        )} | ${detailedDuration(measurement.p95_us)} | ${detailedDuration(
+          measurement.p99_us,
+        )} | ${detailedDuration(
+          measurement.mean_us,
+        )} | ${range} | ${measurement.independent_processes} | ${measurement.samples_per_process} | ${measurement.warmups_per_process} | ${measurement.output_bytes.toLocaleString(
+          "en-US",
+        )} | ${parity.payload_delta_bytes >= 0 ? "+" : ""}${parity.payload_delta_bytes.toLocaleString(
+          "en-US",
+        )} | ${parity.mode} pass |`,
       );
     }
   }
@@ -670,11 +730,11 @@ export function renderDetailedReport(result, roster, workloadManifest) {
       const tailRatio = measurement.p95_us / measurement.p50_us;
       if (tailRatio >= 3) {
         tailObservations.push(
-          `${renderer.label}'s ${workload.label.toLowerCase()} P95 was ${
-            ratio(tailRatio)
-          } its P50 (${detailedDuration(measurement.p95_us)} versus ${
-            detailedDuration(measurement.p50_us)
-          }).`,
+          `${renderer.label}'s ${workload.label.toLowerCase()} P95 was ${ratio(
+            tailRatio,
+          )} its P50 (${detailedDuration(measurement.p95_us)} versus ${detailedDuration(
+            measurement.p50_us,
+          )}).`,
         );
       }
     }

@@ -113,7 +113,7 @@ run_react() {
     info "Running React 19 (Node.js) benchmark..."
     cd "$EXTERNAL_DIR/react"
     if [ ! -d node_modules ]; then
-        npm install --silent 2>/dev/null
+        bun install --cwd "$SCRIPT_DIR/.." --frozen-lockfile
     fi
     # NODE_ENV=production is REQUIRED: dev-mode React SSR is 3-8x slower and
     # not a fair comparison. The bench also hard-fails without it.
@@ -135,7 +135,7 @@ run_bun() {
     info "Running React 19 (Bun) benchmark..."
     cd "$EXTERNAL_DIR/bun"
     if [ ! -d node_modules ]; then
-        "$bun_bin" install --silent 2>/dev/null
+        "$bun_bin" install --cwd "$SCRIPT_DIR/.." --frozen-lockfile
     fi
     # Production mode required (see run_react).
     NODE_ENV=production "$bun_bin" run bench.mjs
@@ -200,7 +200,7 @@ run_handlebars() {
     info "Running Handlebars benchmark..."
     cd "$EXTERNAL_DIR/handlebars"
     if [ ! -d node_modules ]; then
-        npm install --silent 2>/dev/null
+        bun install --cwd "$SCRIPT_DIR/.." --frozen-lockfile
     fi
     node bench.mjs
     info "Handlebars benchmark complete"
@@ -215,7 +215,7 @@ run_marko() {
     info "Running Marko benchmark..."
     cd "$EXTERNAL_DIR/marko"
     if [ ! -d node_modules ]; then
-        npm install --silent 2>/dev/null
+        bun install --cwd "$SCRIPT_DIR/.." --frozen-lockfile
     fi
     node bench.mjs
     info "Marko benchmark complete"
@@ -262,7 +262,7 @@ run_data_table() {
         info "  -> Marko (JS)"
         cd "$EXTERNAL_DIR/marko"
         if [ ! -d node_modules ]; then
-            npm install --silent 2>/dev/null
+            bun install --cwd "$SCRIPT_DIR/.." --frozen-lockfile
         fi
         node bench_table.mjs --rows "$rows" --iters "$iters" --warmup "$warmup"
     else
@@ -308,7 +308,7 @@ run_ebay_srp() {
         info "  -> Marko (JS)"
         cd "$EXTERNAL_DIR/marko"
         if [ ! -d node_modules ]; then
-            npm install --silent 2>/dev/null
+            bun install --cwd "$SCRIPT_DIR/.." --frozen-lockfile
         fi
         node bench_srp.mjs --listings "$listings" --iters "$iters" --warmup "$warmup"
     else
@@ -334,7 +334,7 @@ run_ebay_srp_real() {
     if command -v node &>/dev/null; then
         info "  -> Marko (JS)"
         cd "$EXTERNAL_DIR/marko"
-        if [ ! -d node_modules ]; then npm install --silent 2>/dev/null; fi
+        if [ ! -d node_modules ]; then bun install --cwd "$SCRIPT_DIR/.." --frozen-lockfile; fi
         node bench_srp_real.mjs --listings "$listings" --iters "$iters" --warmup "$warmup"
     else
         warn "Node.js not found, skipping Marko run"
