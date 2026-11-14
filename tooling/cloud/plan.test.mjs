@@ -160,7 +160,9 @@ test("resume reuses complete archives and rejects a changed archive before launc
     ).toBe(5);
     expect(JSON.parse(readFileSync(statePath)).status).toBe("smoke-complete");
     const selection = join(stage, "site/data/performance/proa-refresh.json");
-    const original = readFileSync(selection);
+    const original = Buffer.from('{"reviewOnly":true}\n');
+    mkdirSync(join(stage, "site/data/performance"), { recursive: true });
+    writeFileSync(selection, original);
     state.options.smoke = false;
     writeFileSync(statePath, JSON.stringify(state));
     // Empty archives cannot promote old captures as a replacement campaign.
