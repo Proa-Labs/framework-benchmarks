@@ -38,7 +38,7 @@
     {
       "id": "assets",
       "label": "Images, fonts & scripts",
-      "description": "Check whether assets are transformed automatically, optimized at build time, or prepared manually."
+      "description": "Check asset processing, automatic cache busting, and the difference between build-managed assets and files served unchanged."
     },
     {
       "id": "metadata",
@@ -291,6 +291,12 @@
       "group": "assets",
       "label": "Script loading",
       "definition": "Control when third-party scripts load, including deferred or interaction-driven strategies."
+    },
+    {
+      "id": "assetPipeline",
+      "group": "assets",
+      "label": "Asset pipeline & cache busting",
+      "definition": "Content-based or versioned asset URLs, with imports, helpers, or a manifest keeping references in sync when files change. Notes distinguish processed assets from unchanged public files and identify limited asset coverage. This is browser/CDN cache busting, not a build cache or data-cache invalidation."
     },
     {
       "id": "staticAssets",

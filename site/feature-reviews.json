@@ -6,7 +6,7 @@
       "id": "askama",
       "scope": "Standalone templating API; adding a host framework can provide separate application features.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -187,6 +187,13 @@
           "status": "scope",
           "note": "Templates emit script markup; script scheduling and lifecycle policy belong to the host application.",
           "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+        },
+        "assetPipeline": {
+          "status": "scope",
+          "note": "The reviewed standalone template API does not own an asset build or deployment pipeline. The host application or a separate build tool must version files, update template references, and configure browser/CDN cache headers.",
+          "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+          "label": "Host / build tool required",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "scope",
@@ -523,7 +530,7 @@
       "id": "astro",
       "scope": "Astro documentation; official UI integrations named where required.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "official",
@@ -730,6 +737,13 @@
           "url": "https://docs.astro.build/en/guides/client-side-scripts/",
           "label": "Bundled scripts",
           "reviewedOn": "2026-11-10"
+        },
+        "assetPipeline": {
+          "status": "native",
+          "note": "Assets imported from source enter Astro’s Vite build graph: production URLs are hashed or small files are inlined, and references are updated. Files in public/ are copied unchanged and need their own versioning and cache policy.",
+          "url": "https://docs.astro.build/en/guides/imports/#other-assets",
+          "label": "Vite asset imports",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "native",
@@ -1112,7 +1126,7 @@
       "id": "dioxus",
       "scope": "Dioxus 0.7 documentation, including the optional Fullstack and Router packages.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "official",
@@ -1326,6 +1340,13 @@
           "note": "document::eval and browser bindings execute app-authored JavaScript. This is not an optimized third-party script scheduling API.",
           "url": "https://dioxuslabs.com/learn/0.7/essentials/advanced/breaking_out",
           "label": "Document eval"
+        },
+        "assetPipeline": {
+          "status": "official",
+          "note": "The Dioxus CLI processes assets declared with asset!, hashes their output names, and resolves Asset handles to the built URLs. This includes images and other files; hashing can be explicitly disabled. Arbitrary literal URLs do not gain this behavior.",
+          "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/assets/",
+          "label": "Manganis / asset!",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "official",
@@ -1683,7 +1704,7 @@
       "id": "exact",
       "scope": "Exact source revision 94b8671 (the revision used by the Framework SSR adapter); pre-1.0 APIs change frequently.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -1901,6 +1922,13 @@
           "note": "Page activation policies can defer the generated runtime until interaction. Arbitrary third-party script scheduling is not established.",
           "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
           "label": "Runtime activation policy"
+        },
+        "assetPipeline": {
+          "status": "native",
+          "note": "The pinned deploy pipeline hashes the complete web file graph and publishes it under an immutable release URL. It anchors HTML to that release and rewrites asset entries in the envelope and web manifest. This is deployment-time versioning of the whole tree, not per-file renaming in a plain local build; URLs outside that release remain application-owned.",
+          "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/scripts/deploy.mjs#L1176-L1248",
+          "label": "Versioned web releases",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "native",
@@ -2274,7 +2302,7 @@
       "id": "go-html-template",
       "scope": "Standalone templating API; adding a host framework can provide separate application features.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -2455,6 +2483,13 @@
           "status": "scope",
           "note": "Templates emit script markup; script scheduling and lifecycle policy belong to the host application.",
           "url": "https://pkg.go.dev/html/template"
+        },
+        "assetPipeline": {
+          "status": "scope",
+          "note": "The reviewed standalone template API does not own an asset build or deployment pipeline. The host application or a separate build tool must version files, update template references, and configure browser/CDN cache headers.",
+          "url": "https://pkg.go.dev/html/template",
+          "label": "Host / build tool required",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "scope",
@@ -2791,7 +2826,7 @@
       "id": "handlebars",
       "scope": "Standalone templating API; adding a host framework can provide separate application features.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -2973,6 +3008,13 @@
           "status": "scope",
           "note": "Templates emit script markup; script scheduling and lifecycle policy belong to the host application.",
           "url": "https://handlebarsjs.com/api-reference/compilation.html"
+        },
+        "assetPipeline": {
+          "status": "scope",
+          "note": "The reviewed standalone template API does not own an asset build or deployment pipeline. The host application or a separate build tool must version files, update template references, and configure browser/CDN cache headers.",
+          "url": "https://handlebarsjs.com/api-reference/compilation.html",
+          "label": "Host / build tool required",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "scope",
@@ -3309,7 +3351,7 @@
       "id": "jinja2",
       "scope": "Standalone templating API; adding a host framework can provide separate application features.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -3491,6 +3533,13 @@
           "status": "scope",
           "note": "Templates emit script markup; script scheduling and lifecycle policy belong to the host application.",
           "url": "https://jinja.palletsprojects.com/en/stable/api/"
+        },
+        "assetPipeline": {
+          "status": "scope",
+          "note": "The reviewed standalone template API does not own an asset build or deployment pipeline. The host application or a separate build tool must version files, update template references, and configure browser/CDN cache headers.",
+          "url": "https://jinja.palletsprojects.com/en/stable/api/",
+          "label": "Host / build tool required",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "scope",
@@ -3829,7 +3878,7 @@
       "id": "jte",
       "scope": "Standalone templating API; adding a host framework can provide separate application features.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -4010,6 +4059,13 @@
           "status": "scope",
           "note": "Templates emit script markup; script scheduling and lifecycle policy belong to the host application.",
           "url": "https://jte.gg/"
+        },
+        "assetPipeline": {
+          "status": "scope",
+          "note": "The reviewed standalone template API does not own an asset build or deployment pipeline. The host application or a separate build tool must version files, update template references, and configure browser/CDN cache headers.",
+          "url": "https://jte.gg/",
+          "label": "Host / build tool required",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "scope",
@@ -4350,7 +4406,7 @@
       "id": "laravel",
       "scope": "Laravel 13.x with Blade. Livewire, Inertia, Laravel Head and other companion packages are identified separately; native PHP has a separate row.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -4548,6 +4604,13 @@
           "url": "https://laravel.com/framework/docs/13.x/vite",
           "label": "Asset pipeline",
           "reviewedOn": "2026-11-10"
+        },
+        "assetPipeline": {
+          "status": "native",
+          "note": "Laravel’s Vite integration resolves production manifest entries to versioned JS, CSS, and imported assets. Static images must enter the Vite graph through imports or import.meta.glob and be referenced through the integration. Files served directly from public/ keep their names.",
+          "url": "https://laravel.com/framework/docs/13.x/vite#processing-static-assets-with-vite",
+          "label": "Vite integration",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "native",
@@ -4933,7 +4996,7 @@
       "id": "leptos",
       "scope": "Leptos book and API documentation; official router/server crates named separately.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -5144,6 +5207,13 @@
           "url": "https://book.leptos.dev/metadata.html",
           "label": "leptos_meta Script",
           "reviewedOn": "2026-11-10"
+        },
+        "assetPipeline": {
+          "status": "partial",
+          "note": "cargo-leptos can add hashes to generated CSS, JS, and WASM filenames with hash-files enabled; it is off by default and the server must use matching configuration. Files from assets-dir are copied, so arbitrary images such as image.svg still need application-owned versioning.",
+          "url": "https://github.com/leptos-rs/cargo-leptos/blob/main/README.md",
+          "label": "JS, CSS & WASM hashing",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "official",
@@ -5524,7 +5594,7 @@
       "id": "marko",
       "scope": "Marko 6 documentation; @marko/run application features are identified explicitly.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -5729,6 +5799,13 @@
           "note": "The template runtime manages generated activation code. Scheduling arbitrary third-party scripts remains application-owned.",
           "url": "https://markojs.com/docs/reference/template",
           "label": "Generated runtime scripts"
+        },
+        "assetPipeline": {
+          "status": "official",
+          "note": "Marko Run uses Vite, which hashes imported assets and updates their references in production. The official Vite integration also processes static relative asset attributes in templates. Files placed in public/ are copied unchanged; Marko’s compiler alone is not a complete deployment pipeline.",
+          "url": "https://github.com/marko-js/vite#asset-handling",
+          "label": "Marko Run / Vite",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "official",
@@ -6086,7 +6163,7 @@
       "id": "nextjs",
       "scope": "Next.js App Router documentation, including its React integration.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -6291,6 +6368,13 @@
           "note": "Script supports beforeInteractive, afterInteractive, and lazyOnload. Worker offloading is experimental.",
           "url": "https://nextjs.org/docs/app/guides/scripts",
           "label": "next/script"
+        },
+        "assetPipeline": {
+          "status": "native",
+          "note": "Next.js fingerprints build-managed JS, CSS, fonts, and statically imported images. Their content-based URLs can be cached for a year with immutable headers. Files placed directly in public/ retain their original names and default to max-age=0; they are not automatically fingerprinted.",
+          "url": "https://nextjs.org/docs/app/guides/cdn-caching",
+          "label": "Hashed build assets",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "native",
@@ -6690,7 +6774,7 @@
       "id": "nuxt",
       "scope": "Nuxt 4.x with Vue 3, Nitro and explicitly named companion modules. Experimental APIs and provider-specific cache behavior are qualified.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -6893,6 +6977,13 @@
           "note": "The companion module provides deferred third-party script loading and trigger strategies.",
           "url": "https://scripts.nuxt.com/",
           "label": "Nuxt Scripts"
+        },
+        "assetPipeline": {
+          "status": "native",
+          "note": "Referenced assets in app/assets are processed by Vite or webpack, producing hashed production URLs with updated references. Files in public/ retain their names. Runtime-constructed paths are not automatically discovered; import assets or use an import glob when needed.",
+          "url": "https://nuxt.com/docs/4.x/getting-started/assets",
+          "label": "Vite / webpack assets",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "undocumented",
@@ -7268,7 +7359,7 @@
       "id": "php",
       "scope": "Native PHP templates and runtime extensions; no PHP application framework is implied.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -7465,6 +7556,13 @@
           "status": "scope",
           "note": "Templates emit script markup; script scheduling and lifecycle policy belong to the host application.",
           "url": "https://www.php.net/manual/en/tutorial.php"
+        },
+        "assetPipeline": {
+          "status": "scope",
+          "note": "The reviewed standalone template API does not own an asset build or deployment pipeline. The host application or a separate build tool must version files, update template references, and configure browser/CDN cache headers.",
+          "url": "https://www.php.net/manual/en/tutorial.php",
+          "label": "Host / build tool required",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "scope",
@@ -7815,7 +7913,7 @@
       "id": "proa",
       "scope": "Published Proa documentation reviewed on the same date as other projects. Capabilities are not inferred from benchmark rank.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -8026,6 +8124,13 @@
           "note": "proa_third_party supports consent-aware analytics and deferred scripts; browser execution still requires CSP authorization.",
           "url": "https://proa.so/docs/framework/third-party",
           "label": "proa_third_party"
+        },
+        "assetPipeline": {
+          "status": "partial",
+          "note": "proa_fonts emits content-hashed font files, but the documented static-file setup does not provide a general image/CSS fingerprinting pipeline. Applications supply the static router, build tooling, URL references, and cache headers. Serving image.svg alone does not automatically give it a new URL when its contents change.",
+          "url": "https://proa.so/docs/framework/static-assets",
+          "label": "Fonts; app-owned pipeline",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "official",
@@ -8411,7 +8516,7 @@
       "id": "rails",
       "scope": "Rails documentation. Optional browser frameworks are not attributed to the server template engine.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -8614,6 +8719,13 @@
           "url": "https://guides.rubyonrails.org/action_view_helpers.html",
           "label": "Asset helpers",
           "reviewedOn": "2026-11-10"
+        },
+        "assetPipeline": {
+          "status": "official",
+          "note": "Propshaft, included in newly generated Rails apps, fingerprints assets with content digests and generates a manifest. Asset helpers and CSS references resolve to digested URLs. Bundling, compression, and delivery cache headers are separate configuration concerns; files outside the asset pipeline are not automatically versioned.",
+          "url": "https://guides.rubyonrails.org/asset_pipeline.html",
+          "label": "Propshaft",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "official",
@@ -8996,7 +9108,7 @@
       "id": "react",
       "scope": "React / React DOM documentation. Framework-provided features are not counted as React core.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -9200,6 +9312,13 @@
           "status": "native",
           "note": "Async script elements are hoisted and deduplicated; React also exposes preinit/preload resource hints. This is not an all-purpose third-party consent scheduler.",
           "url": "https://react.dev/reference/react-dom/components/script"
+        },
+        "assetPipeline": {
+          "status": "scope",
+          "note": "React and React DOM render UI; they do not own an asset build or deployment pipeline. A framework or separately configured build tool must fingerprint files, update references, and set delivery cache headers.",
+          "url": "https://react.dev/learn/creating-a-react-app",
+          "label": "Build tool required",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "scope",
@@ -9565,7 +9684,7 @@
       "id": "remix",
       "scope": "Remix 3.1 documentation and package APIs. This is the new Remix component/Fetch architecture, not React-based Remix v2 or React Router framework mode.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -9764,6 +9883,13 @@
           "status": "undocumented",
           "note": "Not established in the reviewed Remix assets guide. External integrations or application code may provide this behavior.",
           "url": "https://docs.remix.run/files-and-assets/"
+        },
+        "assetPipeline": {
+          "status": "native",
+          "note": "Remix 3’s asset server compiles scripts and styles and serves file assets. Content-based fingerprinted URLs are optional; stable URLs use ETags and revalidation by default. Enable fingerprinting and its URL generation for long-lived caching; this is the Remix 3 API, not the older React-based Remix build pipeline.",
+          "url": "https://docs.remix.run/api/assets/",
+          "label": "Optional fingerprinted URLs",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "native",
@@ -10121,7 +10247,7 @@
       "id": "rocker",
       "scope": "Standalone templating API; adding a host framework can provide separate application features.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -10302,6 +10428,13 @@
           "status": "scope",
           "note": "Templates emit script markup; script scheduling and lifecycle policy belong to the host application.",
           "url": "https://github.com/fizzed/rocker"
+        },
+        "assetPipeline": {
+          "status": "scope",
+          "note": "The reviewed standalone template API does not own an asset build or deployment pipeline. The host application or a separate build tool must version files, update template references, and configure browser/CDN cache headers.",
+          "url": "https://github.com/fizzed/rocker",
+          "label": "Host / build tool required",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "scope",
@@ -10640,7 +10773,7 @@
       "id": "sailfish",
       "scope": "Standalone templating API; adding a host framework can provide separate application features.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -10819,6 +10952,13 @@
           "status": "scope",
           "note": "Templates emit script markup; script scheduling and lifecycle policy belong to the host application.",
           "url": "https://docs.rs/sailfish/0.10.2/sailfish/trait.Template.html"
+        },
+        "assetPipeline": {
+          "status": "scope",
+          "note": "The reviewed standalone template API does not own an asset build or deployment pipeline. The host application or a separate build tool must version files, update template references, and configure browser/CDN cache headers.",
+          "url": "https://docs.rs/sailfish/0.10.2/sailfish/trait.Template.html",
+          "label": "Host / build tool required",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "scope",
@@ -11155,7 +11295,7 @@
       "id": "solid",
       "scope": "Solid v1 UI library with explicitly named Solid Router and Solid Meta companions. SolidStart application features are reviewed in their own row.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -11345,6 +11485,13 @@
           "status": "undocumented",
           "note": "Not established in the reviewed SolidJS assets guide. External integrations or application code may provide this behavior.",
           "url": "https://docs.solidjs.com/guides/styling-components/css-modules"
+        },
+        "assetPipeline": {
+          "status": "scope",
+          "note": "Solid’s UI runtime does not itself version image, CSS, or script URLs. Use a separate bundler such as Vite or the SolidStart application framework for a processed asset graph; literal URLs still need a deliberate cache policy.",
+          "url": "https://docs.solidjs.com/quick-start",
+          "label": "Build tool required",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "undocumented",
@@ -11695,7 +11842,7 @@
       "id": "solidstart",
       "scope": "SolidStart v2 with Solid v1, Solid Router v1 and Vite v8. Nitro and other deployment plugins are named separately.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -11891,6 +12038,13 @@
           "status": "undocumented",
           "note": "Not established in the reviewed SolidStart assets guide. External integrations or application code may provide this behavior.",
           "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/static-assets"
+        },
+        "assetPipeline": {
+          "status": "native",
+          "note": "SolidStart’s Vite pipeline hashes imported assets and updates production URLs. The static-asset guide distinguishes these imports from public/ files, which keep their original names and require their own cache-busting strategy.",
+          "url": "https://docs.solidjs.com/solid-start/v1/building-your-application/static-assets",
+          "label": "Vite asset imports",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "native",
@@ -12252,7 +12406,7 @@
       "id": "svelte",
       "scope": "Svelte 5 documentation, with SvelteKit functionality shown as an official companion.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -12473,6 +12627,13 @@
           "url": "https://svelte.dev/docs/kit/project-structure",
           "label": "App shell / components",
           "reviewedOn": "2026-11-10"
+        },
+        "assetPipeline": {
+          "status": "official",
+          "note": "The official SvelteKit companion uses Vite to fingerprint imported assets and update their URLs in production. Svelte’s compiler alone does not supply this pipeline. Files copied from the static directory remain unchanged.",
+          "url": "https://svelte.dev/docs/kit/images#Vite-s-built-in-handling",
+          "label": "SvelteKit / Vite",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "official",
@@ -12862,7 +13023,7 @@
       "id": "sveltekit",
       "scope": "Current SvelteKit documentation with Svelte 5. Remote functions and asynchronous Svelte rendering retain their documented experimental qualifications.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -13066,6 +13227,13 @@
           "status": "undocumented",
           "note": "Not established in the reviewed SvelteKit assets guide. External integrations or application code may provide this behavior.",
           "url": "https://svelte.dev/docs/kit/images"
+        },
+        "assetPipeline": {
+          "status": "native",
+          "note": "SvelteKit uses Vite’s built-in handling for imported assets: production filenames are hashed or small files are inlined, with generated references updated. Files in static/ are served unchanged and need manual versioning if their URLs should be immutable.",
+          "url": "https://svelte.dev/docs/kit/images#Vite-s-built-in-handling",
+          "label": "Vite asset imports",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "undocumented",
@@ -13448,7 +13616,7 @@
       "id": "tanstack-start",
       "scope": "TanStack Start v1 React documentation, with TanStack Router. Experimental Server Components are qualified separately; this is not the Solid adapter review.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -13641,6 +13809,13 @@
           "status": "undocumented",
           "note": "Not established in the reviewed TanStack Start assets guide. External integrations or application code may provide this behavior.",
           "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo"
+        },
+        "assetPipeline": {
+          "status": "native",
+          "note": "TanStack Start integrates a bundler-managed client asset graph, including hashed production chunks and SSR asset URL mapping. Its CDN asset URL hook can remap generated URLs. Assets must enter the build graph; copying a file to public/ does not automatically fingerprint it.",
+          "url": "https://tanstack.com/start/latest/docs/framework/react/guide/cdn-asset-urls",
+          "label": "Bundler-managed assets",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "undocumented",
@@ -14018,7 +14193,7 @@
     },
     {
       "id": "topcoat",
-      "scope": "Streaming and Suspense reviewed against Topcoat 0.12.1; other feature findings retain the 0.3.1 review. Render benchmarks use 0.3.1.",
+      "scope": "Streaming, Suspense, and the asset pipeline reviewed against Topcoat 0.12.1; other feature findings retain the 0.3.1 review. Render benchmarks use 0.3.1.",
       "reviewedOn": "2026-11-10",
       "updatedOn": "2026-11-13",
       "capabilities": {
@@ -14222,6 +14397,13 @@
           "note": "Topcoat manages generated client expressions; arbitrary third-party script scheduling is application-owned.",
           "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/",
           "label": "Compiled client runtime"
+        },
+        "assetPipeline": {
+          "status": "native",
+          "note": "Topcoat 0.12.1’s asset! macro produces a typed asset URL. The asset bundler hashes file contents, emits fingerprinted filenames and a manifest, and the router serves the matching bundle. Deploy the binary and asset bundle from the same build. Assets outside this pipeline remain application-owned.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
+          "label": "asset! / asset bundle",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "native",
@@ -14570,7 +14752,7 @@
       "id": "vue",
       "scope": "Vue 3 documentation. Vue Router and external application/i18n packages are identified separately.",
       "reviewedOn": "2026-11-10",
-      "updatedOn": "2026-11-11",
+      "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
@@ -14775,6 +14957,13 @@
           "url": "https://vuejs.org/guide/scaling-up/ssr.html",
           "label": "Host script integration",
           "reviewedOn": "2026-11-10"
+        },
+        "assetPipeline": {
+          "status": "community",
+          "note": "Vue’s recommended create-vue setup uses Vite, whose production asset graph hashes imported images, CSS, fonts, and scripts and updates references. This behavior comes from the external build tool, not Vue’s runtime. Files copied from public/ are unchanged.",
+          "url": "https://vite.dev/guide/assets",
+          "label": "Vite build pipeline",
+          "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
           "status": "community",
