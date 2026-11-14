@@ -28,7 +28,7 @@ An included renderer must:
 4. pass every parity cell before timing begins; and
 5. appear exactly once in the result artifact and generated table.
 
-There are no partial public rows. An unexpected disappearance, missing workload, absent parity decision, or measurement from another capture invalidates report generation. The public Proa row is named exactly `Proa` and returns a freshly allocated, independently owned `RenderBuffer`. This is the native paged HTML output before optional conversion to a contiguous `String`. Other adapters retain their independently owned String outputs. Proa's context construction, page allocation, component rendering and the previous output's destruction are inside timing. Flattening is performed only for untimed parity dumps. The entire returned owner is passed to an optimizer barrier; no byte-count traversal or page concatenation runs in the measured Proa loop. The former `render_to_string` path remains an explicitly labeled engineering control. This is an output-boundary change, not an upstream framework speedup. Reuse, chaining, manual writes, capacity experiments, and controls remain in engineering reports.
+There are no partial public rows. An unexpected disappearance, missing workload, absent parity decision, or measurement from another capture invalidates report generation. The public Proa row is named exactly `Proa` and returns a freshly allocated, independently owned `RenderBuffer`. This is the native paged HTML output before optional conversion to a contiguous `String`. Other adapters retain their independently owned String outputs. Proa's context construction, page allocation and component rendering are inside timing. Destruction of the previous output happens after timing stops. Flattening is performed only for untimed parity dumps. The entire returned owner is passed to an optimizer barrier; no byte-count traversal or page concatenation runs in the measured Proa loop. The former `render_to_string` path remains an explicitly labeled engineering control. This is an output-boundary change, not an upstream framework speedup. Reuse, chaining, manual writes, capacity experiments, and controls remain in engineering reports.
 
 ## Parity gate
 
@@ -43,6 +43,21 @@ Each adapter first emits an untimed HTML dump. Chromium parses it, and the harne
 The comparison may ignore renderer-internal comments, resource-preload hints, non-semantic `<head>` order, and class-token order. These allowances do not change the timed bytes. The report records response size, the payload delta from Proa, the canonical DOM digest, and whether exact bytes also match.
 
 Each workload also has a negative control. The runner mutates a semantically relevant output and asserts that the gate rejects it. If any positive or negative parity check fails, timing never starts.
+
+### Disclosed Exact native adaptation
+
+The `exact-native-v1` row is explicitly marked **Exact†**. The pinned compiler
+cannot accept the literal classes or all HTML element spellings in the strict
+fixture. User-requested native named styles and equivalent content receive a
+separate content/attribute and representative computed-CSS gate, including
+negative controls. This exception applies only to Exact; strict DOM/class parity
+remains required for every other row. Exact records a distinct DOM digest and
+matching projected-content digests, style-check counts, output bytes and native
+stylesheets. The common render-only boundary, fresh output, host, warmup/sample
+counts and process rotations remain shared. Source/script compilation and input-data construction precede timing. Fresh per-render
+VM/runtime initialization, prepared-input binding, native DOM allocation, app
+construction, formatting and serialization are timed. See [the adaptation notes](external/exact/README.md) for every
+structural/styling difference and the exact timer boundary.
 
 ## Sampling
 

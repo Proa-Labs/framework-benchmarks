@@ -1,0 +1,586 @@
+{
+  "id": "marko",
+  "scope": "Marko 6 documentation; @marko/run application features are identified explicitly.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "Marko compiles templates for server-rendered HTML.",
+      "url": "https://markojs.com/docs/explanation/streaming"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "HTML flushes progressively around await tags; try boundaries support replacement content.",
+      "url": "https://markojs.com/docs/explanation/streaming"
+    },
+    "suspense": {
+      "status": "native",
+      "note": "await plus try / @placeholder coordinates async content and loading states.",
+      "url": "https://markojs.com/docs/explanation/streaming",
+      "label": "await / try"
+    },
+    "client": {
+      "status": "native",
+      "note": "Marko resumes interactive expressions without re-rendering templates to recreate initial state.",
+      "url": "https://markojs.com/docs/explanation/why-is-marko-fast",
+      "label": "Resumability"
+    },
+    "ssg": {
+      "status": "official",
+      "note": "The static adapter crawls routes/links and accepts additional URLs to prerender.",
+      "url": "https://markojs.com/docs/marko-run/adapters",
+      "label": "@marko/run static adapter"
+    },
+    "csr": {
+      "status": "native",
+      "note": "Template.mount creates client UI without requiring initial server HTML.",
+      "url": "https://markojs.com/docs/reference/template"
+    },
+    "serverOnly": {
+      "status": "native",
+      "note": "Server-only/static code is omitted from the interactive client build; this is targeted compilation, not React Server Components.",
+      "url": "https://markojs.com/docs/explanation/targeted-compilation"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "The reviewed patch protocol does not establish production static-shell partial prerendering; persisted pages are described as future work.",
+      "url": "https://markojs.com/docs/explanation/patch-protocol"
+    },
+    "routing": {
+      "status": "official",
+      "note": "@marko/run adds file-based routing, layouts, middleware, and deployment adapters.",
+      "url": "https://markojs.com/docs/marko-run/getting-started",
+      "label": "@marko/run"
+    },
+    "layouts": {
+      "status": "official",
+      "note": "Nested layout files wrap routed content.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing",
+      "label": "@marko/run"
+    },
+    "dynamicRoutes": {
+      "status": "official",
+      "note": "File route conventions support dynamic and catch-all segments.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing",
+      "label": "@marko/run"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "Nested layouts are documented; independent named route-slot navigation is not established.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "The reviewed file router does not establish intercepted-modal/direct-navigation route semantics.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing"
+    },
+    "prefetch": {
+      "status": "undocumented",
+      "note": "Typed URL and fetch/navigation helpers are documented; an automatic route/data prefetch policy is not established.",
+      "url": "https://markojs.com/docs/marko-run/runtime"
+    },
+    "softNavigation": {
+      "status": "undocumented",
+      "note": "The reviewed routing API does not establish this navigation capability. Application code or another package may provide it; this finding is not proof of absence.",
+      "url": "https://markojs.com/docs/marko-run/getting-started",
+      "reviewedOn": "2026-11-11"
+    },
+    "viewTransitions": {
+      "status": "undocumented",
+      "note": "The reviewed routing API does not establish this navigation capability. Application code or another package may provide it; this finding is not proof of absence.",
+      "url": "https://markojs.com/docs/marko-run/getting-started",
+      "reviewedOn": "2026-11-11"
+    },
+    "redirects": {
+      "status": "official",
+      "note": "Run context helpers return redirects and back-navigation responses.",
+      "url": "https://markojs.com/docs/marko-run/runtime",
+      "label": "@marko/run"
+    },
+    "serverData": {
+      "status": "official",
+      "note": "Handlers and middleware populate ctx.data for server templates.",
+      "url": "https://markojs.com/docs/marko-run/data-loading",
+      "label": "@marko/run"
+    },
+    "clientData": {
+      "status": "undocumented",
+      "note": "Client template expressions can consume promises; shared query caches, retry policy, and stale-data handling are not supplied by this template API.",
+      "url": "https://markojs.com/docs/reference/template",
+      "label": "App promises"
+    },
+    "requestDedupe": {
+      "status": "undocumented",
+      "note": "The reviewed loading API does not establish automatic request-wide keyed data deduplication.",
+      "url": "https://markojs.com/docs/marko-run/data-loading"
+    },
+    "persistentCache": {
+      "status": "undocumented",
+      "note": "ctx.data and compiler caching do not establish a cross-request application data/page cache.",
+      "url": "https://markojs.com/docs/marko-run/data-loading"
+    },
+    "invalidation": {
+      "status": "undocumented",
+      "note": "A dependency-aware path/tag data-cache invalidation API is not established by the reviewed loading guide.",
+      "url": "https://markojs.com/docs/marko-run/data-loading"
+    },
+    "isr": {
+      "status": "undocumented",
+      "note": "The static adapter builds files; request-time stale-page regeneration is not established.",
+      "url": "https://markojs.com/docs/marko-run/adapters"
+    },
+    "apiRoutes": {
+      "status": "official",
+      "note": "Handler files expose HTTP routes and custom responses.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing",
+      "label": "@marko/run"
+    },
+    "httpErrors": {
+      "status": "official",
+      "note": "Run’s +404.marko and +500.marko responses carry 404 and 500 respectively; handlers can also return or throw explicit Responses. Marko template fallback UI alone is not HTTP status handling. A failure discovered after response headers have been sent cannot retroactively change that status.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing#special-files",
+      "label": "Marko Run 404 / 500",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "partial",
+      "note": "@marko/run documents POST handlers and parsed form bodies; these are explicit HTTP handlers rather than generated function RPC.",
+      "url": "https://markojs.com/docs/marko-run/data-loading",
+      "label": "POST handlers",
+      "reviewedOn": "2026-11-10"
+    },
+    "forms": {
+      "status": "official",
+      "note": "Run validates form/JSON bodies and route/search inputs against Standard Schema validators; the validator package is application-selected.",
+      "url": "https://markojs.com/docs/marko-run/validation",
+      "label": "@marko/run validation",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Run validates form/JSON bodies and route/search inputs against Standard Schema validators; the validator package is application-selected."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "official",
+      "note": "Middleware runs in the matched route tree before handlers/pages.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing",
+      "label": "@marko/run"
+    },
+    "cookies": {
+      "status": "partial",
+      "note": "WHATWG Request/Response headers are available; application code or another library manages cookie parsing and sessions.",
+      "url": "https://markojs.com/docs/marko-run/runtime",
+      "label": "HTTP headers",
+      "reviewedOn": "2026-11-10"
+    },
+    "cssModules": {
+      "status": "native",
+      "note": "Enhanced style tags and CSS Modules provide compiled class mappings.",
+      "url": "https://markojs.com/docs/guide/styling"
+    },
+    "scopedCss": {
+      "status": "native",
+      "note": "A style tag with a tag variable opts into CSS Modules and exposes local class mappings. Ordinary Marko style tags are global by default; the template boundary alone does not scope them.",
+      "url": "https://markojs.com/docs/guide/styling",
+      "reviewedOn": "2026-11-13",
+      "label": "Opt-in CSS Modules"
+    },
+    "tailwind": {
+      "status": "undocumented",
+      "note": "The reviewed guide explains CSS imports and modules; it does not establish a dedicated Tailwind integration.",
+      "url": "https://markojs.com/docs/guide/styling"
+    },
+    "cssInJs": {
+      "status": "undocumented",
+      "note": "Compiled template styles do not establish a general runtime CSS-in-JS SSR registry.",
+      "url": "https://markojs.com/docs/guide/styling"
+    },
+    "images": {
+      "status": "undocumented",
+      "note": "The reviewed integrations list does not establish a Marko image optimization pipeline.",
+      "url": "https://markojs.com/docs/introduction/integrations"
+    },
+    "fonts": {
+      "status": "undocumented",
+      "note": "Styles and asset imports are documented; automatic font downloading/subsetting/fallback optimization is not established.",
+      "url": "https://markojs.com/docs/guide/styling"
+    },
+    "scripts": {
+      "status": "undocumented",
+      "note": "The template runtime manages generated activation code. Scheduling arbitrary third-party scripts remains application-owned.",
+      "url": "https://markojs.com/docs/reference/template",
+      "label": "Generated runtime scripts"
+    },
+    "assetPipeline": {
+      "status": "official",
+      "note": "Marko Run uses Vite, which hashes imported assets and updates their references in production. The official Vite integration also processes static relative asset attributes in templates. Files placed in public/ are copied unchanged; Marko’s compiler alone is not a complete deployment pipeline.",
+      "url": "https://github.com/marko-js/vite#asset-handling",
+      "label": "Marko Run / Vite",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "official",
+      "note": "Run uses Vite for development/build asset integration.",
+      "url": "https://markojs.com/docs/marko-run/getting-started",
+      "label": "@marko/run / Vite"
+    },
+    "metadata": {
+      "status": "partial",
+      "note": "Head markup can be composed in layouts. +meta is route configuration data, not a typed SEO metadata-object API.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing",
+      "label": "Authored head markup",
+      "reviewedOn": "2026-11-10"
+    },
+    "dynamicMetadata": {
+      "status": "official",
+      "note": "Loaded ctx.data can populate authored head tags; metadata lifecycle/merge policy is application code.",
+      "url": "https://markojs.com/docs/marko-run/data-loading",
+      "label": "Layout / ctx.data"
+    },
+    "metadataInheritance": {
+      "status": "undocumented",
+      "note": "Layout nesting and +meta configuration do not establish automatic SEO field inheritance.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing"
+    },
+    "metadataOverrides": {
+      "status": "undocumented",
+      "note": "A structured document metadata merge/clear contract is not documented for nested layouts.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing"
+    },
+    "titleTemplates": {
+      "status": "undocumented",
+      "note": "Applications can format title markup; no ancestor title-template/absolute-title API is established.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing"
+    },
+    "socialImages": {
+      "status": "undocumented",
+      "note": "A generated route-aware Open Graph image renderer is not established by the reviewed integrations.",
+      "url": "https://markojs.com/docs/introduction/integrations"
+    },
+    "sitemaps": {
+      "status": "partial",
+      "note": "The router demonstrates a sitemap.xml handler filename; generating its XML/URLs remains application code.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing",
+      "label": "Endpoint recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "robots": {
+      "status": "official",
+      "note": "A static resource or handler can publish robots.txt; crawler directive generation is application-owned.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing",
+      "label": "Static file / handler"
+    },
+    "markdown": {
+      "status": "undocumented",
+      "note": "A Markdown content-page integration is not established by the reviewed first-party integrations list.",
+      "url": "https://markojs.com/docs/introduction/integrations"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "Run loads application data but does not document typed content collections/schema registries here.",
+      "url": "https://markojs.com/docs/marko-run/data-loading"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "An authenticated draft-preview mode with cache bypass is not documented in the reviewed loading API.",
+      "url": "https://markojs.com/docs/marko-run/data-loading"
+    },
+    "translations": {
+      "status": "undocumented",
+      "note": "The reviewed integration docs do not establish a message-catalog/translation API.",
+      "url": "https://markojs.com/docs/introduction/integrations"
+    },
+    "localeRouting": {
+      "status": "partial",
+      "note": "A dynamic route segment can carry a locale; language detection, dictionaries, and redirects are application code.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing",
+      "label": "Route segment",
+      "reviewedOn": "2026-11-10"
+    },
+    "localeFormatting": {
+      "status": "undocumented",
+      "note": "Serialization of Intl objects does not itself supply locale selection or a framework formatter API.",
+      "url": "https://markojs.com/docs/reference/template"
+    },
+    "auth": {
+      "status": "undocumented",
+      "note": "Middleware can host auth checks; an identity/session integration is not established by the reviewed Run docs.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing"
+    },
+    "csp": {
+      "status": "partial",
+      "note": "$global.cspNonce is applied to generated scripts/styles. Applications must generate nonces and configure the HTTP policy.",
+      "url": "https://markojs.com/docs/reference/template",
+      "label": "Nonce interoperability",
+      "reviewedOn": "2026-11-10"
+    },
+    "cspNonce": {
+      "status": "partial",
+      "note": "$global.cspNonce is applied to generated scripts/styles. Applications must generate nonces and configure the HTTP policy.",
+      "url": "https://markojs.com/docs/reference/template",
+      "reviewedOn": "2026-11-11",
+      "label": "Nonce interoperability"
+    },
+    "csrf": {
+      "status": "undocumented",
+      "note": "Input/schema validation is documented, but a built-in CSRF token/origin enforcement mechanism is not established.",
+      "url": "https://markojs.com/docs/marko-run/validation"
+    },
+    "environment": {
+      "status": "official",
+      "note": "The Vite-based server/client build separates runtime targets; applications must avoid serializing secrets into template globals.",
+      "url": "https://markojs.com/docs/marko-run/getting-started",
+      "label": "@marko/run / Vite"
+    },
+    "types": {
+      "status": "official",
+      "note": "Marko’s TypeScript tooling checks template inputs; mtc supplies command-line checking.",
+      "url": "https://markojs.com/docs/reference/typescript",
+      "label": "Marko TypeScript tooling"
+    },
+    "hmr": {
+      "status": "official",
+      "note": "Run’s Vite development server updates templates/assets.",
+      "url": "https://markojs.com/docs/marko-run/getting-started",
+      "label": "@marko/run / Vite"
+    },
+    "cli": {
+      "status": "official",
+      "note": "marko-run provides dev, build, and preview commands.",
+      "url": "https://markojs.com/docs/marko-run/getting-started",
+      "label": "@marko/run"
+    },
+    "bundleAnalysis": {
+      "status": "undocumented",
+      "note": "The reviewed CLI guide documents production builds but no built-in module-size visualization.",
+      "url": "https://markojs.com/docs/marko-run/getting-started"
+    },
+    "unitTests": {
+      "status": "official",
+      "note": "@marko/testing-library supplies component testing helpers; it integrates with external test runners.",
+      "url": "https://markojs.com/docs/introduction/integrations",
+      "label": "@marko/testing-library"
+    },
+    "e2eTests": {
+      "status": "undocumented",
+      "note": "Component testing integrations are documented; a browser end-to-end setup is not established by this integrations review.",
+      "url": "https://markojs.com/docs/introduction/integrations"
+    },
+    "observability": {
+      "status": "partial",
+      "note": "Middleware can instrument/log requests; production tracing/metrics exporters are application-selected.",
+      "url": "https://markojs.com/docs/marko-run/file-based-routing",
+      "label": "Middleware hooks",
+      "reviewedOn": "2026-11-10"
+    },
+    "errorHandling": {
+      "status": "native",
+      "note": "try/@catch handles failed async UI; Run also provides +500 error pages.",
+      "url": "https://markojs.com/docs/explanation/streaming"
+    },
+    "serverHosting": {
+      "status": "official",
+      "note": "The Node adapter supplies a production server target.",
+      "url": "https://markojs.com/docs/marko-run/adapters",
+      "label": "@marko/run Node adapter"
+    },
+    "subpathProxy": {
+      "status": "partial",
+      "note": "Marko Run supplies Vite build integration and deployment adapters. Vite can prefix build assets, but that does not by itself rebase application routes, authored links or proxy origin handling. The reviewed Run configuration does not establish a single coordinated subpath deployment contract; adapter/application setup is required.",
+      "url": "https://markojs.com/docs/marko-run/vite-plugin",
+      "label": "Vite assets; host-owned mount",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "official",
+      "note": "The static adapter emits deployable files; request-time server handlers are unavailable.",
+      "url": "https://markojs.com/docs/marko-run/adapters",
+      "label": "@marko/run static adapter"
+    },
+    "containers": {
+      "status": "undocumented",
+      "note": "Node/self-hosting adapters are documented; a maintained container deployment recipe is not established here.",
+      "url": "https://markojs.com/docs/marko-run/adapters"
+    },
+    "edgeHosting": {
+      "status": "official",
+      "note": "The Netlify adapter documents an edge-function option; deployment behavior depends on that adapter.",
+      "url": "https://markojs.com/docs/marko-run/adapters",
+      "label": "@marko/run Netlify adapter"
+    },
+    "orm": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned orm / query builder API. Host libraries and application integrations may provide it.",
+      "url": "https://markojs.com"
+    },
+    "migrations": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned schema migrations API. Host libraries and application integrations may provide it.",
+      "url": "https://markojs.com"
+    },
+    "transactions": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned transactions API. Host libraries and application integrations may provide it.",
+      "url": "https://markojs.com"
+    },
+    "jobs": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned background jobs API. Host libraries and application integrations may provide it.",
+      "url": "https://markojs.com"
+    },
+    "mail": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned email API. Host libraries and application integrations may provide it.",
+      "url": "https://markojs.com"
+    },
+    "uploads": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned file uploads & storage API. Host libraries and application integrations may provide it.",
+      "url": "https://markojs.com"
+    },
+    "realtime": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned real-time delivery API. Host libraries and application integrations may provide it.",
+      "url": "https://markojs.com"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Normal text interpolation is escaped; unescaped HTML interpolation is an explicit bypass. The reviewed output contract is not a rich-HTML sanitizer.",
+      "url": "https://markojs.com/docs/reference/language",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/reference/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/reference/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/reference/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "undocumented",
+      "note": "The linked server API review does not establish the specific progressive forms contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/marko-run/validation",
+      "reviewedOn": "2026-11-11"
+    },
+    "optimisticUi": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific optimistic updates contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/reference/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific stale request handling contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/reference/template",
+      "reviewedOn": "2026-11-11"
+    },
+    "typedLinks": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific typed links & parameters contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/marko-run/getting-started",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchParams": {
+      "status": "official",
+      "note": "Marko Run’s search validators check and transform query values using a function or synchronous Standard Schema validator. Validation is lazy and cached on first access; application code must consume the validated result and handle failures.",
+      "url": "https://markojs.com/docs/marko-run/validation",
+      "reviewedOn": "2026-11-13",
+      "label": "Run search validation"
+    },
+    "stateRestoration": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific navigation state retention contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/marko-run/getting-started",
+      "reviewedOn": "2026-11-11"
+    },
+    "scrollRestoration": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific scroll restoration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/marko-run/getting-started",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationBlocking": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/marko-run/getting-started",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationAccessibility": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessible navigation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/explanation/why-is-marko-fast",
+      "reviewedOn": "2026-11-11"
+    },
+    "a11yChecks": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/explanation/why-is-marko-fast",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/explanation/why-is-marko-fast",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific route / island splitting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/explanation/why-is-marko-fast",
+      "reviewedOn": "2026-11-11"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/marko-run/adapters",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://markojs.com/docs/introduction/integrations",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

@@ -278,6 +278,12 @@ struct ResultSummary {
     workload: &'static str,
     workload_cardinality: usize,
     allocation_policy: &'static str,
+    build_profile: &'static str,
+    optimization_level: &'static str,
+    debug_assertions: bool,
+    timed_operation: &'static str,
+    output_destruction_timed: bool,
+    samples_us: Vec<f64>,
     iterations: usize,
     warmup: usize,
     operations_per_sample: usize,
@@ -291,7 +297,31 @@ struct ResultSummary {
     timestamp_unix: u64,
 }
 
+fn record_owned_render<T>(previous: &mut T, render: impl FnOnce() -> T, record: impl FnOnce(f64)) {
+    let started = Instant::now();
+    let output = render();
+    std::hint::black_box(&output);
+    let elapsed_us = started.elapsed().as_secs_f64() * 1_000_000.0;
+    record(elapsed_us);
+    // Replacing the prior output runs its destructor only after timing stops.
+    *previous = output;
+}
+
 fn main() {
+    assert_eq!(
+        env!("PROA_BENCH_PROFILE"),
+        "release",
+        "use cargo build --release"
+    );
+    assert_ne!(
+        env!("PROA_BENCH_OPT_LEVEL"),
+        "0",
+        "render benchmarks require optimization"
+    );
+    assert!(
+        !cfg!(debug_assertions),
+        "render benchmarks require disabled debug assertions"
+    );
     let args = parse_args();
     assert!(
         args.iterations > 0,
@@ -353,12 +383,15 @@ fn main() {
             std::hint::black_box(&html);
         }
         for _ in 0..args.iterations {
-            let started = Instant::now();
-            html = render(args.implementation, args.workload, &cx);
-            std::hint::black_box(&html);
-            samples.push(started.elapsed().as_secs_f64() * 1_000_000.0);
+            record_owned_render(
+                &mut html,
+                || render(args.implementation, args.workload, &cx),
+                |elapsed| samples.push(elapsed),
+            );
         }
     }
+    // Retain capture-order observations; sorting and serialization are untimed.
+    let raw_samples = samples.clone();
     samples.sort_by(f64::total_cmp);
 
     let mean = samples.iter().sum::<f64>() / samples.len() as f64;
@@ -376,6 +409,16 @@ fn main() {
         workload: args.workload.id(),
         workload_cardinality: cardinality,
         allocation_policy: args.implementation.allocation_policy(),
+        build_profile: env!("PROA_BENCH_PROFILE"),
+        optimization_level: env!("PROA_BENCH_OPT_LEVEL"),
+        debug_assertions: cfg!(debug_assertions),
+        timed_operation: if matches!(args.implementation, Implementation::Memcpy) {
+            "copy_only"
+        } else {
+            "allocate_and_render_fresh_owned_output"
+        },
+        output_destruction_timed: false,
+        samples_us: raw_samples,
         iterations: args.iterations,
         warmup: args.warmup,
         operations_per_sample,
@@ -411,6 +454,48 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn recording_stops_before_replacing_or_destroying_owned_outputs() {
+        use std::cell::{Cell, RefCell};
+        use std::rc::Rc;
+        struct Output {
+            generation: usize,
+            timing: Rc<Cell<bool>>,
+            drops: Rc<RefCell<Vec<usize>>>,
+        }
+        impl Drop for Output {
+            fn drop(&mut self) {
+                assert!(!self.timing.get(), "output was destroyed inside the timer");
+                self.drops.borrow_mut().push(self.generation);
+            }
+        }
+        let timing = Rc::new(Cell::new(false));
+        let drops = Rc::new(RefCell::new(Vec::new()));
+        let output = |generation| Output {
+            generation,
+            timing: Rc::clone(&timing),
+            drops: Rc::clone(&drops),
+        };
+        let mut previous = output(0);
+        for generation in 1..=3 {
+            record_owned_render(
+                &mut previous,
+                || {
+                    timing.set(true);
+                    output(generation)
+                },
+                |elapsed| {
+                    assert!(elapsed.is_finite() && elapsed >= 0.0);
+                    timing.set(false);
+                },
+            );
+            assert_eq!(previous.generation, generation);
+            assert_eq!(drops.borrow().len(), generation);
+        }
+        drop(previous);
+        assert_eq!(*drops.borrow(), vec![0, 1, 2, 3]);
+    }
 
     #[test]
     fn proa_output_stays_paged_and_matches_the_contiguous_control() {

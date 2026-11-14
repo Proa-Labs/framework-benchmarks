@@ -3,6 +3,7 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
+  copyFileSync,
   existsSync,
   mkdirSync,
   mkdtempSync,
@@ -14,7 +15,7 @@ import { cpus, release as osRelease, tmpdir, totalmem } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
-import { acquireRunLock } from "../../load/driver.mjs";
+import { acquireRunLock, hostMetadata } from "../../load/driver.mjs";
 import {
   adapterInvocation,
   readAdapters,
@@ -25,8 +26,10 @@ import {
   captureId as newCaptureId,
   retainCapture,
 } from "../../tooling/captures.mjs";
+import { validateAdaptedFixture } from "../external/exact/parity.mjs";
 import { canonicalDocument, firstDifference } from "./dom.mjs";
 import { refreshProa } from "./refresh-proa.mjs";
+import { validateProaRenderRun } from "./render-contract.mjs";
 import { validateCanonicalResult } from "./report.mjs";
 import {
   renderingSourceFiles,
@@ -241,11 +244,6 @@ function buildAll() {
   console.log(`Building selected adapters: ${requiredIds.join(", ")}`);
   for (const id of requiredIds) {
     const adapter = adapters[id];
-    if (adapter.setup === "bun")
-      run(process.execPath, ["install", "--frozen-lockfile"], {
-        cwd: resolve(workspaceDirectory, adapter.cwd),
-        stdio: "inherit",
-      });
     if (adapter.build)
       run(
         adapter.build[0] === "{bun}" ? process.execPath : adapter.build[0],
@@ -366,7 +364,17 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
           temporaryDirectory,
           `${workload.id}-${rendererId}.html`,
         );
-        runCell(rendererId, workload.id, ["--dump", dumpPath, "--dump-only"]);
+        const cssPath = join(
+          temporaryDirectory,
+          `${workload.id}-${rendererId}.css`,
+        );
+        runCell(rendererId, workload.id, [
+          "--dump",
+          dumpPath,
+          "--dump-only",
+          ...(rendererId === "exact" ? ["--dump-css", cssPath] : []),
+        ]);
+        let adaptation;
         const html = readFileSync(dumpPath, "utf8");
         const canonical = JSON.stringify(await canonicalDocument(page, html));
         if (rendererId === referenceId) {
@@ -389,6 +397,14 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
               `${workload.id} parity negative control did not fail`,
             );
           }
+        } else if (rendererId === "exact") {
+          adaptation = await validateAdaptedFixture(
+            page,
+            expectedHtml,
+            html,
+            workload.id,
+            readFileSync(cssPath, "utf8"),
+          );
         } else if (canonical !== expectedCanonical) {
           const difference = firstDifference(expectedCanonical, canonical);
           throw new Error(
@@ -405,6 +421,7 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
           payload_delta_bytes:
             Buffer.byteLength(html) - Buffer.byteLength(expectedHtml),
           byte_equal_to_proa: html === expectedHtml,
+          ...adaptation,
         };
         process.stdout.write(".");
       }
@@ -463,6 +480,7 @@ function benchmark(temporaryDirectory, activeWorkloads = workloads) {
           resultPath,
         ]).trim();
         const cell = JSON.parse(readFileSync(resultPath, "utf8"));
+        if (rendererId === "proa") validateProaRenderRun(cell);
         if (cell.framework_id !== rendererId || cell.workload !== workload.id) {
           throw new Error(
             `${rendererId}/${workload.id} returned identity ${cell.framework_id}/${cell.workload}`,
@@ -610,6 +628,7 @@ async function captureProductScaling(temporaryDirectory) {
       id,
       label,
       language,
+      ...(id === "exact" ? { fixture: "exact-native-v1" } : {}),
     })),
     parity,
     measurements,
@@ -625,6 +644,14 @@ async function captureProductScaling(temporaryDirectory) {
       ? {}
       : { raw_artifact: `raw/${captureId}/process-summaries.json` }),
   };
+  if (!smoke && rendererIds.includes("exact")) {
+    const path = `raw/${captureId}/products-exact.css`;
+    copyFileSync(
+      join(temporaryDirectory, "768/products-exact.css"),
+      join(storageDirectory, path),
+    );
+    result.raw_stylesheets = [path];
+  }
   const outputName =
     smoke || engineering
       ? "product-scaling-smoke.json"
@@ -773,6 +800,7 @@ function metadata(capturedAt, fingerprint, browserVersion) {
   return {
     captured_at: capturedAt,
     host: {
+      ...hostMetadata(),
       cpu_model: firstCpu?.model ?? "unknown CPU",
       cloud: process.env.BENCH_HOST_LABEL || null,
       server_cpu_affinity: process.env.BENCH_SERVER_CPU || null,
@@ -938,13 +966,16 @@ try {
             label,
             language,
             status: "included",
+            ...(id === "exact" ? { fixture: "exact-native-v1" } : {}),
           })),
           parity,
           measurements: benchmarkResult.measurements,
+          proa_output:
+            "Fresh owned RenderBuffer per iteration. Allocation and rendering are timed; flattening/copying, encoding, parity, hashing and output destruction are outside the render timer.",
           versions: environment.versions,
           provenance: environment.provenance,
           commands: [
-            "bun install --frozen-lockfile (JavaScript adapter directories)",
+            "bun install --frozen-lockfile (repository root, all JavaScript workspaces)",
             "bundle check || bundle install (Rails adapter directory)",
             "cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench",
             "go build -trimpath -o rendering/external/go/build/canonical_suite rendering/external/go/suite_bench.go",
@@ -959,6 +990,11 @@ try {
             "Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.",
             "Semantic DOM parity permits documented serializer metadata and whitespace differences; payload deltas remain visible.",
             "This capture describes one machine and these three workloads; it is not a universal application ranking.",
+            ...(rendererIds.includes("exact")
+              ? [
+                  "Exact uses the disclosed exact-native-v1 adaptation: named native styles, generated classes, text/list wrappers and separated table borders. Content, attributes, formatting and representative computed CSS are checked separately; strict DOM parity is not claimed. Fresh per-render VM/runtime initialization, prepared-input binding, DOM construction and HTML serialization are inside timing; source compilation and input-data construction are outside.",
+                ]
+              : []),
           ],
           raw_artifacts: [
             {
@@ -970,11 +1006,46 @@ try {
         };
         const rawDirectory = join(storageDirectory, "raw", captureId);
         mkdirSync(rawDirectory, { recursive: true });
+        if (rendererIds.includes("exact"))
+          for (const workload of workloads) {
+            const filename = `${workload.id}-exact.css`;
+            copyFileSync(
+              join(temporaryDirectory, filename),
+              join(rawDirectory, filename),
+            );
+            result.raw_artifacts.push({
+              label: `Exact adapted ${workload.id} stylesheet`,
+              path: `raw/${captureId}/${filename}`,
+            });
+          }
         writeFileSync(
           join(rawDirectory, "process-summaries.json"),
           `${JSON.stringify(benchmarkResult.processResults, null, 2)}\n`,
           { flag: "wx" },
         );
+        if (!smoke && !engineering) {
+          const checks = ["exact"].flatMap((id) => {
+            const path = join(resultDirectory, "local/admission", `${id}.json`);
+            if (!existsSync(path)) return [];
+            const proof = JSON.parse(readFileSync(path, "utf8"));
+            return proof.sourceSha256 === fingerprint &&
+              proof.host?.machineId === environment.host.machineId &&
+              proof.host?.campaignId === environment.host.campaignId
+              ? [proof]
+              : [];
+          });
+          if (checks.length === 1) {
+            writeFileSync(
+              join(rawDirectory, "admissions.json"),
+              `${JSON.stringify(checks, null, 2)}\n`,
+              { flag: "wx" },
+            );
+            result.raw_artifacts.push({
+              label: "Unchanged fixture admission checks",
+              path: `raw/${captureId}/admissions.json`,
+            });
+          }
+        }
         if (smoke || engineering || explicitOutput) {
           retainCapture(
             workspaceDirectory,

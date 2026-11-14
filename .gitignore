@@ -31,3 +31,9 @@ travel-agent/results/*.partial
 
 # Local experiment outputs; retained publication archives stay reviewable.
 **/results/local/
+
+# Local GCP campaign artifacts and staging checkouts.
+/cloud-results/
+
+# Shared Turborepo task cache.
+.turbo/

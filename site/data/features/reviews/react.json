@@ -1,0 +1,591 @@
+{
+  "id": "react",
+  "scope": "React / React DOM documentation. Framework-provided features are not counted as React core.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "react-dom/server renders initial HTML with string or stream APIs.",
+      "url": "https://react.dev/reference/react-dom/server"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "renderToPipeableStream and renderToReadableStream progressively produce HTML.",
+      "url": "https://react.dev/reference/react-dom/server"
+    },
+    "suspense": {
+      "status": "native",
+      "note": "Suspense displays a fallback until its supported async dependencies resolve; framework integration governs data loading.",
+      "url": "https://react.dev/reference/react/Suspense"
+    },
+    "client": {
+      "status": "native",
+      "note": "hydrateRoot attaches React behavior to existing server-rendered HTML.",
+      "url": "https://react.dev/reference/react-dom/client/hydrateRoot",
+      "label": "hydrateRoot"
+    },
+    "ssg": {
+      "status": "community",
+      "note": "The recommended full-stack frameworks supply static-site generation; it is not a site-export workflow in React core.",
+      "url": "https://react.dev/learn/creating-a-react-app",
+      "label": "App framework"
+    },
+    "csr": {
+      "status": "native",
+      "note": "createRoot renders and updates browser application UI.",
+      "url": "https://react.dev/reference/react-dom/client/createRoot"
+    },
+    "serverOnly": {
+      "status": "partial",
+      "note": "Server Components require a supporting framework/bundler. React alone does not supply production routing or deployment.",
+      "url": "https://react.dev/reference/rsc/server-components",
+      "label": "Framework required",
+      "reviewedOn": "2026-11-10"
+    },
+    "partialRendering": {
+      "status": "scope",
+      "note": "A prebuilt shell with request-time UI needs an application rendering pipeline.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "routing": {
+      "status": "community",
+      "note": "React recommends an application framework, such as React Router or Next.js, for integrated routing.",
+      "url": "https://react.dev/learn/creating-a-react-app",
+      "label": "App framework"
+    },
+    "layouts": {
+      "status": "scope",
+      "note": "React core renders UI; template includes/layout composition are available; automatic route-layout selection belongs to the host. React recommends selecting a router or application framework.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "dynamicRoutes": {
+      "status": "scope",
+      "note": "React core renders UI; route parameter matching belongs to the host router; templates receive prepared values. React recommends selecting a router or application framework.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "parallelRoutes": {
+      "status": "scope",
+      "note": "React core renders UI; independently navigable routed regions require a host router and client runtime. React recommends selecting a router or application framework.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "interceptedRoutes": {
+      "status": "scope",
+      "note": "React core renders UI; routed-modal/direct-link behavior belongs to the host router. React recommends selecting a router or application framework.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "prefetch": {
+      "status": "community",
+      "note": "React Router Link prefetch can load route data/modules on intent (hover/focus), render or viewport entry. It requires a configured router/framework mode; React core alone does not prefetch navigation destinations.",
+      "url": "https://reactrouter.com/api/components/Link#prefetch",
+      "reviewedOn": "2026-11-11",
+      "label": "React Router"
+    },
+    "softNavigation": {
+      "status": "community",
+      "note": "React Router Link/useNavigate and router providers support browser history and navigation without document reloads. React core alone does not provide a router.",
+      "url": "https://reactrouter.com/start/declarative/navigating",
+      "reviewedOn": "2026-11-11",
+      "label": "React Router"
+    },
+    "viewTransitions": {
+      "status": "community",
+      "note": "React Router integrates animated navigation with browser View Transitions. Current v8 docs deprecate the Link viewTransition option in favor of React ViewTransition; choose a compatible React/router version. Styling and reduced-motion handling remain application-owned.",
+      "url": "https://reactrouter.com/how-to/view-transitions",
+      "reviewedOn": "2026-11-11",
+      "label": "React Router"
+    },
+    "redirects": {
+      "status": "scope",
+      "note": "React core renders UI; HTTP redirects and URL rewrites are owned by the host server/router. React recommends selecting a router or application framework.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "serverData": {
+      "status": "partial",
+      "note": "Server Components can load data before client delivery; build/transport/cache integration requires a supporting framework.",
+      "url": "https://react.dev/reference/rsc/server-components",
+      "label": "Server Components / framework",
+      "reviewedOn": "2026-11-10"
+    },
+    "clientData": {
+      "status": "community",
+      "note": "The guide recommends purpose-built data libraries including TanStack Query and SWR for browser request state/caching.",
+      "url": "https://react.dev/learn/build-a-react-app-from-scratch",
+      "label": "TanStack Query / SWR"
+    },
+    "requestDedupe": {
+      "status": "native",
+      "note": "cache memoizes equivalent calls within a Server Components request; it is not a general client cache or persistent data cache.",
+      "url": "https://react.dev/reference/react/cache",
+      "label": "RSC cache"
+    },
+    "persistentCache": {
+      "status": "scope",
+      "note": "Retaining application data or rendered pages across requests belongs to the host cache.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "invalidation": {
+      "status": "scope",
+      "note": "Application data/page invalidation belongs to the host; recompiling a template is a different cache boundary.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "isr": {
+      "status": "scope",
+      "note": "Regenerating deployed pages requires a host page cache/export pipeline.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "apiRoutes": {
+      "status": "scope",
+      "note": "The host server exposes HTTP endpoints and invokes the template renderer.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "httpErrors": {
+      "status": "scope",
+      "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+      "url": "https://react.dev/learn/creating-a-react-app",
+      "label": "HTTP host required",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "community",
+      "note": "Next.js App Router is one implementation of React Server Functions; a hosting framework is needed for the end-to-end server transport.",
+      "url": "https://nextjs.org/docs/app/getting-started/mutating-data",
+      "label": "App framework"
+    },
+    "forms": {
+      "status": "native",
+      "note": "Function-valued form actions integrate pending state, optimistic UI, and error handling. Server-function transport requires a supporting framework.",
+      "url": "https://react.dev/reference/react-dom/components/form",
+      "label": "Form actions",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Function-valued form actions integrate pending state, optimistic UI, and error handling. Server-function transport requires a supporting framework."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "scope",
+      "note": "Request middleware belongs to the host server.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "cookies": {
+      "status": "scope",
+      "note": "HTTP cookies and sessions belong to the host request/response layer.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "cssModules": {
+      "status": "community",
+      "note": "React delegates styling builds to tools such as Vite/Parcel; CSS Modules support comes from that selected tool.",
+      "url": "https://react.dev/learn/build-a-react-app-from-scratch",
+      "label": "Build tool"
+    },
+    "scopedCss": {
+      "status": "scope",
+      "note": "className and inline style do not compile scoped selectors; use a stylesheet build tool or styling library.",
+      "url": "https://react.dev/learn"
+    },
+    "tailwind": {
+      "status": "scope",
+      "note": "React accepts authored className values; Tailwind’s scanner/compiler is separate application tooling.",
+      "url": "https://react.dev/learn"
+    },
+    "cssInJs": {
+      "status": "scope",
+      "note": "React can render/deduplicate style elements; a CSS-in-JS language/compiler must be supplied by a styling library.",
+      "url": "https://react.dev/reference/react-dom/components/style"
+    },
+    "images": {
+      "status": "scope",
+      "note": "Templates emit image markup; image resizing/conversion requires a separate asset pipeline.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "fonts": {
+      "status": "scope",
+      "note": "Font downloading, subsetting, and fallback optimization require a separate asset pipeline.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "scripts": {
+      "status": "native",
+      "note": "Async script elements are hoisted and deduplicated; React also exposes preinit/preload resource hints. This is not an all-purpose third-party consent scheduler.",
+      "url": "https://react.dev/reference/react-dom/components/script"
+    },
+    "assetPipeline": {
+      "status": "scope",
+      "note": "React and React DOM render UI; they do not own an asset build or deployment pipeline. A framework or separately configured build tool must fingerprint files, update references, and set delivery cache headers.",
+      "url": "https://react.dev/learn/creating-a-react-app",
+      "label": "Build tool required",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "scope",
+      "note": "Serving files and assigning cache headers belong to the host web server.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "metadata": {
+      "status": "partial",
+      "note": "React hoists title elements into the document head. Multiple simultaneous titles are not automatically merged; the application must ensure one.",
+      "url": "https://react.dev/reference/react-dom/components/title",
+      "label": "Element-level support",
+      "assessment": {
+        "label": "Element-level support",
+        "summary": "Head element hoisting is useful, but it does not by itself establish a route-aware metadata system.",
+        "strengths": [
+          "A rendered title element can use component values and move into the document head."
+        ],
+        "tradeoffs": [
+          "The application must ensure only one title is rendered; multiple titles are not automatically resolved.",
+          "Routing, inherited metadata policy, and generated SEO assets depend on the surrounding application/framework."
+        ]
+      },
+      "reviewedOn": "2026-11-10"
+    },
+    "dynamicMetadata": {
+      "status": "native",
+      "note": "Title text can come from component values; this does not establish layout metadata inheritance.",
+      "url": "https://react.dev/reference/react-dom/components/title"
+    },
+    "metadataInheritance": {
+      "status": "scope",
+      "note": "Template inheritance/content composition is separate from a metadata-field inheritance contract.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "metadataOverrides": {
+      "status": "scope",
+      "note": "A host head component or template block can override markup; structured field merge/clear rules are application-owned.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "titleTemplates": {
+      "status": "scope",
+      "note": "Titles can use template expressions; ancestor metadata/title-template policy belongs to the application.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "socialImages": {
+      "status": "scope",
+      "note": "Generating social-preview image bytes needs a separate image renderer/service.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "sitemaps": {
+      "status": "scope",
+      "note": "XML can be templated, but route enumeration and a sitemap generator belong to the host.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "robots": {
+      "status": "scope",
+      "note": "Text can be templated, but crawler-document publishing/configuration belongs to the host.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "markdown": {
+      "status": "scope",
+      "note": "This is text/HTML templating; Markdown parsing and content-page integration require another tool.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "collections": {
+      "status": "scope",
+      "note": "The host loads and validates structured content; the template API renders supplied values.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "draftMode": {
+      "status": "scope",
+      "note": "Editorial preview authorization and published-cache bypass belong to the host application.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "translations": {
+      "status": "community",
+      "note": "react-i18next provides message translation, pluralization, and interpolation.",
+      "url": "https://react.i18next.com/",
+      "label": "react-i18next"
+    },
+    "localeRouting": {
+      "status": "scope",
+      "note": "Language URL matching/detection belongs to the host router.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "localeFormatting": {
+      "status": "scope",
+      "note": "Locale-aware number/date formatting belongs to Intl or an i18n library; it is not supplied by React’s rendering API.",
+      "url": "https://react.dev/learn"
+    },
+    "auth": {
+      "status": "scope",
+      "note": "Identity, login, and authorization are responsibilities of the host application.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "csp": {
+      "status": "partial",
+      "note": "The stream renderer accepts nonce for generated scripts. The host must generate nonces and set the matching HTTP policy.",
+      "url": "https://react.dev/reference/react-dom/server/renderToPipeableStream",
+      "label": "Stream nonce option",
+      "reviewedOn": "2026-11-10"
+    },
+    "cspNonce": {
+      "status": "partial",
+      "note": "The stream renderer accepts nonce for generated scripts. The host must generate nonces and set the matching HTTP policy.",
+      "url": "https://react.dev/reference/react-dom/server/renderToPipeableStream",
+      "reviewedOn": "2026-11-11",
+      "label": "Stream nonce option"
+    },
+    "csrf": {
+      "status": "scope",
+      "note": "HTML escaping does not establish CSRF protection; the host must protect mutation endpoints.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "environment": {
+      "status": "scope",
+      "note": "Server/client secret configuration belongs to the host application, not template evaluation.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "types": {
+      "status": "community",
+      "note": "The official guide uses TypeScript with @types/react and @types/react-dom; those type packages are maintained through DefinitelyTyped.",
+      "url": "https://react.dev/learn/typescript",
+      "label": "TypeScript / DefinitelyTyped"
+    },
+    "hmr": {
+      "status": "community",
+      "note": "Vite, Parcel, and Rsbuild integrate Fast Refresh during development; React alone is not a dev server.",
+      "url": "https://react.dev/learn/build-a-react-app-from-scratch",
+      "label": "Bundler Fast Refresh"
+    },
+    "cli": {
+      "status": "scope",
+      "note": "This renderer integrates with its language/build toolchain rather than supplying an application CLI.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "bundleAnalysis": {
+      "status": "scope",
+      "note": "Production browser/server bundle inspection belongs to the host build toolchain.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "unitTests": {
+      "status": "community",
+      "note": "React Testing Library supplies DOM-oriented component testing utilities; install an external test runner and DOM environment as appropriate.",
+      "url": "https://testing-library.com/docs/react-testing-library/intro/",
+      "label": "React Testing Library"
+    },
+    "e2eTests": {
+      "status": "scope",
+      "note": "Browser end-to-end setup belongs to the chosen application framework/test runner, not React core.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "observability": {
+      "status": "native",
+      "note": "Profiler reports component render timing through a callback. Profiling has overhead and is disabled in ordinary production builds; production profiling requires the special profiling build. Server request traces/metrics remain host-owned.",
+      "url": "https://react.dev/reference/react/Profiler",
+      "label": "Profiler / profiling build",
+      "reviewedOn": "2026-11-13"
+    },
+    "errorHandling": {
+      "status": "native",
+      "note": "Error boundary components use getDerivedStateFromError/componentDidCatch for descendant UI failures. They do not catch every event, async callback, or server-rendering failure.",
+      "url": "https://react.dev/reference/react/Component"
+    },
+    "serverHosting": {
+      "status": "scope",
+      "note": "The renderer needs a host server; it is not a production server runtime.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "subpathProxy": {
+      "status": "scope",
+      "note": "The reviewed UI library does not own production HTTP routing, asset mounting or reverse-proxy origin handling. A router/build tool and host framework must coordinate a subpath deployment; client-side route base support alone is not the complete server deployment contract.",
+      "url": "https://react.dev/learn/creating-a-react-app",
+      "label": "Host framework required",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "scope",
+      "note": "Publishing generated pages requires a host export/deployment workflow.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "containers": {
+      "status": "scope",
+      "note": "A container packages the host application and renderer together; the template API has no container workflow.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "edgeHosting": {
+      "status": "scope",
+      "note": "Edge deployment depends on the host runtime and its adapter, not template syntax.",
+      "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "orm": {
+      "status": "scope",
+      "note": "ORM / query builder belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://react.dev/learn"
+    },
+    "migrations": {
+      "status": "scope",
+      "note": "Schema migrations belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://react.dev/learn"
+    },
+    "transactions": {
+      "status": "scope",
+      "note": "Transactions belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://react.dev/learn"
+    },
+    "jobs": {
+      "status": "scope",
+      "note": "Background jobs belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://react.dev/learn"
+    },
+    "mail": {
+      "status": "scope",
+      "note": "Email belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://react.dev/learn"
+    },
+    "uploads": {
+      "status": "scope",
+      "note": "File uploads & storage belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://react.dev/learn"
+    },
+    "realtime": {
+      "status": "scope",
+      "note": "Real-time delivery belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://react.dev/learn"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Normal text values are rendered as text; dangerouslySetInnerHTML bypasses this path and requires trusted/sanitized HTML. Do not infer arbitrary URL/CSS safety from text escaping.",
+      "url": "https://react.dev/reference/react-dom/components/common#dangerously-setting-the-inner-html",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://react.dev/reference/react-dom/server/renderToPipeableStream",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://react.dev/reference/react-dom/server/renderToPipeableStream",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://react.dev/reference/react-dom/server/renderToPipeableStream",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "community",
+      "note": "React Router framework-mode Form produces a real server submission before JavaScript loads and enhances it afterward. A plain client-only React app has no server action endpoint from React core.",
+      "url": "https://reactrouter.com/explanation/progressive-enhancement",
+      "reviewedOn": "2026-11-11",
+      "label": "React Router framework mode"
+    },
+    "optimisticUi": {
+      "status": "native",
+      "note": "React useOptimistic overlays pending mutation UI and reconciles against the supplied confirmed state through Actions/transitions. Application code must define the update and failure feedback; this is not a durable offline write queue.",
+      "url": "https://react.dev/reference/react/useOptimistic",
+      "reviewedOn": "2026-11-11",
+      "label": "React useOptimistic"
+    },
+    "requestCancellation": {
+      "status": "community",
+      "note": "React Router cancels interrupted navigations/fetcher requests and discards stale revalidation responses. The server may still process canceled requests; this is not backend rollback.",
+      "url": "https://reactrouter.com/explanation/race-conditions",
+      "reviewedOn": "2026-11-11",
+      "label": "React Router"
+    },
+    "typedLinks": {
+      "status": "community",
+      "note": "React Router framework type generation and href utilities check registered paths and required route parameters. Framework-mode type generation must run; this is not a React core router.",
+      "url": "https://reactrouter.com/how-to/route-module-type-safety",
+      "reviewedOn": "2026-11-11",
+      "label": "React Router type generation"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://reactrouter.com/start/declarative/navigating",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "community",
+      "note": "Nested router layouts can preserve mounted parent UI while outlets change. Unmounted route component state is not automatically retained; arbitrary form drafts need URL/session/app storage.",
+      "url": "https://reactrouter.com/explanation/state-management",
+      "reviewedOn": "2026-11-11",
+      "label": "React Router layouts"
+    },
+    "scrollRestoration": {
+      "status": "community",
+      "note": "ScrollRestoration emulates browser restoration after data loads, with custom keys and reset controls. It requires a data/framework router and does not establish automatic nested-scrollport restoration.",
+      "url": "https://reactrouter.com/api/components/ScrollRestoration",
+      "reviewedOn": "2026-11-11",
+      "label": "React Router"
+    },
+    "navigationBlocking": {
+      "status": "community",
+      "note": "useBlocker can pause SPA navigation and let the application proceed/reset after an unsaved-change prompt. Hard reloads and cross-origin navigation require separate browser handling.",
+      "url": "https://reactrouter.com/how-to/navigation-blocking",
+      "reviewedOn": "2026-11-11",
+      "label": "React Router"
+    },
+    "navigationAccessibility": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessible navigation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://react.dev/reference/react-dom/client/hydrateRoot",
+      "reviewedOn": "2026-11-11"
+    },
+    "a11yChecks": {
+      "status": "community",
+      "note": "The recommended eslint-plugin-jsx-a11y integration statically checks JSX accessibility patterns. This is an external lint tool, not runtime enforcement or accessibility certification.",
+      "url": "https://legacy.reactjs.org/docs/accessibility.html#development-assistance",
+      "reviewedOn": "2026-11-11",
+      "label": "eslint-plugin-jsx-a11y"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://react.dev/reference/react-dom/client/hydrateRoot",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "community",
+      "note": "Framework mode splits browser route modules and removes server-only exports. Declarative router usage alone does not enable this build pipeline.",
+      "url": "https://reactrouter.com/explanation/code-splitting",
+      "reviewedOn": "2026-11-11",
+      "label": "React Router framework mode"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://react.dev/learn/creating-a-react-app",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "scope",
+      "note": "Scheduled tasks requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://react.dev/learn",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "scope",
+      "note": "Multi-channel notifications requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://react.dev/learn",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "scope",
+      "note": "Search indexing requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://react.dev/learn",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "scope",
+      "note": "Encrypted model fields requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://react.dev/learn",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://testing-library.com/docs/react-testing-library/intro/",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

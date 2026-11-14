@@ -15,5 +15,12 @@ export default defineConfig({
     tanstackStart(),
     react(),
   ],
-  server: { host: "127.0.0.1", port: 4317, strictPort: true },
+  server: {
+    host: "127.0.0.1",
+    port: 4317,
+    strictPort: true,
+    // Downloadable evidence never drives application modules. In particular,
+    // copying an archived HTML response must not reload the live dashboard.
+    watch: { ignored: ["**/.generated/public/data/**"] },
+  },
 });

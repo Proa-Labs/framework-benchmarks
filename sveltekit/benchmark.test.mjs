@@ -4,7 +4,8 @@ import { readFileSync } from 'node:fs';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
-import { validateStreaming } from './report.mjs';
+import { validateComparisonHosts, validateStreaming } from './report.mjs';
+import comparisonCaptures from './comparison-captures.json' with { type: 'json' };
 
 const capture = JSON.parse(readFileSync(new URL('./results/latest.json', import.meta.url)));
 
@@ -49,4 +50,14 @@ test('custom worker counts cannot overwrite the publication capture', async () =
     // A regressed guard must fail at the build command, not start a capture.
     env: { ...process.env, PATH: '' }, timeout: 5000,
   }), /Custom runs require --out/);
+});
+
+test('historical comparison keeps its pinned host when publication pointers advance', () => {
+  const read = path => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url)));
+  const pinned = ['canonical', 'scaling', 'pages', 'cold'].map(id => read(comparisonCaptures[id]));
+  const stream = read(comparisonCaptures.stream);
+  validateComparisonHosts(stream, pinned);
+  const changed = structuredClone(pinned);
+  changed[0].host.cpu_model = 'different benchmark machine';
+  assert.throws(() => validateComparisonHosts(stream, changed), /different hosts/);
 });

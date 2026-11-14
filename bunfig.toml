@@ -1,0 +1,3 @@
+[install]
+# One shared store; keep differing peer versions isolated between experiments.
+linker = "isolated"

@@ -2,8 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { summarize } from "../../suspense-load/stats.mjs";
 import type { Inputs } from "../benchmark-types.ts";
+import featureProjects from "../data/features/projects.json" with {
+  type: "json",
+};
 import { loadInputs, normalize } from "../data.ts";
 import { required } from "../required.ts";
+import { createDashboardModel } from "../src/charts/dashboard-model.ts";
 
 test("site measurements come from the canonical capture and raw process runs", async () => {
   const { input } = await loadInputs();
@@ -63,7 +67,11 @@ test("renderer refreshes preserve native output and peer dates, and reject stale
     );
     assert.equal(proa.captureId, input.rendering.capture_id);
     assert.equal(proa.capturedAt, input.rendering.captured_at);
-    assert.equal(peer.capturedAt, input.rendering.refresh.baseline_captured_at);
+    assert.equal(
+      peer.capturedAt,
+      input.rendering.refresh?.baseline_captured_at ||
+        input.rendering.captured_at,
+    );
     assert.match(proa.outputBoundary, /RenderBuffer/);
     assert.equal(
       proa.p50,
@@ -207,17 +215,55 @@ test("failed captures, broken parity and incomplete runs cannot become website d
 
 test("requested roster entries never acquire invented measurements", async () => {
   const { input } = await loadInputs();
+  const id = "pending-renderer";
+  input.catalog.push({
+    id,
+    label: "Pending renderer",
+    language: "JavaScript",
+    kind: "UI framework",
+    color: "#64748b",
+    homepage: "https://example.invalid",
+    colorSource: "https://example.invalid",
+    status: "unmeasured",
+    coverageReason: "No admitted render-only capture",
+    coverageSource: "https://example.invalid",
+  });
   const data = normalize(input);
-  for (const id of ["exact", "nextjs", "astro"]) {
-    const renderer = required(data.renderers.find((r) => r.id === id));
-    assert.equal(renderer.status, "unmeasured");
-    assert.ok(renderer.coverageReason);
-    for (const rows of Object.values(data.rendering.rows))
-      assert.equal(
-        rows.some((r) => r.id === id),
-        false,
-      );
-  }
+  const renderer = required(data.renderers.find((r) => r.id === id));
+  assert.equal(renderer.status, "unmeasured");
+  assert.ok(renderer.coverageReason);
+  for (const rows of Object.values(data.rendering.rows))
+    assert.equal(
+      rows.some((r) => r.id === id),
+      false,
+    );
+});
+
+test("coverage links follow recorded suites without substituting renderer timings", async () => {
+  const { input } = await loadInputs();
+  const data = normalize(input);
+  // Exercise absent rendering coverage even after these native adapters join
+  // a newer capture. Other experiments must not fill those missing cells.
+  for (const workload of data.workloads)
+    data.rendering.rows[workload.id] = data.rendering.rows[workload.id].filter(
+      (row) => !["astro", "sveltekit"].includes(row.id),
+    );
+  const model = createDashboardModel(data);
+  for (const id of ["astro", "exact", "nextjs"])
+    assert.deepEqual(model.measurementLinks(id), [
+      { label: "Framework SSR", href: "?view=framework" },
+    ]);
+  assert.deepEqual(
+    model.measurementLinks("sveltekit").map((link) => link.label),
+    ["Framework SSR", "HTTP", "Cold Start"],
+  );
+  data.framework.rows = data.framework.rows.filter((r) => r.id !== "astro");
+  assert.deepEqual(model.measurementLinks("astro"), []);
+  for (const rows of Object.values(data.rendering.rows))
+    assert.equal(
+      rows.some((r) => r.id === "sveltekit"),
+      false,
+    );
 });
 
 test("full-framework measurements stay separate and reject invalid publication captures", async () => {
@@ -225,18 +271,36 @@ test("full-framework measurements stay separate and reject invalid publication c
   const data = normalize(input);
   assert.deepEqual(
     new Set(data.framework.rows.map((r) => r.id)),
-    new Set(["proa", "exact", "nextjs", "astro"]),
+    new Set(["proa", "exact", "nextjs", "astro", "sveltekit"]),
   );
-  for (const engine of input.framework.engines) {
-    const row = required(data.framework.rows.find((r) => r.id === engine.id));
-    assert.equal(
-      row.throughput,
-      summarize(
-        engine.phases
-          .filter((p) => p.mode === "closed")
-          .map((p) => p.completionThroughputRps),
-      ).p50,
+  for (const workload of input.framework.scenario.workloads || []) {
+    const model = createDashboardModel(
+      data,
+      `?view=framework&workload=${workload.id}`,
     );
+    assert.equal(model.state.workload, workload.id);
+    assert.equal(model.getRows().length, 5);
+    for (const engine of input.framework.engines) {
+      const row = required(
+        data.framework.workloads[workload.id].find((r) => r.id === engine.id),
+      );
+      assert.equal(
+        row.throughput,
+        summarize(
+          engine.phases
+            .filter((p) => p.mode === "closed" && p.workload === workload.id)
+            .map((p) => p.completionThroughputRps),
+        ).p50,
+      );
+      assert.equal(row.equalLoadRps, workload.fixedRateRps);
+      assert.ok(
+        row.detail.includes(
+          String(
+            required(engine.parityByWorkload?.[workload.id]).responseBytes,
+          ),
+        ),
+      );
+    }
   }
   for (const change of [
     (c: Inputs["framework"]) => {
@@ -255,10 +319,52 @@ test("full-framework measurements stay separate and reject invalid publication c
   }
 });
 
-test("new suite engines appear without duplicate ecosystem or invented render measurements", async () => {
+test("server-suite engines appear once in the ecosystem", async () => {
   const { input } = await loadInputs();
   const data = normalize(input);
   assert.ok(data.http.rows.cards.some((r) => r.id === "sveltekit"));
   assert.equal(data.ecosystem.filter((r) => r.id === "sveltekit").length, 1);
-  assert.ok(!data.rendering.rows.cards.some((r) => r.id === "sveltekit"));
+  const duplicate = structuredClone(input);
+  duplicate.catalog.push({
+    ...duplicate.catalog[0],
+    id: featureProjects[0].id,
+  });
+  assert.throws(
+    () => normalize(duplicate),
+    /project metadata must have unique IDs/,
+  );
+});
+
+test("shared URLs recover from invalid controls and preserve intentional empty filters", async () => {
+  const data = normalize((await loadInputs()).input);
+  const model = createDashboardModel(
+    data,
+    "?view=__proto__&chart=%3Cscript%3E&workload=missing&rate=Infinity&focus=unknown",
+  );
+  assert.equal(model.state.view, "rendering");
+  assert.equal(model.state.chart, "compare");
+  assert.equal(model.state.workload, "cards");
+  assert.equal(model.state.focus, null);
+  assert.ok(data.rates.includes(model.state.rate));
+  assert.equal(model.visibleRows().length, data.rendering.rows.cards.length);
+  for (const search of ["?selected=", "?types=unknown", "?selected=__proto__"])
+    assert.deepEqual(createDashboardModel(data, search).visibleRows(), []);
+  const legacy = createDashboardModel(
+    data,
+    "?view=framework&workload=catalog&chart=balls",
+  );
+  assert.equal(legacy.state.chart, "bars");
+  assert.ok(legacy.visibleRows().length > 0);
+});
+
+test("admitted capture status overrides unmeasured presentation metadata", async () => {
+  const { input } = await loadInputs();
+  const proa = input.catalog.find((row) => row.id === "proa");
+  if (!proa) throw new Error("Missing Proa display metadata");
+  Object.assign(proa, { status: "unmeasured" });
+  const data = normalize(input);
+  assert.equal(
+    data.renderers.find((row) => row.id === "proa")?.status,
+    "included",
+  );
 });

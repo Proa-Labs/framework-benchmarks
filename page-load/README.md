@@ -38,7 +38,7 @@ independently owned response; nothing is cached across requests.
 ## Run
 
 ```sh
-pnpm install --frozen-lockfile
+bun install --frozen-lockfile
 npm ci --prefix rendering/external/react
 npm ci --prefix rendering/external/marko
 npm ci --prefix rendering/external/sveltekit

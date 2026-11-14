@@ -62,8 +62,13 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     name = (id: string) => renderer(id)?.label || id;
   const logo = (id: string) =>
     `<span class="fw-logo-mark" style="--logo-mask:url('${id === "jte" ? "/logos/jte-mark.svg" : `/${required(renderer(id)).logo}`}')" aria-hidden="true"><img class="fw-logo" data-logo="${id}" src="/${required(renderer(id)).logo}" width="18" height="18" alt=""></span>`;
-  const label = (id: string) =>
-    `<span class="fw-renderer">${logo(id)}<span>${esc(name(id))}</span></span>`;
+  const frameworkUsesJsSsr = () =>
+    /\bBun\b/.test(data.framework.versions.exact || "");
+  const label = (
+    id: string,
+    framework = state.view === "framework" && state.section === "performance",
+  ) =>
+    `<span class="fw-renderer">${logo(id)}<span>${renderer(id)?.renderingAdaptation && state.view === "rendering" && state.section === "performance" ? `<span class="fw-fixture-adapted">${esc(name(id))}</span><sup>†</sup>` : esc(name(id))}${id === "exact" && ((framework && frameworkUsesJsSsr()) || (state.view === "rendering" && state.section === "performance" && renderer(id)?.renderingAdaptation)) ? " (JS SSR)" : ""}</span></span>`;
   const defaults: DashboardState = {
     section: "performance",
     view: "rendering",
@@ -82,14 +87,20 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   const isVisible = (r: { id: string }) =>
     state.selected.includes(r.id) &&
     matchesGroups(required(renderer(r.id)), state.types);
-  const frameworkWorkload = { id: "catalog", label: "32-card catalog" };
+  const frameworkWorkloads = () => data.framework.workloadDefinitions;
   const suites = {
     framework: {
       title: "Framework SSR",
       path: "framework-ssr/results/latest.json",
-      method: `${data.framework.methodology.repeats} rotated independent production server processes per phase kind. Capacity: ${data.framework.methodology.concurrency} connections. Equal-load latency: ${data.framework.methodology.fixedRateRps} scheduled requests/s. Every response is validated; generator-limited phases are rejected.`,
-      scope:
-        "Production HTTP routing → complete SSR HTML. Shared 32-card catalog with escaping, branches, lists and a request-specific value. Framework shells may differ. No full-document cache, database, network I/O or hydration timing.",
+      method: `${data.framework.methodology.repeats} rotated independent production server processes per phase kind. Capacity: ${data.framework.methodology.concurrency} connections. ${frameworkWorkloads()
+        .map(
+          (w) =>
+            `${w.label}: ${w.capacityDurationSeconds}s capacity window; latency at ${w.fixedRateRps} scheduled requests/s for ${w.latencyDurationSeconds}s`,
+        )
+        .join(
+          ". ",
+        )}. Every response is validated; generator-limited phases are rejected.`,
+      scope: `Production HTTP routing → complete SSR HTML. Shared component page, product grid and table workloads with escaping, branches, lists and a request-specific value. Framework shells may differ. ${frameworkUsesJsSsr() ? "Exact uses its production JavaScript SSR backend on Bun; its native Rust render host is not measured in this capture. " : ""}No full-document cache, database, external I/O or browser hydration timing.`,
     },
     rendering: {
       title: "SSR render latency",
@@ -97,7 +108,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       method:
         "Five independent processes. Bars show the median process P50; boxes summarize those five process medians, not individual render latency.",
       scope:
-        "Prepared data → a complete, freshly owned HTML output. Each adapter uses its declared native output type; Proa may return a RenderBuffer without String conversion. Includes rendering, formatting, and output allocation. Excludes data setup, HTTP, routing, databases, hydration, and network transfer. All captured semantic DOM parity cells passed.",
+        "Prepared data → a complete, freshly owned HTML output. Each adapter uses its declared native output type; Proa may return a RenderBuffer without String conversion. Includes rendering, formatting, and output allocation. Excludes data setup, HTTP, routing, databases, hydration, and network transfer. Strict rows passed unchanged DOM/class parity. Exact† uses separately checked native styles and markup; its adaptation is disclosed.",
     },
     http: {
       title: "HTTP capacity",
@@ -129,7 +140,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     Pick<DashboardState, "chart" | "workload">
   > = {
     rendering: { chart: "compare", workload: "cards" },
-    framework: { chart: "bars", workload: "catalog" },
+    framework: { chart: "bars", workload: frameworkWorkloads()[0].id },
     http: { chart: "bars", workload: "cards" },
     streaming: { chart: "lines", workload: "products" },
     startup: { chart: "bars", workload: "products" },
@@ -169,7 +180,11 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     const allowed = {
       section: ["performance", "ecosystem"],
       view: Object.keys(suites),
-      workload: [...data.workloads.map((w) => w.id), "catalog"],
+      workload: [
+        ...data.workloads.map((w) => w.id),
+        ...frameworkWorkloads().map((w) => w.id),
+        "catalog",
+      ],
       framework: ["throughput", "p50", "p99", "cpu", "rss"],
       chart: ["compare", "bars", "lines", "balls", "table"],
       http: [
@@ -331,13 +346,30 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       case "streaming":
         return data.streaming.rows[String(state.rate)];
       case "framework":
-        return data.framework.rows;
+        return data.framework.workloads[state.workload];
       case "startup":
         return data.startup.rows;
     }
   }
   function samples(r: ChartRow) {
     return "samples" in r ? r.samples : r.seriesSamples[metric()] || [];
+  }
+  function comparisonMeasurements() {
+    return orderedWorkloads().flatMap((w) =>
+      (data.rendering.rows[w.id] || []).filter(isVisible).map((row) => ({
+        ...row,
+        workload: w.id,
+        suite: "rendering" as const,
+        unit: "µs",
+        capturedAt: row.capturedAt,
+        source: row.source ?? suites.rendering.path,
+        latency: {
+          values: row,
+          unit: "µs",
+          scope: "Render duration · median of 5 run percentiles",
+        },
+      })),
+    );
   }
   function value(r: ChartRow): number {
     const key = metric();
@@ -381,11 +413,44 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     );
   }
 
+  function renderingCoverage(id: string, workload: string) {
+    const project = required(renderer(id));
+    const unsupported = project.renderingUnsupported?.[workload];
+    return unsupported
+      ? {
+          ...unsupported,
+          status: unsupported.status ?? ("unsupported" as const),
+        }
+      : {
+          status: "unmeasured" as const,
+          reason:
+            project.coverageReason ||
+            "No validated render-only capture is available for this workload. HTTP request measurements are a separate experiment.",
+          version: project.version || "",
+          source: project.coverageSource || project.homepage,
+        };
+  }
+
+  function measurementLinks(id: string) {
+    const links: { label: string; href: string }[] = [];
+    if (data.framework.rows.some((r) => r.id === id))
+      links.push({ label: "Framework SSR", href: "?view=framework" });
+    const workload = orderedWorkloads().find((w) =>
+      data.http.rows[w.id]?.some((r) => r.id === id),
+    );
+    if (workload)
+      links.push({ label: "HTTP", href: `?view=http&workload=${workload.id}` });
+    if (data.startup.rows.some((r) => r.id === id))
+      links.push({ label: "Cold Start", href: "?view=startup" });
+    return links;
+  }
+
   function normalizeState() {
     if (state.view === "streaming") state.chart = "lines";
     if (state.view === "framework" && !data.framework) state.view = "rendering";
     if (state.view === "framework") {
-      state.workload = "catalog";
+      if (!data.framework.workloads[state.workload])
+        state.workload = frameworkWorkloads()[0].id;
       if (state.chart === "balls") state.chart = "bars";
     } else if (state.workload === "catalog") state.workload = "cards";
     if (state.chart === "compare" && state.view !== "rendering")
@@ -402,6 +467,25 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       .sort((a, b) =>
         metric() === "throughput" ? value(b) - value(a) : value(a) - value(b),
       );
+  function validationNote() {
+    const exclusions =
+      state.view === "streaming" ? data.streaming.excluded || [] : [];
+    if (exclusions.length)
+      return `${exclusions.map((entry) => name(entry.id)).join(", ")} streaming results withheld: placeholder validation was incorrect. Corrected rerun pending.`;
+    return "";
+  }
+  function captureNote() {
+    const review = data[state.view].reviewRefresh;
+    if (review) return review.note;
+    return state.view === "rendering" ? data.rendering.refresh?.note || "" : "";
+  }
+
+  function experimentDescription() {
+    return state.view === "startup"
+      ? "Time from launching a fresh server process to receiving its first complete product-grid response. Includes runtime startup and rendering; builds run beforehand and the disk cache is warm."
+      : "";
+  }
+
   function heading() {
     if (state.view === "framework")
       return {
@@ -443,7 +527,8 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     logo,
     label,
     isVisible,
-    frameworkWorkload,
+    frameworkWorkloads,
+    frameworkUsesJsSsr,
     suites,
     viewDefaults,
     viewStateKeys,
@@ -454,13 +539,19 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     metric,
     getRows,
     samples,
+    comparisonMeasurements,
     value,
     unit,
     summary,
     uncaptured,
+    renderingCoverage,
+    measurementLinks,
     latencyStats,
     normalizeState,
     visibleRows,
+    validationNote,
+    captureNote,
+    experimentDescription,
     heading,
   };
 }

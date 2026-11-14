@@ -1,0 +1,22 @@
+{
+  "name": "framework-ssr-sveltekit",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "imports": {
+    "#lib/*": "./src/lib/*"
+  },
+  "scripts": {
+    "build": "bun --bun vite build",
+    "start": "bun server.ts"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-node": "catalog:",
+    "@sveltejs/kit": "catalog:",
+    "@sveltejs/vite-plugin-svelte": "catalog:",
+    "acorn": "catalog:",
+    "svelte": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

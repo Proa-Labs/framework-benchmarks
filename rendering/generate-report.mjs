@@ -1,3 +1,4 @@
+import { capturedRenderingContract } from '../tooling/rendering-contract.mjs';
 import { verifyRefresh } from "../scripts/proa-refresh-evidence.mjs";
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -31,13 +32,8 @@ const historicalReportPath = join(
   "archive",
   "public-report-2026-08-31.md",
 );
-const roster = JSON.parse(
-  readFileSync(join(renderingDirectory, "canonical", "roster.json"), "utf8"),
-);
-const workloads = JSON.parse(
-  readFileSync(join(renderingDirectory, "canonical", "workloads.json"), "utf8"),
-);
 const result = JSON.parse(readFileSync(resultPath, "utf8"));
+const { roster, workloads } = capturedRenderingContract(workspaceDirectory, result);
 const productScaling = JSON.parse(readFileSync(productScalingPath, "utf8"));
 const historicalReport = readFileSync(historicalReportPath, "utf8");
 
@@ -74,7 +70,7 @@ function renderProductScaling(capture) {
       }
       return formatDuration(measurement.p50_us);
     });
-    return `| ${renderer.label} | ${cells.join(" | ")} |`;
+    return `| ${renderer.label}${renderer.fixture ? "†" : ""} | ${cells.join(" | ")} |`;
   });
   const firstMeasurement =
     capture.measurements[capture.renderers[0].id][counts[0]];
@@ -97,7 +93,7 @@ ${capture.refresh ? capture.refresh.note + "\n\n" : ""}This ${capturedDate} UTC 
 contract at ${counts.slice(0, -1).join(", ")}, and ${counts.at(-1)} cards. Every value includes component/template
 execution and a fresh independently owned response; deterministic input
 construction remains outside timing. All ${capture.renderers.length * counts.length} renderer/size cells passed the same
-semantic-DOM parity gate used by the canonical scoreboard. Each cell below is
+${capture.renderers.some(r=>r.fixture) ? "strict semantic-DOM gate or Exact’s explicitly adapted content-and-style gate. Exact† uses native named styles and different HTML; see [the adaptation notes](rendering/external/exact/README.md)." : "semantic-DOM parity gate used by the canonical scoreboard."} Each cell below is
 the median of ${processCount} independent process P50s, using ${samples.slice(0, -1).join(", ")}, and ${samples.at(-1)} measured
 renders per process respectively.
 
@@ -157,7 +153,7 @@ for (const artifact of result.raw_artifacts) {
   }
 }
 const detailed = `${
-  renderDetailedReport(result, roster, workloads).trimEnd()
+  renderDetailedReport(result, roster, workloads).trimEnd().replaceAll("](rendering/external/exact/README.md)", `](https://github.com/Proa-Labs/framework-benchmarks/blob/${result.provenance.harness_commit}/rendering/external/exact/README.md)`)
 }\n`;
 const currentPages = [scoreboardPath, engineeringPath]
   .map((path) => readFileSync(path, "utf8"))

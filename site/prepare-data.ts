@@ -1,11 +1,11 @@
-import { cp, mkdir, writeFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import suites from "../tooling/suites.json" with { type: "json" };
 import { validateCapture } from "../tooling/validate.mjs";
 import { verifySourceSnapshot } from "../tooling/verify-source.mjs";
 import type { View } from "./benchmark-types.ts";
-import { loadInputs, normalize } from "./data.ts";
+import { captures, loadInputs, normalize } from "./data.ts";
 import {
   featureRows,
   features,
@@ -13,7 +13,12 @@ import {
   supportStates,
   updatedOn,
 } from "./features-data.ts";
+import {
+  copyGenerated as cp,
+  writeGenerated as writeFile,
+} from "./generated-files.ts";
 import { buildPreviews } from "./previews.ts";
+import { copyProaRefreshEvidence } from "./proa-refresh.ts";
 import { required } from "./required.ts";
 export const siteRoot = dirname(fileURLToPath(import.meta.url));
 export const generatedDirectory = join(siteRoot, ".generated");
@@ -25,7 +30,14 @@ export async function prepareData() {
   const captureIds = Object.keys(buffers) as View[];
   const outputDirectory = join(generatedDirectory, "public");
   await mkdir(join(outputDirectory, "data/captures"), { recursive: true });
-  await cp(join(siteRoot, "public"), outputDirectory, { recursive: true });
+  await cp(join(siteRoot, "public"), outputDirectory);
+  // Keep the published attribution URL stable while source data lives together.
+  await cp(
+    join(siteRoot, "data/branding/logo-sources.json"),
+    join(outputDirectory, "logos/sources.json"),
+  );
+  if (input.reviewRefresh)
+    await copyProaRefreshEvidence(dirname(siteRoot), outputDirectory, captures);
   await Promise.all(
     Object.entries(buffers).map(([id, buffer]) =>
       writeFile(join(outputDirectory, "data/captures", `${id}.json`), buffer),
@@ -84,9 +96,15 @@ export async function prepareData() {
   }).formatRange(dates[0], required(dates.at(-1)));
   const metadata = {
     dateRange,
+    renderingOutput:
+      typeof data.rendering.outputBoundary === "string"
+        ? data.rendering.outputBoundary
+        : null,
     framework: {
       scenario: input.framework.scenario,
+      versions: data.framework.versions,
       methodology: input.framework.methodology,
+      workloads: data.framework.workloadDefinitions,
     },
     captures: captureIds.map((id) => {
       const { download, date, capture } = data[id];

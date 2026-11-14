@@ -18,8 +18,6 @@ From the repository root:
 
 ```sh
 bun install --frozen-lockfile
-bun install --cwd rendering/external/react --frozen-lockfile
-bun install --cwd site --frozen-lockfile
 bun run --cwd site dev
 ```
 
@@ -33,7 +31,7 @@ bun run --cwd site test:browser
 bun run --cwd site build
 ```
 
-Install Playwright Chromium if needed: `cd site && bun node_modules/playwright/cli.js install chromium`. Website checks do not require Rust, Ruby, Java, Go or a benchmark rerun.
+Install Playwright Chromium if needed: `bun node_modules/playwright/cli.js install chromium` from the repository root. Website checks do not require Rust, Ruby, Java, Go or a benchmark rerun.
 
 ## Structure
 
@@ -57,11 +55,11 @@ Install Playwright Chromium if needed: `cd site && bun node_modules/playwright/c
 | `suspense-load/results/latest.json` | Streaming     |
 | `cold-start/results/latest.json`    | Startup       |
 
-`data.ts` uses shared statistics and validators. `catalog.json` contains project metadata, never timings. Builds reject invalid captures, preserve original JSON bytes in `dist/client/data/captures/`, and emit normalized results and SHA-256 provenance under `dist/client/data/`.
+`data.ts` uses shared statistics and validators. Authored site inputs live under [`data/`](data/README.md), grouped into performance, features and branding. `data/performance/catalog.json` contains project metadata, never timings. Builds reject invalid captures, preserve original JSON bytes in `dist/client/data/captures/`, and emit normalized results and SHA-256 provenance under `dist/client/data/`.
 
 New selected captures flow into the next build automatically. Dates, machines, versions and output boundaries retain their original meaning. Contributor smoke runs do not replace publication pointers. See [CONTRIBUTING.md](../CONTRIBUTING.md) for the capture and source-retention protocol.
 
-Feature definitions live in `feature-definitions.json`, final primary-source findings in `feature-reviews.json`, and feature-only projects in `feature-projects.json`. `feature-schema.ts` defines their TypeScript types; `features-data.ts` validates statuses and joins reviews to projects. One registry drives React profiles, matrix, overview and downloadable `data/features.json`. Supported totals count built-in, official-package and third-party support; qualified or undocumented findings stay separate. These totals describe documentation coverage, not API quality.
+Feature definitions live in `data/features/definitions.json`, additional projects in `data/features/projects.json`, and final primary-source findings in one `data/features/reviews/<framework>.json` per project. `feature-schema.ts` defines their TypeScript types; `features-data.ts` discovers reviews, validates their feature IDs, statuses and evidence, and joins them to projects. Aggregate dates follow the individual reviews. One registry drives React profiles, matrix, overview and downloadable `data/features.json`. Supported totals count built-in, official-package and third-party support; qualified and not-established findings stay separate. These totals describe documentation coverage, not API quality.
 
 ## Cloudflare and PR previews
 

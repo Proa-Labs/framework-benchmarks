@@ -2,6 +2,7 @@ import type {
   BenchmarkData,
   ChartMode,
   ChartRow,
+  HttpRow,
   Metric,
   Percentiles,
   View,
@@ -17,6 +18,11 @@ type ExportRow = ChartRow & {
   exportMetric?: string;
   exportValue?: number;
   exportSamples?: number[];
+  suite?: "rendering" | "framework";
+  unit?: string;
+  capturedAt?: string;
+  source?: string;
+  latency?: Latency;
 };
 interface FlowRuntime {
   paired: boolean;
@@ -70,7 +76,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     logo,
     label,
     isVisible,
-    frameworkWorkload,
+    frameworkWorkloads,
     suites,
     rememberView,
     switchView,
@@ -91,6 +97,13 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     $("[data-chart-note]").textContent = chart.note;
     return chart;
   }
+  const syncSectionLinks = () => {
+    $$<HTMLAnchorElement>("a[data-section]").forEach((link) => {
+      const params = new URLSearchParams(currentSearch);
+      params.set("section", required(link.dataset.section));
+      link.href = `${location.pathname}?${params}`;
+    });
+  };
   const save = () => {
     const params = new URLSearchParams();
     for (const key of [
@@ -110,6 +123,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     if (state.types.length !== ALL_GROUPS.length)
       params.set("types", state.types.join(","));
     currentSearch = `?${params.toString()}`;
+    syncSectionLinks();
     history.replaceState(
       history.state,
       "",
@@ -127,14 +141,33 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   const percentilePopup = $("[data-percentile-popup]");
   let popupAnchor: Element | null = null;
   let popupPinned = false;
-  const percentileTarget = ".fw-row[data-focus], .fw-comparison [data-focus]";
+  let supportHideTimer = 0;
+  let returningPopupFocus = false;
+  let dismissedHover = false;
+  let pointerX = Number.NaN,
+    pointerY = Number.NaN;
+  const percentileTarget =
+    ".fw-row[data-focus], .fw-comparison [data-focus], .fw-comparison [data-render-support]";
   function hidePercentiles(force = false) {
+    clearTimeout(supportHideTimer);
     if (popupPinned && !force) return;
+    // Hiding a popup can uncover a different cell beneath the stationary mouse.
+    // Wait for actual pointer movement before accepting another hover.
+    if (force) dismissedHover = true;
+    const restore =
+      force && percentilePopup.contains(document.activeElement)
+        ? popupAnchor
+        : null;
     popupPinned = false;
     percentilePopup.hidden = true;
     if (popupAnchor) {
       popupAnchor.removeAttribute("aria-describedby");
       popupAnchor = null;
+    }
+    if (restore instanceof HTMLElement && restore.isConnected) {
+      returningPopupFocus = true;
+      restore.focus({ preventScroll: true });
+      returningPopupFocus = false;
     }
   }
   function placePercentiles(event: MouseEvent | null, anchor: Element) {
@@ -175,6 +208,10 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     const ready = entries.filter((e): e is StatEntry & { stats: Latency } =>
       Boolean(e.stats?.values),
     );
+    clearTimeout(supportHideTimer);
+    percentilePopup.removeAttribute("data-support-popover");
+    percentilePopup.setAttribute("role", "tooltip");
+    percentilePopup.removeAttribute("aria-label");
     if (!ready.length) {
       hidePercentiles();
       return;
@@ -185,20 +222,87 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     anchor.setAttribute("aria-describedby", "fw-percentile-popover");
     const single = ready.length === 1,
       first = ready[0];
+    const adapted =
+      state.view === "rendering"
+        ? renderer(first.id)?.renderingAdaptation
+        : undefined;
+    if (adapted) interactivePopup(`${name(first.id)} fixture notes`);
     percentilePopup.innerHTML = single
       ? `<div class="fw-popover-heading"><div class="fw-popover-identity">${logo(first.id)}<span class="fw-popover-title">${esc(name(first.id))}</span></div></div><div class="fw-percentile-values">${(["p50", "p95", "p99"] as const).map((q) => `<div class="fw-percentile-value"><small>${q.toUpperCase()}</small><div class="fw-percentile-number"><strong>${pctFmt(first.stats.values[q])}</strong><span class="fw-popover-unit">${esc(first.stats.unit)}</span></div></div>`).join("")}</div><div class="fw-popover-scope">${esc(first.stats.scope)}</div>`
       : `<div class="fw-popover-heading">${esc(heading)}</div><div class="fw-percentile-grid"><span></span><span>P50</span><span>P95</span><span>P99</span>${ready.map((e) => `<span class="fw-popover-renderer">${esc(name(e.id))}</span>${(["p50", "p95", "p99"] as const).map((q) => `<span>${pctFmt(e.stats.values[q])}<span class="fw-popover-unit">${esc(e.stats.unit)}</span></span>`).join("")}`).join("")}</div><div class="fw-popover-scope">${esc(first.stats.scope)}</div>`;
+    if (adapted) percentilePopup.innerHTML += adaptationDescription(adapted);
     percentilePopup.hidden = false;
     placePercentiles(event, anchor);
   }
+  function interactivePopup(label: string) {
+    percentilePopup.setAttribute("data-support-popover", "");
+    percentilePopup.setAttribute("role", "dialog");
+    percentilePopup.setAttribute("aria-label", label);
+  }
+  function adaptationDescription(
+    adapted: NonNullable<
+      import("../../benchmark-types.ts").Renderer["renderingAdaptation"]
+    >,
+  ) {
+    return `<div class="fw-popover-scope" data-adaptation-explanation><strong>${esc(adapted.label)}</strong><p>${esc(adapted.reason)}</p>${adapted.backend ? `<p>${esc(adapted.backend)}</p>` : ""}<p><a href="${esc(adapted.source)}" target="_blank" rel="noreferrer">Exact’s styling guide ↗</a> · <a href="${esc(adapted.details)}" target="_blank" rel="noreferrer">What we changed ↗</a></p></div>`;
+  }
   function showRowPercentiles(row: HTMLElement) {
+    clearTimeout(supportHideTimer);
+    if (row.dataset.renderAdaptation) {
+      const id = row.dataset.renderAdaptation;
+      const adapted = required(renderer(id)?.renderingAdaptation);
+      popupAnchor?.removeAttribute("aria-describedby");
+      popupAnchor = row;
+      row.setAttribute("aria-describedby", "fw-percentile-popover");
+      interactivePopup(`${name(id)} fixture notes`);
+      percentilePopup.innerHTML = `<div class="fw-popover-heading">${logo(id)} ${esc(name(id))}</div>${adaptationDescription(adapted)}`;
+      percentilePopup.hidden = false;
+      placePercentiles(null, row);
+      return;
+    }
+    if (row.dataset.renderSupport) {
+      clearTimeout(supportHideTimer);
+      const id = row.dataset.renderSupport;
+      const workload = required(
+        data.workloads.find((w) => w.id === row.dataset.supportWorkload),
+      );
+      const coverage = model.renderingCoverage(id, workload.id);
+      if (popupAnchor && popupAnchor !== row)
+        popupAnchor.removeAttribute("aria-describedby");
+      popupAnchor = row;
+      interactivePopup(`${name(id)} fixture notes`);
+      row.removeAttribute("title");
+      row.setAttribute("aria-describedby", "fw-percentile-popover");
+      const status =
+        coverage.status === "unsupported"
+          ? "Unsupported for this fixture"
+          : coverage.status === "parity-failed"
+            ? "Does not pass this fixture"
+            : "Not measured";
+      percentilePopup.innerHTML = `<div class="fw-popover-heading">${logo(id)} ${esc(name(id))} · ${esc(workload.label)}</div><div class="fw-popover-scope"><strong>${status}</strong><p>${esc(coverage.reason)}</p>${coverage.version ? `<p>Checked version: ${esc(coverage.version)}</p>` : ""}<p><a href="${esc(coverage.source)}" target="_blank" rel="noreferrer">Why this differs ↗</a></p></div>`;
+      percentilePopup.hidden = false;
+      placePercentiles(null, row);
+      return;
+    }
     const workload = row.dataset.statWorkload,
-      r = (workload ? data.rendering.rows[workload] : getRows()).find(
-        (r) => r.id === row.dataset.focus,
-      ),
-      stats = latencyStats(r, { flow: state.chart === "balls" });
+      framework = row.dataset.statSuite === "framework",
+      r = (
+        framework
+          ? data.framework.workloads[required(workload)]
+          : workload
+            ? data.rendering.rows[workload]
+            : getRows()
+      ).find((r) => r.id === row.dataset.focus),
+      stats =
+        framework && r
+          ? {
+              values: (r as HttpRow).percentiles.equalLoad,
+              unit: "ms",
+              scope: `Full-framework HTTP request → complete HTML · equal load ${(r as HttpRow).equalLoadRps} requests/s · median of three run percentiles`,
+            }
+          : latencyStats(r, { flow: state.chart === "balls" });
     if (workload && stats)
-      stats.scope = `${required(data.workloads.find((w) => w.id === workload)).label} · ${stats.scope}`;
+      stats.scope = `${required((framework ? frameworkWorkloads() : data.workloads).find((w) => w.id === workload)).label} · ${stats.scope}`;
     showPercentiles(
       [
         {
@@ -218,6 +322,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         event.relatedTarget instanceof Node ? event.relatedTarget : null,
       )
     ) {
+      if (dismissedHover) return;
       if (popupAnchor !== row) popupPinned = false;
       showRowPercentiles(row);
     }
@@ -229,18 +334,75 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       !row.contains(
         event.relatedTarget instanceof Node ? event.relatedTarget : null,
       )
-    )
-      hidePercentiles();
+    ) {
+      const next =
+        event.relatedTarget instanceof Node ? event.relatedTarget : null;
+      if (percentilePopup.hasAttribute("data-support-popover")) {
+        if (!percentilePopup.contains(next))
+          supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
+      } else hidePercentiles();
+    }
   });
-  listen(root, "focusin", (event) => {
+  listen(root, "pointermove", (event) => {
+    // movementX/Y can stay zero outside pointer lock. Compare viewport
+    // coordinates so a real move can reopen a dismissed explanation reliably.
+    const moved = event.clientX !== pointerX || event.clientY !== pointerY;
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    if (!dismissedHover || !moved) return;
+    dismissedHover = false;
     const row = closest(event, percentileTarget);
     if (row) showRowPercentiles(row);
   });
+  listen(percentilePopup, "pointerenter", () => clearTimeout(supportHideTimer));
+  listen(percentilePopup, "pointerleave", () => {
+    if (
+      percentilePopup.hasAttribute("data-support-popover") &&
+      !percentilePopup.contains(document.activeElement)
+    )
+      supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
+  });
+  listen(root, "focusin", (event) => {
+    const row = closest(event, percentileTarget);
+    if (row && !returningPopupFocus) {
+      dismissedHover = false;
+      showRowPercentiles(row);
+    }
+  });
   listen(root, "focusout", (event) => {
-    if (closest(event, percentileTarget)) hidePercentiles();
+    const next =
+      event.relatedTarget instanceof Node ? event.relatedTarget : null;
+    if (percentilePopup.contains(next)) return;
+    if (
+      event.target instanceof Node &&
+      percentilePopup.contains(event.target) &&
+      next !== popupAnchor
+    )
+      hidePercentiles(true);
+    else if (closest(event, percentileTarget)) hidePercentiles();
   });
   listen(document, "keydown", (event) => {
     if (event.key === "Escape") hidePercentiles(true);
+    if (
+      event.key === "Tab" &&
+      !percentilePopup.hidden &&
+      percentilePopup.hasAttribute("data-support-popover")
+    ) {
+      const links = Array.from(
+        percentilePopup.querySelectorAll<HTMLAnchorElement>("a[href]"),
+      );
+      if (!event.shiftKey && event.target === popupAnchor && links[0]) {
+        event.preventDefault();
+        links[0].focus();
+      } else if (
+        event.shiftKey &&
+        event.target === links[0] &&
+        popupAnchor instanceof HTMLElement
+      ) {
+        event.preventDefault();
+        popupAnchor.focus();
+      }
+    }
   });
   listen(window, "resize", () => {
     if (!percentilePopup.hidden && popupAnchor?.isConnected)
@@ -250,7 +412,10 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     window,
     "scroll",
     () => {
-      if (popupPinned && popupAnchor?.isConnected)
+      if (
+        popupAnchor?.isConnected &&
+        (popupPinned || popupAnchor.matches(":hover, :focus-visible"))
+      )
         placePercentiles(null, popupAnchor);
       else hidePercentiles();
     },
@@ -268,12 +433,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   }
   function renderScenarios() {
     const fixed = ["streaming", "startup"].includes(state.view),
-      active =
-        state.view === "framework"
-          ? "catalog"
-          : fixed
-            ? "products"
-            : state.workload,
+      active = fixed ? "products" : state.workload,
       compare = state.chart === "compare";
     $('.fw-workload-tabs [data-chart="compare"]').hidden =
       state.view !== "rendering";
@@ -288,8 +448,12 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         selected = !compare && button.dataset.workload === active;
       choice.hidden =
         state.view === "framework"
-          ? button.dataset.workload !== "catalog"
+          ? !frameworkWorkloads().some((w) => w.id === button.dataset.workload)
           : button.dataset.workload === "catalog";
+      const miniature = choice.querySelector<HTMLIFrameElement>("iframe");
+      const src = `/previews/${state.view === "framework" && frameworkWorkloads().some((w) => w.id === button.dataset.workload) ? "framework-" : ""}${button.dataset.workload}.html`;
+      if (miniature && miniature.getAttribute("src") !== src)
+        miniature.src = src;
       choice.dataset.active = String(selected);
       button.setAttribute("aria-pressed", String(selected));
       button.disabled = fixed && button.dataset.workload !== "products";
@@ -589,17 +753,13 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     $("[data-performance]").hidden = state.section !== "performance";
     $("[data-ecosystem]").hidden = state.section !== "ecosystem";
     $("[data-results-title]").hidden = state.view === "rendering";
-    const exclusions =
-      state.view === "streaming" ? data.streaming.excluded || [] : [];
+    const description = $("[data-experiment-description]");
+    description.textContent = model.experimentDescription();
+    description.hidden = !description.textContent;
     const validationNote = $("[data-validation-note]");
-    if (validationNote) {
-      const refreshNote =
-        state.view === "rendering" ? data.rendering.refresh?.note : null;
-      validationNote.hidden = !exclusions.length && !refreshNote;
-      validationNote.textContent = exclusions.length
-        ? `${exclusions.map((entry) => name(entry.id)).join(", ")} streaming results withheld: placeholder validation was incorrect. Corrected rerun pending.`
-        : refreshNote || "";
-    }
+    const note = model.validationNote();
+    validationNote.hidden = !note;
+    validationNote.textContent = note;
     $("#site-title").textContent =
       state.section === "ecosystem"
         ? "The ecosystem"
@@ -662,15 +822,20 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         .sort((a, b) =>
           metric() === "throughput" ? value(b) - value(a) : value(a) - value(b),
         );
-    if (state.focus && !rows.some((row) => row.id === state.focus))
+    if (
+      state.focus &&
+      !(state.chart === "compare" ? model.comparisonMeasurements() : rows).some(
+        (row) => row.id === state.focus,
+      )
+    )
       state.focus = null;
     $("[data-heading]").textContent = model.heading();
-    if (!rows.length) {
+    if (state.chart === "compare") drawComparison(rows);
+    else if (!rows.length) {
       $("[data-results]").innerHTML =
         '<div class="fw-empty">No measurements for this selection.</div>';
       $("[data-chart-note]").textContent = "";
-    } else if (state.chart === "compare") drawComparison(rows);
-    else if (
+    } else if (
       state.chart === "lines" &&
       state.view === "streaming" &&
       state.stream === "completion"
@@ -683,14 +848,15 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     if (
       state.view === "rendering" &&
       (state.chart !== "compare" || !rows.length) &&
-      uncaptured().length
+      uncaptured().some((r) => !data.framework.rows.some((v) => v.id === r.id))
     )
       $("[data-results]").insertAdjacentHTML(
         "beforeend",
-        `<div class="fw-unmeasured-list"><h3>Not measured</h3>${uncaptured()
+        `<div class="fw-unmeasured-list"><h3>Outside this experiment</h3>${uncaptured()
+          .filter((r) => !data.framework.rows.some((v) => v.id === r.id))
           .map(
             (r) =>
-              `<div>${label(r.id)}<span>${esc(r.coverageReason)} <a href="${esc(r.coverageSource)}" target="_blank" rel="noreferrer">Details ↗</a>${data.framework?.rows.some((v) => v.id === r.id) ? ' · <a href="?view=framework">Measured in Framework SSR ↗</a>' : ""}</span></div>`,
+              `<div>${label(r.id)}<span>${markup.coverage(r)}</span></div>`,
           )
           .join("")}</div>`,
       );
@@ -720,21 +886,27 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       .join("");
     const cpuContext = $("[data-cpu-context]");
     if (cpuContext)
-      cpuContext.hidden =
-        state.view !== "streaming" ||
-        !/^\d+$/.test(s.host?.serverCpuAffinity ?? "");
+      cpuContext.hidden = !/^\d+$/.test(s.host?.serverCpuAffinity ?? "");
     $("[data-capture]").textContent =
       `${s.host?.cloud || s.host?.cpu_model || s.host?.cpuModel || "Recorded host"} · ${s.date}`;
     const missing = data.renderers.filter(
-      (r) => isVisible(r) && !all.some((v) => v.id === r.id),
+      (r) =>
+        isVisible(r) &&
+        !(
+          state.chart === "compare" ? model.comparisonMeasurements() : all
+        ).some((v) => v.id === r.id),
     );
     $("[data-coverage]").textContent = missing.length
       ? `${missing.length} roster entries not measured here`
       : "";
     $("[data-scope]").textContent = suites[state.view].scope;
     $("[data-method]").textContent = suites[state.view].method;
+    const captureNote = $("[data-capture-note]");
+    $("[data-review-note]").hidden = !s.reviewRefresh;
+    captureNote.innerHTML = `<span data-capture-note-copy>${esc(model.captureNote())}</span>${s.reviewRefresh ? ' <a class="underline underline-offset-4" href="/data/proa-refresh/manifest.json" target="_blank" rel="noreferrer">Refresh evidence ↗</a>' : ""}`;
+    captureNote.hidden = !captureNote.textContent;
     $("[data-source]").innerHTML =
-      `<a href="${s.download}" download>Original capture ↗</a> · <a href="https://github.com/Proa-Labs/framework-benchmarks/blob/main/${s.source}" target="_blank" rel="noreferrer">View source ↗</a><br><span class="fw-source-hash">${s.sourceSnapshot ? `<a href="${s.sourceSnapshot}" download>Captured source snapshot ↗</a><br>` : ""}Source SHA-256 ${esc(s.hash)} · Artifact SHA-256 ${esc(s.artifactSha256)}</span>${s.note ? `<br>${esc(s.note)}` : ""}`;
+      `<a href="${s.download}" download>${s.reviewRefresh ? "Review comparison" : "Original capture"} ↗</a> · <a href="${s.reviewRefresh ? "/data/proa-refresh/manifest.json" : `https://github.com/Proa-Labs/framework-benchmarks/blob/main/${s.source}`}" target="_blank" rel="noreferrer">View source ↗</a><br><span class="fw-source-hash">${s.sourceSnapshot ? `<a href="${s.sourceSnapshot}" download>Captured source snapshot ↗</a><br>` : ""}${s.reviewRefresh ? "Proa source SHA-256" : "Source SHA-256"} ${esc(s.hash)} · Artifact SHA-256 ${esc(s.artifactSha256)}</span>${s.note ? `<br>${esc(s.note)}` : ""}`;
     $$<HTMLInputElement>("[data-engine]").forEach((el) => {
       (el as HTMLInputElement).checked = state.selected.includes(
         required(el.dataset.engine),
@@ -768,19 +940,23 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
                 ),
             )
           : state.chart === "compare"
-            ? rows.flatMap((row) =>
-                data.workloads.map((w) => ({
-                  ...required(
-                    data.rendering.rows[w.id].find((r) => r.id === row.id),
-                  ),
-                  workload: w.id,
-                })),
-              )
+            ? model.comparisonMeasurements()
             : rows;
     const exportData = {
+      reviewRefresh: s.reviewRefresh,
       measurementStatus:
         metric() === "breakdown" ? "not instrumented" : "measured",
       experiment: state.view,
+      captures:
+        state.chart === "compare"
+          ? {
+              rendering: {
+                source: data.rendering.source,
+                hash: data.rendering.hash,
+                capturedAt: data.rendering.capturedAt,
+              },
+            }
+          : undefined,
       toolTypes: state.types,
       unmeasured: (state.view === "rendering"
         ? uncaptured()
@@ -789,6 +965,14 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
           )
       ).map((r) => ({
         id: r.id,
+        ...(state.view === "rendering"
+          ? {
+              workloads: model.orderedWorkloads().map((w) => ({
+                workload: w.id,
+                ...model.renderingCoverage(r.id, w.id),
+              })),
+            }
+          : {}),
         reason:
           state.view === "rendering"
             ? r.coverageReason
@@ -819,22 +1003,30 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         state.view === "streaming" && state.chart !== "lines"
           ? state.rate
           : null,
-      unit: unit(),
+      unit: state.chart === "compare" ? "per row" : unit(),
       capturedAt: s.capturedAt,
-      source: suites[state.view].path,
+      source: s.source,
       hash: s.hash,
       method: suites[state.view].method,
       scope: suites[state.view].scope,
       rows: exportRows.map((r) => ({
         id: r.id,
         workload: r.workload ?? state.workload,
+        suite: r.suite ?? state.view,
+        unit: r.unit ?? unit(),
+        capturedAt: r.capturedAt ?? s.capturedAt,
+        captureId: "captureId" in r ? r.captureId : undefined,
+        source: r.source ?? suites[state.view].path,
         metric: r.exportMetric || metric(),
         rate: r.rate ?? (state.view === "streaming" ? state.rate : null),
         value: r.exportValue ?? value(r),
         samples: r.exportSamples ?? samples(r),
         detail: r.detail,
+        fixture: "fixture" in r ? r.fixture : undefined,
+        adaptation: "adaptation" in r ? r.adaptation : undefined,
         errors: r.errors ?? null,
-        latencyPercentiles: latencyStats(r, { rate: r.rate ?? null }),
+        latencyPercentiles:
+          r.latency ?? latencyStats(r, { rate: r.rate ?? null }),
         ...(state.chart === "balls" && "flow" in r && r.flow
           ? { pairedFlowMeasurement: r.flow }
           : {}),
@@ -848,6 +1040,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         [
           [
             "renderer",
+            "suite",
             "value",
             "unit",
             "metric",
@@ -859,22 +1052,30 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
             "latency_p99",
             "latency_unit",
             "errors",
+            "fixture",
+            "fixture_notes_url",
+            "review_refresh",
           ],
           ...exportRows.map((r) => {
-            const latency = latencyStats(r, { rate: r.rate ?? null });
+            const latency =
+              r.latency ?? latencyStats(r, { rate: r.rate ?? null });
             return [
               name(r.id),
+              r.suite ?? state.view,
               r.exportValue ?? value(r),
-              unit(),
+              r.unit ?? unit(),
               r.exportMetric || metric(),
               r.workload ?? state.workload,
               r.rate ?? (state.view === "streaming" ? state.rate : ""),
-              s.capturedAt,
+              r.capturedAt ?? s.capturedAt,
               latency?.values.p50 ?? "",
               latency?.values.p95 ?? "",
               latency?.values.p99 ?? "",
               latency?.unit ?? "",
               r.errors ?? "",
+              "fixture" in r ? r.fixture : "",
+              "adaptation" in r ? (r.adaptation?.details ?? "") : "",
+              s.reviewRefresh?.note ?? "",
             ];
           }),
         ]
@@ -891,6 +1092,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     )
     .join("");
   const infoButton = $(".fw-experiment-info");
+  const infoFocusTarget = $("#experiment-rendering");
   const infoPopup = $("#rendering-info");
   let infoHovered = false,
     infoFocused = false,
@@ -920,11 +1122,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       hideInfoSoon();
     });
   }
-  listen(infoButton, "focus", () => {
-    infoFocused = infoButton.matches(":focus-visible");
+  listen(infoFocusTarget, "focus", () => {
+    infoFocused = infoFocusTarget.matches(":focus-visible");
     if (infoFocused) showInfo();
   });
-  listen(infoButton, "blur", () => {
+  listen(infoFocusTarget, "blur", () => {
     infoFocused = false;
     hideInfoSoon();
   });
@@ -933,6 +1135,18 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       infoPopup.hidePopover();
   });
   listen(root, "click", (e) => {
+    const sectionLink = closest(e, "a[data-section]");
+    if (sectionLink) {
+      // Preserve live D3 selections, which may be newer than React's route
+      // snapshot. Keep real hrefs for no-JS, modified-click and new-tab use.
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey)
+        return;
+      e.preventDefault();
+      state.section = required(sectionLink.dataset.section);
+      render();
+      save();
+      return;
+    }
     const el = closest(e, "button");
     if (!el) return;
     if (el.hasAttribute("data-share")) {
@@ -950,14 +1164,14 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       return;
     }
     if (el.dataset.preview) {
-      const w = [...data.workloads, frameworkWorkload].find(
+      const w = [...data.workloads, ...frameworkWorkloads()].find(
         (w) => w.id === el.dataset.preview,
       );
       $("#fixture-title").textContent = required(w).label;
       $<HTMLIFrameElement>("[data-fixture-frame]").src =
-        `previews/${required(w).id}.html`;
+        `previews/${state.view === "framework" ? "framework-" : ""}${required(w).id}.html`;
       $<HTMLAnchorElement>("[data-preview-link]").href =
-        `previews/${required(w).id}.html`;
+        `previews/${state.view === "framework" ? "framework-" : ""}${required(w).id}.html`;
       $<HTMLDialogElement>(".fw-fixture-dialog").showModal();
       return;
     }
@@ -1057,13 +1271,19 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     const row = closest(event, percentileTarget);
     if (row) {
       if (row.isConnected) {
+        dismissedHover = false;
         popupPinned = true;
         showRowPercentiles(row);
       }
     }
   });
   listen(document, "pointerdown", (event) => {
-    if (!closest(event, ".fw-row,.fw-comparison,.fw-chart"))
+    if (
+      !closest(
+        event,
+        ".fw-row,.fw-comparison,.fw-chart,[data-percentile-popup]",
+      )
+    )
       hidePercentiles(true);
   });
   listen(document, "visibilitychange", () => {
