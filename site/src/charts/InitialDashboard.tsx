@@ -21,6 +21,9 @@ export function ChartMarkup({
       : markup.draw(model.visibleRows()));
   return (
     <div
+      data-initial-chart={
+        slot === "results" ? JSON.stringify(model.state) : undefined
+      }
       {...(slot === "catalog"
         ? { "data-catalog": "" }
         : { "data-results": "", "aria-live": "off" })}
@@ -60,9 +63,11 @@ export function WorkloadChoices({ model }: { model: DashboardModel }) {
           }
         >
           <span className="fw-workload-thumb" aria-hidden="true">
-            <iframe
-              src={`/previews/${state.view === "framework" && frameworkWorkloads().some((v) => v.id === w.id) ? "framework-" : ""}${w.id}.html`}
-              sandbox=""
+            <img
+              src={`/thumbnails/${state.view === "framework" && frameworkWorkloads().some((v) => v.id === w.id) ? "framework-" : ""}${w.id}.svg`}
+              alt=""
+              width="800"
+              height="640"
               loading="lazy"
               tabIndex={-1}
               title={`${w.label} miniature`}

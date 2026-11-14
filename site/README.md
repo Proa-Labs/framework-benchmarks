@@ -47,13 +47,13 @@ Install Playwright Chromium if needed: `bun node_modules/playwright/cli.js insta
 
 ## Measurements and evidence
 
-| Source                              | View          |
-| ----------------------------------- | ------------- |
-| `rendering/results/latest.json`     | SSR Rendering |
-| `framework-ssr/results/latest.json` | Framework SSR |
-| `page-load/results/latest.json`     | HTTP          |
-| `suspense-load/results/latest.json` | Streaming     |
-| `cold-start/results/latest.json`    | Startup       |
+| Source                                         | View          |
+| ---------------------------------------------- | ------------- |
+| `benchmarks/rendering/results/latest.json`     | SSR Rendering |
+| `benchmarks/framework-ssr/results/latest.json` | Framework SSR |
+| `benchmarks/http/results/latest.json`          | HTTP          |
+| `benchmarks/streaming/results/latest.json`     | Streaming     |
+| `benchmarks/cold-start/results/latest.json`    | Startup       |
 
 `data.ts` uses shared statistics and validators. Authored site inputs live under [`data/`](data/README.md), grouped into performance, features and branding. `data/performance/catalog.json` contains project metadata, never timings. Builds reject invalid captures, preserve original JSON bytes in `dist/client/data/captures/`, and emit normalized results and SHA-256 provenance under `dist/client/data/`.
 
@@ -77,3 +77,24 @@ bun run --cwd site deploy        # Publish production when authorized
 The browser suite checks the built app through Cloudflare's local runtime. It includes JavaScript-disabled requests for comparison tables, selected workload bars, Framework SSR, streaming panels and filtered feature matrices, plus hydration and interaction checks.
 
 Old `.html` document URLs redirect through `public/_redirects`; they do not need application routes.
+
+## Mobile and sharing checks
+
+The UI uses Tailwind's `text-sm` (14px) minimum for labels and numeric data,
+with a 16px base. Narrow layouts scroll comparison tables instead of shrinking
+their text. Inert SVG thumbnails contain only the first visible rows/cards;
+opening a workload creates a sandboxed frame for the full fixture. Preview-only `no-transform`
+headers prevent Cloudflare from injecting analytics into sandboxed documents.
+
+`src/page-meta.ts` supplies each route's canonical URL, Open Graph fields and
+large Twitter card. The shared 1200×630 PNG and Apple touch icon are committed
+assets; Vite fingerprints the social PNG so updated cards have a new image URL. Edit `data/branding/social-card.svg`, then run
+`bun site/generate-brand-assets.ts` from the repository root to regenerate them.
+
+Run `bun site/test/lighthouse.ts --runs 3` after installing Playwright Chromium.
+It audits all four main routes on standard mobile and desktop presets using
+Lighthouse 13.6.0, retaining JSON reports under ignored `site/test-results/lighthouse/`.
+It requires a median 100 in performance, accessibility, best practices and SEO.
+The local audit proxy forwards the production Host and applies Brotli transport
+compression, matching the indexing and compression policy at Cloudflare; it does
+not rewrite content, disable audits or change the preview's noindex policy.

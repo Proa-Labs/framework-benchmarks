@@ -1,9 +1,9 @@
-import type { Capture, Phase } from "../framework-ssr/report.ts";
+import type { Capture, Phase } from "../benchmarks/framework-ssr/report.ts";
 import {
   validateResult,
   workloadDefinitions,
-} from "../framework-ssr/report.ts";
-import { summarize } from "../suspense-load/stats.mjs";
+} from "../benchmarks/framework-ssr/report.ts";
+import { summarize } from "../tooling/stats.mjs";
 import type { Percentiles } from "./benchmark-types.ts";
 
 const median = (values: number[]) => summarize(values).p50;
