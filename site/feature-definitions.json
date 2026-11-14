@@ -227,6 +227,12 @@
       "definition": "Define application endpoints for JSON, webhooks, or other HTTP responses."
     },
     {
+      "id": "httpErrors",
+      "group": "server",
+      "label": "HTTP error correctness",
+      "definition": "Documented HTTP handling for missing routes or records (404) and server failures (5xx), with an error response carrying the intended status rather than just displaying fallback UI. Notes identify application-owned mapping, static-host requirements, and the point after which streaming headers/status can no longer change. Client-only error screens do not qualify."
+    },
+    {
       "id": "actions",
       "group": "server",
       "label": "Server functions",
@@ -471,6 +477,12 @@
       "group": "deployment",
       "label": "Self-hosting",
       "definition": "Run the production application on infrastructure you operate, with a documented server runtime or adapter."
+    },
+    {
+      "id": "subpathProxy",
+      "group": "deployment",
+      "label": "Subpath & reverse-proxy support",
+      "definition": "A documented deployment under a public prefix such as /dashboard/, coordinating route matching, generated links, assets, and any client/server endpoints. Notes explain whether a proxy preserves or strips the prefix and how the public origin or trusted forwarding is configured. A development-only API proxy or route-prefix setting alone does not establish complete support."
     },
     {
       "id": "staticHosting",

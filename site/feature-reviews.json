@@ -133,6 +133,13 @@
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://askama.rs/en/stable/"
         },
+        "httpErrors": {
+          "status": "scope",
+          "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+          "url": "https://askama.rs/en/stable/",
+          "label": "HTTP host required",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
@@ -341,6 +348,13 @@
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://askama.rs/en/stable/"
+        },
+        "subpathProxy": {
+          "status": "scope",
+          "note": "The reviewed standalone template/runtime API does not coordinate a public URL prefix across routing, assets, links and proxy headers. That deployment behavior belongs to the host application or web framework.",
+          "url": "https://askama.rs/en/stable/",
+          "label": "Host framework required",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "scope",
@@ -668,6 +682,13 @@
           "note": "Endpoints produce arbitrary responses; on-demand server endpoints support HTTP methods.",
           "url": "https://docs.astro.build/en/guides/endpoints/"
         },
+        "httpErrors": {
+          "status": "native",
+          "note": "On-demand pages can set Astro.response.status or return an explicit Response; custom 404/500 handling is part of the routing/adapter workflow. Prerendered HTML files need the static host to return the intended status. Decide HTTP errors before the response headers are sent; a late streamed fallback cannot replace the status already on the wire.",
+          "url": "https://docs.astro.build/en/reference/api-reference/#response",
+          "label": "SSR status; static-host caveat",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "native",
           "note": "Astro Actions expose typed server handlers to browser code and HTML forms.",
@@ -926,6 +947,13 @@
           "note": "On-demand hosting requires a deployment adapter such as the official Node adapter.",
           "url": "https://docs.astro.build/en/guides/on-demand-rendering/",
           "label": "SSR adapter"
+        },
+        "subpathProxy": {
+          "status": "native",
+          "note": "Astro’s base setting supplies a deployment prefix, and BASE_URL lets authored links and public-file references use it. Imported build assets are handled by the build. Configure the deployment adapter and proxy to agree on the public URL and forwarded host; literal root-relative URLs are not automatically rewritten.",
+          "url": "https://docs.astro.build/en/reference/configuration-reference/#base",
+          "label": "Build base; adapter setup",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "native",
@@ -1267,6 +1295,13 @@
           "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/axum",
           "label": "Fullstack / Axum"
         },
+        "httpErrors": {
+          "status": "official",
+          "note": "Fullstack maps errors bubbling to the root into HTTP statuses, with unknown errors defaulting to 500. A custom ErrorBoundary must explicitly call FullstackContext::commit_error_status to preserve the intended error status when it catches an error. Rendering a fallback alone does not set that status; response decisions must precede committed headers.",
+          "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/errors/",
+          "label": "Fullstack error statuses",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "official",
           "note": "Fullstack registers server functions that browser code can call.",
@@ -1510,6 +1545,13 @@
           "note": "The production Fullstack integration runs an Axum application server.",
           "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/axum",
           "label": "Fullstack / Axum"
+        },
+        "subpathProxy": {
+          "status": "partial",
+          "note": "The CLI documents web.app.base_path for subdirectory builds. Its web.proxy setting is a development API proxy, not production reverse-proxy support. Production Fullstack routing, server-function URLs, browser routing and forwarded origin must also agree with the deployment; the CLI setting alone does not establish that complete contract.",
+          "url": "https://dioxuslabs.com/learn/0.7/guides/tools/configure/",
+          "label": "Build base; host setup",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "official",
@@ -1850,6 +1892,13 @@
           "note": "The site sample authors a separate Bun HTTP server. That demonstrates an app backend, not a framework-owned endpoint router.",
           "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/patterns/site/server.ts"
         },
+        "httpErrors": {
+          "status": "native",
+          "note": "The pinned web host returns 404 for missing routes and 500 when per-request rendering throws, and sends rendered pages with page.status. Contract head metadata can declare 404, 410 or 503. This is behavior of the included web serving path, not a promise that an arbitrary static host or custom backend applies those statuses.",
+          "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/host/web/serve.mjs#L910-L942",
+          "label": "Web-host status mapping",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "partial",
           "note": "Contract actions/mutations invoke app data modules. These are not established as generated browser-to-server RPC endpoints.",
@@ -2110,6 +2159,13 @@
           "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md#what-works-today-and-what-doesnt-yet",
           "label": "Rust prerender host",
           "reviewedOn": "2026-11-10"
+        },
+        "subpathProxy": {
+          "status": "undocumented",
+          "note": "The pinned web host and deployment pipeline use application-root routes and separate versioned asset directories. The reviewed source does not establish one supported deployment-prefix configuration coordinating navigation, assets and public origin behind a reverse proxy. An asset release prefix alone does not demonstrate that behavior.",
+          "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/host/web/serve.mjs",
+          "label": "Deployment prefix not established",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "native",
@@ -2429,6 +2485,13 @@
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://pkg.go.dev/html/template"
         },
+        "httpErrors": {
+          "status": "scope",
+          "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+          "url": "https://pkg.go.dev/html/template",
+          "label": "HTTP host required",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
@@ -2637,6 +2700,13 @@
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://pkg.go.dev/html/template"
+        },
+        "subpathProxy": {
+          "status": "scope",
+          "note": "The reviewed standalone template/runtime API does not coordinate a public URL prefix across routing, assets, links and proxy headers. That deployment behavior belongs to the host application or web framework.",
+          "url": "https://pkg.go.dev/html/template",
+          "label": "Host framework required",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "scope",
@@ -2954,6 +3024,13 @@
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://handlebarsjs.com/guide/"
         },
+        "httpErrors": {
+          "status": "scope",
+          "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+          "url": "https://handlebarsjs.com/guide/",
+          "label": "HTTP host required",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
@@ -3162,6 +3239,13 @@
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://handlebarsjs.com/guide/"
+        },
+        "subpathProxy": {
+          "status": "scope",
+          "note": "The reviewed standalone template/runtime API does not coordinate a public URL prefix across routing, assets, links and proxy headers. That deployment behavior belongs to the host application or web framework.",
+          "url": "https://handlebarsjs.com/guide/",
+          "label": "Host framework required",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "scope",
@@ -3479,6 +3563,13 @@
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://jinja.palletsprojects.com/en/stable/api/"
         },
+        "httpErrors": {
+          "status": "scope",
+          "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+          "url": "https://jinja.palletsprojects.com/en/stable/api/",
+          "label": "HTTP host required",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
@@ -3689,6 +3780,13 @@
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://jinja.palletsprojects.com/en/stable/api/"
+        },
+        "subpathProxy": {
+          "status": "scope",
+          "note": "The reviewed standalone template/runtime API does not coordinate a public URL prefix across routing, assets, links and proxy headers. That deployment behavior belongs to the host application or web framework.",
+          "url": "https://jinja.palletsprojects.com/en/stable/api/",
+          "label": "Host framework required",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "scope",
@@ -4005,6 +4103,13 @@
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://jte.gg/"
         },
+        "httpErrors": {
+          "status": "scope",
+          "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+          "url": "https://jte.gg/",
+          "label": "HTTP host required",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
@@ -4217,6 +4322,13 @@
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://jte.gg/"
+        },
+        "subpathProxy": {
+          "status": "scope",
+          "note": "The reviewed standalone template/runtime API does not coordinate a public URL prefix across routing, assets, links and proxy headers. That deployment behavior belongs to the host application or web framework.",
+          "url": "https://jte.gg/",
+          "label": "Host framework required",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "scope",
@@ -4535,6 +4647,13 @@
           "note": "Routes match methods and parameterized paths, invoke controllers and return response/redirect endpoints.",
           "url": "https://laravel.com/framework/docs/13.x/routing"
         },
+        "httpErrors": {
+          "status": "native",
+          "note": "abort and HTTP exceptions select error statuses, and custom error views retain the exception’s status. The exception handler maps unexpected failures to server-error responses. Custom response/render callbacks must preserve the intended status. Once a streamed response has sent headers, a later failure cannot change its HTTP status.",
+          "url": "https://laravel.com/framework/docs/13.x/errors#http-exceptions",
+          "label": "HTTP exceptions / responses",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "undocumented",
           "note": "Not established in the reviewed Laravel server guide. External integrations or application code may provide this behavior.",
@@ -4784,6 +4903,13 @@
           "status": "native",
           "note": "The production guide documents PHP server deployment, configuration/cache commands, workers and health checks.",
           "url": "https://laravel.com/framework/docs/13.x/deployment"
+        },
+        "subpathProxy": {
+          "status": "partial",
+          "note": "Laravel documents trusted proxy addresses and forwarded headers so request URLs use the public scheme and host. A subdirectory deployment must also align the web server’s application base, URL generation, assets and any browser router. Trusted-proxy configuration or a route group prefix alone is not an automatic rebasing pipeline.",
+          "url": "https://laravel.com/framework/docs/13.x/requests#configuring-trusted-proxies",
+          "label": "Trusted proxies; host-owned mount",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "undocumented",
@@ -5134,6 +5260,13 @@
           "url": "https://book.leptos.dev/server/26_extractors.html",
           "label": "leptos_axum / leptos_actix"
         },
+        "httpErrors": {
+          "status": "official",
+          "note": "The Axum/Actix integrations expose ResponseOptions to set status and headers during SSR or a server function. A view showing “not found” must explicitly choose 404; a visual ErrorBoundary alone does not do so. With streaming, make the decision before headers are sent; later failures cannot replace the committed HTTP status.",
+          "url": "https://book.leptos.dev/server/27_response.html",
+          "label": "ResponseOptions / integrations",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "official",
           "note": "The #[server] macro generates server endpoints and browser call stubs.",
@@ -5396,6 +5529,13 @@
           "note": "Axum/Actix applications can run as production binaries on VMs.",
           "url": "https://book.leptos.dev/deployment/ssr.html",
           "label": "Server integrations"
+        },
+        "subpathProxy": {
+          "status": "official",
+          "note": "The non-root deployment guide coordinates Router base, HydrationScripts root and the server-function URL. It explicitly describes a proxy stripping the prefix and using different server/browser router bases. Asset hosting and public-origin/forwarded-header policy remain part of the Axum/Actix deployment.",
+          "url": "https://book.leptos.dev/deployment/sub_path.html",
+          "label": "Router / server integration",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "partial",
@@ -5728,6 +5868,13 @@
           "url": "https://markojs.com/docs/marko-run/file-based-routing",
           "label": "@marko/run"
         },
+        "httpErrors": {
+          "status": "official",
+          "note": "Run’s +404.marko and +500.marko responses carry 404 and 500 respectively; handlers can also return or throw explicit Responses. Marko template fallback UI alone is not HTTP status handling. A failure discovered after response headers have been sent cannot retroactively change that status.",
+          "url": "https://markojs.com/docs/marko-run/file-based-routing#special-files",
+          "label": "Marko Run 404 / 500",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "partial",
           "note": "@marko/run documents POST handlers and parsed form bodies; these are explicit HTTP handlers rather than generated function RPC.",
@@ -5972,6 +6119,13 @@
           "note": "The Node adapter supplies a production server target.",
           "url": "https://markojs.com/docs/marko-run/adapters",
           "label": "@marko/run Node adapter"
+        },
+        "subpathProxy": {
+          "status": "partial",
+          "note": "Marko Run supplies Vite build integration and deployment adapters. Vite can prefix build assets, but that does not by itself rebase application routes, authored links or proxy origin handling. The reviewed Run configuration does not establish a single coordinated subpath deployment contract; adapter/application setup is required.",
+          "url": "https://markojs.com/docs/marko-run/vite-plugin",
+          "label": "Vite assets; host-owned mount",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "official",
@@ -6294,6 +6448,13 @@
           "note": "route.ts handlers use Web Request/Response and support multiple HTTP methods.",
           "url": "https://nextjs.org/docs/app/getting-started/route-handlers"
         },
+        "httpErrors": {
+          "status": "native",
+          "note": "notFound renders the not-found UI with 404 for a non-streamed response. Once streaming has started, that UI can arrive with HTTP 200 and noindex metadata instead. Check missing resources before the response starts when a true 404 is required; a displayed error boundary cannot rewrite already-sent status headers.",
+          "url": "https://nextjs.org/docs/app/api-reference/file-conventions/loading#status-codes",
+          "label": "Pre-stream status decisions",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "native",
           "note": "Server Functions marked with use server can be called from Client Components and used as form actions.",
@@ -6571,6 +6732,13 @@
               "Shared cache/tag invalidation and proxy buffering need configuration; a container alone does not supply this coordination."
             ]
           }
+        },
+        "subpathProxy": {
+          "status": "native",
+          "note": "basePath prefixes framework navigation for subpath deployments and is fixed at build time. Asset references such as next/image sources may need the prefix explicitly. Self-hosting behind a reverse proxy is documented; configure the proxy’s public host/protocol and streaming behavior. assetPrefix alone is for assets, not mounting the application.",
+          "url": "https://nextjs.org/docs/app/api-reference/config/next-config-js/basePath",
+          "label": "basePath / proxy setup",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "native",
@@ -6908,6 +7076,13 @@
           "note": "Nitro registers server endpoints/middleware and exposes H3 request, cookie and response utilities.",
           "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
         },
+        "httpErrors": {
+          "status": "native",
+          "note": "Nuxt distinguishes server/application error responses from client-only error boundaries. Server error helpers and response-status APIs let the application send 404 or 5xx with its error page; rendering fallback UI alone is not sufficient. Client navigation errors do not change the original document status, and streamed headers cannot be changed after publication.",
+          "url": "https://nuxt.com/docs/4.x/getting-started/error-handling",
+          "label": "Server errors / response status",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "undocumented",
           "note": "Not established in the reviewed Nuxt server guide. External integrations or application code may provide this behavior.",
@@ -7157,6 +7332,13 @@
           "status": "native",
           "note": "Nitro presets target Node, serverless and worker deployments; prerendered output can be static. Target capabilities and caches vary.",
           "url": "https://nuxt.com/docs/4.x/getting-started/deployment"
+        },
+        "subpathProxy": {
+          "status": "native",
+          "note": "app.baseURL configures the application’s public base path, including framework routing and generated asset paths; NUXT_APP_BASE_URL can override it at runtime. Nitro’s deployment and proxy must agree on that public path and origin. Hard-coded root-relative URLs and third-party integrations still need matching configuration.",
+          "url": "https://nuxt.com/docs/4.x/api/nuxt-config#baseurl",
+          "label": "app.baseURL / Nitro",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "native",
@@ -7491,6 +7673,13 @@
           "label": "Script endpoints",
           "reviewedOn": "2026-11-10"
         },
+        "httpErrors": {
+          "status": "partial",
+          "note": "http_response_code lets a PHP application set 404 or 5xx before headers are sent. Native PHP does not automatically map every missing application route or rendered fallback into the correct status; routing, exception handling and output buffering are application/web-server responsibilities.",
+          "url": "https://www.php.net/manual/en/function.http-response-code.php",
+          "label": "Application-set status",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
@@ -7718,6 +7907,13 @@
           "note": "PHP-FPM is the production FastCGI process manager; deploy it behind a web server. The CLI development server is not a production host.",
           "url": "https://www.php.net/manual/en/install.fpm.php",
           "label": "PHP-FPM"
+        },
+        "subpathProxy": {
+          "status": "scope",
+          "note": "The reviewed standalone template/runtime API does not coordinate a public URL prefix across routing, assets, links and proxy headers. That deployment behavior belongs to the host application or web framework.",
+          "url": "https://www.php.net/manual/en/install.fpm.php",
+          "label": "Host framework required",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "scope",
@@ -8049,6 +8245,13 @@
           "url": "https://proa.so/docs/framework/route-handlers",
           "label": "Axum integration"
         },
+        "httpErrors": {
+          "status": "official",
+          "note": "Axum handlers and managed Page/layout head hooks can set error statuses before the response is published. Managed status mutations report failure after headers are committed. Framework render/encoding failures have documented 500 responses when a replacement response is still possible; a late streaming error cannot replace the status already sent. A custom “not found” page must explicitly select 404.",
+          "url": "https://proa.so/docs/framework/errors",
+          "label": "Pre-commit status / Axum",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "partial",
           "note": "RSJS query/mutation helpers call explicit server URLs. The reviewed form guide uses an authored Axum POST handler, rather than a generated server-function RPC.",
@@ -8319,6 +8522,13 @@
           "status": "native",
           "note": "Deploy a release binary plus public assets on your own server.",
           "url": "https://proa.so/docs/framework/deployment"
+        },
+        "subpathProxy": {
+          "status": "official",
+          "note": "The deployment guide configures FrameworkBuilder::with_base_path for a proxy that strips the public prefix before forwarding. BasePath-aware URL helpers and linked RSJS asset serving keep generated links, runtime imports and island loads aligned. Incoming routes remain unprefixed; the prefix is explicit, not inferred from forwarded headers. Authored URLs and Axum redirects must use the matching helpers.",
+          "url": "https://proa.so/docs/framework/deployment#serving-behind-a-url-path-prefix",
+          "label": "BasePath / Axum deployment",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "undocumented",
@@ -8648,6 +8858,13 @@
           "note": "Controllers handle routed HTTP requests and can render JSON responses.",
           "url": "https://guides.rubyonrails.org/getting_started.html"
         },
+        "httpErrors": {
+          "status": "native",
+          "note": "Rails maps routing/controller exceptions to HTTP error responses; render status and head let application handlers choose explicit codes. Custom rescue_from handlers must retain the intended status rather than returning a successful-looking error page. Streaming cannot change the status after the response has been committed.",
+          "url": "https://guides.rubyonrails.org/action_controller_advanced_topics.html#rescue-from",
+          "label": "Exception mapping / render status",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "partial",
           "note": "Controller actions accept explicit HTTP requests/forms; this is distinct from generated function-call RPC stubs.",
@@ -8887,6 +9104,13 @@
           "status": "native",
           "note": "Production Rails applications run a Ruby application server; the guide deploys through the generated production setup.",
           "url": "https://guides.rubyonrails.org/getting_started.html"
+        },
+        "subpathProxy": {
+          "status": "native",
+          "note": "Rails documents config.relative_url_root or RAILS_RELATIVE_URL_ROOT for deployment beneath a prefix, plus reverse-proxy setup. URL generation, the web server/Rack mount and asset delivery must agree. Configure trusted proxies and the public HTTPS scheme for the deployment rather than assuming every forwarded header is authoritative.",
+          "url": "https://guides.rubyonrails.org/configuring.html#deploy-to-a-subdirectory-relative-url-root",
+          "label": "Relative URL root / proxy setup",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "scope",
@@ -9245,6 +9469,13 @@
           "note": "The host server exposes HTTP endpoints and invokes the template renderer.",
           "url": "https://react.dev/learn/creating-a-react-app"
         },
+        "httpErrors": {
+          "status": "scope",
+          "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+          "url": "https://react.dev/learn/creating-a-react-app",
+          "label": "HTTP host required",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "community",
           "note": "Next.js App Router is one implementation of React Server Functions; a hosting framework is needed for the end-to-end server transport.",
@@ -9486,6 +9717,13 @@
           "status": "scope",
           "note": "The renderer needs a host server; it is not a production server runtime.",
           "url": "https://react.dev/learn/creating-a-react-app"
+        },
+        "subpathProxy": {
+          "status": "scope",
+          "note": "The reviewed UI library does not own production HTTP routing, asset mounting or reverse-proxy origin handling. A router/build tool and host framework must coordinate a subpath deployment; client-side route base support alone is not the complete server deployment contract.",
+          "url": "https://react.dev/learn/creating-a-react-app",
+          "label": "Host framework required",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "scope",
@@ -9814,6 +10052,13 @@
           "note": "Typed routes and Fetch controllers match URLs, handle HTTP methods, compose middleware and return standard Responses including redirects.",
           "url": "https://docs.remix.run/request-handling/"
         },
+        "httpErrors": {
+          "status": "native",
+          "note": "Unmatched routes return 404; route actions return explicit error Responses for missing records and other expected failures. Unexpected router exceptions need a server-boundary catch or the Node adapter’s onError hook to produce 500 before bytes are sent. Stream render errors use explicit hooks; after publication they cannot replace the response status.",
+          "url": "https://docs.remix.run/errors-and-cancellation/",
+          "label": "Fetch statuses; server boundary",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "partial",
           "note": "Controller actions handle named HTTP routes and enhanced forms. A generated arbitrary function-call RPC boundary is not established.",
@@ -10041,6 +10286,13 @@
           "status": "native",
           "note": "The documented Node Fetch adapter serves router.fetch. The production chapter is unfinished, so deployment configuration and operations remain application-owned.",
           "url": "https://docs.remix.run/production/"
+        },
+        "subpathProxy": {
+          "status": "partial",
+          "note": "The Node Fetch adapter can opt in to trusted forwarding headers for public origin/client information. Typed route patterns and application middleware supply routing, but the application must coordinate a mount prefix with links, asset-server URLs and the proxy. The adapter’s proxy support alone is not automatic whole-app rebasing.",
+          "url": "https://docs.remix.run/api/node-fetch-server/",
+          "label": "Fetch adapter; app-owned mount",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "undocumented",
@@ -10374,6 +10626,13 @@
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://github.com/fizzed/rocker"
         },
+        "httpErrors": {
+          "status": "scope",
+          "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+          "url": "https://github.com/fizzed/rocker",
+          "label": "HTTP host required",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
@@ -10584,6 +10843,13 @@
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://github.com/fizzed/rocker"
+        },
+        "subpathProxy": {
+          "status": "scope",
+          "note": "The reviewed standalone template/runtime API does not coordinate a public URL prefix across routing, assets, links and proxy headers. That deployment behavior belongs to the host application or web framework.",
+          "url": "https://github.com/fizzed/rocker",
+          "label": "Host framework required",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "scope",
@@ -10898,6 +11164,13 @@
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://docs.rs/sailfish/latest/sailfish/"
         },
+        "httpErrors": {
+          "status": "scope",
+          "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+          "url": "https://docs.rs/sailfish/latest/sailfish/",
+          "label": "HTTP host required",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
@@ -11106,6 +11379,13 @@
           "status": "scope",
           "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
           "url": "https://docs.rs/sailfish/latest/sailfish/"
+        },
+        "subpathProxy": {
+          "status": "scope",
+          "note": "The reviewed standalone template/runtime API does not coordinate a public URL prefix across routing, assets, links and proxy headers. That deployment behavior belongs to the host application or web framework.",
+          "url": "https://docs.rs/sailfish/latest/sailfish/",
+          "label": "Host framework required",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "scope",
@@ -11427,6 +11707,13 @@
           "note": "These application/server responsibilities are outside the standalone Solid UI library. SolidStart and host libraries are reviewed separately.",
           "url": "https://docs.solidjs.com/solid-start/v2"
         },
+        "httpErrors": {
+          "status": "scope",
+          "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+          "url": "https://docs.solidjs.com/solid-start/v2",
+          "label": "HTTP host required",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "scope",
           "note": "These application/server responsibilities are outside the standalone Solid UI library. SolidStart and host libraries are reviewed separately.",
@@ -11651,6 +11938,13 @@
           "note": "These application/server responsibilities are outside the standalone Solid UI library. SolidStart and host libraries are reviewed separately.",
           "url": "https://docs.solidjs.com/solid-start/v2"
         },
+        "subpathProxy": {
+          "status": "scope",
+          "note": "The reviewed UI library does not own production HTTP routing, asset mounting or reverse-proxy origin handling. A router/build tool and host framework must coordinate a subpath deployment; client-side route base support alone is not the complete server deployment contract.",
+          "url": "https://docs.solidjs.com/solid-start/v2",
+          "label": "Host framework required",
+          "reviewedOn": "2026-11-13"
+        },
         "staticHosting": {
           "status": "partial",
           "note": "A browser build can be served as static files through its build tool. This does not provide request-time SSR or a static page-generation API.",
@@ -11840,7 +12134,7 @@
     },
     {
       "id": "solidstart",
-      "scope": "SolidStart v2 with Solid v1, Solid Router v1 and Vite v8. Nitro and other deployment plugins are named separately.",
+      "scope": "SolidStart v2 with Solid v1, Solid Router v1 and Vite v8. Subpath and HTTP error findings also inspect source revision 68ce20b; deployment plugins are named separately.",
       "reviewedOn": "2026-11-10",
       "updatedOn": "2026-11-13",
       "capabilities": {
@@ -11972,6 +12266,13 @@
           "status": "native",
           "note": "Route files export HTTP method handlers returning Responses, with typed request/route context.",
           "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/api-routes"
+        },
+        "httpErrors": {
+          "status": "native",
+          "note": "The v2 HttpStatusCode component sets the server response status, and Start’s default error boundary selects 500. Applications must set 404 for their catch-all/missing-record UI or return an explicit endpoint Response. Client-only fallback UI does not alter the original HTTP response; decide status before streaming headers are sent.",
+          "url": "https://github.com/solidjs/solid-start/blob/68ce20b02714ec1a5d213711ee0bc924948f21c5/packages/start/src/shared/HttpStatusCode.ts",
+          "label": "HttpStatusCode / server response",
+          "reviewedOn": "2026-11-13"
         },
         "actions": {
           "status": "native",
@@ -12209,6 +12510,13 @@
           "note": "Vite deployment plugins such as Nitro, Cloudflare and Netlify determine runtime output. Target compatibility depends on the plugin and server dependencies.",
           "url": "https://docs.solidjs.com/solid-start/v2/guides/deployment-plugins",
           "label": "Deployment plugins"
+        },
+        "subpathProxy": {
+          "status": "partial",
+          "note": "The reviewed v2 source derives the server mount from Vite’s path base or explicit server.baseURL and uses it for server-function URLs. Router links and deployment-plugin public-origin handling must also match. An external CDN asset base is deliberately separate from the application mount; a complete proxy deployment still requires coordinated setup.",
+          "url": "https://github.com/solidjs/solid-start/blob/68ce20b02714ec1a5d213711ee0bc924948f21c5/packages/start/src/config/index.ts#L275-L285",
+          "label": "Vite/server base; adapter setup",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "community",
@@ -12553,6 +12861,13 @@
           "url": "https://svelte.dev/docs/kit/routing",
           "label": "SvelteKit"
         },
+        "httpErrors": {
+          "status": "official",
+          "note": "SvelteKit maps missing routes and error(status, ...) failures to HTTP responses, and unexpected failures to 500. A Svelte component boundary by itself does not set HTTP status. Error/status decisions must happen before the server starts streaming; rejected streamed promises cannot replace headers already sent.",
+          "url": "https://svelte.dev/docs/kit/errors",
+          "label": "SvelteKit HTTP errors",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "official",
           "note": "SvelteKit remote functions expose server queries, forms, and commands. Availability depends on the documented Kit configuration.",
@@ -12824,6 +13139,13 @@
           "note": "adapter-node produces a standalone production Node server.",
           "url": "https://svelte.dev/docs/kit/adapter-node",
           "label": "SvelteKit adapter-node"
+        },
+        "subpathProxy": {
+          "status": "official",
+          "note": "SvelteKit provides paths.base and base-aware link/asset helpers. Its Node adapter documents explicit public-origin and trusted forwarded-header configuration behind a proxy. Keep the proxy mount aligned with the configured base; the Svelte compiler alone does not provide HTTP deployment behavior.",
+          "url": "https://svelte.dev/docs/kit/adapter-node#Environment-variables-PROTOCOL_HEADER-HOST_HEADER-and-PORT_HEADER",
+          "label": "SvelteKit / adapter-node",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "official",
@@ -13158,6 +13480,13 @@
           "note": "File-based page/layout and HTTP-method endpoint modules expose route params and request cookie helpers.",
           "url": "https://svelte.dev/docs/kit/routing"
         },
+        "httpErrors": {
+          "status": "native",
+          "note": "SvelteKit returns 404 for unmatched routes, preserves error(status, ...) statuses for expected failures, and uses 500 for unexpected failures. A custom +error page is separate from choosing the status. Decide errors in the initial load/response phase: once streaming starts, later promise failures cannot change status or headers.",
+          "url": "https://svelte.dev/docs/kit/errors",
+          "label": "Expected / unexpected errors",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "partial",
           "note": "query/form/command remote functions provide typed server calls but are explicitly experimental and opt-in.",
@@ -13416,6 +13745,13 @@
           "note": "The official Node adapter produces a standalone server; the guide documents deployment settings and container integration.",
           "url": "https://svelte.dev/docs/kit/adapter-node",
           "label": "Node adapter"
+        },
+        "subpathProxy": {
+          "status": "native",
+          "note": "paths.base and base-aware path helpers support subpath deployments; authored URLs must use the appropriate helpers. adapter-node documents public-origin and trusted protocol/host/port headers behind a proxy. The proxy and server must agree on the configured mount, and forwarding headers are trusted only from the intended proxy.",
+          "url": "https://svelte.dev/docs/kit/adapter-node#Environment-variables-PROTOCOL_HEADER-HOST_HEADER-and-PORT_HEADER",
+          "label": "paths.base / adapter origin",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "official",
@@ -13744,6 +14080,13 @@
           "note": "Server routes handle HTTP methods and standard Request/Response bodies, including multipart data. Durable file storage is application/provider-owned.",
           "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-routes"
         },
+        "httpErrors": {
+          "status": "native",
+          "note": "Start combines Router notFound handling with server routes and response-status helpers. Use an explicit Response or setResponseStatus for application HTTP errors rather than relying on a rendered error component alone. Decide failures before the SSR response headers are sent; errors discovered later in a stream cannot replace the committed HTTP status.",
+          "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions",
+          "label": "Router / server response status",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "native",
           "note": "createServerFn provides typed server handlers callable from route loaders and clients, with middleware and input validation.",
@@ -13984,6 +14327,13 @@
           "note": "The overview documents deployment to server and worker runtimes; runtime-specific dependencies must match the target.",
           "url": "https://tanstack.com/start/latest/docs/framework/react/overview"
         },
+        "subpathProxy": {
+          "status": "partial",
+          "note": "TanStack Router’s basepath rebases route matching and generated navigation. Start’s bundler asset base and deployment adapter must be configured consistently, including the public origin behind a proxy. Router basepath alone does not establish that assets and server endpoints are all mounted correctly.",
+          "url": "https://tanstack.com/router/latest/docs/api/router/RouterOptionsType#basepath-property",
+          "label": "Router base; deployment setup",
+          "reviewedOn": "2026-11-13"
+        },
         "staticHosting": {
           "status": "native",
           "note": "The build plugin can crawl/enumerate routes and generate static HTML. Dynamic server functions are unavailable on static-only hosting.",
@@ -14193,7 +14543,7 @@
     },
     {
       "id": "topcoat",
-      "scope": "Streaming, Suspense, and the asset pipeline reviewed against Topcoat 0.12.1; other feature findings retain the 0.3.1 review. Render benchmarks use 0.3.1.",
+      "scope": "Streaming, Suspense, asset pipeline, subpath deployment, and HTTP error handling reviewed against Topcoat 0.12.1; other feature findings retain the 0.3.1 review. Render benchmarks use 0.3.1.",
       "reviewedOn": "2026-11-10",
       "updatedOn": "2026-11-13",
       "capabilities": {
@@ -14327,6 +14677,13 @@
           "status": "native",
           "note": "Route macros register HTTP API handlers alongside pages.",
           "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/"
+        },
+        "httpErrors": {
+          "status": "native",
+          "note": "Topcoat 0.12.1 maps router errors to their HTTP status and other unhandled errors to 500. A fallback view can explicitly select StatusCode::NOT_FOUND. Error-boundary documentation states that handlers can change status only before the response starts streaming; a late fallback cannot retroactively change it.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md#errors",
+          "label": "Router errors / status in views",
+          "reviewedOn": "2026-11-13"
         },
         "actions": {
           "status": "native",
@@ -14563,6 +14920,13 @@
           "status": "native",
           "note": "serve/serve_until run a router from a TCP listener with graceful shutdown.",
           "url": "https://docs.rs/topcoat/0.3.1/topcoat/fn.serve.html"
+        },
+        "subpathProxy": {
+          "status": "partial",
+          "note": "Topcoat 0.12.1 provides a public BaseUrl with an optional path prefix and helpers for absolute URLs; assets can use a separately configured external base. These helpers do not establish automatic rebasing of every route, relative link and live request. The proxy mount and application URL use must be coordinated explicitly.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/crates/topcoat-core/src/base_url.rs",
+          "label": "BaseUrl; proxy-owned mount",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "planned",
@@ -14890,6 +15254,13 @@
           "note": "The host server exposes HTTP endpoints and invokes the template renderer.",
           "url": "https://vuejs.org/guide/scaling-up/ssr.html"
         },
+        "httpErrors": {
+          "status": "scope",
+          "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+          "url": "https://vuejs.org/guide/scaling-up/ssr.html",
+          "label": "HTTP host required",
+          "reviewedOn": "2026-11-13"
+        },
         "actions": {
           "status": "scope",
           "note": "Generated browser-to-server function transports are outside the template API.",
@@ -15127,6 +15498,13 @@
           "url": "https://vuejs.org/guide/scaling-up/ssr.html",
           "label": "Custom SSR server",
           "reviewedOn": "2026-11-10"
+        },
+        "subpathProxy": {
+          "status": "scope",
+          "note": "The reviewed UI library does not own production HTTP routing, asset mounting or reverse-proxy origin handling. A router/build tool and host framework must coordinate a subpath deployment; client-side route base support alone is not the complete server deployment contract.",
+          "url": "https://vuejs.org/guide/scaling-up/ssr.html",
+          "label": "Host framework required",
+          "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
           "status": "partial",
