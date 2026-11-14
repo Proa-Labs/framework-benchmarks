@@ -91,7 +91,10 @@ try {
     if (response.status() >= 400)
       errors.push(`${response.status()} ${response.url()}`);
   });
-  await page.addInitScript(() => {
+  // Keep this instrumentation on its own page: Playwright injects init scripts
+  // into every future frame too, while fixture previews intentionally ban scripts.
+  const hydrationPage = await context.newPage();
+  await hydrationPage.addInitScript(() => {
     const observer = new MutationObserver(() => {
       const table = document.querySelector("[data-renderer-comparison]");
       if (table) {
@@ -101,9 +104,10 @@ try {
     });
     observer.observe(document, { childList: true, subtree: true });
   });
-  await navigate(server.url);
+  await hydrationPage.goto(server.url);
+  await hydrationPage.locator('[data-app-ready="true"]').waitFor();
   assert.equal(
-    await page.evaluate(
+    await hydrationPage.evaluate(
       () =>
         window.initialComparisonProbe ===
         document.querySelector("[data-renderer-comparison]"),
@@ -111,6 +115,7 @@ try {
     true,
     "Hydration must preserve the server-rendered comparison table",
   );
+  await hydrationPage.close();
   checks.push("server-rendered comparison nodes survive hydration");
   await navigate(`${server.url}/?chart=bars`);
   await page.locator(".fw-row").first().waitFor();
