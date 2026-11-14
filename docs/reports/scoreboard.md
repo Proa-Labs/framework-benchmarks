@@ -8,7 +8,7 @@ Seventeen renderers turn the same prepared data into the same three pages, and t
 
 **November 14, 2026 · Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz · linux**
 
-On these workloads, the November 14, 2026 capture on Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz measured Proa rendering the component page 78.4× faster than React, the 1,000-row table 39.9× faster than React, and the product grid 36.9× faster than React. These ratios describe this capture, not every application.
+On these workloads, the November 14, 2026 capture on Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz measured Proa rendering the component page 78.2× faster than React, the 1,000-row table 40.3× faster than React, and the product grid 36.1× faster than React. These ratios describe this capture, not every application.
 
 > Lower is better. Strict rows pass unchanged DOM/class parity. Exact† uses an explicitly adapted fixture with equivalent content and native styles; its HTML differs. See [adaptation details](../../benchmarks/rendering/external/exact/README.md).
 
@@ -17,26 +17,26 @@ Each cell is `P50 render time · relative to Proa`.
 | Renderer | Component page | 1,000-row table | Product grid |
 | --- | ---: | ---: | ---: |
 | Proa | 0.001 ms · 1.00× | 0.25 ms · 1.00× | 0.013 ms · 1.00× |
-| Marko | 0.011 ms · 9.42× | 1.45 ms · 5.72× | 0.11 ms · 8.97× |
-| React | 0.087 ms · 78.4× | 10.1 ms · 39.9× | 0.47 ms · 36.9× |
-| Vue | 0.010 ms · 8.83× | 1.62 ms · 6.42× | 0.094 ms · 7.34× |
-| Svelte | 0.009 ms · 8.38× | 1.58 ms · 6.24× | 0.094 ms · 7.35× |
-| Rails | 0.080 ms · 71.6× | 9.10 ms · 35.9× | 0.48 ms · 37.9× |
-| jte | 0.023 ms · 20.8× | 7.32 ms · 28.9× | 0.64 ms · 49.9× |
-| Rocker | 0.037 ms · 32.8× | 10.8 ms · 42.5× | 0.79 ms · 62.1× |
-| Handlebars | 0.026 ms · 23.5× | 4.16 ms · 16.4× | 0.21 ms · 16.6× |
-| Go html/template | 0.14 ms · 128× | 14.4 ms · 56.7× | 1.17 ms · 91.6× |
-| Jinja2 | 0.11 ms · 97.9× | 19.3 ms · 76.2× | 1.48 ms · 116× |
-| PHP | 0.034 ms · 30.4× | 1.84 ms · 7.26× | 0.096 ms · 7.57× |
-| Askama | 0.001 ms · 1.12× | 0.76 ms · 3.00× | 0.024 ms · 1.91× |
-| Sailfish | 0.002 ms · 1.73× | 0.63 ms · 2.48× | 0.024 ms · 1.85× |
-| Leptos | 0.019 ms · 16.7× | 1.79 ms · 7.08× | 0.27 ms · 21.2× |
-| Dioxus | 0.17 ms · 148× | 3.47 ms · 13.7× | 0.44 ms · 34.2× |
-| Topcoat | 0.016 ms · 14.7× | 1.48 ms · 5.83× | 0.20 ms · 15.5× |
-| Astro | 0.051 ms · 46.0× | 2.90 ms · 11.4× | 0.29 ms · 22.8× |
-| SvelteKit | 0.012 ms · 10.9× | 1.64 ms · 6.48× | 0.091 ms · 7.17× |
-| Next.js | 0.077 ms · 68.9× | 5.24 ms · 20.7× | 0.43 ms · 33.9× |
-| Exact† | 5.55 ms · 4977× | 151 ms · 597× | 17.5 ms · 1372× |
+| Marko | 0.010 ms · 9.24× | 1.50 ms · 5.98× | 0.11 ms · 8.93× |
+| React | 0.087 ms · 78.2× | 10.1 ms · 40.3× | 0.45 ms · 36.1× |
+| Vue | 0.010 ms · 9.18× | 1.63 ms · 6.51× | 0.094 ms · 7.49× |
+| Svelte | 0.009 ms · 8.41× | 1.60 ms · 6.36× | 0.096 ms · 7.64× |
+| Rails | 0.080 ms · 71.9× | 9.06 ms · 36.1× | 0.48 ms · 38.5× |
+| jte | 0.017 ms · 15.6× | 6.95 ms · 27.7× | 0.64 ms · 50.6× |
+| Rocker | 0.037 ms · 33.2× | 10.1 ms · 40.1× | 0.81 ms · 64.1× |
+| Handlebars | 0.026 ms · 23.8× | 4.18 ms · 16.6× | 0.21 ms · 17.0× |
+| Go html/template | 0.14 ms · 129× | 14.3 ms · 56.8× | 1.16 ms · 92.2× |
+| Jinja2 | 0.11 ms · 96.7× | 19.2 ms · 76.5× | 1.47 ms · 117× |
+| PHP | 0.034 ms · 30.4× | 1.78 ms · 7.11× | 0.098 ms · 7.81× |
+| Askama | 0.001 ms · 1.11× | 0.75 ms · 3.01× | 0.024 ms · 1.94× |
+| Sailfish | 0.002 ms · 1.72× | 0.62 ms · 2.45× | 0.024 ms · 1.89× |
+| Leptos | 0.019 ms · 16.7× | 1.81 ms · 7.21× | 0.27 ms · 21.4× |
+| Dioxus | 0.17 ms · 149× | 3.48 ms · 13.9× | 0.42 ms · 33.6× |
+| Topcoat | 0.016 ms · 14.6× | 1.45 ms · 5.79× | 0.20 ms · 15.7× |
+| Astro | 0.051 ms · 46.1× | 3.00 ms · 11.9× | 0.30 ms · 23.7× |
+| SvelteKit | 0.012 ms · 10.7× | 1.58 ms · 6.29× | 0.093 ms · 7.43× |
+| Next.js | 0.075 ms · 68.0× | 5.24 ms · 20.9× | 0.44 ms · 34.8× |
+| Exact† | 5.59 ms · 5039× | 149 ms · 596× | 17.5 ms · 1391× |
 
 Rows use the fixed order in [the canonical roster](../../benchmarks/rendering/canonical/roster.json); columns are never ranked independently.
 <!-- canonical-scoreboard:end -->
@@ -144,102 +144,101 @@ The scoreboard's own result JSON generates this section.
 <!-- canonical-details:start -->
 ### Capture metadata
 
-- Capture: `canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929`
-- Captured: 2026-11-14T04:25:12.136Z
-- Completed: 2026-11-14T04:36:08.618Z
-- Host: Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz, 16 logical CPUs, 63200751616 bytes RAM
+- Capture: `canonical-ssr-v1-2026-11-14T18-20-35-163Z-22e9b54c`
+- Captured: 2026-11-14T18:20:35.163Z
+- Completed: 2026-11-14T18:31:32.528Z
+- Host: Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz, 16 logical CPUs, 63200768000 bytes RAM
 - OS: linux (6.12.105+), x64
 - Proa output: Fresh owned RenderBuffer per iteration. Allocation and rendering are timed; flattening/copying, encoding, parity, hashing and output destruction are outside the render timer.
-- Harness commit: `db57c694b8a9f35be288bc5ac6cd1a4bf83a0e33`
-- Canonical source SHA-256: `8e3f6c791501becbcf394f3302def4bea9a27e31fb9da23ec0b496d4f7d548c1`
+- Harness commit: `aeecfd7b6de3404d275be68e5ed3ef7c9224ce76`
+- Canonical source SHA-256: `32238acd12805bf5f979fa43902a13f2783928fab3ecafe6aff53d3f3d3ea6ea`
 
 ### Detailed measurements
 
 | Renderer | Workload | P50 | P95 | P99 | Mean | Process P50 range | Processes | Samples/process | Warmups/process | Payload bytes | Payload Δ vs Proa | Parity |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Proa | Component page | 1.116 µs | 1.155 µs | 1.182 µs | 1.139 µs | 1.104 µs–1.128 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
-| Proa | 1,000-row table | 253.222 µs | 273.419 µs | 283.216 µs | 254.984 µs | 246.069 µs–256.260 µs | 5 | 200 | 20 | 988,509 | +0 | semantic DOM pass |
-| Proa | Product grid | 12.752 µs | 13.104 µs | 18.561 µs | 12.944 µs | 12.601 µs–13.145 µs | 5 | 500 | 50 | 284,908 | +0 | semantic DOM pass |
-| Marko | Component page | 10.513 µs | 24.139 µs | 36.230 µs | 26.474 µs | 10.344 µs–10.659 µs | 5 | 2000 | 200 | 24,038 | -1,070 | semantic DOM pass |
-| Marko | 1,000-row table | 1.448 ms | 4.760 ms | 7.451 ms | 2.019 ms | 1.378 ms–1.514 ms | 5 | 200 | 20 | 983,187 | -5,322 | semantic DOM pass |
-| Marko | Product grid | 114.436 µs | 190.125 µs | 3.161 ms | 201.795 µs | 107.753 µs–119.689 µs | 5 | 500 | 50 | 282,604 | -2,304 | semantic DOM pass |
-| React | Component page | 87.456 µs | 603.889 µs | 3.171 ms | 221.572 µs | 83.186 µs–94.308 µs | 5 | 2000 | 200 | 25,202 | +94 | semantic DOM pass |
-| React | 1,000-row table | 10.103 ms | 21.082 ms | 34.428 ms | 10.688 ms | 9.146 ms–10.882 ms | 5 | 200 | 20 | 990,695 | +2,186 | semantic DOM pass |
-| React | Product grid | 470.215 µs | 3.120 ms | 10.417 ms | 1.195 ms | 436.243 µs–511.958 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
-| Vue | Component page | 9.854 µs | 23.375 µs | 40.419 µs | 37.375 µs | 9.611 µs–10.527 µs | 5 | 2000 | 200 | 25,700 | +592 | semantic DOM pass |
-| Vue | 1,000-row table | 1.625 ms | 5.162 ms | 7.596 ms | 2.443 ms | 1.606 ms–1.653 ms | 5 | 200 | 20 | 1,006,523 | +18,014 | semantic DOM pass |
-| Vue | Product grid | 93.600 µs | 291.249 µs | 5.250 ms | 279.389 µs | 93.382 µs–103.656 µs | 5 | 500 | 50 | 287,420 | +2,512 | semantic DOM pass |
-| Svelte | Component page | 9.350 µs | 21.736 µs | 46.798 µs | 26.873 µs | 9.026 µs–9.888 µs | 5 | 2000 | 200 | 25,748 | +640 | semantic DOM pass |
-| Svelte | 1,000-row table | 1.579 ms | 5.294 ms | 7.266 ms | 2.454 ms | 1.429 ms–1.713 ms | 5 | 200 | 20 | 1,003,227 | +14,718 | semantic DOM pass |
-| Svelte | Product grid | 93.745 µs | 238.237 µs | 3.129 ms | 218.250 µs | 91.448 µs–104.490 µs | 5 | 500 | 50 | 286,476 | +1,568 | semantic DOM pass |
-| Rails | Component page | 79.928 µs | 108.948 µs | 534.581 µs | 93.618 µs | 79.540 µs–80.749 µs | 5 | 2000 | 200 | 35,839 | +10,731 | semantic DOM pass |
-| Rails | 1,000-row table | 9.101 ms | 9.724 ms | 9.830 ms | 9.004 ms | 8.902 ms–9.128 ms | 5 | 200 | 20 | 1,228,793 | +240,284 | semantic DOM pass |
-| Rails | Product grid | 483.340 µs | 799.155 µs | 2.341 ms | 562.655 µs | 453.676 µs–585.342 µs | 5 | 500 | 50 | 296,823 | +11,915 | semantic DOM pass |
-| jte | Component page | 23.259 µs | 30.617 µs | 528.977 µs | 54.649 µs | 15.401 µs–23.602 µs | 5 | 2000 | 200 | 25,109 | +1 | semantic DOM pass |
-| jte | 1,000-row table | 7.320 ms | 18.014 ms | 27.260 ms | 8.960 ms | 6.926 ms–7.409 ms | 5 | 200 | 20 | 988,510 | +1 | semantic DOM pass |
-| jte | Product grid | 636.497 µs | 3.753 ms | 4.538 ms | 1.255 ms | 626.455 µs–646.404 µs | 5 | 500 | 50 | 284,909 | +1 | semantic DOM pass |
-| Rocker | Component page | 36.642 µs | 46.982 µs | 3.008 ms | 77.100 µs | 36.453 µs–37.126 µs | 5 | 2000 | 200 | 25,109 | +1 | semantic DOM pass |
-| Rocker | 1,000-row table | 10.766 ms | 23.322 ms | 36.981 ms | 11.184 ms | 9.594 ms–10.983 ms | 5 | 200 | 20 | 990,508 | +1,999 | semantic DOM pass |
-| Rocker | Product grid | 791.409 µs | 4.141 ms | 4.850 ms | 1.650 ms | 715.899 µs–812.851 µs | 5 | 500 | 50 | 285,869 | +961 | semantic DOM pass |
-| Handlebars | Component page | 26.260 µs | 40.856 µs | 168.462 µs | 50.634 µs | 22.612 µs–33.463 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
-| Handlebars | 1,000-row table | 4.161 ms | 7.071 ms | 15.100 ms | 4.888 ms | 4.080 ms–4.844 ms | 5 | 200 | 20 | 990,694 | +2,185 | semantic DOM pass |
-| Handlebars | Product grid | 211.170 µs | 581.619 µs | 3.476 ms | 424.506 µs | 207.108 µs–266.276 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
-| Go html/template | Component page | 143.317 µs | 227.024 µs | 237.068 µs | 163.395 µs | 142.337 µs–145.026 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
-| Go html/template | 1,000-row table | 14.370 ms | 14.933 ms | 15.561 ms | 14.390 ms | 14.138 ms–14.667 ms | 5 | 200 | 20 | 990,509 | +2,000 | semantic DOM pass |
-| Go html/template | Product grid | 1.168 ms | 1.227 ms | 1.331 ms | 1.175 ms | 1.148 ms–1.176 ms | 5 | 500 | 50 | 285,676 | +768 | semantic DOM pass |
-| Jinja2 | Component page | 109.252 µs | 116.607 µs | 121.136 µs | 109.660 µs | 107.503 µs–109.895 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
-| Jinja2 | 1,000-row table | 19.284 ms | 20.397 ms | 23.555 ms | 19.477 ms | 19.017 ms–20.291 ms | 5 | 200 | 20 | 990,257 | +1,748 | semantic DOM pass |
-| Jinja2 | Product grid | 1.476 ms | 1.510 ms | 1.536 ms | 1.476 ms | 1.423 ms–1.492 ms | 5 | 500 | 50 | 285,676 | +768 | semantic DOM pass |
-| PHP | Component page | 33.873 µs | 37.015 µs | 41.543 µs | 34.276 µs | 33.317 µs–34.285 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
-| PHP | 1,000-row table | 1.838 ms | 1.891 ms | 1.912 ms | 1.841 ms | 1.766 ms–1.847 ms | 5 | 200 | 20 | 990,694 | +2,185 | semantic DOM pass |
-| PHP | Product grid | 96.486 µs | 104.420 µs | 107.615 µs | 98.278 µs | 93.565 µs–100.383 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
-| Askama | Component page | 1.247 µs | 1.270 µs | 1.296 µs | 1.262 µs | 1.221 µs–1.291 µs | 5 | 2000 | 200 | 44,849 | +19,741 | semantic DOM pass |
-| Askama | 1,000-row table | 760.736 µs | 792.746 µs | 806.908 µs | 763.992 µs | 753.691 µs–774.031 µs | 5 | 200 | 20 | 991,007 | +2,498 | semantic DOM pass |
-| Askama | Product grid | 24.299 µs | 24.858 µs | 31.170 µs | 24.661 µs | 23.709 µs–24.471 µs | 5 | 500 | 50 | 285,676 | +768 | semantic DOM pass |
-| Sailfish | Component page | 1.926 µs | 2.020 µs | 2.119 µs | 1.955 µs | 1.913 µs–1.987 µs | 5 | 2000 | 200 | 44,849 | +19,741 | semantic DOM pass |
-| Sailfish | 1,000-row table | 627.548 µs | 650.846 µs | 673.457 µs | 629.553 µs | 614.043 µs–630.584 µs | 5 | 200 | 20 | 990,694 | +2,185 | semantic DOM pass |
-| Sailfish | Product grid | 23.559 µs | 24.686 µs | 30.578 µs | 23.820 µs | 23.110 µs–24.037 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
-| Leptos | Component page | 18.668 µs | 19.156 µs | 24.702 µs | 18.850 µs | 18.602 µs–19.607 µs | 5 | 2000 | 200 | 25,219 | +111 | semantic DOM pass |
-| Leptos | 1,000-row table | 1.792 ms | 1.830 ms | 1.851 ms | 1.792 ms | 1.762 ms–1.807 ms | 5 | 200 | 20 | 991,512 | +3,003 | semantic DOM pass |
-| Leptos | Product grid | 270.070 µs | 276.619 µs | 282.291 µs | 271.001 µs | 264.764 µs–270.308 µs | 5 | 500 | 50 | 286,063 | +1,155 | semantic DOM pass |
-| Dioxus | Component page | 165.105 µs | 174.800 µs | 177.851 µs | 165.627 µs | 160.392 µs–166.608 µs | 5 | 2000 | 200 | 25,141 | +33 | semantic DOM pass |
-| Dioxus | 1,000-row table | 3.473 ms | 3.642 ms | 3.660 ms | 3.458 ms | 3.402 ms–3.745 ms | 5 | 200 | 20 | 990,695 | +2,186 | semantic DOM pass |
-| Dioxus | Product grid | 436.108 µs | 494.974 µs | 501.436 µs | 447.264 µs | 413.336 µs–471.721 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
-| Topcoat | Component page | 16.357 µs | 16.890 µs | 21.878 µs | 16.272 µs | 16.021 µs–16.393 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
-| Topcoat | 1,000-row table | 1.476 ms | 1.771 ms | 1.783 ms | 1.556 ms | 1.444 ms–1.488 ms | 5 | 200 | 20 | 988,509 | +0 | semantic DOM pass |
-| Topcoat | Product grid | 197.558 µs | 204.629 µs | 210.293 µs | 198.656 µs | 192.000 µs–198.023 µs | 5 | 500 | 50 | 284,908 | +0 | semantic DOM pass |
-| Astro | Component page | 51.290 µs | 89.267 µs | 878.230 µs | 114.134 µs | 50.150 µs–53.108 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
-| Astro | 1,000-row table | 2.897 ms | 6.906 ms | 9.917 ms | 3.765 ms | 2.754 ms–3.090 ms | 5 | 200 | 20 | 990,507 | +1,998 | semantic DOM pass |
-| Astro | Product grid | 291.138 µs | 1.179 ms | 3.503 ms | 542.165 µs | 288.668 µs–293.988 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
-| SvelteKit | Component page | 12.168 µs | 19.180 µs | 30.925 µs | 30.680 µs | 11.284 µs–12.442 µs | 5 | 2000 | 200 | 25,770 | +662 | semantic DOM pass |
-| SvelteKit | 1,000-row table | 1.640 ms | 5.040 ms | 8.021 ms | 2.574 ms | 1.588 ms–1.691 ms | 5 | 200 | 20 | 1,003,248 | +14,739 | semantic DOM pass |
-| SvelteKit | Product grid | 91.400 µs | 153.940 µs | 3.442 ms | 219.261 µs | 89.600 µs–94.805 µs | 5 | 500 | 50 | 286,476 | +1,568 | semantic DOM pass |
-| Next.js | Component page | 76.861 µs | 131.256 µs | 1.490 ms | 157.049 µs | 75.949 µs–80.987 µs | 5 | 2000 | 200 | 25,201 | +93 | semantic DOM pass |
-| Next.js | 1,000-row table | 5.235 ms | 20.271 ms | 32.860 ms | 8.251 ms | 5.108 ms–5.562 ms | 5 | 200 | 20 | 990,694 | +2,185 | semantic DOM pass |
-| Next.js | Product grid | 432.763 µs | 2.507 ms | 4.987 ms | 826.971 µs | 415.702 µs–436.120 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
-| Exact | Component page | 5.555 ms | 18.299 ms | 30.084 ms | 7.436 ms | 5.541 ms–5.610 ms | 5 | 2000 | 200 | 34,637 | +9,529 | adapted content and styles pass |
-| Exact | 1,000-row table | 151.112 ms | 665.560 ms | 912.530 ms | 238.520 ms | 145.569 ms–151.713 ms | 5 | 200 | 20 | 1,025,844 | +37,335 | adapted content and styles pass |
-| Exact | Product grid | 17.499 ms | 62.255 ms | 92.318 ms | 23.159 ms | 17.319 ms–17.594 ms | 5 | 500 | 50 | 261,879 | -23,029 | adapted content and styles pass |
+| Proa | Component page | 1.110 µs | 1.157 µs | 1.202 µs | 1.120 µs | 1.078 µs–1.142 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
+| Proa | 1,000-row table | 250.952 µs | 274.317 µs | 284.846 µs | 255.743 µs | 248.429 µs–253.380 µs | 5 | 200 | 20 | 988,509 | +0 | semantic DOM pass |
+| Proa | Product grid | 12.572 µs | 12.817 µs | 18.248 µs | 12.663 µs | 12.353 µs–12.800 µs | 5 | 500 | 50 | 284,908 | +0 | semantic DOM pass |
+| Marko | Component page | 10.260 µs | 23.969 µs | 34.540 µs | 26.037 µs | 9.835 µs–11.108 µs | 5 | 2000 | 200 | 24,038 | -1,070 | semantic DOM pass |
+| Marko | 1,000-row table | 1.499 ms | 4.839 ms | 6.947 ms | 2.134 ms | 1.404 ms–1.617 ms | 5 | 200 | 20 | 983,187 | -5,322 | semantic DOM pass |
+| Marko | Product grid | 112.243 µs | 198.653 µs | 3.183 ms | 203.677 µs | 110.738 µs–119.058 µs | 5 | 500 | 50 | 282,604 | -2,304 | semantic DOM pass |
+| React | Component page | 86.808 µs | 602.818 µs | 3.184 ms | 227.796 µs | 84.278 µs–93.404 µs | 5 | 2000 | 200 | 25,202 | +94 | semantic DOM pass |
+| React | 1,000-row table | 10.110 ms | 20.646 ms | 35.220 ms | 10.682 ms | 9.338 ms–12.415 ms | 5 | 200 | 20 | 990,695 | +2,186 | semantic DOM pass |
+| React | Product grid | 453.976 µs | 3.095 ms | 10.168 ms | 1.223 ms | 433.633 µs–491.103 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
+| Vue | Component page | 10.192 µs | 23.067 µs | 38.223 µs | 35.567 µs | 10.015 µs–10.905 µs | 5 | 2000 | 200 | 25,700 | +592 | semantic DOM pass |
+| Vue | 1,000-row table | 1.633 ms | 4.838 ms | 9.581 ms | 2.447 ms | 1.585 ms–1.685 ms | 5 | 200 | 20 | 1,006,523 | +18,014 | semantic DOM pass |
+| Vue | Product grid | 94.155 µs | 329.729 µs | 4.551 ms | 283.126 µs | 90.877 µs–102.694 µs | 5 | 500 | 50 | 287,420 | +2,512 | semantic DOM pass |
+| Svelte | Component page | 9.338 µs | 25.121 µs | 47.388 µs | 26.888 µs | 8.873 µs–10.265 µs | 5 | 2000 | 200 | 25,748 | +640 | semantic DOM pass |
+| Svelte | 1,000-row table | 1.596 ms | 5.583 ms | 8.476 ms | 2.578 ms | 1.495 ms–1.722 ms | 5 | 200 | 20 | 1,003,227 | +14,718 | semantic DOM pass |
+| Svelte | Product grid | 96.099 µs | 250.932 µs | 3.156 ms | 231.720 µs | 95.074 µs–109.220 µs | 5 | 500 | 50 | 286,476 | +1,568 | semantic DOM pass |
+| Rails | Component page | 79.856 µs | 104.799 µs | 606.787 µs | 95.143 µs | 78.117 µs–80.529 µs | 5 | 2000 | 200 | 35,839 | +10,731 | semantic DOM pass |
+| Rails | 1,000-row table | 9.062 ms | 9.700 ms | 9.814 ms | 8.959 ms | 8.878 ms–9.545 ms | 5 | 200 | 20 | 1,228,793 | +240,284 | semantic DOM pass |
+| Rails | Product grid | 484.173 µs | 818.716 µs | 2.243 ms | 566.296 µs | 462.745 µs–540.213 µs | 5 | 500 | 50 | 296,823 | +11,915 | semantic DOM pass |
+| jte | Component page | 17.323 µs | 25.450 µs | 57.960 µs | 43.842 µs | 14.664 µs–23.622 µs | 5 | 2000 | 200 | 25,109 | +1 | semantic DOM pass |
+| jte | 1,000-row table | 6.949 ms | 19.052 ms | 28.204 ms | 8.716 ms | 6.783 ms–7.835 ms | 5 | 200 | 20 | 988,510 | +1 | semantic DOM pass |
+| jte | Product grid | 636.346 µs | 3.734 ms | 4.442 ms | 1.249 ms | 628.676 µs–651.367 µs | 5 | 500 | 50 | 284,909 | +1 | semantic DOM pass |
+| Rocker | Component page | 36.825 µs | 45.515 µs | 3.052 ms | 79.507 µs | 36.150 µs–37.318 µs | 5 | 2000 | 200 | 25,109 | +1 | semantic DOM pass |
+| Rocker | 1,000-row table | 10.064 ms | 21.468 ms | 34.392 ms | 9.892 ms | 8.199 ms–10.771 ms | 5 | 200 | 20 | 990,508 | +1,999 | semantic DOM pass |
+| Rocker | Product grid | 805.506 µs | 4.171 ms | 4.779 ms | 1.722 ms | 788.672 µs–979.088 µs | 5 | 500 | 50 | 285,869 | +961 | semantic DOM pass |
+| Handlebars | Component page | 26.395 µs | 42.993 µs | 173.854 µs | 48.551 µs | 25.213 µs–32.510 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
+| Handlebars | 1,000-row table | 4.175 ms | 6.586 ms | 15.804 ms | 4.880 ms | 4.084 ms–4.355 ms | 5 | 200 | 20 | 990,694 | +2,185 | semantic DOM pass |
+| Handlebars | Product grid | 213.544 µs | 631.691 µs | 3.363 ms | 422.520 µs | 209.317 µs–265.361 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
+| Go html/template | Component page | 143.496 µs | 226.571 µs | 236.523 µs | 163.598 µs | 141.820 µs–144.667 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
+| Go html/template | 1,000-row table | 14.261 ms | 14.834 ms | 15.729 ms | 14.309 ms | 14.223 ms–14.325 ms | 5 | 200 | 20 | 990,509 | +2,000 | semantic DOM pass |
+| Go html/template | Product grid | 1.159 ms | 1.226 ms | 1.334 ms | 1.165 ms | 1.158 ms–1.160 ms | 5 | 500 | 50 | 285,676 | +768 | semantic DOM pass |
+| Jinja2 | Component page | 107.303 µs | 115.100 µs | 118.328 µs | 107.907 µs | 105.097 µs–110.090 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
+| Jinja2 | 1,000-row table | 19.189 ms | 20.544 ms | 23.732 ms | 19.392 ms | 18.809 ms–19.465 ms | 5 | 200 | 20 | 990,257 | +1,748 | semantic DOM pass |
+| Jinja2 | Product grid | 1.475 ms | 1.512 ms | 1.546 ms | 1.476 ms | 1.444 ms–1.484 ms | 5 | 500 | 50 | 285,676 | +768 | semantic DOM pass |
+| PHP | Component page | 33.755 µs | 37.650 µs | 40.470 µs | 34.215 µs | 33.529 µs–34.273 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
+| PHP | 1,000-row table | 1.783 ms | 1.839 ms | 1.879 ms | 1.785 ms | 1.775 ms–1.824 ms | 5 | 200 | 20 | 990,694 | +2,185 | semantic DOM pass |
+| PHP | Product grid | 98.187 µs | 106.787 µs | 109.868 µs | 99.585 µs | 97.184 µs–101.325 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
+| Askama | Component page | 1.230 µs | 1.256 µs | 1.275 µs | 1.241 µs | 1.224 µs–1.247 µs | 5 | 2000 | 200 | 44,849 | +19,741 | semantic DOM pass |
+| Askama | 1,000-row table | 754.548 µs | 778.485 µs | 798.588 µs | 756.687 µs | 749.004 µs–758.246 µs | 5 | 200 | 20 | 991,007 | +2,498 | semantic DOM pass |
+| Askama | Product grid | 24.376 µs | 25.187 µs | 31.264 µs | 24.721 µs | 24.253 µs–24.551 µs | 5 | 500 | 50 | 285,676 | +768 | semantic DOM pass |
+| Sailfish | Component page | 1.904 µs | 2.061 µs | 2.166 µs | 1.964 µs | 1.882 µs–1.938 µs | 5 | 2000 | 200 | 44,849 | +19,741 | semantic DOM pass |
+| Sailfish | 1,000-row table | 615.808 µs | 645.262 µs | 666.069 µs | 617.033 µs | 613.438 µs–622.859 µs | 5 | 200 | 20 | 990,694 | +2,185 | semantic DOM pass |
+| Sailfish | Product grid | 23.739 µs | 24.975 µs | 30.528 µs | 24.025 µs | 23.556 µs–23.828 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
+| Leptos | Component page | 18.564 µs | 19.074 µs | 24.850 µs | 18.768 µs | 18.541 µs–18.623 µs | 5 | 2000 | 200 | 25,219 | +111 | semantic DOM pass |
+| Leptos | 1,000-row table | 1.810 ms | 1.857 ms | 1.878 ms | 1.813 ms | 1.795 ms–1.818 ms | 5 | 200 | 20 | 991,512 | +3,003 | semantic DOM pass |
+| Leptos | Product grid | 268.464 µs | 276.421 µs | 282.101 µs | 268.893 µs | 266.235 µs–269.338 µs | 5 | 500 | 50 | 286,063 | +1,155 | semantic DOM pass |
+| Dioxus | Component page | 165.068 µs | 174.474 µs | 178.073 µs | 166.159 µs | 163.843 µs–171.034 µs | 5 | 2000 | 200 | 25,141 | +33 | semantic DOM pass |
+| Dioxus | 1,000-row table | 3.479 ms | 3.667 ms | 3.770 ms | 3.484 ms | 3.470 ms–3.531 ms | 5 | 200 | 20 | 990,695 | +2,186 | semantic DOM pass |
+| Dioxus | Product grid | 423.010 µs | 490.885 µs | 501.742 µs | 435.628 µs | 413.524 µs–454.335 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
+| Topcoat | Component page | 16.223 µs | 16.821 µs | 21.631 µs | 16.221 µs | 15.994 µs–16.393 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
+| Topcoat | 1,000-row table | 1.453 ms | 1.757 ms | 1.791 ms | 1.535 ms | 1.443 ms–1.471 ms | 5 | 200 | 20 | 988,509 | +0 | semantic DOM pass |
+| Topcoat | Product grid | 197.269 µs | 204.495 µs | 216.463 µs | 198.332 µs | 192.695 µs–198.742 µs | 5 | 500 | 50 | 284,908 | +0 | semantic DOM pass |
+| Astro | Component page | 51.154 µs | 91.452 µs | 739.837 µs | 114.008 µs | 49.289 µs–51.899 µs | 5 | 2000 | 200 | 25,108 | +0 | semantic DOM pass |
+| Astro | 1,000-row table | 2.997 ms | 6.991 ms | 10.872 ms | 3.899 ms | 2.968 ms–3.341 ms | 5 | 200 | 20 | 990,507 | +1,998 | semantic DOM pass |
+| Astro | Product grid | 297.639 µs | 1.132 ms | 4.003 ms | 544.373 µs | 284.108 µs–316.961 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
+| SvelteKit | Component page | 11.864 µs | 19.692 µs | 31.127 µs | 31.665 µs | 11.267 µs–12.289 µs | 5 | 2000 | 200 | 25,770 | +662 | semantic DOM pass |
+| SvelteKit | 1,000-row table | 1.578 ms | 5.074 ms | 9.342 ms | 2.530 ms | 1.549 ms–1.684 ms | 5 | 200 | 20 | 1,003,248 | +14,739 | semantic DOM pass |
+| SvelteKit | Product grid | 93.446 µs | 244.731 µs | 3.697 ms | 234.380 µs | 91.347 µs–94.028 µs | 5 | 500 | 50 | 286,476 | +1,568 | semantic DOM pass |
+| Next.js | Component page | 75.492 µs | 134.326 µs | 2.106 ms | 157.660 µs | 74.456 µs–79.781 µs | 5 | 2000 | 200 | 25,201 | +93 | semantic DOM pass |
+| Next.js | 1,000-row table | 5.236 ms | 20.090 ms | 33.149 ms | 8.303 ms | 5.108 ms–5.918 ms | 5 | 200 | 20 | 990,694 | +2,185 | semantic DOM pass |
+| Next.js | Product grid | 437.881 µs | 2.473 ms | 5.143 ms | 835.131 µs | 422.193 µs–489.192 µs | 5 | 500 | 50 | 285,868 | +960 | semantic DOM pass |
+| Exact | Component page | 5.593 ms | 18.153 ms | 30.081 ms | 7.892 ms | 5.540 ms–5.619 ms | 5 | 2000 | 200 | 34,637 | +9,529 | adapted content and styles pass |
+| Exact | 1,000-row table | 149.454 ms | 618.250 ms | 888.399 ms | 230.803 ms | 147.635 ms–153.880 ms | 5 | 200 | 20 | 1,025,844 | +37,335 | adapted content and styles pass |
+| Exact | Product grid | 17.493 ms | 62.030 ms | 88.123 ms | 23.287 ms | 17.414 ms–17.956 ms | 5 | 500 | 50 | 261,879 | -23,029 | adapted content and styles pass |
 
 ### Tail observations
 
 The report flags every cell whose process-median P95 is at least 3× its P50:
 
-- Marko's 1,000-row table P95 was 3.29× its P50 (4.760 ms versus 1.448 ms).
-- React's component page P95 was 6.91× its P50 (603.889 µs versus 87.456 µs).
-- React's product grid P95 was 6.63× its P50 (3.120 ms versus 470.215 µs).
-- Vue's 1,000-row table P95 was 3.18× its P50 (5.162 ms versus 1.625 ms).
-- Vue's product grid P95 was 3.11× its P50 (291.249 µs versus 93.600 µs).
-- Svelte's 1,000-row table P95 was 3.35× its P50 (5.294 ms versus 1.579 ms).
-- jte's product grid P95 was 5.90× its P50 (3.753 ms versus 636.497 µs).
-- Rocker's product grid P95 was 5.23× its P50 (4.141 ms versus 791.409 µs).
-- Astro's product grid P95 was 4.05× its P50 (1.179 ms versus 291.138 µs).
-- SvelteKit's 1,000-row table P95 was 3.07× its P50 (5.040 ms versus 1.640 ms).
-- Next.js's 1,000-row table P95 was 3.87× its P50 (20.271 ms versus 5.235 ms).
-- Next.js's product grid P95 was 5.79× its P50 (2.507 ms versus 432.763 µs).
-- Exact's component page P95 was 3.29× its P50 (18.299 ms versus 5.555 ms).
-- Exact's 1,000-row table P95 was 4.40× its P50 (665.560 ms versus 151.112 ms).
-- Exact's product grid P95 was 3.56× its P50 (62.255 ms versus 17.499 ms).
+- Marko's 1,000-row table P95 was 3.23× its P50 (4.839 ms versus 1.499 ms).
+- React's component page P95 was 6.94× its P50 (602.818 µs versus 86.808 µs).
+- React's product grid P95 was 6.82× its P50 (3.095 ms versus 453.976 µs).
+- Vue's product grid P95 was 3.50× its P50 (329.729 µs versus 94.155 µs).
+- Svelte's 1,000-row table P95 was 3.50× its P50 (5.583 ms versus 1.596 ms).
+- jte's product grid P95 was 5.87× its P50 (3.734 ms versus 636.346 µs).
+- Rocker's product grid P95 was 5.18× its P50 (4.171 ms versus 805.506 µs).
+- Astro's product grid P95 was 3.80× its P50 (1.132 ms versus 297.639 µs).
+- SvelteKit's 1,000-row table P95 was 3.21× its P50 (5.074 ms versus 1.578 ms).
+- Next.js's 1,000-row table P95 was 3.84× its P50 (20.090 ms versus 5.236 ms).
+- Next.js's product grid P95 was 5.65× its P50 (2.473 ms versus 437.881 µs).
+- Exact's component page P95 was 3.25× its P50 (18.153 ms versus 5.593 ms).
+- Exact's 1,000-row table P95 was 4.14× its P50 (618.250 ms versus 149.454 ms).
+- Exact's product grid P95 was 3.55× its P50 (62.030 ms versus 17.493 ms).
 
 ### Parity
 
@@ -292,11 +291,11 @@ Full commands recorded by the capture:
 - `bun install --frozen-lockfile (repository root, all JavaScript workspaces)`
 - `bundle check || bundle install (Rails adapter directory)`
 - `cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench`
-- `go build -trimpath -o rendering/external/go/build/canonical_suite rendering/external/go/suite_bench.go`
-- `python3 -m venv rendering/external/jinja/.venv && pip install -r rendering/external/jinja/requirements.txt`
+- `go build -trimpath -o benchmarks/rendering/external/go/build/canonical_suite benchmarks/rendering/external/go/suite_bench.go`
+- `python3 -m venv benchmarks/rendering/external/jinja/.venv && pip install -r benchmarks/rendering/external/jinja/requirements.txt`
 - `gradle --no-daemon --quiet installDist copyJteBinaryStaticContent (jte adapter directory)`
 - `gradle --no-daemon --quiet installDist (Rocker adapter directory)`
-- `"bun" "rendering/canonical/run.mjs" "--no-setup"`
+- `"bun" "benchmarks/rendering/canonical/run.mjs" "--no-setup"`
 
 ### Known limitations
 
@@ -307,12 +306,12 @@ Full commands recorded by the capture:
 
 ### Raw and related evidence
 
-- [Per-process summaries](../../benchmarks/rendering/results/raw/canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929/process-summaries.json)
+- [Per-process summaries](../../benchmarks/rendering/results/raw/canonical-ssr-v1-2026-11-14T18-20-35-163Z-22e9b54c/process-summaries.json)
 - [Result-table migration map](../../benchmarks/rendering/MIGRATION.md)
-- [Exact adapted cards stylesheet](../../benchmarks/rendering/results/raw/canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929/cards-exact.css)
-- [Exact adapted table stylesheet](../../benchmarks/rendering/results/raw/canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929/table-exact.css)
-- [Exact adapted products stylesheet](../../benchmarks/rendering/results/raw/canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929/products-exact.css)
-- [Unchanged fixture admission checks](../../benchmarks/rendering/results/raw/canonical-ssr-v1-2026-11-14T04-25-12-136Z-32700929/admissions.json)
+- [Exact adapted cards stylesheet](../../benchmarks/rendering/results/raw/canonical-ssr-v1-2026-11-14T18-20-35-163Z-22e9b54c/cards-exact.css)
+- [Exact adapted table stylesheet](../../benchmarks/rendering/results/raw/canonical-ssr-v1-2026-11-14T18-20-35-163Z-22e9b54c/table-exact.css)
+- [Exact adapted products stylesheet](../../benchmarks/rendering/results/raw/canonical-ssr-v1-2026-11-14T18-20-35-163Z-22e9b54c/products-exact.css)
+- [Unchanged fixture admission checks](../../benchmarks/rendering/results/raw/canonical-ssr-v1-2026-11-14T18-20-35-163Z-22e9b54c/admissions.json)
 
 Allocation measurements and construction-path controls remain separate from this renderer scoreboard. See the [engineering report](engineering.md) and [mechanism-specific notes](../engineering/README.md).
 

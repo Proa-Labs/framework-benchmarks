@@ -15,33 +15,33 @@ renders per process respectively.
 
 | Renderer | 12 cards P50 | 96 cards P50 | 768 cards P50 |
 | --- | ---: | ---: | ---: |
-| Proa | 1.649 µs | 12.556 µs | 118.160 µs |
-| Marko | 17.060 µs | 111.821 µs | 824.037 µs |
-| React | 60.639 µs | 431.842 µs | 7.010 ms |
-| Vue | 15.691 µs | 91.082 µs | 824.094 µs |
-| Svelte | 12.595 µs | 92.534 µs | 799.706 µs |
-| Rails | 76.313 µs | 458.336 µs | 3.478 ms |
-| jte | 74.544 µs | 632.909 µs | 7.804 ms |
-| Rocker | 120.823 µs | 813.904 µs | 12.075 ms |
-| Handlebars | 36.608 µs | 244.590 µs | 2.187 ms |
-| Go html/template | 127.536 µs | 1.149 ms | 8.781 ms |
-| Jinja2 | 189.199 µs | 1.412 ms | 12.098 ms |
-| PHP | 13.021 µs | 94.255 µs | 2.619 ms |
-| Askama | 3.122 µs | 23.800 µs | 215.228 µs |
-| Sailfish | 3.035 µs | 23.141 µs | 209.303 µs |
-| Leptos | 34.650 µs | 263.418 µs | 2.239 ms |
-| Dioxus | 60.366 µs | 415.938 µs | 4.416 ms |
-| Topcoat | 24.651 µs | 193.107 µs | 1.678 ms |
-| Astro | 50.824 µs | 282.173 µs | 2.553 ms |
-| SvelteKit | 13.045 µs | 91.033 µs | 777.390 µs |
-| Next.js | 54.885 µs | 417.257 µs | 4.041 ms |
-| Exact† | 3.757 ms | 17.257 ms | 99.419 ms |
+| Proa | 1.659 µs | 12.618 µs | 118.721 µs |
+| Marko | 17.401 µs | 116.421 µs | 919.767 µs |
+| React | 65.072 µs | 447.599 µs | 7.226 ms |
+| Vue | 16.213 µs | 98.039 µs | 845.269 µs |
+| Svelte | 13.976 µs | 94.301 µs | 852.526 µs |
+| Rails | 78.006 µs | 476.026 µs | 3.506 ms |
+| jte | 74.879 µs | 640.438 µs | 8.250 ms |
+| Rocker | 125.022 µs | 792.946 µs | 11.324 ms |
+| Handlebars | 37.361 µs | 212.540 µs | 2.197 ms |
+| Go html/template | 129.123 µs | 1.159 ms | 8.745 ms |
+| Jinja2 | 188.563 µs | 1.424 ms | 12.323 ms |
+| PHP | 13.066 µs | 97.578 µs | 2.662 ms |
+| Askama | 3.162 µs | 24.300 µs | 220.084 µs |
+| Sailfish | 3.163 µs | 23.648 µs | 211.110 µs |
+| Leptos | 35.238 µs | 267.302 µs | 2.281 ms |
+| Dioxus | 60.902 µs | 425.611 µs | 4.562 ms |
+| Topcoat | 25.087 µs | 194.636 µs | 1.688 ms |
+| Astro | 50.984 µs | 294.653 µs | 2.889 ms |
+| SvelteKit | 13.323 µs | 90.603 µs | 782.839 µs |
+| Next.js | 56.436 µs | 442.860 µs | 4.232 ms |
+| Exact† | 3.783 ms | 17.528 ms | 101.962 ms |
 
 The 96-card column is an independent engineering capture, not a replacement
 for the canonical result. Reproduce the matrix with
 `./benchmarks/rendering/run-all --product-scaling`; the retained summary and per-process
 measurements are in [`benchmarks/rendering/results/product-scaling.json`](../../benchmarks/rendering/results/product-scaling.json)
-and [its raw process artifact](../../benchmarks/rendering/results/raw/product-scaling-v1-2026-11-14T04-36-11-783Z-90f9001f/process-summaries.json).
+and [its raw process artifact](../../benchmarks/rendering/results/raw/product-scaling-v1-2026-11-14T18-31-35-860Z-5243419f/process-summaries.json).
 <!-- product-scaling:end -->
 
 [![Full fresh-response render scaling for seventeen frameworks across twelve, ninety-six and 768 product cards](../figures/05-product-card-scaling.svg)](../figures/05-product-card-scaling.svg)
