@@ -1278,9 +1278,11 @@
           "label": "Fullstack incremental renderer"
         },
         "invalidation": {
-          "status": "undocumented",
-          "note": "clear_cache configuration controls the static renderer’s cache on startup; the guide does not establish dependency/path/tag invalidation during requests.",
-          "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/static_site_generation"
+          "status": "native",
+          "note": "Reactive resources expose restart to re-run their asynchronous work, and reactive dependencies can trigger refresh. This is resource-level invalidation; it does not establish automatic tag/path purging of retained HTML or a shared server cache.",
+          "url": "https://docs.rs/dioxus-hooks/latest/dioxus_hooks/struct.Resource.html#method.restart",
+          "reviewedOn": "2026-11-13",
+          "label": "Resource restart / dependency refresh"
         },
         "isr": {
           "status": "partial",
@@ -1347,10 +1349,11 @@
           "url": "https://dioxuslabs.com/learn/0.7/essentials/ui/styling"
         },
         "tailwind": {
-          "status": "community",
-          "note": "The official guide wires Tailwind’s external compiler output into the app’s stylesheet/assets.",
-          "url": "https://dioxuslabs.com/learn/0.7/guides/utilities/tailwind",
-          "label": "Tailwind recipe"
+          "status": "official",
+          "note": "Dioxus 0.7 integrates automatic Tailwind processing in its CLI workflow. Tailwind remains the external CSS compiler, but Dioxus supplies the build integration rather than requiring only an application-authored standalone recipe.",
+          "url": "https://dioxuslabs.com/blog/release-070/",
+          "label": "Integrated Tailwind workflow",
+          "reviewedOn": "2026-11-13"
         },
         "cssInJs": {
           "status": "undocumented",
@@ -1429,9 +1432,11 @@
           "label": "SSG route enumeration"
         },
         "robots": {
-          "status": "undocumented",
-          "note": "Static resources can carry an authored robots.txt; a crawler-directive generation API is not documented.",
-          "url": "https://dioxuslabs.com/learn/0.7/guides/tools/configure"
+          "status": "official",
+          "note": "The CLI’s public asset directory can publish an application-authored robots.txt at its unchanged public path. The file’s directive contents and deployment policy are application-owned; this is not a typed crawler-directive generator.",
+          "url": "https://dioxuslabs.com/learn/0.7/guides/tools/configure/",
+          "reviewedOn": "2026-11-13",
+          "label": "Public asset file"
         },
         "markdown": {
           "status": "undocumented",
@@ -1602,9 +1607,11 @@
           "reviewedOn": "2026-11-10"
         },
         "realtime": {
-          "status": "undocumented",
-          "note": "The reviewed framework documentation does not establish an owned real-time delivery API. Host libraries and application integrations may provide it.",
-          "url": "https://dioxuslabs.com"
+          "status": "official",
+          "note": "Dioxus 0.7 Fullstack server functions support typed WebSockets with a use_websocket client hook. This supplies a real-time transport; applications still own authorization, message semantics and distributed pub/sub.",
+          "url": "https://dioxuslabs.com/blog/release-070/",
+          "reviewedOn": "2026-11-13",
+          "label": "Fullstack typed WebSockets"
         },
         "xssEscaping": {
           "status": "native",
@@ -1699,10 +1706,11 @@
           "reviewedOn": "2026-11-11"
         },
         "codeSplitting": {
-          "status": "undocumented",
-          "note": "The linked rendering API review does not establish the specific route / island splitting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/streaming/",
-          "reviewedOn": "2026-11-11"
+          "status": "official",
+          "note": "Dioxus 0.7’s WASM-Split/CLI integration supports split WebAssembly bundles and lazy loading. Use the documented splitting workflow; this is not a claim that every Rust dependency or all routes split automatically.",
+          "url": "https://dioxuslabs.com/blog/release-070/",
+          "reviewedOn": "2026-11-13",
+          "label": "Dioxus CLI / WASM-Split"
         },
         "offline": {
           "status": "undocumented",
@@ -1802,10 +1810,11 @@
           "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
         },
         "routing": {
-          "status": "undocumented",
-          "note": "Contract provides retained navigation stacks. HTTP URL-to-page routing was not established by this review.",
-          "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md#contract",
-          "label": "Navigation stacks"
+          "status": "native",
+          "note": "Contract route tables match URLs and parameters, and retained navigation stacks implement push/back/history handling in the web host. This is the included client/host routing model, not an application endpoint router for arbitrary server APIs.",
+          "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+          "label": "Contract route tables",
+          "reviewedOn": "2026-11-13"
         },
         "layouts": {
           "status": "partial",
@@ -2218,10 +2227,11 @@
           "url": "https://github.com/expo/exact"
         },
         "xssEscaping": {
-          "status": "undocumented",
-          "note": "The linked security API review does not establish the specific output escaping contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "The pinned web HTML serializer escapes text and quoted attribute values; normal browser text nodes use textContent rather than interpreting text as HTML. Rich Markdown/raw content and URL/style policies require their own review; this is output encoding, not a general sanitizer.",
+          "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/host/web-js/dom.js#L8-L53",
+          "reviewedOn": "2026-11-13",
+          "label": "Escaped text / attribute output"
         },
         "htmlSanitization": {
           "status": "undocumented",
@@ -2255,17 +2265,18 @@
           "label": "Resource overlay"
         },
         "requestCancellation": {
-          "status": "undocumented",
-          "note": "The linked data API review does not establish the specific stale request handling contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+          "status": "native",
+          "note": "Resources use newest-request-wins admission: stale answers do not overwrite newer state. Mutations can instead opt into queue behavior so every reply lands. This establishes stale-result suppression, not a guarantee that backend work is aborted or a completed write is undone.",
           "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#resources-and-mutations",
-          "reviewedOn": "2026-11-11"
+          "reviewedOn": "2026-11-13",
+          "label": "Newest-request-wins resources"
         },
         "typedLinks": {
-          "status": "partial",
-          "note": "The guide documents named routes and path(name, params) construction, but does not establish compile-time checks of every destination name and required URL parameter. A path helper alone does not meet the typed-link contract.",
-          "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
-          "reviewedOn": "2026-11-11",
-          "label": "Named path helper"
+          "status": "native",
+          "note": "The pinned compiler requires path() to name a declared route with the exact parameter count and checks literal destinations. It encodes parameter values; other computed strings can bypass those checks and still require application care.",
+          "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/contract/types/src/routes.rs#L312-L358",
+          "reviewedOn": "2026-11-13",
+          "label": "Compiler-checked route helpers"
         },
         "searchParams": {
           "status": "undocumented",
@@ -3548,10 +3559,11 @@
           "reviewedOn": "2026-11-10"
         },
         "invalidation": {
-          "status": "community",
-          "note": "A custom cachelib-backed extension can use cachelib’s delete/clear operations. Jinja does not infer page/data dependencies.",
-          "url": "https://cachelib.readthedocs.io/en/stable/",
-          "label": "cachelib"
+          "status": "partial",
+          "note": "The documentation demonstrates an application-authored fragment-cache extension using cachelib. That extension can call cachelib delete/clear, but Jinja does not provide an integrated fragment invalidation API or infer page/data dependencies.",
+          "url": "https://jinja.palletsprojects.com/en/stable/extensions/#cache",
+          "label": "Custom cache extension",
+          "reviewedOn": "2026-11-13"
         },
         "isr": {
           "status": "scope",
@@ -3693,10 +3705,11 @@
           "url": "https://jinja.palletsprojects.com/en/stable/api/"
         },
         "translations": {
-          "status": "official",
-          "note": "The bundled i18n extension adds trans/gettext integration; the application supplies its translation catalogs.",
+          "status": "native",
+          "note": "The bundled i18n extension adds trans/gettext integration. Enable the extension and supply application translation catalogs; it is included in Jinja rather than a separately installed first-party companion.",
           "url": "https://jinja.palletsprojects.com/en/stable/extensions/#i18n-extension",
-          "label": "i18n extension"
+          "label": "Bundled i18n extension",
+          "reviewedOn": "2026-11-13"
         },
         "localeRouting": {
           "status": "scope",
@@ -4695,10 +4708,11 @@
           "url": "https://laravel.com/framework/docs/13.x/vite"
         },
         "tailwind": {
-          "status": "official",
-          "note": "First-party starter kits configure Tailwind alongside their selected UI stack; the CSS compiler is installed separately.",
+          "status": "community",
+          "note": "Laravel’s official starter kits configure Tailwind for the selected UI stack. Tailwind supplies the separately installed CSS compiler; the starter-kit configuration does not make that compiler Laravel-owned.",
           "url": "https://laravel.com/framework/docs/13.x/starter-kits",
-          "label": "Starter kit integration"
+          "label": "Tailwind in starter kits",
+          "reviewedOn": "2026-11-13"
         },
         "cssInJs": {
           "status": "undocumented",
@@ -4788,11 +4802,11 @@
           "url": "https://laravel.com/framework/docs/13.x/head"
         },
         "robots": {
-          "status": "partial",
-          "note": "Laravel Head controls per-document robots meta directives; it does not establish robots.txt file generation.",
-          "url": "https://laravel.com/framework/docs/13.x/head",
-          "label": "Robots meta only",
-          "reviewedOn": "2026-11-10"
+          "status": "native",
+          "note": "Laravel’s application scaffold includes public/robots.txt, served unchanged from the public web root. Laravel Head’s per-page robots meta fields are a separate mechanism; the application owns the crawler-file directives.",
+          "url": "https://github.com/laravel/laravel/blob/a255d7688770af9713daff1439c47ff9bc6abd47/public/robots.txt",
+          "label": "Scaffolded public/robots.txt",
+          "reviewedOn": "2026-11-13"
         },
         "markdown": {
           "status": "native",
@@ -5513,11 +5527,11 @@
           "label": "Playwright"
         },
         "observability": {
-          "status": "partial",
-          "note": "The deployment recipe configures RUST_LOG and a production Rust server; exporters and monitoring infrastructure are application-owned.",
-          "url": "https://book.leptos.dev/deployment/ssr.html",
-          "label": "Host logging configuration",
-          "reviewedOn": "2026-11-10"
+          "status": "native",
+          "note": "leptos::logging supplies log/warn/error macros for the browser console or native terminal. The debug_* variants are debug-build-only. Structured tracing, collection/export and production monitoring remain host/integration work.",
+          "url": "https://docs.rs/leptos/latest/leptos/logging/index.html",
+          "label": "Isomorphic logging macros",
+          "reviewedOn": "2026-11-13"
         },
         "errorHandling": {
           "status": "native",
@@ -5918,8 +5932,10 @@
         },
         "scopedCss": {
           "status": "native",
-          "note": "Enhanced style syntax scopes authored styles to the template.",
-          "url": "https://markojs.com/docs/guide/styling"
+          "note": "A style tag with a tag variable opts into CSS Modules and exposes local class mappings. Ordinary Marko style tags are global by default; the template boundary alone does not scope them.",
+          "url": "https://markojs.com/docs/guide/styling",
+          "reviewedOn": "2026-11-13",
+          "label": "Opt-in CSS Modules"
         },
         "tailwind": {
           "status": "undocumented",
@@ -6228,10 +6244,11 @@
           "reviewedOn": "2026-11-11"
         },
         "searchParams": {
-          "status": "undocumented",
-          "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://markojs.com/docs/marko-run/getting-started",
-          "reviewedOn": "2026-11-11"
+          "status": "official",
+          "note": "Marko Run’s search validators check and transform query values using a function or synchronous Standard Schema validator. Validation is lazy and cached on first access; application code must consume the validated result and handle failures.",
+          "url": "https://markojs.com/docs/marko-run/validation",
+          "reviewedOn": "2026-11-13",
+          "label": "Run search validation"
         },
         "stateRestoration": {
           "status": "undocumented",
@@ -7074,7 +7091,7 @@
         "apiRoutes": {
           "status": "native",
           "note": "Nitro registers server endpoints/middleware and exposes H3 request, cookie and response utilities.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server"
         },
         "httpErrors": {
           "status": "native",
@@ -7086,12 +7103,12 @@
         "actions": {
           "status": "undocumented",
           "note": "Not established in the reviewed Nuxt server guide. External integrations or application code may provide this behavior.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server"
         },
         "forms": {
           "status": "partial",
           "note": "Endpoints can read/validate request bodies, but a unified typed form-action and field-error workflow is not established by this guide.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server",
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server",
           "label": "Endpoint validation",
           "reviewedOn": "2026-11-11",
           "assessment": {
@@ -7107,12 +7124,12 @@
         "middleware": {
           "status": "native",
           "note": "Nitro registers server endpoints/middleware and exposes H3 request, cookie and response utilities.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server"
         },
         "cookies": {
           "status": "native",
           "note": "Nitro registers server endpoints/middleware and exposes H3 request, cookie and response utilities.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server"
         },
         "cssModules": {
           "status": "native",
@@ -7161,9 +7178,11 @@
           "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
-          "status": "undocumented",
-          "note": "Not established in the reviewed Nuxt assets guide. External integrations or application code may provide this behavior.",
-          "url": "https://nuxt.com/docs/4.x/getting-started/styling"
+          "status": "native",
+          "note": "Nuxt serves public directory files at unchanged paths and processes imported app/assets through the configured bundler. Public copying and content-hashed build assets are distinct behaviors.",
+          "url": "https://nuxt.com/docs/4.x/getting-started/assets",
+          "reviewedOn": "2026-11-13",
+          "label": "Public directory / build assets"
         },
         "metadata": {
           "status": "native",
@@ -7275,9 +7294,11 @@
           "label": "nuxt-security"
         },
         "csrf": {
-          "status": "undocumented",
-          "note": "Not established in the reviewed Nuxt security guide. External integrations or application code may provide this behavior.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
+          "status": "community",
+          "note": "The separately installed nuxt-security module offers optional CSRF middleware. Enable and configure that protection for the relevant routes; installing Nuxt or using CSP alone does not provide universal CSRF protection.",
+          "url": "https://nuxt.com/modules/security",
+          "reviewedOn": "2026-11-13",
+          "label": "Optional nuxt-security CSRF"
         },
         "environment": {
           "status": "native",
@@ -7358,17 +7379,17 @@
         "orm": {
           "status": "undocumented",
           "note": "The reviewed Nuxt server/data guides do not establish an owned orm / query builder API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server"
         },
         "migrations": {
           "status": "undocumented",
           "note": "The reviewed Nuxt server/data guides do not establish an owned schema migrations API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server"
         },
         "transactions": {
           "status": "undocumented",
           "note": "The reviewed Nuxt server/data guides do not establish an owned transactions API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server"
         },
         "jobs": {
           "status": "partial",
@@ -7380,17 +7401,17 @@
         "mail": {
           "status": "undocumented",
           "note": "The reviewed Nuxt server/data guides do not establish an owned email API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server"
         },
         "uploads": {
           "status": "undocumented",
           "note": "The reviewed Nuxt server/data guides do not establish an owned file uploads & storage API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server"
         },
         "realtime": {
           "status": "undocumented",
           "note": "The reviewed Nuxt server/data guides do not establish an owned real-time delivery API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server"
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server"
         },
         "xssEscaping": {
           "status": "native",
@@ -7420,7 +7441,7 @@
         "progressiveEnhancement": {
           "status": "undocumented",
           "note": "The linked server API review does not establish the specific progressive forms contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server",
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server",
           "reviewedOn": "2026-11-11"
         },
         "optimisticUi": {
@@ -7478,11 +7499,11 @@
           "label": "NuxtRouteAnnouncer"
         },
         "a11yChecks": {
-          "status": "official",
-          "note": "@nuxt/a11y adds axe-core accessibility audits in Nuxt DevTools. The reviewed module is alpha and optional; diagnostics are not a conformance certificate.",
+          "status": "partial",
+          "note": "The optional @nuxt/a11y module runs accessibility audits in development. The reviewed release is alpha; it is not stable built-in enforcement or a certification that the application is accessible.",
           "url": "https://nuxt.com/modules/a11y",
-          "reviewedOn": "2026-11-11",
-          "label": "@nuxt/a11y"
+          "reviewedOn": "2026-11-13",
+          "label": "Alpha @nuxt/a11y module"
         },
         "lazyActivation": {
           "status": "native",
@@ -7525,7 +7546,7 @@
         "fieldEncryption": {
           "status": "undocumented",
           "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://nuxt.com/docs/4.x/guide/directory-structure/server",
+          "url": "https://nuxt.com/docs/4.x/directory-structure/server",
           "reviewedOn": "2026-11-11"
         },
         "httpTests": {
@@ -8107,7 +8128,7 @@
     },
     {
       "id": "proa",
-      "scope": "Published Proa documentation reviewed on the same date as other projects. Capabilities are not inferred from benchmark rank.",
+      "scope": "Published Proa documentation and named first-party or external integrations. Individual findings retain their review dates; capabilities are not inferred from benchmark rank.",
       "reviewedOn": "2026-11-10",
       "updatedOn": "2026-11-13",
       "capabilities": {
@@ -8224,13 +8245,17 @@
         },
         "persistentCache": {
           "status": "native",
-          "note": "The documented data cache retains keyed results across requests with explicit policy.",
-          "url": "https://proa.so/docs/framework/caching"
+          "note": "StandardDataLoader is an explicit process-local keyed cache with TTL, invalidate and clear. Share that loader across requests to reuse entries. Cross-instance storage and coordination require application-owned Redis/database/upstream integration; request-scoped DataResolver alone does not persist values.",
+          "url": "https://proa.so/docs/framework/caching",
+          "reviewedOn": "2026-11-13",
+          "label": "StandardDataLoader / process local"
         },
         "invalidation": {
           "status": "native",
-          "note": "Invalidation targets data keys and render dependencies; cache traces expose dependency behavior.",
-          "url": "https://proa.so/docs/framework/caching"
+          "note": "StandardDataLoader exposes key invalidation and clear; RSJS queries support explicit refresh/invalidation. Cache Trace records render dependencies for the application to consume. Recording a tag does not automatically purge a CDN or invalidate cached HTML.",
+          "url": "https://proa.so/docs/framework/caching",
+          "reviewedOn": "2026-11-13",
+          "label": "Explicit keys; app-owned CDN purge"
         },
         "isr": {
           "status": "partial",
@@ -8240,13 +8265,14 @@
           "reviewedOn": "2026-11-10"
         },
         "apiRoutes": {
-          "status": "official",
+          "status": "native",
           "note": "Route::endpoint registers Axum handlers for JSON, forms, raw bodies, and webhooks.",
           "url": "https://proa.so/docs/framework/route-handlers",
-          "label": "Axum integration"
+          "label": "Axum integration",
+          "reviewedOn": "2026-11-13"
         },
         "httpErrors": {
-          "status": "official",
+          "status": "native",
           "note": "Axum handlers and managed Page/layout head hooks can set error statuses before the response is published. Managed status mutations report failure after headers are committed. Framework render/encoding failures have documented 500 responses when a replacement response is still possible; a late streaming error cannot replace the status already sent. A custom “not found” page must explicitly select 404.",
           "url": "https://proa.so/docs/framework/errors",
           "label": "Pre-commit status / Axum",
@@ -8276,10 +8302,11 @@
           }
         },
         "middleware": {
-          "status": "official",
+          "status": "native",
           "note": "Axum handlers/layers compose around endpoints; framework security layers apply to registered endpoints.",
           "url": "https://proa.so/docs/framework/route-handlers",
-          "label": "Axum layers"
+          "label": "Axum layers",
+          "reviewedOn": "2026-11-13"
         },
         "cookies": {
           "status": "partial",
@@ -8336,10 +8363,11 @@
           "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
-          "status": "official",
+          "status": "native",
           "note": "FrameworkBuilder mounts an application-supplied static router; disk/embedded service and cache headers are explicit.",
           "url": "https://proa.so/docs/framework/static-assets",
-          "label": "Static router"
+          "label": "Static router",
+          "reviewedOn": "2026-11-13"
         },
         "metadata": {
           "status": "native",
@@ -8546,19 +8574,25 @@
           "url": "https://proa.so/docs/framework/deployment"
         },
         "orm": {
-          "status": "undocumented",
-          "note": "The reviewed framework documentation does not establish an owned orm / query builder API. Host libraries and application integrations may provide it.",
-          "url": "https://proa.so"
+          "status": "community",
+          "note": "The database guide integrates external SQLx, Diesel and Toasty behind DataLoader. Proa ships no database driver or ORM; these libraries supply queries and models, with their own installation and configuration.",
+          "url": "https://proa.so/docs/framework/databases",
+          "reviewedOn": "2026-11-13",
+          "label": "SQLx / Diesel / Toasty"
         },
         "migrations": {
-          "status": "undocumented",
-          "note": "The reviewed framework documentation does not establish an owned schema migrations API. Host libraries and application integrations may provide it.",
-          "url": "https://proa.so"
+          "status": "community",
+          "note": "proa add database scaffolds SQLx/SQLite and proa db runs the external library’s migrations. This is an integrated CLI workflow for SQLx, not a Proa-owned schema/migration engine.",
+          "url": "https://proa.so/docs/framework/databases",
+          "reviewedOn": "2026-11-13",
+          "label": "SQLx via Proa CLI"
         },
         "transactions": {
-          "status": "undocumented",
-          "note": "The reviewed framework documentation does not establish an owned transactions API. Host libraries and application integrations may provide it.",
-          "url": "https://proa.so"
+          "status": "community",
+          "note": "The documented SQLx data-layer integration can use SQLx transactions, with commit, rollback and rollback-on-drop supplied by that external library. Proa provides no transaction manager; database lifetime, loader boundaries and retry policy remain application-owned.",
+          "url": "https://docs.rs/sqlx/0.8.6/sqlx/struct.Transaction.html",
+          "label": "SQLx data-layer integration",
+          "reviewedOn": "2026-11-13"
         },
         "jobs": {
           "status": "undocumented",
@@ -8618,10 +8652,11 @@
           "reviewedOn": "2026-11-11"
         },
         "requestCancellation": {
-          "status": "undocumented",
-          "note": "The reviewed query/mutation guide does not establish the cancellation or stale-result suppression contract for superseded requests. Pending state and keyed queries alone do not prove it.",
+          "status": "native",
+          "note": "RSJS query observers move to the cache entry for a new structural key, so an old entry’s request stays with that entry. Full page-generation teardown cancels scheduled work and in-flight queries and invalidates old handles. This does not mean every key change aborts the previous shared request or undoes a server mutation.",
           "url": "https://proa.so/docs/rsjs/queries-mutations",
-          "reviewedOn": "2026-11-11"
+          "reviewedOn": "2026-11-13",
+          "label": "Query ownership / generation teardown"
         },
         "typedLinks": {
           "status": "undocumented",
@@ -9427,7 +9462,7 @@
         },
         "redirects": {
           "status": "scope",
-          "note": "React core renders UI; hTTP redirects and URL rewrites are owned by the host server/router. React recommends selecting a router or application framework.",
+          "note": "React core renders UI; HTTP redirects and URL rewrites are owned by the host server/router. React recommends selecting a router or application framework.",
           "url": "https://react.dev/learn/creating-a-react-app"
         },
         "serverData": {
@@ -9704,9 +9739,10 @@
         },
         "observability": {
           "status": "native",
-          "note": "Profiler reports component render timing through a callback. Production request traces/metrics require host instrumentation.",
+          "note": "Profiler reports component render timing through a callback. Profiling has overhead and is disabled in ordinary production builds; production profiling requires the special profiling build. Server request traces/metrics remain host-owned.",
           "url": "https://react.dev/reference/react/Profiler",
-          "label": "Profiler"
+          "label": "Profiler / profiling build",
+          "reviewedOn": "2026-11-13"
         },
         "errorHandling": {
           "status": "native",
@@ -9743,37 +9779,37 @@
         "orm": {
           "status": "scope",
           "note": "ORM / query builder belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://react.dev"
+          "url": "https://react.dev/learn"
         },
         "migrations": {
           "status": "scope",
           "note": "Schema migrations belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://react.dev"
+          "url": "https://react.dev/learn"
         },
         "transactions": {
           "status": "scope",
           "note": "Transactions belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://react.dev"
+          "url": "https://react.dev/learn"
         },
         "jobs": {
           "status": "scope",
           "note": "Background jobs belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://react.dev"
+          "url": "https://react.dev/learn"
         },
         "mail": {
           "status": "scope",
           "note": "Email belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://react.dev"
+          "url": "https://react.dev/learn"
         },
         "uploads": {
           "status": "scope",
           "note": "File uploads & storage belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://react.dev"
+          "url": "https://react.dev/learn"
         },
         "realtime": {
           "status": "scope",
           "note": "Real-time delivery belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
-          "url": "https://react.dev"
+          "url": "https://react.dev/learn"
         },
         "xssEscaping": {
           "status": "native",
@@ -9889,25 +9925,25 @@
         "scheduling": {
           "status": "scope",
           "note": "Scheduled tasks requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
-          "url": "https://react.dev",
+          "url": "https://react.dev/learn",
           "reviewedOn": "2026-11-11"
         },
         "notifications": {
           "status": "scope",
           "note": "Multi-channel notifications requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
-          "url": "https://react.dev",
+          "url": "https://react.dev/learn",
           "reviewedOn": "2026-11-11"
         },
         "searchIndex": {
           "status": "scope",
           "note": "Search indexing requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
-          "url": "https://react.dev",
+          "url": "https://react.dev/learn",
           "reviewedOn": "2026-11-11"
         },
         "fieldEncryption": {
           "status": "scope",
           "note": "Encrypted model fields requires a host application or specialized integration beyond the reviewed UI API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
-          "url": "https://react.dev",
+          "url": "https://react.dev/learn",
           "reviewedOn": "2026-11-11"
         },
         "httpTests": {
@@ -10396,10 +10432,11 @@
           "reviewedOn": "2026-11-11"
         },
         "requestCancellation": {
-          "status": "undocumented",
-          "note": "The linked data API review does not establish the specific stale request handling contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.remix.run/streaming-ui-with-frames/",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "A newer frame reload cancels earlier client work for that frame, including pending requests and streamed content. Server work may already have happened; cancellation is not mutation rollback.",
+          "url": "https://docs.remix.run/api/component/jsx-runtime/",
+          "reviewedOn": "2026-11-13",
+          "label": "Frame reload cancellation"
         },
         "typedLinks": {
           "status": "native",
@@ -10415,10 +10452,11 @@
           "reviewedOn": "2026-11-11"
         },
         "stateRestoration": {
-          "status": "undocumented",
-          "note": "The linked routing API review does not establish the specific navigation state retention contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.remix.run/api/component/",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "Frame reconciliation preserves matching client component state while updating server HTML. State survives only while component identity is retained; durable restoration after reload or replacement is application-owned.",
+          "url": "https://docs.remix.run/api/component/jsx-runtime/",
+          "reviewedOn": "2026-11-13",
+          "label": "Frame reconciliation"
         },
         "scrollRestoration": {
           "status": "undocumented",
@@ -10433,10 +10471,11 @@
           "reviewedOn": "2026-11-11"
         },
         "navigationAccessibility": {
-          "status": "undocumented",
-          "note": "The linked client rendering API review does not establish the specific accessible navigation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.remix.run/api/component/",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "The frame navigation runtime resets focus and scroll by default and provides explicit resetFocus/resetScroll controls. This is focus behavior, not a documented SvelteKit-style route announcer or a general accessibility guarantee.",
+          "url": "https://docs.remix.run/api/component/jsx-runtime/",
+          "reviewedOn": "2026-11-13",
+          "label": "Navigation focus controls"
         },
         "a11yChecks": {
           "status": "undocumented",
@@ -11720,9 +11759,11 @@
           "url": "https://docs.solidjs.com/solid-start/v2"
         },
         "forms": {
-          "status": "undocumented",
-          "note": "Not established in the reviewed SolidJS server guide. External integrations or application code may provide this behavior.",
-          "url": "https://docs.solidjs.com/solid-router"
+          "status": "official",
+          "note": "Solid Router actions integrate HTML forms, parsed submission arguments, pending/error state and query revalidation. Input validation remains application code or a schema library. A no-JavaScript server submission also requires a server integration such as SolidStart.",
+          "url": "https://docs.solidjs.com/solid-router/concepts/actions",
+          "reviewedOn": "2026-11-13",
+          "label": "Solid Router actions"
         },
         "middleware": {
           "status": "scope",
@@ -11929,9 +11970,11 @@
           "url": "https://docs.solidjs.com/guides/testing"
         },
         "errorHandling": {
-          "status": "undocumented",
-          "note": "Not established in the reviewed SolidJS testing guide. External integrations or application code may provide this behavior.",
-          "url": "https://docs.solidjs.com/guides/testing"
+          "status": "native",
+          "note": "Solid ErrorBoundary catches rendering and reactive-update errors in its subtree and provides a fallback/reset function. It does not catch arbitrary event-handler or unrelated asynchronous callback failures; HTTP status handling is a separate concern.",
+          "url": "https://docs.solidjs.com/reference/components/error-boundary",
+          "reviewedOn": "2026-11-13",
+          "label": "Solid ErrorBoundary"
         },
         "serverHosting": {
           "status": "scope",
@@ -12065,10 +12108,11 @@
           "reviewedOn": "2026-11-11"
         },
         "navigationBlocking": {
-          "status": "undocumented",
-          "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.solidjs.com/solid-router/reference/components/router",
-          "reviewedOn": "2026-11-11"
+          "status": "official",
+          "note": "Solid Router useBeforeLeave runs before router navigation and can prevent, retry or cancel leaving. The application owns its prompt and dirty-state policy; this is not a universal custom dialog for browser unload or cross-origin navigation.",
+          "url": "https://docs.solidjs.com/solid-router/reference/primitives/use-before-leave",
+          "reviewedOn": "2026-11-13",
+          "label": "Solid Router useBeforeLeave"
         },
         "navigationAccessibility": {
           "status": "undocumented",
@@ -12317,13 +12361,16 @@
         },
         "tailwind": {
           "status": "community",
-          "note": "The styling guide integrates separate Tailwind and CSS-in-JS packages; they are not SolidStart-owned compilers.",
-          "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/css-and-styling"
+          "note": "The Vite styling workflow can import CSS generated by Tailwind, and the guide demonstrates a route stylesheet importing tailwindcss. Tailwind is an external compiler; this is separate from a CSS-in-JS integration.",
+          "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/css-and-styling",
+          "label": "Tailwind / Vite",
+          "reviewedOn": "2026-11-13"
         },
         "cssInJs": {
-          "status": "community",
-          "note": "The styling guide integrates separate Tailwind and CSS-in-JS packages; they are not SolidStart-owned compilers.",
-          "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/css-and-styling"
+          "status": "undocumented",
+          "note": "The reviewed v2 styling guide establishes CSS and CSS Modules, but does not establish a named CSS-in-JS integration with documented server-rendering behavior. General Vite compatibility is not sufficient evidence of that SSR contract.",
+          "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/css-and-styling",
+          "reviewedOn": "2026-11-13"
         },
         "images": {
           "status": "undocumented",
@@ -12501,9 +12548,11 @@
           "url": "https://docs.solidjs.com/solid-start/v2/guides/deployment-plugins"
         },
         "errorHandling": {
-          "status": "undocumented",
-          "note": "Not established in the reviewed SolidStart testing guide. External integrations or application code may provide this behavior.",
-          "url": "https://docs.solidjs.com/solid-start/v2/guides/deployment-plugins"
+          "status": "native",
+          "note": "Solid ErrorBoundary catches rendering and reactive-update errors in its subtree and provides a fallback/reset function. It does not catch arbitrary event-handler or unrelated asynchronous callback failures; HTTP status handling is a separate concern.",
+          "url": "https://docs.solidjs.com/reference/components/error-boundary",
+          "reviewedOn": "2026-11-13",
+          "label": "Solid ErrorBoundary"
         },
         "serverHosting": {
           "status": "community",
@@ -12599,10 +12648,11 @@
           "reviewedOn": "2026-11-11"
         },
         "progressiveEnhancement": {
-          "status": "undocumented",
-          "note": "The linked server API review does not establish the specific progressive forms contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-mutation",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "Server-backed Solid Router actions can be used as real HTML form actions, so the server handles submissions before JavaScript loads. Keep the use-server handler and native form action; an action implemented only as browser fetch is not a no-JavaScript endpoint.",
+          "url": "https://docs.solidjs.com/solid-router/concepts/actions",
+          "reviewedOn": "2026-11-13",
+          "label": "Server-backed Router actions"
         },
         "optimisticUi": {
           "status": "partial",
@@ -12642,10 +12692,11 @@
           "reviewedOn": "2026-11-11"
         },
         "navigationBlocking": {
-          "status": "undocumented",
-          "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.solidjs.com/solid-router/reference/components/router",
-          "reviewedOn": "2026-11-11"
+          "status": "official",
+          "note": "Solid Router useBeforeLeave runs before router navigation and can prevent, retry or cancel leaving. The application owns its prompt and dirty-state policy; this is not a universal custom dialog for browser unload or cross-origin navigation.",
+          "url": "https://docs.solidjs.com/solid-router/reference/primitives/use-before-leave",
+          "reviewedOn": "2026-11-13",
+          "label": "Solid Router useBeforeLeave"
         },
         "navigationAccessibility": {
           "status": "undocumented",
@@ -12869,10 +12920,11 @@
           "reviewedOn": "2026-11-13"
         },
         "actions": {
-          "status": "official",
-          "note": "SvelteKit remote functions expose server queries, forms, and commands. Availability depends on the documented Kit configuration.",
+          "status": "partial",
+          "note": "The SvelteKit companion exposes typed query/form/command remote functions, but they remain experimental and opt-in. They are not a stable server-function transport supplied by the Svelte compiler. Stable Kit form actions are reviewed separately.",
           "url": "https://svelte.dev/docs/kit/remote-functions",
-          "label": "SvelteKit"
+          "label": "Experimental SvelteKit remote functions",
+          "reviewedOn": "2026-11-13"
         },
         "forms": {
           "status": "official",
@@ -12913,10 +12965,11 @@
           "url": "https://svelte.dev/docs/svelte/scoped-styles"
         },
         "tailwind": {
-          "status": "official",
-          "note": "The official sv addon configures Tailwind’s external package/compiler.",
+          "status": "community",
+          "note": "The official sv addon installs/configures the external Tailwind compiler. The setup integration is first-party; CSS compilation itself comes from Tailwind rather than the Svelte runtime.",
           "url": "https://svelte.dev/docs/cli/tailwind",
-          "label": "sv Tailwind addon"
+          "label": "Tailwind via sv addon",
+          "reviewedOn": "2026-11-13"
         },
         "cssInJs": {
           "status": "scope",
@@ -13471,9 +13524,11 @@
           "url": "https://svelte.dev/docs/kit/load"
         },
         "isr": {
-          "status": "undocumented",
-          "note": "Not established in the reviewed SvelteKit data guide. External integrations or application code may provide this behavior.",
-          "url": "https://svelte.dev/docs/kit/load"
+          "status": "official",
+          "note": "The official Vercel adapter documents per-route ISR configuration. Regeneration is supplied by that hosting platform/adapter, not by a static export or a generic SvelteKit cache on every deployment.",
+          "url": "https://svelte.dev/docs/kit/adapter-vercel#Incremental-Static-Regeneration",
+          "reviewedOn": "2026-11-13",
+          "label": "Vercel adapter ISR"
         },
         "apiRoutes": {
           "status": "native",
@@ -13531,10 +13586,11 @@
           "url": "https://svelte.dev/docs/svelte/scoped-styles"
         },
         "tailwind": {
-          "status": "official",
-          "note": "Official sv add integrations configure Tailwind, mdsvex, Vitest and Playwright respectively. The compilers/runners are external packages.",
-          "url": "https://svelte.dev/docs/cli/sv-add",
-          "label": "sv add integration"
+          "status": "community",
+          "note": "The official sv addon installs/configures the external Tailwind compiler. The setup integration is first-party; CSS compilation itself comes from Tailwind rather than the Svelte runtime.",
+          "url": "https://svelte.dev/docs/cli/tailwind",
+          "label": "Tailwind via sv addon",
+          "reviewedOn": "2026-11-13"
         },
         "cssInJs": {
           "status": "undocumented",
@@ -13565,9 +13621,11 @@
           "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
-          "status": "undocumented",
-          "note": "Not established in the reviewed SvelteKit assets guide. External integrations or application code may provide this behavior.",
-          "url": "https://svelte.dev/docs/kit/images"
+          "status": "native",
+          "note": "The static directory publishes files unchanged, while Vite processes imported source assets. paths.base and asset/path helpers must match the deployment; static copying is separate from content hashing.",
+          "url": "https://svelte.dev/docs/kit/project-structure#Project-files-static",
+          "reviewedOn": "2026-11-13",
+          "label": "Static directory / Vite"
         },
         "metadata": {
           "status": "partial",
@@ -13588,11 +13646,11 @@
           "reviewedOn": "2026-11-10"
         },
         "dynamicMetadata": {
-          "status": "partial",
-          "note": "svelte:head emits data-driven title/meta markup. Applications own deduplication/composition rather than a structured metadata object registry.",
+          "status": "native",
+          "note": "svelte:head can render titles and metadata from page/load data and update them during client navigation. This uses the existing page data flow; structured field inheritance and deduplication remain application-owned.",
           "url": "https://svelte.dev/docs/kit/seo",
-          "label": "Head elements",
-          "reviewedOn": "2026-11-10"
+          "label": "Load data / svelte:head",
+          "reviewedOn": "2026-11-13"
         },
         "metadataInheritance": {
           "status": "undocumented",
@@ -13628,10 +13686,11 @@
           "label": "Endpoint / static file"
         },
         "markdown": {
-          "status": "official",
-          "note": "Official sv add integrations configure Tailwind, mdsvex, Vitest and Playwright respectively. The compilers/runners are external packages.",
-          "url": "https://svelte.dev/docs/cli/sv-add",
-          "label": "sv add integration"
+          "status": "community",
+          "note": "mdsvex is an external Markdown/Svelte compiler. The official sv addon configures that package; an official setup command does not make mdsvex a Svelte-owned compiler.",
+          "url": "https://svelte.dev/docs/cli/mdsvex",
+          "label": "mdsvex via sv addon",
+          "reviewedOn": "2026-11-13"
         },
         "collections": {
           "status": "undocumented",
@@ -13644,14 +13703,18 @@
           "url": "https://svelte.dev/docs/kit/integrations"
         },
         "translations": {
-          "status": "undocumented",
-          "note": "Not established in the reviewed SvelteKit i18n guide. External integrations or application code may provide this behavior.",
-          "url": "https://svelte.dev/docs/kit/hooks"
+          "status": "community",
+          "note": "The Svelte package directory lists i18n integrations, including Paraglide JS and Wuchale.",
+          "url": "https://svelte.dev/packages",
+          "reviewedOn": "2026-11-13",
+          "label": "i18n packages"
         },
         "localeRouting": {
-          "status": "undocumented",
-          "note": "Not established in the reviewed SvelteKit i18n guide. External integrations or application code may provide this behavior.",
-          "url": "https://svelte.dev/docs/kit/hooks"
+          "status": "community",
+          "note": "The Paraglide addon configures locale-aware app routing and messages through an external package.",
+          "url": "https://svelte.dev/docs/cli/paraglide",
+          "reviewedOn": "2026-11-13",
+          "label": "Paraglide"
         },
         "localeFormatting": {
           "status": "undocumented",
@@ -13679,9 +13742,11 @@
           "label": "CSP nonce / auto mode"
         },
         "csrf": {
-          "status": "undocumented",
-          "note": "Not established in the reviewed SvelteKit security guide. External integrations or application code may provide this behavior.",
-          "url": "https://svelte.dev/docs/kit/auth"
+          "status": "native",
+          "note": "SvelteKit checks Origin on unsafe browser requests with form-like content types in production. trustedOrigins configures exceptions; this is origin enforcement, not a CSRF-token service, and it does not protect arbitrary JSON APIs by token.",
+          "url": "https://svelte.dev/docs/kit/configuration#csrf",
+          "reviewedOn": "2026-11-13",
+          "label": "Production origin checks"
         },
         "environment": {
           "status": "native",
@@ -13719,16 +13784,18 @@
           "url": "https://svelte.dev/docs/kit/introduction"
         },
         "unitTests": {
-          "status": "official",
-          "note": "Official sv add integrations configure Tailwind, mdsvex, Vitest and Playwright respectively. The compilers/runners are external packages.",
-          "url": "https://svelte.dev/docs/cli/sv-add",
-          "label": "sv add integration"
+          "status": "community",
+          "note": "The official sv tooling can configure external Vitest/component-testing or Playwright browser workflows. The test runners are external packages; they are not bundled SvelteKit runtime APIs.",
+          "url": "https://svelte.dev/docs/svelte/testing",
+          "label": "Vitest / Testing Library",
+          "reviewedOn": "2026-11-13"
         },
         "e2eTests": {
-          "status": "official",
-          "note": "Official sv add integrations configure Tailwind, mdsvex, Vitest and Playwright respectively. The compilers/runners are external packages.",
-          "url": "https://svelte.dev/docs/cli/sv-add",
-          "label": "sv add integration"
+          "status": "community",
+          "note": "The official sv tooling can configure external Vitest/component-testing or Playwright browser workflows. The test runners are external packages; they are not bundled SvelteKit runtime APIs.",
+          "url": "https://svelte.dev/docs/svelte/testing",
+          "label": "Playwright",
+          "reviewedOn": "2026-11-13"
         },
         "observability": {
           "status": "native",
@@ -14036,8 +14103,8 @@
         "viewTransitions": {
           "status": "native",
           "note": "Router viewTransition/defaultViewTransition coordinate document.startViewTransition during navigation, including transition types. It is opt-in and depends on browser support; animation CSS and reduced-motion behavior remain app-owned.",
-          "url": "https://tanstack.com/router/latest/docs/framework/react/examples/view-transitions",
-          "reviewedOn": "2026-11-11",
+          "url": "https://tanstack.com/router/latest/docs/api/router/RouterOptionsType#defaultviewtransition-property",
+          "reviewedOn": "2026-11-13",
           "label": "TanStack Router"
         },
         "redirects": {
@@ -14161,9 +14228,11 @@
           "reviewedOn": "2026-11-13"
         },
         "staticAssets": {
-          "status": "undocumented",
-          "note": "Not established in the reviewed TanStack Start assets guide. External integrations or application code may provide this behavior.",
-          "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo"
+          "status": "native",
+          "note": "Files in public are served at their public paths; imported build assets are processed by the configured bundler. For example, the SEO guide documents automatic serving of public/robots.txt. Public files do not gain hashed filenames merely by being copied.",
+          "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo",
+          "reviewedOn": "2026-11-13",
+          "label": "Public directory / bundler"
         },
         "metadata": {
           "status": "native",
@@ -14214,11 +14283,11 @@
           "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo"
         },
         "robots": {
-          "status": "partial",
-          "note": "The SEO guide publishes an application-owned robots.txt. It does not establish a typed robots directive generator.",
+          "status": "native",
+          "note": "A documented public/robots.txt convention serves crawler directives automatically, or a server route can generate the response. The application authors the directives; a typed directive-builder API is not required by this feature definition.",
           "url": "https://tanstack.com/start/latest/docs/framework/react/guide/seo",
-          "label": "Authored robots.txt",
-          "reviewedOn": "2026-11-10"
+          "label": "Static convention / server route",
+          "reviewedOn": "2026-11-13"
         },
         "markdown": {
           "status": "official",
@@ -14424,10 +14493,11 @@
           "reviewedOn": "2026-11-11"
         },
         "progressiveEnhancement": {
-          "status": "undocumented",
-          "note": "The linked server API review does not establish the specific progressive forms contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "The server-functions guide documents native HTML forms using a server function’s .url. Return an appropriate Response/redirect and validate the request on the server. A JavaScript-only event handler is a different submission path.",
+          "url": "https://tanstack.com/start/latest/docs/framework/react/guide/server-functions#progressive-enhancement",
+          "reviewedOn": "2026-11-13",
+          "label": "Server-function URL forms"
         },
         "optimisticUi": {
           "status": "native",
@@ -14543,14 +14613,15 @@
     },
     {
       "id": "topcoat",
-      "scope": "Streaming, Suspense, asset pipeline, subpath deployment, and HTTP error handling reviewed against Topcoat 0.12.1; other feature findings retain the 0.3.1 review. Render benchmarks use 0.3.1.",
-      "reviewedOn": "2026-11-10",
+      "scope": "Topcoat 0.12.1 documentation and source, including explicitly enabled first-party features and named external integrations. The framework remains experimental; rendering benchmarks separately retain Topcoat 0.3.1.",
+      "reviewedOn": "2026-11-13",
       "updatedOn": "2026-11-13",
       "capabilities": {
         "ssr": {
           "status": "native",
           "note": "Async Rust view components render markup on the server.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "streaming": {
           "status": "native",
@@ -14567,116 +14638,135 @@
         "client": {
           "status": "native",
           "note": "Reactive Rust expressions compile to JavaScript that activates server-rendered UI; shards can replace server-rendered fragments.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "label": "Compiled JS"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "label": "Compiled JS",
+          "reviewedOn": "2026-11-13"
         },
         "ssg": {
           "status": "planned",
-          "note": "Static export and prerendering are unchecked roadmap items in the reviewed version.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "note": "Static export and prerendering remain unchecked roadmap items in Topcoat 0.12.1.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Roadmap"
         },
         "csr": {
           "status": "partial",
           "note": "Compiled reactive expressions update server-authored UI. A standalone CSR application root is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
           "label": "Server-authored runtime",
-          "reviewedOn": "2026-11-10"
+          "reviewedOn": "2026-11-13"
         },
         "serverOnly": {
           "status": "native",
           "note": "Rust view/component code renders on the server; explicitly reactive expressions compile to JavaScript.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+          "reviewedOn": "2026-11-13"
         },
         "partialRendering": {
           "status": "undocumented",
-          "note": "The reviewed roadmap still plans prerendering and streaming; a static-shell/dynamic-hole pipeline is not established.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "note": "The 0.12.1 README still lists static export and prerendering as roadmap work. live!/emit! stream runtime updates; that does not establish a retained prerendered shell with request-time holes.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "routing": {
           "status": "native",
           "note": "Pages, layouts, and API routes support manual or auto-discovered routers.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "layouts": {
           "status": "native",
           "note": "Module layouts wrap routed pages and compose app-level structure.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+          "reviewedOn": "2026-11-13"
         },
         "dynamicRoutes": {
           "status": "native",
           "note": "Page/API route macros support typed path and query parameters.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+          "reviewedOn": "2026-11-13"
         },
         "parallelRoutes": {
           "status": "undocumented",
           "note": "The reviewed module router does not establish independently navigable named slots.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+          "reviewedOn": "2026-11-13"
         },
         "interceptedRoutes": {
           "status": "undocumented",
           "note": "The reviewed router does not define intercepted-modal and direct-entry rendering semantics.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+          "reviewedOn": "2026-11-13"
         },
         "prefetch": {
-          "status": "planned",
-          "note": "Client-side navigation and prefetching are explicit unchecked roadmap items.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "status": "native",
+          "note": "Runtime links prefetch on intent by default, with viewport and never modes configurable per link/context. Prefetch is best effort and may be skipped for data-saving or concurrent-load policy; plain anchors keep normal navigation.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime/link.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Runtime link prefetch"
         },
         "softNavigation": {
-          "status": "planned",
-          "note": "Client-side navigation is an unchecked roadmap item in the reviewed 0.3.1 README, rather than a shipped navigation integration.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "runtime::link and link_attrs navigate server-rendered pages without a full reload. Shared signals can survive reconciliation; external targets, downloads and incompatible responses use normal document navigation.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime/link.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Runtime links"
         },
         "viewTransitions": {
           "status": "undocumented",
           "note": "The reviewed routing API does not establish this navigation capability. Application code or another package may provide it; this finding is not proof of absence.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "redirects": {
-          "status": "partial",
-          "note": "HTTP routes can return application-authored responses; automatic rewrite/proxy configuration is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/",
-          "label": "HTTP responses",
-          "reviewedOn": "2026-11-10"
+          "status": "native",
+          "note": "Router errors/helpers support temporary and permanent redirects, 303 POST/Redirect/GET and internal rewrite redispatch. These are HTTP/router APIs; proxy deployment still requires explicit mount/origin configuration.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/error.md",
+          "label": "Redirect / rewrite helpers",
+          "reviewedOn": "2026-11-13"
         },
         "serverData": {
           "status": "native",
           "note": "Async view functions load data directly and share request/app context.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/context/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+          "reviewedOn": "2026-11-13"
         },
         "clientData": {
           "status": "partial",
           "note": "Procedures/shards can request server results and replace UI. A browser query cache with retry/stale-data policy is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
           "label": "Procedures / shards",
-          "reviewedOn": "2026-11-10"
+          "reviewedOn": "2026-11-13"
         },
         "requestDedupe": {
           "status": "native",
           "note": "#[memoize] shares a request-context function result by arguments within one request.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/context/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+          "reviewedOn": "2026-11-13"
         },
         "persistentCache": {
           "status": "undocumented",
           "note": "Request memoization is documented; an across-request data/page cache is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/context/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+          "reviewedOn": "2026-11-13"
         },
         "invalidation": {
           "status": "undocumented",
           "note": "The reviewed memoization lifecycle ends with the request; cross-request dependency/tag invalidation is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/context/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+          "reviewedOn": "2026-11-13"
         },
         "isr": {
           "status": "undocumented",
           "note": "The reviewed route API does not establish retained static-page regeneration.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+          "reviewedOn": "2026-11-13"
         },
         "apiRoutes": {
           "status": "native",
           "note": "Route macros register HTTP API handlers alongside pages.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md",
+          "reviewedOn": "2026-11-13"
         },
         "httpErrors": {
           "status": "native",
@@ -14688,72 +14778,73 @@
         "actions": {
           "status": "native",
           "note": "Procedures are documented as async server functions callable from the browser.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "label": "Procedures"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "label": "Procedures",
+          "reviewedOn": "2026-11-13"
         },
         "forms": {
-          "status": "partial",
-          "note": "Views emit form controls and procedures handle server work; typed form validation is not established in this version.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/",
-          "label": "App forms / procedures",
-          "reviewedOn": "2026-11-11",
-          "assessment": {
-            "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
-            "strengths": [
-              "Views emit form controls and procedures handle server work; typed form validation is not established in this version."
-            ],
-            "tradeoffs": [
-              "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
-            ]
-          }
+          "status": "native",
+          "note": "Route Form<T> extraction deserializes native query/form submissions into typed values, and documented examples use POST/Redirect/GET. Parsing failures map to HTTP errors; business validation and field-error feedback remain application-owned. A general validation framework is still roadmap work.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/content.md",
+          "label": "Typed native form submissions",
+          "reviewedOn": "2026-11-13"
         },
         "middleware": {
-          "status": "partial",
-          "note": "Request-context functions compose shared checks; the guide recommends functions rather than a general middleware chain.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/context/",
-          "label": "Context functions",
-          "reviewedOn": "2026-11-10"
+          "status": "native",
+          "note": "Router layers wrap request handling with body, context and Next, and can apply across route prefixes. Optional TowerLayer/TowerRoute bridge external middleware/services. A helper function alone is not the complete middleware API.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md#layers",
+          "label": "Router layers",
+          "reviewedOn": "2026-11-13"
         },
         "cookies": {
           "status": "native",
           "note": "Cookie helpers support signed/encrypted and prefixed cookies; sessions accept app-supplied storage.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/cookie/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/cookie.md",
+          "reviewedOn": "2026-11-13"
         },
         "cssModules": {
           "status": "undocumented",
           "note": "The reviewed view/style APIs do not document CSS Modules class-map compilation.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+          "reviewedOn": "2026-11-13"
         },
         "scopedCss": {
           "status": "undocumented",
           "note": "Views accept authored classes/styles; component-local selector rewriting is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+          "reviewedOn": "2026-11-13"
         },
         "tailwind": {
           "status": "native",
           "note": "The optional Tailwind integration runs the external compiler and bundles generated CSS.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/tailwind/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/tailwind.md",
+          "reviewedOn": "2026-11-13"
         },
         "cssInJs": {
           "status": "undocumented",
           "note": "Compiled reactive style expressions do not establish a CSS-in-JS compiler/SSR registry.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+          "reviewedOn": "2026-11-13"
         },
         "images": {
           "status": "planned",
-          "note": "Image optimization/resizing is an explicit unchecked roadmap item.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "note": "Image optimization/resizing remains an unchecked roadmap item in 0.12.1; asset hashing and downloading do not transform images.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Roadmap"
         },
         "fonts": {
           "status": "native",
           "note": "Font utilities download/bundle Fontsource fonts as application assets; this does not imply every font has automatic subsetting.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/font/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/font.md",
+          "reviewedOn": "2026-11-13"
         },
         "scripts": {
           "status": "undocumented",
           "note": "Topcoat manages generated client expressions; arbitrary third-party script scheduling is application-owned.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/",
-          "label": "Compiled client runtime"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+          "label": "Compiled client runtime",
+          "reviewedOn": "2026-11-13"
         },
         "assetPipeline": {
           "status": "native",
@@ -14765,161 +14856,193 @@
         "staticAssets": {
           "status": "native",
           "note": "asset! discovers, copies/downloads, and fingerprints application assets.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/asset/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
+          "reviewedOn": "2026-11-13"
         },
         "metadata": {
-          "status": "undocumented",
-          "note": "Layout composition is documented; a typed document metadata registry is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/"
+          "status": "native",
+          "note": "The built-in Metadata API supplies structured title, description, canonical, robots, Open Graph and X fields; metadata::tags renders the combined document head. The feature is enabled by default.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/metadata.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Structured Metadata API"
         },
         "dynamicMetadata": {
-          "status": "partial",
-          "note": "Async server views can load values for authored head tags; there is no established dedicated metadata hook.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/",
-          "label": "Authored head markup",
-          "reviewedOn": "2026-11-10"
+          "status": "native",
+          "note": "Metadata::from_fn loads request-dependent metadata asynchronously through Cx before the outer layout renders. Request memoization can share data with the page body.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/metadata.md#loading-metadata-for-a-request",
+          "label": "Async Metadata::from_fn",
+          "reviewedOn": "2026-11-13"
         },
         "metadataInheritance": {
-          "status": "undocumented",
-          "note": "Module layout nesting does not establish metadata-field inheritance.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/"
+          "status": "native",
+          "note": "Router defaults, outer-to-inner layouts and page metadata combine field by field. Unset fields inherit; request child contexts can override the combined values. An Open Graph image list is replaced as one field.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/metadata.md#setting-metadata",
+          "reviewedOn": "2026-11-13",
+          "label": "Field-level inheritance"
         },
         "metadataOverrides": {
-          "status": "undocumented",
-          "note": "A standard child metadata-field merge/clear contract is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/"
+          "status": "native",
+          "note": "Page/inner metadata replaces fields independently, and no_* removal methods block inheritance for selected fields. Open Graph image lists replace as a whole rather than merging every item.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/metadata.md#setting-metadata",
+          "reviewedOn": "2026-11-13",
+          "label": "Overrides / explicit removals"
         },
         "titleTemplates": {
           "status": "undocumented",
           "note": "Title text can be rendered by application views; an ancestor title-template API is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+          "reviewedOn": "2026-11-13"
         },
         "socialImages": {
           "status": "undocumented",
           "note": "Asset downloads/fingerprints do not establish dynamic social-card image generation.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/asset/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
+          "reviewedOn": "2026-11-13"
         },
         "sitemaps": {
-          "status": "undocumented",
-          "note": "Routes can serve XML, but an automatic URL enumeration/XML sitemap generator is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/router/"
+          "status": "native",
+          "note": "The optional sitemap feature supplies Sitemap and SitemapUrl response types with last-modified, frequency and priority. Relative URLs resolve with BaseUrl; application code chooses/enumerates entries.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/content/sitemap.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Sitemap response types"
         },
         "robots": {
           "status": "native",
-          "note": "Application-authored robots.txt can be bundled as an asset; a typed directive generator is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/asset/",
-          "label": "Authored file"
+          "note": "With the fs feature, public_dir serves an application public directory at the site root, allowing an authored robots.txt to retain its required public URL. A fingerprinted asset! URL alone is not the robots.txt convention; directive contents remain application-owned.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/crates/topcoat-router/src/route/directory.rs#L242-L259",
+          "label": "Unchanged public file",
+          "reviewedOn": "2026-11-13"
         },
         "markdown": {
-          "status": "undocumented",
-          "note": "The reviewed view API does not establish Markdown page parsing/routing.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/"
+          "status": "planned",
+          "note": "Markdown support remains a roadmap item in 0.12.1; rendering authored HTML or an email plain-text alternative is a different feature.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Markdown support planned"
         },
         "collections": {
           "status": "undocumented",
           "note": "Assets are bundled; typed content collection schemas/loaders/query APIs are not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/asset/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
+          "reviewedOn": "2026-11-13"
         },
         "draftMode": {
           "status": "undocumented",
           "note": "Request functions can authorize a preview; a dedicated draft/cache-bypass mode is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/context/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+          "reviewedOn": "2026-11-13"
         },
         "translations": {
-          "status": "undocumented",
-          "note": "The reviewed view/runtime API does not establish compile-checked message catalogs or pluralization.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/"
+          "status": "native",
+          "note": "The optional first-party l10n/Fluent features load message catalogs, interpolate arguments and apply locale fallback. topcoat l10n check validates message keys/variables; applications choose supported locales.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/l10n.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Fluent catalogs / l10n"
         },
         "localeRouting": {
-          "status": "partial",
-          "note": "The request-context guide demonstrates reading Accept-Language; locale URL negotiation and redirects are application policy.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/context/",
-          "label": "Request helper recipe",
-          "reviewedOn": "2026-11-10"
+          "status": "native",
+          "note": "Locale implements route parameter parsing, and the localization guide composes a locale segment with request layers and Accept-Language negotiation. The application chooses supported locales and redirect/fallback policy.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/l10n.md",
+          "label": "Locale parameters / negotiation",
+          "reviewedOn": "2026-11-13"
         },
         "localeFormatting": {
-          "status": "undocumented",
-          "note": "The reviewed rendering API does not establish locale-sensitive number/date formatters.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/"
+          "status": "native",
+          "note": "The l10n-number and l10n-datetime features format numbers and dates for the request locale. Documented limitations include no currency/percent formatting and limited date/time styles; enable the relevant features.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/l10n.md#formatting",
+          "reviewedOn": "2026-11-13",
+          "label": "Optional locale formatters"
         },
         "auth": {
           "status": "planned",
-          "note": "Full authentication is planned. Existing cookies/sessions provide primitives, not an identity system.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "note": "Authentication remains a roadmap item in 0.12.1. Cookie/session primitives require application-owned account lookup, credential verification and identity storage.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Roadmap"
         },
         "csp": {
           "status": "undocumented",
           "note": "The reviewed generated-JavaScript runtime does not document coordinated CSP nonce/hash policy.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+          "reviewedOn": "2026-11-13"
         },
         "cspNonce": {
           "status": "undocumented",
           "note": "The reviewed security/rendering API does not establish coordinated per-response CSP nonces for generated scripts and styles. Hash-based CSP and application-authored headers are different mechanisms.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+          "reviewedOn": "2026-11-13"
         },
         "csrf": {
-          "status": "undocumented",
-          "note": "Procedures expose browser-to-server calls, but a CSRF token/origin enforcement contract is not established by the reviewed runtime docs.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/"
+          "status": "native",
+          "note": "OriginPolicy rejects cross-origin browser mutations and cross-origin WebSocket handshakes before request layers by default. Trusted origins or explicit disabling are configurable. This is origin enforcement, not a token service or authentication.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router.md#cross-origin-requests",
+          "reviewedOn": "2026-11-13",
+          "label": "Default OriginPolicy"
         },
         "environment": {
           "status": "partial",
           "note": "Server context can hold configuration; explicitly compiled client expressions must not expose secrets. A public/private environment namespace is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/context/",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
           "label": "Request / app context",
-          "reviewedOn": "2026-11-10"
+          "reviewedOn": "2026-11-13"
         },
         "types": {
           "status": "native",
           "note": "Rust checks server components and the typed expressions accepted by the reactive compiler.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+          "reviewedOn": "2026-11-13"
         },
         "hmr": {
           "status": "partial",
           "note": "Development hooks notify the dev server about rebuild/readiness and display status; this does not establish state-preserving hot replacement.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/dev/",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
           "label": "Dev rebuild integration",
-          "reviewedOn": "2026-11-10"
+          "reviewedOn": "2026-11-13"
         },
         "cli": {
           "status": "partial",
           "note": "Existing tooling bundles assets; project scaffolding via topcoat new is still on the roadmap.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/asset/",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
           "label": "Asset tooling",
-          "reviewedOn": "2026-11-10"
+          "reviewedOn": "2026-11-13"
         },
         "bundleAnalysis": {
           "status": "undocumented",
           "note": "Asset discovery/bundling is documented; a production module-size analysis view is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/asset/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/asset.md",
+          "reviewedOn": "2026-11-13"
         },
         "unitTests": {
-          "status": "undocumented",
-          "note": "Rust code can use cargo test, but a documented component test harness is not established in this crate review.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/"
+          "status": "native",
+          "note": "Views/helpers use Rust tests with a fresh Cx::new() populated through Cx::with. This supplies context construction, not a browser test runner; application tests must arrange their own dependencies.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Rust tests / explicit context"
         },
         "e2eTests": {
           "status": "undocumented",
           "note": "The reviewed runtime docs do not provide a browser end-to-end test integration.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+          "reviewedOn": "2026-11-13"
         },
         "observability": {
           "status": "undocumented",
           "note": "Request context exposes headers/extensions; a maintained tracing/metrics integration is not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/context/"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/context.md",
+          "reviewedOn": "2026-11-13"
         },
         "errorHandling": {
-          "status": "partial",
-          "note": "Views/routes return typed errors; automatic component fallback/recovery boundaries are not established.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/",
-          "label": "Typed error propagation",
-          "reviewedOn": "2026-11-10"
+          "status": "native",
+          "note": "The built-in error_boundary component catches child view failures and renders a supplied fallback; returning Err propagates upward. A fallback must explicitly choose an HTTP error status before streaming begins.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/crates/topcoat/src/view/error_boundary.rs",
+          "label": "View error_boundary",
+          "reviewedOn": "2026-11-13"
         },
         "serverHosting": {
           "status": "native",
           "note": "serve/serve_until run a router from a TCP listener with graceful shutdown.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/fn.serve.html"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "subpathProxy": {
           "status": "partial",
@@ -14930,185 +15053,212 @@
         },
         "staticHosting": {
           "status": "planned",
-          "note": "Static export/prerendering are planned; a static-only production export is not established.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "note": "A complete static export remains an unchecked roadmap item in 0.12.1; publishing bundled assets alone is not an exported application.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Roadmap"
         },
         "containers": {
           "status": "undocumented",
           "note": "Deployment documentation is an unchecked roadmap item; a maintained container recipe is not established.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "edgeHosting": {
-          "status": "undocumented",
-          "note": "Deployment documentation is planned; an edge/worker adapter is not established.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md"
+          "status": "native",
+          "note": "A published 0.12.1 example runs Router::handle from a Cloudflare Worker fetch handler without the native serve feature. It buffers request bodies and does not support runtime WebSocket connections on Workers.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/examples/cloudflare-worker/README.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Cloudflare Worker example"
         },
         "orm": {
-          "status": "undocumented",
-          "note": "The reviewed framework documentation does not establish an owned orm / query builder API. Host libraries and application integrations may provide it.",
-          "url": "https://github.com/tokio-rs/topcoat"
+          "status": "official",
+          "note": "The recommended scaffold and todo example integrate the first-party Toasty ORM with SQLite. Enable/install that integration; Topcoat’s renderer does not itself supply the database or query engine.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/getting_started.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Toasty integration"
         },
         "migrations": {
-          "status": "undocumented",
-          "note": "The reviewed framework documentation does not establish an owned schema migrations API. Host libraries and application integrations may provide it.",
-          "url": "https://github.com/tokio-rs/topcoat"
+          "status": "official",
+          "note": "The recommended Toasty scaffold documents generating and applying versioned migrations through the application CLI. Migration execution/history belongs to Toasty rather than the view renderer.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/getting_started.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Toasty migrations"
         },
         "transactions": {
           "status": "undocumented",
           "note": "The reviewed framework documentation does not establish an owned transactions API. Host libraries and application integrations may provide it.",
-          "url": "https://github.com/tokio-rs/topcoat"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "jobs": {
-          "status": "undocumented",
-          "note": "The reviewed framework documentation does not establish an owned background jobs API. Host libraries and application integrations may provide it.",
-          "url": "https://github.com/tokio-rs/topcoat"
+          "status": "planned",
+          "note": "A durable background-job system remains roadmap work in 0.12.1.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Background jobs planned"
         },
         "mail": {
-          "status": "undocumented",
-          "note": "The reviewed framework documentation does not establish an owned email API. Host libraries and application integrations may provide it.",
-          "url": "https://github.com/tokio-rs/topcoat"
+          "status": "native",
+          "note": "The optional mail feature provides typed mail builders, HTML/plain-text bodies, attachments and transport APIs. SMTP needs mail-smtp and transport configuration; acceptance by a transport is not inbox delivery or a durable job queue.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/mail.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Mail builders / transports"
         },
         "uploads": {
-          "status": "undocumented",
-          "note": "The reviewed framework documentation does not establish an owned file uploads & storage API. Host libraries and application integrations may provide it.",
-          "url": "https://github.com/tokio-rs/topcoat"
+          "status": "partial",
+          "note": "The optional multipart extractor streams form fields/files and enforces configured body limits. Durable storage, file validation and cloud-object lifecycle remain application/library work.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/content/multipart.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Multipart transport"
         },
         "realtime": {
-          "status": "undocumented",
-          "note": "The reviewed framework documentation does not establish an owned real-time delivery API. Host libraries and application integrations may provide it.",
-          "url": "https://github.com/tokio-rs/topcoat"
+          "status": "native",
+          "note": "Optional WebSocket and SSE response types provide real-time transports, and connected live views can continue over a runtime WebSocket. Applications still own authentication, fan-out/storage and distributed pub/sub.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view/live.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Live views / WebSocket / SSE"
         },
         "xssEscaping": {
-          "status": "undocumented",
-          "note": "The linked security API review does not establish the specific output escaping contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "view! escapes interpolated values. Explicit raw/unescaped APIs require trusted content and do not sanitize rich HTML; compiled browser-expression captures must still exclude secrets.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view/view.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Escaped view interpolation"
         },
         "htmlSanitization": {
           "status": "undocumented",
           "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+          "reviewedOn": "2026-11-13"
         },
         "authorization": {
           "status": "undocumented",
           "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+          "reviewedOn": "2026-11-13"
         },
         "rateLimiting": {
-          "status": "undocumented",
-          "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/",
-          "reviewedOn": "2026-11-11"
+          "status": "planned",
+          "note": "The roadmap still lists easier-to-use middleware such as rate limiting. Runtime WebSocket render limits are a narrower resource cap, not a general request-rate limiter.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Rate-limiting middleware planned"
         },
         "progressiveEnhancement": {
-          "status": "undocumented",
-          "note": "The linked server API review does not establish the specific progressive forms contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "The Toasty todo example submits ordinary HTML forms to server handlers, mutates the database and redirects. That submission path works without the client runtime; reactive procedures/shards are separate enhancements.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/examples/toasty-todo/README.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Native POST / redirect forms"
         },
         "optimisticUi": {
           "status": "undocumented",
           "note": "The linked data API review does not establish the specific optimistic updates contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime.md",
+          "reviewedOn": "2026-11-13"
         },
         "requestCancellation": {
-          "status": "undocumented",
-          "note": "The linked data API review does not establish the specific stale request handling contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/runtime/",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "When shard arguments change, a new request aborts the earlier pending request so the latest arguments win. This is client request/stale-result handling; a server mutation may already have taken effect.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime/shard.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Latest shard request wins"
         },
         "typedLinks": {
-          "status": "undocumented",
-          "note": "The linked routing API review does not establish the specific typed links & parameters contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "href!(handler, named_parameter: value) constructs route-aware links with generated parameter bindings, encoding and compile-time checking of required arguments. The API also accepts raw paths, which do not gain equivalent route-name guarantees.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/href.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Typed href! helpers"
         },
         "searchParams": {
-          "status": "undocumented",
-          "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "query_params derives a typed deserializer and caches the parsed request query. Malformed inputs return a QueryParamsError or a configured HTTP error/redirect. This is server request state, not a browser query-state synchronization library.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/router/query_params.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Typed query_params"
         },
         "stateRestoration": {
-          "status": "undocumented",
-          "note": "The linked routing API review does not establish the specific navigation state retention contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "Runtime navigation preserves signals shared by both pages, and shard updates retain matching signal/input state. Preservation depends on identity; this is not durable restoration after reload or a guarantee that every departed page remains mounted.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime/link.md#navigation-behavior",
+          "reviewedOn": "2026-11-13",
+          "label": "Shared-signal retention"
         },
         "scrollRestoration": {
-          "status": "undocumented",
-          "note": "The linked routing API review does not establish the specific scroll restoration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "reviewedOn": "2026-11-11"
+          "status": "native",
+          "note": "Runtime navigation scrolls new pages to the top or fragment and restores saved scroll on back/forward. The documented behavior covers page navigation, not arbitrary independently scrolling containers.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/runtime/link.md#navigation-behavior",
+          "reviewedOn": "2026-11-13",
+          "label": "Runtime history scroll"
         },
         "navigationBlocking": {
           "status": "undocumented",
           "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "navigationAccessibility": {
           "status": "undocumented",
           "note": "The linked client rendering API review does not establish the specific accessible navigation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "a11yChecks": {
           "status": "undocumented",
           "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "lazyActivation": {
-          "status": "undocumented",
-          "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "reviewedOn": "2026-11-11"
+          "status": "planned",
+          "note": "Islands remain a roadmap item; reactive expressions and streaming alone do not establish configurable idle/visible/interaction activation.",
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13",
+          "label": "Islands planned"
         },
         "codeSplitting": {
           "status": "undocumented",
           "note": "The linked rendering API review does not establish the specific route / island splitting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/crate/topcoat/0.3.1/source/README.md",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "offline": {
           "status": "undocumented",
           "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/fn.serve.html",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "scheduling": {
           "status": "undocumented",
           "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://github.com/tokio-rs/topcoat",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "notifications": {
           "status": "undocumented",
           "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://github.com/tokio-rs/topcoat",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "searchIndex": {
           "status": "undocumented",
           "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://github.com/tokio-rs/topcoat",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "fieldEncryption": {
           "status": "undocumented",
           "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://github.com/tokio-rs/topcoat",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
+          "reviewedOn": "2026-11-13"
         },
         "httpTests": {
           "status": "undocumented",
           "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://docs.rs/topcoat/0.3.1/topcoat/view/",
-          "reviewedOn": "2026-11-11"
+          "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/docs/view.md",
+          "reviewedOn": "2026-11-13"
         }
       }
     },
@@ -15602,10 +15752,11 @@
           "label": "Watcher cleanup recipe"
         },
         "typedLinks": {
-          "status": "undocumented",
-          "note": "The linked routing API review does not establish the specific typed links & parameters contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://router.vuejs.org/guide/",
-          "reviewedOn": "2026-11-11"
+          "status": "official",
+          "note": "Vue Router supports typed route maps that check route names and required parameters. Configure the map or use its documented file-based type generation; raw string paths and type assertions can bypass that checking. This is router tooling, not Vue runtime validation of arbitrary URLs.",
+          "url": "https://router.vuejs.org/guide/advanced/typed-routes.html",
+          "reviewedOn": "2026-11-13",
+          "label": "Vue Router typed route maps"
         },
         "searchParams": {
           "status": "undocumented",
@@ -15654,10 +15805,11 @@
           "label": "Async hydration strategies"
         },
         "codeSplitting": {
-          "status": "undocumented",
-          "note": "The linked rendering API review does not establish the specific route / island splitting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
-          "url": "https://vuejs.org/guide/scaling-up/ssr.html",
-          "reviewedOn": "2026-11-11"
+          "status": "official",
+          "note": "Vue Router’s lazy route-component workflow combines with Vite/webpack to emit and load route chunks on demand. Configure that build integration; arbitrary dynamic import syntax alone is not the whole route pipeline, and shared imports still affect downloads.",
+          "url": "https://router.vuejs.org/guide/advanced/lazy-loading.html",
+          "reviewedOn": "2026-11-13",
+          "label": "Vue Router + bundler"
         },
         "offline": {
           "status": "undocumented",

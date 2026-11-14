@@ -1113,22 +1113,22 @@ export function FeaturesPage({
         <details className="fw-feature-method">
           <summary>How this comparison works</summary>
           <p>
-            Base documentation review: Nov 10, 2026. Expanded behavior, security
-            and backend review: Nov 11, 2026. Each cell names its API boundary
-            and source. Support can differ from the versions used in benchmark
-            captures.
+            Evidence updated {updatedDateLabel}. Each finding names its API
+            boundary and source; individual review dates and version scopes
+            appear in the details. Feature reviews can use newer versions than
+            the separately retained benchmark captures.
           </p>
           <p>
             Overview bars show supported capabilities, grouped by built-in,
             official package and third-party package. Each capability uses the
             same width; unfilled space is excluded from the count. Category and
-            tool filters apply to both views. Qualified, planned, not documented
-            and outside-scope findings remain in the matrix and each tool’s
-            profile. No weights or quality score are assigned.
+            tool filters apply to both views. Qualified, planned, not
+            established and outside-scope findings remain in the matrix and each
+            tool’s profile. No weights or quality score are assigned.
           </p>
           <p>
-            “Not documented” means the linked API or guide was reviewed without
-            establishing the defined behavior; it does not prove absence.
+            “Not established” means the reviewed sources do not establish the
+            defined behavior; it is inconclusive and does not prove absence.
             “Outside scope” means the reviewed core delegates that
             responsibility. Built-in establishes ownership, not API quality:
             read the evidence for limitations and composition or override

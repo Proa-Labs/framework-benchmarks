@@ -709,9 +709,9 @@
       "description": "No support claim has been verified here. This does not mean unsupported."
     },
     "undocumented": {
-      "label": "Not documented",
+      "label": "Not established",
       "symbol": "·",
-      "description": "Reviewed the linked API or guide without establishing this behavior. This is not proof that an application cannot implement it."
+      "description": "The reviewed sources do not establish this behavior. This is an inconclusive finding, not a claim that the feature is absent or impossible."
     },
     "scope": {
       "label": "Outside scope",

@@ -1270,7 +1270,7 @@ try {
   await page.locator('[data-feature-cell="exact/suspense"]').click();
   assert.match(
     required(await page.locator(".fw-feature-detail-status").textContent()),
-    /Not documented/,
+    /Not established/,
   );
   await page.locator(".fw-feature-dialog").press("Escape");
   assert.match(
