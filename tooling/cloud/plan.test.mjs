@@ -114,6 +114,8 @@ test("artifact extraction rejects traversal, links, duplicate and unrelated file
   }
 });
 
+// This integration check clones retained evidence and starts three controller
+// processes. Give shared CI runners room beyond Bun's 5-second unit-test limit.
 test("resume reuses complete archives and rejects a changed archive before launching machines", () => {
   const temp = mkdtempSync(join(tmpdir(), "bench-resume-"));
   try {
@@ -180,7 +182,7 @@ test("resume reuses complete archives and rejects a changed archive before launc
   } finally {
     rmSync(temp, { recursive: true, force: true });
   }
-});
+}, 30_000);
 
 test("reconnection rejects a worker from another suite or altered isolation contract", () => {
   const expected = jobManifest(options, "rendering");
