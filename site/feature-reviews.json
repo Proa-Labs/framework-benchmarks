@@ -8524,10 +8524,10 @@
           "url": "https://proa.so/docs/framework/deployment"
         },
         "subpathProxy": {
-          "status": "official",
-          "note": "The deployment guide configures FrameworkBuilder::with_base_path for a proxy that strips the public prefix before forwarding. BasePath-aware URL helpers and linked RSJS asset serving keep generated links, runtime imports and island loads aligned. Incoming routes remain unprefixed; the prefix is explicit, not inferred from forwarded headers. Authored URLs and Axum redirects must use the matching helpers.",
+          "status": "native",
+          "note": "Proa has built-in base-path support through FrameworkBuilder::with_base_path. Configure the public prefix at startup for a proxy that strips it before forwarding. BasePath-aware URL helpers and linked RSJS asset serving keep generated links, runtime imports and island loads aligned. Incoming routes remain unprefixed; authored links, forms, images and redirects use cx.url or app_url. The prefix is explicit, not inferred from forwarded headers.",
           "url": "https://proa.so/docs/framework/deployment#serving-behind-a-url-path-prefix",
-          "label": "BasePath / Axum deployment",
+          "label": "Built-in BasePath support",
           "reviewedOn": "2026-11-13"
         },
         "staticHosting": {
