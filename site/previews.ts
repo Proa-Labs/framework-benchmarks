@@ -5,11 +5,14 @@ import { mkdir, readFile } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import type { ComponentType } from "react";
-import type { Capture } from "../framework-ssr/report.ts";
+import type { Capture } from "../benchmarks/framework-ssr/report.ts";
 import { writeGenerated as writeFile } from "./generated-files.ts";
 
 const requireFixture = createRequire(
-  new URL("../rendering/external/react/package.json", import.meta.url),
+  new URL(
+    "../benchmarks/rendering/external/react/package.json",
+    import.meta.url,
+  ),
 );
 const style = `
 :root{font:14px/1.5 system-ui,sans-serif;color:#202630;background:#f7f9fc;color-scheme:light}*{box-sizing:border-box}body{margin:0;padding:28px}h1{font-size:26px;margin:0 0 12px}h2{font-size:20px}h3{font-size:15px}p{margin:8px 0}a{color:inherit;text-decoration:none}header,footer{padding:12px 0}.hero-section{border-bottom:1px solid #dce1e8}.subtitle,footer{color:#64748b}.card-grid,main>div[class*="grid"]{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}.card,main>div[class*="grid"]>a{border:1px solid #dce1e8;border-radius:8px;background:white;overflow:hidden}.card-body,main>div[class*="grid"]>a{padding:14px}.card-image{width:100%;height:92px;object-fit:cover;background:#e9eef5}.card-title{margin:0}.feature-list{padding-left:18px;font-size:12px}.btn-primary{border:0;background:#334155;color:white;padding:7px 10px;border-radius:4px}main>div[class*="grid"]>a>div:first-child{height:100px;display:grid;place-items:center;background:#edf1f7;border-radius:5px;color:#6c7d95;font-size:22px}main>div[class*="grid"]>a>div:nth-of-type(2){display:flex;gap:2px;align-items:center}svg{width:14px;height:14px;color:#ba934e;fill:currentColor}table{width:100%;border-collapse:collapse;white-space:nowrap;font-size:12px}th,td{text-align:left;padding:8px 12px;border-bottom:1px solid #dce1e8}th{background:#e9eef5}tr:nth-child(even){background:#f0f4f8}.overflow-x-auto{overflow:auto}[class*="font-mono"]{font-family:monospace}@media(max-width:650px){.card-grid,main>div[class*="grid"]{grid-template-columns:repeat(2,minmax(0,1fr))}body{padding:16px}}
@@ -27,7 +30,7 @@ export async function buildPreviews(
     React = requireFixture("react");
     ({ renderToString } = requireFixture("react-dom/server"));
     ({ ROOTS } = await import(
-      "../rendering/external/react/suite_components.mjs"
+      "../benchmarks/rendering/external/react/suite_components.mjs"
     ));
   } catch (error) {
     throw new Error(
@@ -38,7 +41,7 @@ export async function buildPreviews(
   await mkdir(join(directory, "previews"), { recursive: true });
   if (frameworkCapture) {
     const { validateSemanticHtml } = await import(
-      "../framework-ssr/parity.mjs"
+      "../benchmarks/framework-ssr/parity.mjs"
     );
     const proa = required(
       frameworkCapture.engines.find((e) => e.id === "proa"),
@@ -54,7 +57,7 @@ export async function buildPreviews(
           : "proa-parity.html";
       const body = await readFile(
         new URL(
-          `../framework-ssr/results/raw/${frameworkCapture.captureId}/${filename}`,
+          `../benchmarks/framework-ssr/results/raw/${frameworkCapture.captureId}/${filename}`,
           import.meta.url,
         ),
         "utf8",
@@ -86,7 +89,7 @@ export async function buildPreviews(
   for (const { id } of workloads) {
     if (!ROOTS[id])
       throw new Error(
-        `Preview fixture missing for ${id}: add it to rendering/external/react/suite_components.mjs`,
+        `Preview fixture missing for ${id}: add it to benchmarks/rendering/external/react/suite_components.mjs`,
       );
     const raw = renderToString(React.createElement(ROOTS[id]));
     // The original sample's header names an obsolete Rust-only roster. Give

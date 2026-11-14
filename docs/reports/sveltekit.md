@@ -1,0 +1,130 @@
+# Proa versus SvelteKit
+
+> **PROA-only refresh.** Only Proa was refreshed on 2026-11-11. SvelteKit retains its 2026-10-21 measurements. Proa HTTP phases are shared with the new Suspense capture; its 60 browser navigations and two JavaScript-disabled controls were measured afresh.
+
+**Historical comparison.** Its five inputs are pinned in [the capture manifest](../../experiments/sveltekit-streaming/comparison-captures.json). Updating the main scoreboard or HTTP suites does not change this report; the current renderer publication is shown on [the main scoreboard](scoreboard.md).
+
+Generated from captures on **Apple M4 Max**, 2026-11-11 UTC. Proa revision **bbbc9684**, **SvelteKit 3.1.0 / Svelte 5.57.2 / adapter-node 6.0.0**, Node **v24.20.0**. Full production builds, no development server, proxy, response cache, or compression.
+
+The static 96-card HTML page sustained **20,863 responses/s for Proa** and **1,458 for SvelteKit**. In the native streaming browser tests, all 96 cards reached the DOM at median **97.3 ms / 93.7 ms on desktop** and **358.9 ms / 278.0 ms on mobile4x** (Proa / SvelteKit). Proa’s first mobile panel arrived at **93.8 ms**, versus **278.0 ms** for SvelteKit. The complete tables below retain first-panel timing, transfer size, CPU, overload failures, and every rate in the sweep.
+
+## What the async comparison measures
+
+SvelteKit's native [streaming with promises](https://svelte.dev/docs/kit/load#Streaming-with-promises) streams resolved **data**, then Svelte hydrates and renders the panels in the browser. An SSR [`{#await}` block](https://svelte.dev/docs/svelte/await) renders its pending branch on the server. Svelte's [async SSR documentation](https://svelte.dev/docs/svelte/await-expressions#Server-side-rendering) distinguishes blocking awaits from pending boundaries; it does not provide the equivalent of Proa's resolved-HTML boundary stream in this pinned release.
+
+The comparison uses each framework's native streaming route:
+
+| Framework | Server response contains | Browser work to show resolved panels |
+| --- | --- | --- |
+| Proa | Early fallback shell, then all 96 cards as resolved HTML inside boundary-replacement envelopes | Decode/insert resolved HTML using Proa's inline stream runtime |
+| SvelteKit | Early fallback shell, then all eight promised panel values | Fetch the production client runtime, hydrate, and render 96 cards |
+
+Every request uses the same eight delayed panels (5, 8, 12, 18, 27, 40, 60, and 90 ms), 12 cards per panel, five SVG stars per card, and prepared typed input values. SvelteKit's data serialization is part of its native path and is included. There is no external data service. The resolved panel DOM, including text, attributes, classes, element order, and all 480 stars, must match across all browser samples. The fixture preserves the existing benchmark's BackCompat document mode and utility-class markup; it is a rendering workload rather than a styled application. No CSS, product images, or fonts are fetched.
+
+**HTTP response end is a different completion boundary for SvelteKit.** Its capacity numbers below describe delivering data, not delivering server-rendered product HTML. The browser table compares the same completed UI. The [combined load figure](../figures/07-suspense-load.svg) overlays these Proa/SvelteKit measurements with the retained [Marko/React capture](http-capacity.md#suspense-streaming-over-http-one-core-each), labeling the capture dates and completion boundaries.
+
+## Browser completion
+
+![First-panel P50 and all-card completion P50 and P95](../../experiments/sveltekit-streaming/browser.svg)
+
+Thirty measured fresh browser contexts per framework and profile across three Chromium launches, with order rotated. One untimed navigation per framework/profile warms each launch. Browser cache is disabled, service workers are blocked, and requests use identity encoding. Desktop: 1440×1000, 1× CPU, 5 ms latency, 100 Mbps. Mobile4x: 390×844, 2× DPR, 4× CPU slowdown, 40 ms latency, 10 Mbps down / 5 Mbps up. Chromium **149.0.7827.55**. These are simulated network/CPU profiles on the same desktop host, not measurements on a phone. [CDP latency](https://chromedevtools.github.io/devtools-protocol/tot/Network/#method-emulateNetworkConditions) is a minimum request-to-response-headers delay, rather than an extra RTT added on top of server processing.
+
+Times start at navigation. “All cards” is the MutationObserver timestamp when every panel has 12 complete cards and 60 SVG stars; exact resolved DOM parity is checked afterward. “2 rAF” is the next two animation-frame callbacks after completion, an opportunity to paint, not a screenshot-based visual metric. Transfer includes document and client resources completed by that point, with headers. JS transfer counts external script resources; Proa's inline replacement scripts are included in its document bytes. Browser script/task durations are Chromium's reported ScriptDuration and TaskDuration, including the same observer instrumentation and excluding the later DOM parity traversal. They are CDP task timings rather than OS process CPU accounting.
+
+| Profile | Framework | Shell P50 | First panel P50 | All cards P50 | All cards P95 | 2 rAF P50 | Total transfer | External JS | Script duration P50 | Task duration P50 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| desktop | SvelteKit | 10.3 ms | 41.5 ms | 93.7 ms | 94.4 ms | 113.5 ms | 119.7 KiB | 101.4 KiB | 3.08 ms | 30.4 ms |
+| mobile4x | SvelteKit | 61.7 ms | 278.0 ms | 278.0 ms | 282.8 ms | 293.2 ms | 119.7 KiB | 101.4 KiB | 11.4 ms | 112.1 ms |
+| desktop | Proa | 9.20 ms | 19.0 ms | 97.3 ms | 97.9 ms | 117.2 ms | 378.7 KiB | 0.0 KiB | 5.23 ms | 27.6 ms |
+| mobile4x | Proa | 54.0 ms | 93.8 ms | 358.9 ms | 360.3 ms | 378.0 ms | 378.7 KiB | 0.0 KiB | 21.2 ms | 112.3 ms |
+
+JavaScript-disabled controls passed in both profiles: both frameworks leave the pending shell (zero rendered product cards). Proa's resolved HTML is transported inertly and needs its replacement script; HTML streaming here does not imply JavaScript-free progressive reveal.
+
+## HTTP streaming capacity and latency
+
+Three fresh processes per framework/rate, order rotated, one Proa Tokio worker or one Node process. Exact server CPU charges every process thread, including GC helpers. Twelve separate generator processes, 24 untimed warmup requests, one-second pre-roll, five-second observation window. Each generator uses a keep-alive agent capped at 256 sockets (3,072 total); any agent queueing is included in scheduled-arrival latency. The shared driver uses a 15-second socket timeout alongside platform TCP connection timeouts. Throughput counts successful responses ending inside that window; scheduled-arrival latencies include queueing and generator lag. Latency percentiles cover successful responses only; failures are reported separately and must be considered alongside them. At overload, failures censor the latency distribution, so a lower successful-response percentile can accompany more failed requests. Rows show medians of the three phase metrics, and errors are summed. High-load overload/errors are retained rather than treated as completed work. Every response is validated: Proa's complete HTML boundary payload or all SvelteKit promised values and product fields. The generator must stay below 80% worker utilization and 25 ms P95 scheduling lag; otherwise the capture aborts.
+
+| Framework | Offered rps | Response ends/s | First byte P50 | Response end P50 | Response end P95 | Response end P99 | Server CPU/response | Cores | Peak RSS | Document body | Errors |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Proa | 250 | 250 | 0.26 ms | 90.9 ms | 91.9 ms | 92.0 ms | 0.340 ms | 0.08 | 8.0 MiB | 378.4 KiB | 0 |
+| SvelteKit | 250 | 250 | 0.42 ms | 90.8 ms | 91.0 ms | 91.2 ms | 0.803 ms | 0.20 | 200.0 MiB | 17.8 KiB | 0 |
+| Proa | 500 | 500 | 0.18 ms | 91.4 ms | 91.7 ms | 91.9 ms | 0.268 ms | 0.13 | 9.0 MiB | 378.4 KiB | 0 |
+| SvelteKit | 500 | 500 | 0.29 ms | 90.2 ms | 90.5 ms | 90.7 ms | 0.567 ms | 0.28 | 233.1 MiB | 17.8 KiB | 0 |
+| Proa | 1,000 | 1,000 | 0.18 ms | 91.2 ms | 91.3 ms | 92.2 ms | 0.229 ms | 0.23 | 12.0 MiB | 378.4 KiB | 0 |
+| SvelteKit | 1,000 | 1,000 | 0.34 ms | 90.4 ms | 90.7 ms | 91.1 ms | 0.568 ms | 0.56 | 261.0 MiB | 17.8 KiB | 0 |
+| Proa | 2,000 | 2,000 | 0.18 ms | 91.0 ms | 91.3 ms | 91.6 ms | 0.219 ms | 0.43 | 17.4 MiB | 378.4 KiB | 0 |
+| SvelteKit | 2,000 | 2,000 | 0.48 ms | 90.3 ms | 91.9 ms | 92.9 ms | 0.463 ms | 0.91 | 310.7 MiB | 17.8 KiB | 0 |
+| Proa | 3,000 | 3,000 | 0.18 ms | 90.9 ms | 91.3 ms | 92.6 ms | 0.203 ms | 0.60 | 23.1 MiB | 378.4 KiB | 0 |
+| SvelteKit | 3,000 | 3,003 | 0.98 ms | 91.6 ms | 95.5 ms | 98.1 ms | 0.413 ms | 1.22 | 359.3 MiB | 17.8 KiB | 0 |
+| Proa | 4,000 | 4,000 | 0.32 ms | 91.0 ms | 92.2 ms | 93.5 ms | 0.207 ms | 0.82 | 29.2 MiB | 378.4 KiB | 0 |
+| SvelteKit | 4,000 | 2,935 | 601.0 ms | 720.2 ms | 5942.0 ms | 5976.9 ms | 0.416 ms | 1.02 | 527.3 MiB | 17.8 KiB | 1,186 |
+| Proa | 5,000 | 4,978 | 6.02 ms | 103.4 ms | 145.4 ms | 165.4 ms | 0.193 ms | 0.95 | 50.2 MiB | 378.4 KiB | 0 |
+| SvelteKit | 5,000 | 2,923 | 1738.0 ms | 1868.6 ms | 3474.8 ms | 4335.1 ms | 0.405 ms | 1.10 | 555.3 MiB | 17.8 KiB | 1,072 |
+| Proa | 6,000 | 4,478 | 758.7 ms | 1233.4 ms | 2014.8 ms | 2166.4 ms | 0.185 ms | 0.86 | 218.7 MiB | 378.4 KiB | 0 |
+| SvelteKit | 6,000 | 2,986 | 2443.2 ms | 2559.7 ms | 5937.2 ms | 8527.3 ms | 0.394 ms | 1.06 | 537.2 MiB | 17.8 KiB | 0 |
+
+Recorded failure messages across the full phases: SvelteKit: `connect ETIMEDOUT 127.0.0.1:<port>`. Overload includes the production server’s accept queue and HTTP adapter; connection retries/timeouts and server queueing are part of these scheduled-arrival results. This sweep is not a renderer-only microbenchmark.
+
+## Static pages over HTTP
+
+These are complete server-rendered pages on both sides. SvelteKit uses the production [Node adapter](https://svelte.dev/docs/kit/adapter-node), ordinary filesystem routing, and `csr=false`, avoiding an unnecessary hydration payload for the static-page workload. Every served response must hash to its engine's production dump; SvelteKit's full document also passes the canonical Svelte DOM gate and a changed-text negative control. Capacity uses 64 closed-loop connections, five-second windows, three fresh-process repeats. Equal-load latency uses the existing fixed rates below each engine's capacity, with three repeats. The [retained five-engine capture](../../benchmarks/http/results/archive/retained-ab83bbaa90793486a44213c7.json) also includes React, Marko, and Go.
+
+| Workload | Engine | Capacity responses/s | CPU/response | Peak RSS | Equal-load rps | P50 | P99 |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Component page | Proa | 95,454 | 0.010 ms | 8.5 MiB | 2,000 | 0.09 ms | 0.14 ms |
+| Component page | SvelteKit | 9,693 | 0.122 ms | 392.1 MiB | 2,000 | 0.27 ms | 0.70 ms |
+| Product grid | Proa | 20,863 | 0.048 ms | 9.6 MiB | 500 | 0.21 ms | 0.35 ms |
+| Product grid | SvelteKit | 1,458 | 0.851 ms | 547.0 MiB | 500 | 0.96 ms | 1.84 ms |
+| 1,000-row table | Proa | 3,351 | 0.298 ms | 70.5 MiB | 50 | 1.07 ms | 2.05 ms |
+| 1,000-row table | SvelteKit | 121 | 8.440 ms | 466.4 MiB | 50 | 7.53 ms | 8.51 ms |
+
+## Cold start
+
+Spawn to first complete, validated 96-card product response. Fifteen fresh production processes per engine after two untimed disk-cache warmups; order rotates. This includes module loading, input construction, and the first render, but excludes dependency installation and build time. Warm filesystem cache is intentional; this is not a cold disk or deployed serverless platform measurement. The host one-minute load average at capture start was 6.60 on 16 logical CPUs; other work was active on this shared development machine.
+
+| Engine | First response P50 | P95 | RSS after response |
+| --- | ---: | ---: | ---: |
+| Proa | 5.11 ms | 11.4 ms | 4.6 MiB |
+| SvelteKit | 55.0 ms | 57.1 ms | 72.0 MiB |
+
+## Renderer-only and product scaling
+
+The existing Svelte row uses the **same pinned Svelte compiler** as the SvelteKit app. It measures compiled component rendering through `svelte/server`, while the HTTP rows above include the SvelteKit application server. Naming a second renderer-only row “SvelteKit” would measure the same renderer twice. All 17 renderers were rerun with five independent processes per cell; [full scoreboard](scoreboard.md).
+
+| Workload | Proa P50 | Svelte P50 | Svelte ÷ Proa |
+| --- | ---: | ---: | ---: |
+| cards | 0.875 µs | 8.209 µs | 9.38× |
+| products | 10.500 µs | 70.438 µs | 6.71× |
+| table | 189.375 µs | 945.333 µs | 4.99× |
+
+The scaling capture also reruns all 17 renderers at each size, five independent processes per cell. This is a separate renderer-only run, not cached output or a second HTTP measurement.
+
+| Cards | Proa P50 | Svelte P50 |
+| --- | ---: | ---: |
+| 12 | 1.292 µs | 9.292 µs |
+| 96 | 11.500 µs | 71.042 µs |
+| 768 | 89.375 µs | 563.542 µs |
+
+## Reproduce and inspect
+
+`bun install --frozen-lockfile` installs the pinned Kit/adapter/compiler toolchain. Follow the [contributor setup](../../CONTRIBUTING.md#first-run-bun-only) for the other languages and Playwright. Run timed suites sequentially on an idle host:
+
+```sh
+./benchmarks/rendering/run-all
+./benchmarks/rendering/run-all --product-scaling --no-setup
+bun benchmarks/http/run.mjs
+bun benchmarks/cold-start/run.mjs
+bun experiments/sveltekit-streaming/run.mjs
+bun experiments/sveltekit-streaming/report.mjs
+bun run refresh
+bun test benchmarks/rendering/external/sveltekit/stream-validator.test.mjs
+bun experiments/sveltekit-streaming/report.mjs --check
+```
+
+Implementation: [production SvelteKit app](../../benchmarks/rendering/external/sveltekit/), [load runner](../../experiments/sveltekit-streaming/run.mjs), [browser observer](../../experiments/sveltekit-streaming/browser.mjs), and [promise-value validator](../../benchmarks/rendering/external/sveltekit/stream-validator.mjs).
+
+Raw evidence: [streaming + browser samples](../../experiments/sveltekit-streaming/results/archive/retained-719ec008c43dc06f4201e488.json), [HTTP](../../benchmarks/http/results/archive/retained-ab83bbaa90793486a44213c7.json), [cold starts](../../benchmarks/cold-start/results/archive/retained-28efb77c8e12de21553fe758.json), [renderer-only](../../benchmarks/rendering/results/archive/canonical-ssr-v1-proa-2026-11-11T18-37-55-139Z.json), [scaling](../../benchmarks/rendering/results/archive/product-scaling-v1-proa-2026-11-11T18-37-57-269Z.json). Each capture retains timestamps, framework/host metadata and a measured-source SHA-256. The comparison generator refuses incomplete, smoke, stale-source, missing-phase, unsupported-throughput, browser-parity, and inconsistent-summary captures.
+
+The retained capture also includes a buffered control for validation; it is excluded from the comparison charts and tables.
+
+The Proa-only writer/memcpy and allocation microbenchmarks, linked showcase corpus, agent chain, and travel-agent studies do not contain equivalent SvelteKit applications. They remain explicitly separate; this change adds no invented SvelteKit rows to those studies. The development host is shared and uses no CPU affinity or exclusive-host isolation. Other desktop work can affect CPU clocks, medians, and tails; engine order rotates and every repeat remains available in the raw captures. These one-host results describe these fixtures and pinned versions, not a universal framework ranking.

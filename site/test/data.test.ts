@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { summarize } from "../../suspense-load/stats.mjs";
+import { summarize } from "../../tooling/stats.mjs";
 import type { Inputs } from "../benchmark-types.ts";
 import featureProjects from "../data/features/projects.json" with {
   type: "json",

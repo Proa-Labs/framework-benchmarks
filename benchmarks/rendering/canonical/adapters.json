@@ -1,0 +1,210 @@
+{
+  "proa": {
+    "id": "proa",
+    "label": "Proa",
+    "language": "Rust",
+    "setup": "rust",
+    "cwd": ".",
+    "command": "{root}/target/release/representative_suite_bench",
+    "args": ["--framework", "{id}"]
+  },
+  "marko": {
+    "id": "marko",
+    "label": "Marko",
+    "language": "JavaScript",
+    "setup": "bun",
+    "cwd": "benchmarks/rendering/external/marko",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "package": "marko"
+  },
+  "react": {
+    "id": "react",
+    "label": "React",
+    "language": "JavaScript",
+    "setup": "bun",
+    "cwd": "benchmarks/rendering/external/react",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "package": "react"
+  },
+  "vue": {
+    "id": "vue",
+    "label": "Vue",
+    "language": "JavaScript",
+    "setup": "bun",
+    "cwd": "benchmarks/rendering/external/vue",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "package": "vue"
+  },
+  "svelte": {
+    "id": "svelte",
+    "label": "Svelte",
+    "language": "JavaScript",
+    "setup": "bun",
+    "cwd": "benchmarks/rendering/external/svelte",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "package": "svelte"
+  },
+  "rails": {
+    "id": "rails",
+    "label": "Rails",
+    "language": "Ruby",
+    "setup": "rails",
+    "cwd": "benchmarks/rendering/external/rails",
+    "command": "{bundle}",
+    "args": ["exec", "ruby", "suite_bench.rb"]
+  },
+  "jte": {
+    "id": "jte",
+    "label": "jte",
+    "language": "Java",
+    "setup": "jte",
+    "cwd": "benchmarks/rendering/external/jte",
+    "command": "{root}/rendering/external/jte/build/install/proa-jte-bench/bin/proa-jte-bench",
+    "args": []
+  },
+  "rocker": {
+    "id": "rocker",
+    "label": "Rocker",
+    "language": "Java",
+    "setup": "rocker",
+    "cwd": "benchmarks/rendering/external/rocker",
+    "command": "{root}/rendering/external/rocker/build/install/proa-rocker-bench/bin/proa-rocker-bench",
+    "args": []
+  },
+  "handlebars": {
+    "id": "handlebars",
+    "label": "Handlebars",
+    "language": "JavaScript",
+    "setup": "bun",
+    "cwd": "benchmarks/rendering/external/handlebars",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "package": "handlebars"
+  },
+  "go-html-template": {
+    "id": "go-html-template",
+    "label": "Go html/template",
+    "language": "Go",
+    "setup": "go",
+    "cwd": "benchmarks/rendering/external/go",
+    "command": "{root}/rendering/external/go/build/canonical_suite",
+    "args": []
+  },
+  "jinja2": {
+    "id": "jinja2",
+    "label": "Jinja2",
+    "language": "Python",
+    "setup": "jinja2",
+    "cwd": "benchmarks/rendering/external/jinja",
+    "command": "{root}/rendering/external/jinja/.venv/bin/python3",
+    "args": ["suite_bench.py"]
+  },
+  "php": {
+    "id": "php",
+    "label": "PHP",
+    "language": "PHP",
+    "setup": "php",
+    "cwd": "benchmarks/rendering/external/php",
+    "command": "php",
+    "args": ["suite_bench.php"]
+  },
+  "askama": {
+    "id": "askama",
+    "label": "Askama",
+    "language": "Rust",
+    "setup": "rust",
+    "cwd": ".",
+    "command": "{root}/target/release/representative_suite_bench",
+    "args": ["--framework", "{id}"]
+  },
+  "sailfish": {
+    "id": "sailfish",
+    "label": "Sailfish",
+    "language": "Rust",
+    "setup": "rust",
+    "cwd": ".",
+    "command": "{root}/target/release/representative_suite_bench",
+    "args": ["--framework", "{id}"]
+  },
+  "leptos": {
+    "id": "leptos",
+    "label": "Leptos",
+    "language": "Rust",
+    "setup": "rust",
+    "cwd": ".",
+    "command": "{root}/target/release/representative_suite_bench",
+    "args": ["--framework", "{id}"]
+  },
+  "dioxus": {
+    "id": "dioxus",
+    "label": "Dioxus",
+    "language": "Rust",
+    "setup": "rust",
+    "cwd": ".",
+    "command": "{root}/target/release/representative_suite_bench",
+    "args": ["--framework", "{id}"]
+  },
+  "topcoat": {
+    "id": "topcoat",
+    "label": "Topcoat",
+    "language": "Rust",
+    "setup": "rust",
+    "cwd": ".",
+    "command": "{root}/target/release/representative_suite_bench",
+    "args": ["--framework", "{id}"]
+  },
+  "astro": {
+    "id": "astro",
+    "label": "Astro",
+    "language": "JavaScript",
+    "setup": "bun",
+    "cwd": "benchmarks/rendering/external/astro",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "build": ["{bun}", "build.mjs"],
+    "versionPackage": "astro"
+  },
+  "sveltekit": {
+    "id": "sveltekit",
+    "label": "SvelteKit",
+    "language": "JavaScript",
+    "setup": "custom",
+    "cwd": "benchmarks/rendering/external/sveltekit",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "build": ["{bun}", "render_build.mjs"],
+    "versionPackage": "@sveltejs/kit"
+  },
+  "nextjs": {
+    "id": "nextjs",
+    "label": "Next.js",
+    "language": "JavaScript",
+    "setup": "bun",
+    "cwd": "benchmarks/rendering/external/next",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "build": ["{bun}", "build.mjs"],
+    "versionCommand": ["{bun}", "version.mjs"]
+  },
+  "exact": {
+    "id": "exact",
+    "label": "Exact",
+    "language": "JavaScript",
+    "setup": "custom",
+    "cwd": "benchmarks/rendering/external/exact",
+    "command": "{bun}",
+    "args": ["suite_bench.mjs"],
+    "build": ["{bun}", "build.mjs"],
+    "versionCommand": [
+      "git",
+      "-C",
+      "../../../framework-ssr/.cache/exact",
+      "rev-parse",
+      "HEAD"
+    ]
+  }
+}

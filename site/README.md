@@ -47,13 +47,13 @@ Install Playwright Chromium if needed: `bun node_modules/playwright/cli.js insta
 
 ## Measurements and evidence
 
-| Source                              | View          |
-| ----------------------------------- | ------------- |
-| `rendering/results/latest.json`     | SSR Rendering |
-| `framework-ssr/results/latest.json` | Framework SSR |
-| `page-load/results/latest.json`     | HTTP          |
-| `suspense-load/results/latest.json` | Streaming     |
-| `cold-start/results/latest.json`    | Startup       |
+| Source                                         | View          |
+| ---------------------------------------------- | ------------- |
+| `benchmarks/rendering/results/latest.json`     | SSR Rendering |
+| `benchmarks/framework-ssr/results/latest.json` | Framework SSR |
+| `benchmarks/http/results/latest.json`          | HTTP          |
+| `benchmarks/streaming/results/latest.json`     | Streaming     |
+| `benchmarks/cold-start/results/latest.json`    | Startup       |
 
 `data.ts` uses shared statistics and validators. Authored site inputs live under [`data/`](data/README.md), grouped into performance, features and branding. `data/performance/catalog.json` contains project metadata, never timings. Builds reject invalid captures, preserve original JSON bytes in `dist/client/data/captures/`, and emit normalized results and SHA-256 provenance under `dist/client/data/`.
 

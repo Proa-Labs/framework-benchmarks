@@ -5,7 +5,7 @@ import {
   loadProaRefresh,
   type RefreshManifest,
   refreshFolders,
-} from "../tooling/proa-refresh.mjs";
+} from "../tooling/capture/proa-refresh.mjs";
 import type { Inputs, View } from "./benchmark-types.ts";
 import {
   copyGenerated as cp,
@@ -71,7 +71,7 @@ export function applyProaRefresh(
         readFileSync(
           join(
             root,
-            "rendering/results/raw",
+            "benchmarks/rendering/results/raw",
             r.capture_id,
             "process-summaries.json",
           ),

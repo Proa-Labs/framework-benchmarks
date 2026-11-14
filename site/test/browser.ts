@@ -81,11 +81,10 @@ try {
   page = await context.newPage();
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("console", (message) => {
-    if (
-      message.type() === "error" &&
-      /hydrat|server.rendered|didn.t match/i.test(message.text())
-    )
-      errors.push(message.text());
+    if (message.type() === "error") {
+      const { url, lineNumber } = message.location();
+      errors.push(`${message.text()} (${url}:${lineNumber + 1})`);
+    }
   });
   page.on("response", (response) => {
     if (response.status() >= 400)

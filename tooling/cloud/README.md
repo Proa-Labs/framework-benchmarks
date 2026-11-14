@@ -15,8 +15,8 @@ This selection intentionally blocks `check:publication`, required for merging
 and production deployment. Run a fresh full campaign with the updated Proa pin,
 select its validated results, and remove the review selection before merging.
 The five-suite campaign below remains the publication path. For an isolated
-full-framework Proa diagnostic, use `bun framework-ssr/run.ts --proa-only --out
-framework-ssr/results/local/proa.json`; it cannot replace a published capture.
+full-framework Proa diagnostic, use `bun benchmarks/framework-ssr/run.ts --proa-only --out
+benchmarks/framework-ssr/results/local/proa.json`; it cannot replace a published capture.
 
 ## Full comparison campaigns
 
@@ -65,7 +65,7 @@ A forced process kill can leave a job until that deadline; the campaign manifest
 retains its name for inspection. Resume does not splice partial suite results.
 
 A complete campaign is extracted into `<out>/validated`, then checked with
-`tooling/publication.mjs`. The staging checkout drops the old Proa-only preview
+`tooling/checks/publication.mjs`. The staging checkout drops the old Proa-only preview
 selection before validating the full replacement campaign and restores it if
 validation fails. The original checkout's selection and merge/deploy gate stay
 in place until the validated campaign is selected there.

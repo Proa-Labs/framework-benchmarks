@@ -4,8 +4,8 @@
     "bunfig.toml",
     "biome.json",
     "tooling/**",
-    "rendering/external/shared/**",
-    "rendering/canonical/**"
+    "benchmarks/rendering/external/shared/**",
+    "benchmarks/rendering/canonical/**"
   ],
   "tasks": {
     "//#lint:repo": {

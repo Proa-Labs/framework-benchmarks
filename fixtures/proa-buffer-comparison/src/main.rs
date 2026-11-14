@@ -20,13 +20,13 @@ mod preallocated;
 // Compile the existing core workload definitions directly; no peer renderer
 // runs in this fixture. The product module's Topcoat dependency is compile-only.
 #[allow(dead_code)]
-#[path = "../../../rendering/src/proa_page.rs"]
+#[path = "../../../benchmarks/rendering/src/proa_page.rs"]
 mod core_cards;
 #[allow(dead_code)]
-#[path = "../../../rendering/src/topcoat_product_grid.rs"]
+#[path = "../../../benchmarks/rendering/src/topcoat_product_grid.rs"]
 mod core_products;
 #[allow(dead_code)]
-#[path = "../../../rendering/src/data_table_page.rs"]
+#[path = "../../../benchmarks/rendering/src/data_table_page.rs"]
 mod core_table;
 const CARDS_PER_SECTION: usize = 8;
 const NUM_SECTIONS: usize = 4;

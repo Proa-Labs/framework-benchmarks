@@ -76,8 +76,11 @@ test("artifact extraction rejects traversal, links, duplicate and unrelated file
       ["../escape"],
       ["/absolute"],
       ["tooling/code.mjs"],
-      ["rendering/results/link"],
-      ["rendering/results/a.json", "rendering/results/a.json"],
+      ["benchmarks/rendering/results/link"],
+      [
+        "benchmarks/rendering/results/a.json",
+        "benchmarks/rendering/results/a.json",
+      ],
     ]) {
       const archive = join(temp, "test.tar.gz");
       expect(spawnSync("python3", [generator, archive, ...paths]).status).toBe(
@@ -96,7 +99,7 @@ test("artifact extraction rejects traversal, links, duplicate and unrelated file
       spawnSync("python3", [
         generator,
         archive,
-        "rendering/results/raw/capture/samples.json",
+        "benchmarks/rendering/results/raw/capture/samples.json",
       ]).status,
     ).toBe(0);
     expect(
