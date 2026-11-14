@@ -2,13 +2,13 @@
 // Uses a real production build, standard Lighthouse mobile/desktop presets,
 // every scored category, and a pinned Lighthouse CLI outside app dependencies.
 import assert from "node:assert/strict";
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rm, writeFile } from "node:fs/promises";
 import { createServer, request } from "node:http";
 import { join } from "node:path";
-import { parseArgs } from "node:util";
-import { createBrotliCompress } from "node:zlib";
+import { parseArgs, promisify } from "node:util";
+import { brotliCompress, createBrotliCompress } from "node:zlib";
 import { chromium } from "playwright";
-import { siteRoot } from "../build.ts";
+import { outputDirectory, siteRoot } from "../build.ts";
 import { startServer } from "../dev.ts";
 
 const { values } = parseArgs({
@@ -31,6 +31,19 @@ const directory = join(siteRoot, "test-results/lighthouse");
 await rm(directory, { recursive: true, force: true });
 await mkdir(directory, { recursive: true });
 const server = await startServer({ port: 0, live: false });
+// Compression runs at Cloudflare, outside a visitor's device. Prepare immutable
+// asset encodings before Chrome starts so the localhost proxy does not compete
+// with its renderer for the CI VM's CPUs. Each audit still downloads every byte.
+const encodedAssets = new Map<string, Buffer>();
+let precompressedResponses = 0;
+const encode = promisify(brotliCompress);
+for (const asset of await readdir(join(outputDirectory, "assets"))) {
+  if (/\.(?:js|css|json|svg|xml)$/.test(asset))
+    encodedAssets.set(
+      `/assets/${asset}`,
+      await encode(await readFile(join(outputDirectory, "assets", asset))),
+    );
+}
 // Forward the real production Host to exercise its actual indexing policy.
 // No response bytes, audit rules or scores are rewritten. Direct local and
 // workers.dev previews continue to return their required noindex headers.
@@ -57,7 +70,15 @@ const proxy = createServer((incoming, outgoing) => {
         headers.vary = "Accept-Encoding";
       }
       outgoing.writeHead(response.statusCode || 502, headers);
-      if (compress) response.pipe(createBrotliCompress()).pipe(outgoing);
+      const encoded =
+        compress && headers["cache-control"]?.includes("immutable")
+          ? encodedAssets.get(new URL(incoming.url || "/", server.url).pathname)
+          : undefined;
+      if (encoded) {
+        precompressedResponses++;
+        response.resume();
+        outgoing.end(encoded);
+      } else if (compress) response.pipe(createBrotliCompress()).pipe(outgoing);
       else response.pipe(outgoing);
     },
   );
@@ -74,6 +95,8 @@ const origin = `http://127.0.0.1:${address.port}`;
 const summary: Record<string, unknown> = {
   lighthouseVersion: "13.6.0",
   runs,
+  browserLifecycle:
+    "Lighthouse batch per device; cold HTTP and site storage for every navigation",
   pages: {},
 };
 const results: Record<string, Record<string, number[]>> = {};
@@ -85,70 +108,111 @@ try {
     null,
     "Audit must use the production indexing policy",
   );
-  for (const device of devices)
-    for (const path of paths)
-      for (let run = 1; run <= runs; run++) {
-        const name = `${device}-${path.slice(1) || "home"}-${run}`;
-        const output = join(directory, `${name}.json`);
-        const child = Bun.spawn(
-          [
-            "npm",
-            "exec",
-            "--yes",
-            "--package=lighthouse@13.6.0",
-            "--",
-            "lighthouse",
-            origin + path,
-            "--quiet",
-            "--chrome-flags=--headless --no-sandbox",
-            "--output=json",
-            ...(values["save-assets"] ? ["--save-assets"] : []),
-            `--output-path=${output}`,
-            ...(device === "desktop" ? ["--preset=desktop"] : []),
-          ],
-          {
-            env: { ...process.env, CHROME_PATH: chromium.executablePath() },
-            stdout: "inherit",
-            stderr: "inherit",
-          },
+  // Lighthouse's native batch mode reuses Chrome across URLs. Every navigation
+  // still clears HTTP/site storage and uses the standard throttling presets.
+  // Avoid measuring repeated browser/font-service startup on a shared CI VM.
+  for (const device of devices) {
+    const output = join(directory, device || "");
+    await mkdir(output, { recursive: true });
+    const child = Bun.spawn(
+      [
+        "npm",
+        "exec",
+        "--yes",
+        "--package=lighthouse@13.6.0",
+        "--",
+        "lighthouse",
+        ...paths.flatMap((path) =>
+          Array.from({ length: runs }, () => origin + path),
+        ),
+        "--quiet",
+        "--chrome-flags=--headless --no-sandbox",
+        "--output=json",
+        ...(values["save-assets"] ? ["--save-assets"] : []),
+        `--output-path=${output}`,
+        ...(device === "desktop" ? ["--preset=desktop"] : []),
+      ],
+      {
+        env: { ...process.env, CHROME_PATH: chromium.executablePath() },
+        stdout: "inherit",
+        stderr: "inherit",
+      },
+    );
+    assert.equal(await child.exited, 0, `${device}: Lighthouse could not run`);
+    const files = (await readdir(output)).filter((file) =>
+      file.endsWith(".report.json"),
+    );
+    assert.equal(
+      files.length,
+      paths.length * runs,
+      "Every requested audit must produce a report",
+    );
+    const reports = await Promise.all(
+      files.map(async (file) =>
+        JSON.parse(await readFile(join(output, file), "utf8")),
+      ),
+    );
+    reports.sort((a, b) => Date.parse(a.fetchTime) - Date.parse(b.fetchTime));
+    const counts = new Map<string, number>();
+    for (const report of reports) {
+      assert.ok(!report.runtimeError, report.runtimeError?.message);
+      const url = new URL(report.requestedUrl);
+      assert.equal(url.origin, origin);
+      assert.ok(paths.includes(url.pathname));
+      assert.equal(
+        report.configSettings.disableStorageReset,
+        false,
+        "Every audit must use a cold page cache",
+      );
+      assert.equal(report.configSettings.throttlingMethod, "simulate");
+      assert.equal(
+        report.configSettings.throttling.cpuSlowdownMultiplier,
+        device === "mobile" ? 4 : 1,
+      );
+      const requests = report.audits["network-requests"].details.items;
+      assert.ok(
+        requests.some(
+          (item: { url: string; transferSize: number }) =>
+            /\/assets\/index-[^/]+\.js$/.test(item.url) &&
+            item.transferSize > 0,
+        ),
+        "Every audit must download its application entry script",
+      );
+      const path = url.pathname;
+      const run = (counts.get(path) || 0) + 1;
+      counts.set(path, run);
+      const key = `${device} ${path}`;
+      results[key] ||= {};
+      for (const category of [
+        "performance",
+        "accessibility",
+        "best-practices",
+        "seo",
+      ])
+        assert.ok(
+          report.categories[category],
+          `${key}: missing ${category} category`,
         );
+      for (const [category, value] of Object.entries(report.categories) as [
+        string,
+        { score: number | null },
+      ][]) {
+        if (value.score === null) continue;
         assert.equal(
-          await child.exited,
-          0,
-          `${name}: Lighthouse could not run`,
+          typeof value.score,
+          "number",
+          `${key}: ${category} was not scored`,
         );
-        const report = JSON.parse(await readFile(output, "utf8"));
-        assert.ok(!report.runtimeError, report.runtimeError?.message);
-        const key = `${device} ${path}`;
-        results[key] ||= {};
-        for (const category of [
-          "performance",
-          "accessibility",
-          "best-practices",
-          "seo",
-        ])
-          assert.ok(
-            report.categories[category],
-            `${key}: missing ${category} category`,
-          );
-        for (const [category, value] of Object.entries(report.categories) as [
-          string,
-          { score: number | null },
-        ][]) {
-          if (value.score === null) continue;
-          const score = value.score;
-          assert.equal(
-            typeof score,
-            "number",
-            `${key}: ${category} was not scored`,
-          );
-          results[key][category] ||= [];
-          results[key][category].push(Math.round(score * 100));
-        }
-        console.log(
-          `${key} (${run}/${runs}): ${JSON.stringify(Object.fromEntries(Object.entries(results[key]).map(([category, scores]) => [category, scores.at(-1)])))}`,
-        );
+        results[key][category] ||= [];
+        results[key][category].push(Math.round(value.score * 100));
       }
+      console.log(
+        `${key} (${run}/${runs}): ${JSON.stringify(Object.fromEntries(Object.entries(results[key]).map(([category, scores]) => [category, scores.at(-1)])))}`,
+      );
+    }
+    for (const path of paths)
+      assert.equal(counts.get(path), runs, `${device} ${path}: missing repeat`);
+  }
   const pages = Object.fromEntries(
     Object.entries(results).map(([page, categories]) => [
       page,
@@ -166,6 +230,11 @@ try {
     ]),
   );
   summary.pages = pages;
+  summary.precompressedAssetResponses = precompressedResponses;
+  assert.ok(
+    precompressedResponses > 0,
+    "Audit must serve the immutable build assets",
+  );
   await writeFile(
     join(directory, "summary.json"),
     `${JSON.stringify(summary, null, 2)}\n`,
