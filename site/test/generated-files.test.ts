@@ -77,4 +77,5 @@ test("revalidating unchanged captures does not rewrite live app inputs or previe
     assert.equal(after[i].mtimeMs, before[i].mtimeMs, paths[i]);
     assert.equal(after[i].ino, before[i].ino, paths[i]);
   }
-}, 20000);
+  // Two full validations include hash-checking retained compressed source archives.
+}, 60000);

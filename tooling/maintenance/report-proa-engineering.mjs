@@ -4,7 +4,6 @@ import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseTables, pick } from "../charts/lib/tables.mjs";
 import { PAGES } from "../../experiments/showcase/capture_memcpy.mjs";
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const path = join(root, "benchmarks/rendering/results/proa-pr83-criterion.json");
@@ -111,21 +110,9 @@ const triple = (id) => {
 		.map((n) => (n / 1000).toFixed(4))
 		.join(" / ");
 };
-const archive = readFileSync(
-	join(root, "docs/archive/public-report-2026-08-31.md"),
-	"utf8",
-);
-const tables = parseTables(archive);
-const std = pick(tables, [
-	"Standard-page row",
-	"Output bytes/render",
-	"Raw time, µs/10 renders",
-]);
-const criteria = pick(tables, [
-	"Criterion row",
-	"Output bytes",
-	"Raw time, µs",
-]);
+const workloads = read(join(root, "experiments/showcase/criterion-workloads.json"));
+const std = { rows: workloads.standard.map(({label, bytes}) => [label, bytes]) };
+const criteria = { rows: workloads.criterion.map(({id, bytes}) => ["`" + id + "`", bytes]) };
 const standardIds = {
 	"Proa fresh owned": "ssr_frameworks/proa/fresh_owned_full",
 	"Proa reused chained": "ssr_frameworks/proa/reused_chained_full",
@@ -199,7 +186,7 @@ const block = `<!-- proa-engineering:start -->
 ## PROA engineering refresh
 
 **${capture.captured_at.slice(0, 10)} UTC** · Proa \`${capture.proa_revision}\` · Apple M4 Max.
-Only PROA was rerun. Peer Criterion rows below retain their August 30–31 measurements; they are dated engineering context, not simultaneous comparisons. Fresh canonical, standard-page, targeted \`proa_fresh\`, and product-grid \`proa_owned_full\` lanes now return an independently owned **RenderBuffer**, including context/page allocation and destruction, with no final String copy. The \`fresh_owned_string\`, \`proa_fresh_string\`, and \`proa_owned_string\` rows retain the former String conversion as explicit controls. Flattening for byte equality happens before timing. The optimizer sees the complete output owner. Other upstream showcase String-returning APIs, integer Vec lanes, and reused controls retain their declared boundaries. This boundary change is distinct from a framework optimization. Batch sizes and sample policies remain as declared in each fixture. Intervals are Criterion's 95% slope intervals (mean intervals for flat sampling). The [retained estimates and samples](benchmarks/rendering/results/proa-pr83-criterion.json) contain all ${capture.rows.length} measured PROA rows and the reproduction command.
+This is the latest standalone PROA engineering capture. It is separate from the current same-host framework comparison; superseded peer measurements have been removed. Fresh canonical, standard-page, targeted \`proa_fresh\`, and product-grid \`proa_owned_full\` lanes now return an independently owned **RenderBuffer**, including context/page allocation and destruction, with no final String copy. The \`fresh_owned_string\`, \`proa_fresh_string\`, and \`proa_owned_string\` rows retain the former String conversion as explicit controls. Flattening for byte equality happens before timing. The optimizer sees the complete output owner. Other upstream showcase String-returning APIs, integer Vec lanes, and reused controls retain their declared boundaries. This boundary change is distinct from a framework optimization. Batch sizes and sample policies remain as declared in each fixture. Intervals are Criterion's 95% slope intervals (mean intervals for flat sampling). The [retained estimates and samples](benchmarks/rendering/results/proa-pr83-criterion.json) contain all ${capture.rows.length} measured PROA rows and the reproduction command.
 
 | Refreshed standard-page row | Output bytes/render | Raw time, µs/10 renders |
 | --- | ---: | ---: |
@@ -209,7 +196,7 @@ ${standard.join("\n")}
 | --- | ---: | ---: |
 ${criterion.join("\n")}
 
-The [data table](benchmarks/rendering/results/proa-pr83-data_table_bench.json), [marketplace SRP](benchmarks/rendering/results/proa-pr83-ebay_srp_bench.json), and [synthetic listings](benchmarks/rendering/results/proa-pr83-ebay_srp_real_bench.json) standalone PROA fixtures were rerun at their default sample counts. Their original cross-language comparisons remain archived.
+The [data table](benchmarks/rendering/results/proa-pr83-data_table_bench.json), [marketplace SRP](benchmarks/rendering/results/proa-pr83-ebay_srp_bench.json), and [synthetic listings](benchmarks/rendering/results/proa-pr83-ebay_srp_real_bench.json) standalone PROA fixtures were rerun at their default sample counts. Superseded cross-language comparisons are available in Git history.
 
 The integer and product-grid controls below were also rerun for PROA only. Values are µs per render; fresh and reused ownership remain separate.
 
@@ -219,7 +206,7 @@ ${extra.join("\n")}
 
 ### Refreshed linked showcase corpus
 
-The locked deployable fixture covers all twelve pages, five independent processes per page, with the original warmup and iteration counts. Raw byte variation is retained separately from canonical JSON-key-order equivalence. The process summaries, binary/source digests and compressed raw-sample link are in [the SSR artifact](experiments/showcase/results/ssr-pr83.json). The [browser JavaScript capture](experiments/showcase/results/client-js-pr83.json) also reruns all four interactive pages under both desktop and 4× CPU-throttled mobile profiles, with 30 recorded navigations per page/profile. Figure 06 uses these new samples; the original application capture remains in the archive below.
+The locked deployable fixture covers all twelve pages, five independent processes per page, with the original warmup and iteration counts. Raw byte variation is retained separately from canonical JSON-key-order equivalence. The process summaries, binary/source digests and compressed raw-sample link are in [the SSR artifact](experiments/showcase/results/ssr-pr83.json). The [browser JavaScript capture](experiments/showcase/results/client-js-pr83.json) also reruns all four interactive pages under both desktop and 4× CPU-throttled mobile profiles, with 30 recorded navigations per page/profile. Figure 06 uses these new samples; superseded application captures are available in Git history.
 
 | Refreshed showcase page | Output bytes | Recorded renders | Process-median P50 µs [95% CI] | Pooled P95 µs | Raw bytes stable? |
 | --- | ---: | ---: | ---: | ---: | --- |
@@ -234,8 +221,7 @@ if (start >= 0) {
 		"<!-- proa-engineering:end -->".length;
 	doc = doc.slice(0, start) + block + doc.slice(end);
 } else {
-	const at = doc.indexOf("<!-- historical-results:start -->");
-	doc = doc.slice(0, at) + block + "\n\n" + doc.slice(at);
+	doc = doc.trimEnd() + "\n\n" + block + "\n";
 }
 doc = formatReportLinks(doc, docPath);
 if (process.argv.includes("--check")) {

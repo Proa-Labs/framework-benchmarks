@@ -296,24 +296,10 @@ test("the retained latest artifact is complete when present", () => {
   assert.doesNotThrow(() =>
     validateCanonicalResult(latest, captured.roster, captured.workloads),
   );
-  // generate-report.mjs joins scoreboard.md and engineering.md with this
-  // break, replaces every marker pair, and splits them again to write.
-  const pages = ["docs/reports/scoreboard.md", "docs/reports/engineering.md"]
-    .map((name) => readFileSync(join(workspaceDirectory, name), "utf8"))
-    .join("\n<!-- generate-report:page-break -->\n");
-  const historicalReport = readFileSync(
-    join(workspaceDirectory, "docs/archive", "public-report-2026-08-31.md"),
-    "utf8",
-  );
-  assert.doesNotThrow(() =>
-    assertReadmeCurrent(
-      pages,
-      latest,
-      captured.roster,
-      captured.workloads,
-      historicalReport,
-    ),
-  );
+  // Validate the current generated pages without relying on superseded data.
+  assert.doesNotThrow(() => execFileSync(process.execPath, [
+    join(renderingDirectory, "generate-report.mjs"), "--check",
+  ], { cwd: workspaceDirectory, stdio: "pipe" }));
 });
 
 test("the retained capture has one parity pass per roster/workload cell", () => {

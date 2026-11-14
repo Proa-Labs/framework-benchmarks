@@ -10,6 +10,7 @@ import suites from "../../benchmarks/suites.json" with { type: "json" };
 import { sourceDigest } from "../capture/captures.mjs";
 import { readMeasuredSources } from "../capture/measured-sources.mjs";
 import { repositoryRoot } from "../repository.mjs";
+import { verifyReportTestOnlyChange } from "./report-source.mjs";
 import { validateCapture } from "./validate.mjs";
 
 // Contributor checks and previews can inspect historical results. Merging and
@@ -241,8 +242,24 @@ export async function verifyPublication(root) {
       : id === "framework"
         ? frameworkSourceFiles(root)
         : await readMeasuredSources(join(root, suite.entry));
+    const digest = sourceDigest(root, files, rendering ? "/" : "");
+    if (rendering && digest !== result.provenance.source_sha256) {
+      verifyReportTestOnlyChange(
+        root,
+        files,
+        join(
+          root,
+          suite.directory,
+          "results/raw",
+          result.capture_id,
+          "source.tar.gz",
+        ),
+        result.provenance.source_sha256,
+      );
+      continue;
+    }
     assert.equal(
-      sourceDigest(root, files, rendering ? "/" : ""),
+      digest,
       rendering ? result.provenance.source_sha256 : result.source.sourceSha256,
       `${id}: measured sources changed; rerun the complete campaign before publication`,
     );

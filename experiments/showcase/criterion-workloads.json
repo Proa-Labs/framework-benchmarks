@@ -1,0 +1,94 @@
+{
+  "standard": [
+    {
+      "label": "Proa fresh owned",
+      "bytes": "25,108"
+    },
+    {
+      "label": "Proa reused chained",
+      "bytes": "25,108"
+    }
+  ],
+  "criterion": [
+    {
+      "id": "escape_heavy/proa_reuse",
+      "bytes": "2,729"
+    },
+    {
+      "id": "escape_heavy/proa_fresh",
+      "bytes": "2,729"
+    },
+    {
+      "id": "large_page/proa_reuse",
+      "bytes": "269,751"
+    },
+    {
+      "id": "large_page/proa_fresh",
+      "bytes": "269,751"
+    },
+    {
+      "id": "request_burst/proa_100req",
+      "bytes": "25,108/request"
+    },
+    {
+      "id": "airbnb_search/proa_chained",
+      "bytes": "20,208"
+    },
+    {
+      "id": "airbnb_search/proa_reuse",
+      "bytes": "20,208"
+    },
+    {
+      "id": "airbnb_search/proa_fresh",
+      "bytes": "20,208"
+    },
+    {
+      "id": "showcase/home_proa_chained",
+      "bytes": "162,800"
+    },
+    {
+      "id": "showcase/search_proa_chained",
+      "bytes": "49,913"
+    },
+    {
+      "id": "showcase/listing_proa_chained",
+      "bytes": "95,588"
+    },
+    {
+      "id": "showcase/nike_catalog_proa_fresh",
+      "bytes": "128,211"
+    },
+    {
+      "id": "showcase/nike_catalog_proa_reused",
+      "bytes": "128,211"
+    },
+    {
+      "id": "showcase/nike_product_proa_fresh",
+      "bytes": "58,959"
+    },
+    {
+      "id": "showcase/nike_product_proa_reused",
+      "bytes": "58,959"
+    },
+    {
+      "id": "showcase/ebay_cards_60_proa_fresh",
+      "bytes": "240,785"
+    },
+    {
+      "id": "showcase/ebay_cards_60_proa_reused",
+      "bytes": "240,785"
+    },
+    {
+      "id": "showcase/ebay_chrome_60_proa_fresh",
+      "bytes": "522,876"
+    },
+    {
+      "id": "showcase/ebay_real_chrome_60_proa_fresh",
+      "bytes": "794,776"
+    },
+    {
+      "id": "showcase/sentry_otel_400_proa_fresh",
+      "bytes": "874,540"
+    }
+  ]
+}

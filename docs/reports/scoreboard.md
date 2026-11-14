@@ -324,7 +324,7 @@ Allocation measurements and construction-path controls remain separate from this
 - [HTTP capacity, cold start and streaming](http-capacity.md)
   - What one core of each production server sustains, and what a fresh process costs.
 - [Engineering, application and agent captures](engineering.md)
-  - Product-grid scaling, the memcpy floor, Proa's buffer allocation, and the archived August report.
+  - Product-grid scaling, the memcpy floor, Proa's buffer allocation, and the latest standalone engineering experiments.
 - [Canonical benchmark protocol](../../benchmarks/rendering/protocol.md)
   - The parity gate, the fairness rules, and the workload shapes in full.
 - [Rendering suite](../../benchmarks/rendering/)

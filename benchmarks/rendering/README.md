@@ -28,10 +28,7 @@ Compatibility scripts and specialized benches remain available through [`run_all
 
 - [`results/latest.md`](results/latest.md): detailed canonical report
 - [`results/latest.json`](results/latest.json): sole source for public numbers
-- [`RESULT_TABLE_AUDIT.md`](../../docs/archive/result-table-audit.md): classification of every pre-refactor result table
 - [`MIGRATION.md`](MIGRATION.md): where each old result moved
-- [`../archive/legacy-cross-language.md`](../../docs/archive/legacy-cross-language.md): non-parity-gated adapter loop
-- [`../archive/public-report-2026-08-31.md`](../../docs/archive/public-report-2026-08-31.md): complete pre-refactor mixed report, with local links rebased
 
 ## Refresh only PROA
 
