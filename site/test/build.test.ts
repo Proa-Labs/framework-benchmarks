@@ -25,6 +25,12 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       manifest.captures[id].artifactSha256,
     );
   }
+  assert.deepEqual(
+    await readFile(join(outputDirectory, "logos/sources.json")),
+    await readFile(
+      new URL("../data/branding/logo-sources.json", import.meta.url),
+    ),
+  );
   const server = await startServer({ port: 0, live: false, build: false });
   try {
     const initialResponse = await fetch(server.url);

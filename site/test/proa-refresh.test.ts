@@ -8,7 +8,7 @@ import { loadInputs, normalize, repositoryRoot } from "../data.ts";
 import { createDashboardModel } from "../src/charts/dashboard-model.ts";
 
 const reviewTest = test.skipIf(
-  !existsSync(join(repositoryRoot, "site/proa-refresh.json")),
+  !existsSync(join(repositoryRoot, "site/data/performance/proa-refresh.json")),
 );
 
 reviewTest(
@@ -56,7 +56,10 @@ reviewTest(
   "review evidence rejects changed fixtures, wrong revisions and unpaired hosts",
   async () => {
     const manifest = JSON.parse(
-      await readFile(join(repositoryRoot, "site/proa-refresh.json"), "utf8"),
+      await readFile(
+        join(repositoryRoot, "site/data/performance/proa-refresh.json"),
+        "utf8",
+      ),
     );
     const read = async (id: string) =>
       JSON.parse(

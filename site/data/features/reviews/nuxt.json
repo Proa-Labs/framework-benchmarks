@@ -1,0 +1,603 @@
+{
+  "id": "nuxt",
+  "scope": "Nuxt 4.x with Vue 3, Nitro and explicitly named companion modules. Experimental APIs and provider-specific cache behavior are qualified.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "Nuxt supports universal rendering/hydration, client-only routes and prerendered routes. Hybrid route rules choose behavior per path; this is not an assertion of Next-style partial prerendering.",
+      "url": "https://nuxt.com/docs/4.x/guide/concepts/rendering"
+    },
+    "streaming": {
+      "status": "partial",
+      "note": "ssrStreaming is an experimental option in Nuxt 4.x. Default universal rendering must not be represented as production HTML streaming.",
+      "url": "https://nuxt.com/docs/4.x/guide/going-further/experimental-features",
+      "label": "Experimental SSR streaming",
+      "reviewedOn": "2026-11-10"
+    },
+    "suspense": {
+      "status": "partial",
+      "note": "Nuxt uses Vue Suspense to coordinate async page data. Vue still marks Suspense experimental; data waiting alone is not out-of-order HTML delivery.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/data-fetching",
+      "label": "Vue Suspense",
+      "reviewedOn": "2026-11-10"
+    },
+    "client": {
+      "status": "native",
+      "note": "Nuxt supports universal rendering/hydration, client-only routes and prerendered routes. Hybrid route rules choose behavior per path; this is not an assertion of Next-style partial prerendering.",
+      "url": "https://nuxt.com/docs/4.x/guide/concepts/rendering"
+    },
+    "ssg": {
+      "status": "native",
+      "note": "Nuxt supports universal rendering/hydration, client-only routes and prerendered routes. Hybrid route rules choose behavior per path; this is not an assertion of Next-style partial prerendering.",
+      "url": "https://nuxt.com/docs/4.x/guide/concepts/rendering"
+    },
+    "csr": {
+      "status": "native",
+      "note": "Nuxt supports universal rendering/hydration, client-only routes and prerendered routes. Hybrid route rules choose behavior per path; this is not an assertion of Next-style partial prerendering.",
+      "url": "https://nuxt.com/docs/4.x/guide/concepts/rendering"
+    },
+    "serverOnly": {
+      "status": "partial",
+      "note": "The opt-in componentIslands experiment enables server components and selective hydration. It is not an unqualified stable core capability in this Nuxt 4.x review.",
+      "url": "https://nuxt.com/docs/4.x/guide/going-further/experimental-features",
+      "label": "Experimental component islands",
+      "reviewedOn": "2026-11-10"
+    },
+    "partialRendering": {
+      "status": "partial",
+      "note": "Hybrid rules mix prerendered, server-rendered and client-rendered routes. That does not establish a cached static shell plus dynamic holes within the same route.",
+      "url": "https://nuxt.com/docs/4.x/guide/concepts/rendering",
+      "label": "Hybrid routes",
+      "reviewedOn": "2026-11-10"
+    },
+    "routing": {
+      "status": "native",
+      "note": "File-system pages, nested route composition, middleware and NuxtLink navigation/prefetching form the routing workflow.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/routing"
+    },
+    "layouts": {
+      "status": "native",
+      "note": "File-system pages, nested route composition, middleware and NuxtLink navigation/prefetching form the routing workflow.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/routing"
+    },
+    "dynamicRoutes": {
+      "status": "native",
+      "note": "File-system pages, nested route composition, middleware and NuxtLink navigation/prefetching form the routing workflow.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/routing"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Nuxt routing guide. External integrations or application code may provide this behavior.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/routing"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Nuxt routing guide. External integrations or application code may provide this behavior.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/routing"
+    },
+    "prefetch": {
+      "status": "native",
+      "note": "File-system pages, nested route composition, middleware and NuxtLink navigation/prefetching form the routing workflow.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/routing"
+    },
+    "softNavigation": {
+      "status": "native",
+      "note": "NuxtLink and the integrated router update pages/history without a full reload. Internal links are prefetched according to the configured policy; external links and explicit reloads retain document navigation.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/routing",
+      "reviewedOn": "2026-11-11",
+      "label": "NuxtLink / Vue Router"
+    },
+    "viewTransitions": {
+      "status": "native",
+      "note": "pageTransition/layoutTransition coordinate Vue enter/leave animations across navigation. Native browser View Transitions are a separate experimental option, not required for the stable page-transition API. Authors supply CSS and reduced-motion treatment.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/transitions",
+      "reviewedOn": "2026-11-11",
+      "label": "Page / layout transitions"
+    },
+    "redirects": {
+      "status": "native",
+      "note": "File-system pages, nested route composition, middleware and NuxtLink navigation/prefetching form the routing workflow.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/routing"
+    },
+    "serverData": {
+      "status": "native",
+      "note": "useAsyncData/useFetch share keyed state, transfer SSR payloads, deduplicate pending reads and support refresh/clear operations. This is distinct from a durable server cache.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/data-fetching"
+    },
+    "clientData": {
+      "status": "native",
+      "note": "useAsyncData/useFetch share keyed state, transfer SSR payloads, deduplicate pending reads and support refresh/clear operations. This is distinct from a durable server cache.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/data-fetching"
+    },
+    "requestDedupe": {
+      "status": "native",
+      "note": "useAsyncData/useFetch share keyed state, transfer SSR payloads, deduplicate pending reads and support refresh/clear operations. This is distinct from a durable server cache.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/data-fetching"
+    },
+    "persistentCache": {
+      "status": "native",
+      "note": "Route rules support SWR and ISR caching. ISR behavior and durable storage depend on the Nitro hosting preset/provider.",
+      "url": "https://nuxt.com/docs/4.x/guide/concepts/rendering"
+    },
+    "invalidation": {
+      "status": "native",
+      "note": "useAsyncData/useFetch share keyed state, transfer SSR payloads, deduplicate pending reads and support refresh/clear operations. This is distinct from a durable server cache.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/data-fetching"
+    },
+    "isr": {
+      "status": "native",
+      "note": "Route rules support SWR and ISR caching. ISR behavior and durable storage depend on the Nitro hosting preset/provider.",
+      "url": "https://nuxt.com/docs/4.x/guide/concepts/rendering"
+    },
+    "apiRoutes": {
+      "status": "native",
+      "note": "Nitro registers server endpoints/middleware and exposes H3 request, cookie and response utilities.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server"
+    },
+    "httpErrors": {
+      "status": "native",
+      "note": "Nuxt distinguishes server/application error responses from client-only error boundaries. Server error helpers and response-status APIs let the application send 404 or 5xx with its error page; rendering fallback UI alone is not sufficient. Client navigation errors do not change the original document status, and streamed headers cannot be changed after publication.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/error-handling",
+      "label": "Server errors / response status",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Nuxt server guide. External integrations or application code may provide this behavior.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server"
+    },
+    "forms": {
+      "status": "partial",
+      "note": "Endpoints can read/validate request bodies, but a unified typed form-action and field-error workflow is not established by this guide.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server",
+      "label": "Endpoint validation",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Endpoints can read/validate request bodies, but a unified typed form-action and field-error workflow is not established by this guide."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "native",
+      "note": "Nitro registers server endpoints/middleware and exposes H3 request, cookie and response utilities.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server"
+    },
+    "cookies": {
+      "status": "native",
+      "note": "Nitro registers server endpoints/middleware and exposes H3 request, cookie and response utilities.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server"
+    },
+    "cssModules": {
+      "status": "native",
+      "note": "Vue single-file component scoped styles and CSS Modules are supported by the build pipeline.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/styling"
+    },
+    "scopedCss": {
+      "status": "native",
+      "note": "Vue single-file component scoped styles and CSS Modules are supported by the build pipeline.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/styling"
+    },
+    "tailwind": {
+      "status": "community",
+      "note": "The styling guide integrates Tailwind as an external CSS compiler.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/styling",
+      "label": "Tailwind"
+    },
+    "cssInJs": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Nuxt styling guide. External integrations or application code may provide this behavior.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/styling"
+    },
+    "images": {
+      "status": "official",
+      "note": "NuxtImg/NuxtPicture generate provider-backed responsive sizes and formats; install the companion module.",
+      "url": "https://image.nuxt.com/",
+      "label": "Nuxt Image"
+    },
+    "fonts": {
+      "status": "official",
+      "note": "The companion module self-hosts fonts and generates fallback metrics; provider/configuration determines the output.",
+      "url": "https://fonts.nuxt.com/",
+      "label": "Nuxt Fonts"
+    },
+    "scripts": {
+      "status": "official",
+      "note": "The companion module provides deferred third-party script loading and trigger strategies.",
+      "url": "https://scripts.nuxt.com/",
+      "label": "Nuxt Scripts"
+    },
+    "assetPipeline": {
+      "status": "native",
+      "note": "Referenced assets in app/assets are processed by Vite or webpack, producing hashed production URLs with updated references. Files in public/ retain their names. Runtime-constructed paths are not automatically discovered; import assets or use an import glob when needed.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/assets",
+      "label": "Vite / webpack assets",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "native",
+      "note": "Nuxt serves public directory files at unchanged paths and processes imported app/assets through the configured bundler. Public copying and content-hashed build assets are distinct behaviors.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/assets",
+      "reviewedOn": "2026-11-13",
+      "label": "Public directory / build assets"
+    },
+    "metadata": {
+      "status": "native",
+      "note": "useHead/useSeoMeta provide typed reactive tags and titleTemplate composition; app.head is static configuration.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/seo-meta",
+      "assessment": {
+        "summary": "A reactive, typed head API powered by Unhead, with semantic tag deduplication and title templates.",
+        "strengths": [
+          "Page registrations can replace matching defaults without copying every tag.",
+          "useSeoMeta types common SEO fields while useHead supports general head elements."
+        ],
+        "tradeoffs": [
+          "app.head is static; reactive values belong in composables.",
+          "Unhead tag identity/key rules differ from a nested metadata-object merge contract."
+        ]
+      }
+    },
+    "dynamicMetadata": {
+      "status": "native",
+      "note": "useHead/useSeoMeta provide typed reactive tags and titleTemplate composition; app.head is static configuration.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/seo-meta"
+    },
+    "metadataInheritance": {
+      "status": "native",
+      "note": "Unhead resolves duplicate semantic identities and keys across registrations; later/page entries replace matching defaults. Explicit keys and removal behavior differ from nested metadata-object merging.",
+      "url": "https://unhead.unjs.io/docs/head/guides/core-concepts/handling-duplicates"
+    },
+    "metadataOverrides": {
+      "status": "native",
+      "note": "Unhead resolves duplicate semantic identities and keys across registrations; later/page entries replace matching defaults. Explicit keys and removal behavior differ from nested metadata-object merging.",
+      "url": "https://unhead.unjs.io/docs/head/guides/core-concepts/handling-duplicates"
+    },
+    "titleTemplates": {
+      "status": "native",
+      "note": "useHead/useSeoMeta provide typed reactive tags and titleTemplate composition; app.head is static configuration.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/seo-meta"
+    },
+    "socialImages": {
+      "status": "community",
+      "note": "Nuxt SEO's separately maintained OG Image, Sitemap and Robots modules add generation APIs. These are not bundled Nuxt core features.",
+      "url": "https://nuxtseo.com/",
+      "label": "Nuxt SEO modules"
+    },
+    "sitemaps": {
+      "status": "community",
+      "note": "Nuxt SEO's separately maintained OG Image, Sitemap and Robots modules add generation APIs. These are not bundled Nuxt core features.",
+      "url": "https://nuxtseo.com/",
+      "label": "Nuxt SEO modules"
+    },
+    "robots": {
+      "status": "community",
+      "note": "Nuxt SEO's separately maintained OG Image, Sitemap and Robots modules add generation APIs. These are not bundled Nuxt core features.",
+      "url": "https://nuxtseo.com/",
+      "label": "Nuxt SEO modules"
+    },
+    "markdown": {
+      "status": "official",
+      "note": "The companion module loads Markdown and other content files with typed queries.",
+      "url": "https://content.nuxt.com/",
+      "label": "Nuxt Content"
+    },
+    "collections": {
+      "status": "official",
+      "note": "Content collections provide schemas, querying and structured content integration.",
+      "url": "https://content.nuxt.com/",
+      "label": "Nuxt Content"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Nuxt content guide. External integrations or application code may provide this behavior.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/introduction"
+    },
+    "translations": {
+      "status": "official",
+      "note": "The companion module integrates Vue I18n catalogs, lazy messages and locale routing.",
+      "url": "https://i18n.nuxtjs.org/",
+      "label": "Nuxt i18n"
+    },
+    "localeRouting": {
+      "status": "official",
+      "note": "Locale-aware route generation, URL prefixes and SEO helpers are supplied by the i18n module.",
+      "url": "https://i18n.nuxtjs.org/",
+      "label": "Nuxt i18n"
+    },
+    "localeFormatting": {
+      "status": "official",
+      "note": "The module's Vue I18n integration supplies locale-sensitive number and date formatting.",
+      "url": "https://i18n.nuxtjs.org/",
+      "label": "Nuxt i18n"
+    },
+    "auth": {
+      "status": "official",
+      "note": "The documented Nuxt Auth Utils companion supplies encrypted sessions and auth helpers. Applications still choose persistence and authorization policy.",
+      "url": "https://nuxt.com/docs/4.x/guide/recipes/sessions-and-authentication",
+      "label": "Nuxt Auth Utils"
+    },
+    "csp": {
+      "status": "community",
+      "note": "nuxt-security coordinates random request nonces and strict CSP for SSR; static output uses hashes instead. The module is maintained outside Nuxt core and must be installed/configured.",
+      "url": "https://nuxt-security.vercel.app/advanced/strict-csp",
+      "reviewedOn": "2026-11-11",
+      "label": "nuxt-security headers"
+    },
+    "cspNonce": {
+      "status": "community",
+      "note": "nuxt-security coordinates random request nonces and strict CSP for SSR; static output uses hashes instead. The module is maintained outside Nuxt core and must be installed/configured.",
+      "url": "https://nuxt-security.vercel.app/advanced/strict-csp",
+      "reviewedOn": "2026-11-11",
+      "label": "nuxt-security"
+    },
+    "csrf": {
+      "status": "community",
+      "note": "The separately installed nuxt-security module offers optional CSRF middleware. Enable and configure that protection for the relevant routes; installing Nuxt or using CSP alone does not provide universal CSRF protection.",
+      "url": "https://nuxt.com/modules/security",
+      "reviewedOn": "2026-11-13",
+      "label": "Optional nuxt-security CSRF"
+    },
+    "environment": {
+      "status": "native",
+      "note": "Private runtimeConfig fields stay on the server; only explicit public configuration enters page payloads. Runtime secrets can be set without rebuilding.",
+      "url": "https://nuxt.com/docs/4.x/guide/going-further/runtime-config"
+    },
+    "types": {
+      "status": "native",
+      "note": "Nuxt generates TypeScript types and provides a project CLI and Vite hot updates.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/introduction"
+    },
+    "hmr": {
+      "status": "native",
+      "note": "Nuxt generates TypeScript types and provides a project CLI and Vite hot updates.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/introduction"
+    },
+    "cli": {
+      "status": "native",
+      "note": "Nuxt generates TypeScript types and provides a project CLI and Vite hot updates.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/introduction"
+    },
+    "bundleAnalysis": {
+      "status": "partial",
+      "note": "nuxt analyze builds and serves production dependency analysis; the command is explicitly experimental.",
+      "url": "https://nuxt.com/docs/4.x/api/commands/analyze",
+      "label": "Experimental analyzer",
+      "reviewedOn": "2026-11-10"
+    },
+    "unitTests": {
+      "status": "official",
+      "note": "@nuxt/test-utils supplies Nuxt-aware Vitest/browser helpers, with Playwright integration.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/testing",
+      "label": "Nuxt Test Utils"
+    },
+    "e2eTests": {
+      "status": "official",
+      "note": "@nuxt/test-utils supplies Nuxt-aware Vitest/browser helpers, with Playwright integration.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/testing",
+      "label": "Nuxt Test Utils"
+    },
+    "observability": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Nuxt testing guide. External integrations or application code may provide this behavior.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/testing"
+    },
+    "errorHandling": {
+      "status": "native",
+      "note": "NuxtErrorBoundary renders a resettable client fallback; server/application error pages and clearError handle broader failures.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/error-handling"
+    },
+    "serverHosting": {
+      "status": "native",
+      "note": "Nitro presets target Node, serverless and worker deployments; prerendered output can be static. Target capabilities and caches vary.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/deployment"
+    },
+    "subpathProxy": {
+      "status": "native",
+      "note": "app.baseURL configures the application’s public base path, including framework routing and generated asset paths; NUXT_APP_BASE_URL can override it at runtime. Nitro’s deployment and proxy must agree on that public path and origin. Hard-coded root-relative URLs and third-party integrations still need matching configuration.",
+      "url": "https://nuxt.com/docs/4.x/api/nuxt-config#baseurl",
+      "label": "app.baseURL / Nitro",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "native",
+      "note": "Nitro presets target Node, serverless and worker deployments; prerendered output can be static. Target capabilities and caches vary.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/deployment"
+    },
+    "containers": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Nuxt deployment guide. External integrations or application code may provide this behavior.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/deployment"
+    },
+    "edgeHosting": {
+      "status": "native",
+      "note": "Nitro presets target Node, serverless and worker deployments; prerendered output can be static. Target capabilities and caches vary.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/deployment"
+    },
+    "orm": {
+      "status": "undocumented",
+      "note": "The reviewed Nuxt server/data guides do not establish an owned orm / query builder API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server"
+    },
+    "migrations": {
+      "status": "undocumented",
+      "note": "The reviewed Nuxt server/data guides do not establish an owned schema migrations API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server"
+    },
+    "transactions": {
+      "status": "undocumented",
+      "note": "The reviewed Nuxt server/data guides do not establish an owned transactions API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server"
+    },
+    "jobs": {
+      "status": "partial",
+      "note": "Nitro tasks are opt-in/experimental scheduled or programmatic work. The documented runner is not a durable queue with retries.",
+      "url": "https://nitro.build/guide/tasks",
+      "label": "Experimental Nitro tasks",
+      "reviewedOn": "2026-11-10"
+    },
+    "mail": {
+      "status": "undocumented",
+      "note": "The reviewed Nuxt server/data guides do not establish an owned email API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server"
+    },
+    "uploads": {
+      "status": "undocumented",
+      "note": "The reviewed Nuxt server/data guides do not establish an owned file uploads & storage API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server"
+    },
+    "realtime": {
+      "status": "undocumented",
+      "note": "The reviewed Nuxt server/data guides do not establish an owned real-time delivery API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Its integrated UI renderer supplies this policy. Vue escapes ordinary text and attribute bindings using browser APIs/server encoding. v-html and untrusted URLs/styles need separate controls; templates themselves must be trusted.",
+      "url": "https://vuejs.org/guide/best-practices/security.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nuxt-security.vercel.app/advanced/strict-csp",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nuxt-security.vercel.app/advanced/strict-csp",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "community",
+      "note": "nuxt-security supplies rate-limiter middleware and a configurable unstorage driver. The default LRU store is process-local; use an appropriate shared driver for distributed limits.",
+      "url": "https://nuxt-security.vercel.app/middleware/rate-limiter",
+      "reviewedOn": "2026-11-11",
+      "label": "nuxt-security"
+    },
+    "progressiveEnhancement": {
+      "status": "undocumented",
+      "note": "The linked server API review does not establish the specific progressive forms contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server",
+      "reviewedOn": "2026-11-11"
+    },
+    "optimisticUi": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific optimistic updates contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/data-fetching",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "native",
+      "note": "useAsyncData/useFetch expose dedupe/cancel behavior and an AbortSignal for a cancelable handler. The handler must propagate cancellation to its underlying work; this cannot undo completed server mutations.",
+      "url": "https://nuxt.com/docs/4.x/api/composables/use-async-data",
+      "reviewedOn": "2026-11-11",
+      "label": "useAsyncData"
+    },
+    "typedLinks": {
+      "status": "partial",
+      "note": "Typed page route generation is an experimental/configuration-dependent option in the reviewed Nuxt 4 routing guide. It is not equivalent to validation of all arbitrary query values.",
+      "url": "https://nuxt.com/docs/4.x/guide/going-further/experimental-features#typedpages",
+      "reviewedOn": "2026-11-11",
+      "label": "Experimental typedPages"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/routing",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "native",
+      "note": "Vue KeepAlive can retain selected component instances/state across route switches when composed with RouterView; Nuxt also exposes page keepalive configuration. It is opt-in and limited by include/exclude/cache eviction.",
+      "url": "https://nuxt.com/docs/4.x/api/components/nuxt-page",
+      "reviewedOn": "2026-11-11",
+      "label": "KeepAlive"
+    },
+    "scrollRestoration": {
+      "status": "native",
+      "note": "Vue Router scrollBehavior receives saved positions for history traversal and lets the app return scrolling behavior. Nuxt configures it through its router integration; the app can customize it.",
+      "url": "https://router.vuejs.org/guide/advanced/scroll-behavior.html",
+      "reviewedOn": "2026-11-11",
+      "label": "Vue Router"
+    },
+    "navigationBlocking": {
+      "status": "native",
+      "note": "Navigation guards can return false or prompt before leaving a route, including in-component beforeRouteLeave. Full-document unload is a separate browser mechanism.",
+      "url": "https://router.vuejs.org/guide/advanced/navigation-guards.html",
+      "reviewedOn": "2026-11-11",
+      "label": "Vue Router guards"
+    },
+    "navigationAccessibility": {
+      "status": "native",
+      "note": "NuxtRouteAnnouncer provides route announcements when included in the application. It is an explicit component rather than proof that every Nuxt app manages focus correctly.",
+      "url": "https://nuxt.com/docs/4.x/api/components/nuxt-route-announcer",
+      "reviewedOn": "2026-11-11",
+      "label": "NuxtRouteAnnouncer"
+    },
+    "a11yChecks": {
+      "status": "partial",
+      "note": "The optional @nuxt/a11y module runs accessibility audits in development. The reviewed release is alpha; it is not stable built-in enforcement or a certification that the application is accessible.",
+      "url": "https://nuxt.com/modules/a11y",
+      "reviewedOn": "2026-11-13",
+      "label": "Alpha @nuxt/a11y module"
+    },
+    "lazyActivation": {
+      "status": "native",
+      "note": "Nuxt documents lazy hydration triggers for delayed interactive components, built on Vue's hydration strategies. The selected trigger controls activation; this does not imply every component's code is withheld until then.",
+      "url": "https://nuxt.com/docs/4.x/api/utils/define-lazy-hydration-component",
+      "reviewedOn": "2026-11-11",
+      "label": "Lazy hydration"
+    },
+    "codeSplitting": {
+      "status": "native",
+      "note": "Nuxt splits pages automatically and supports lazy component imports. Shared dependencies and auto-import usage still influence the chunks sent to a page.",
+      "url": "https://nuxt.com/docs/4.x/guide/concepts/auto-imports",
+      "reviewedOn": "2026-11-11",
+      "label": "Page / component bundles"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/deployment",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nitro.build/guide/tasks",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nitro.build/guide/tasks",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nitro.build/guide/tasks",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://nuxt.com/docs/4.x/directory-structure/server",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "official",
+      "note": "@nuxt/test-utils provides runtime and end-to-end helpers including server fetch against a test Nuxt app. Tests that start a server have a different boundary/cost from in-process Laravel request simulation.",
+      "url": "https://nuxt.com/docs/4.x/getting-started/testing",
+      "reviewedOn": "2026-11-11",
+      "label": "@nuxt/test-utils"
+    }
+  }
+}

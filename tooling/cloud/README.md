@@ -2,7 +2,7 @@
 
 ## Proa-only review refreshes
 
-`site/proa-refresh.json` selects the retained before/after Proa captures for a
+`site/data/performance/proa-refresh.json` selects the retained before/after Proa captures for a
 review preview. It preserves the full campaign's peer measurements, records each
 row's original capture and date, and links the evidence from every experiment.
 Both Proa revisions must run on the same physical worker; peers use matching C4

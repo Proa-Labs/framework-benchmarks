@@ -31,6 +31,11 @@ export async function prepareData() {
   const outputDirectory = join(generatedDirectory, "public");
   await mkdir(join(outputDirectory, "data/captures"), { recursive: true });
   await cp(join(siteRoot, "public"), outputDirectory);
+  // Keep the published attribution URL stable while source data lives together.
+  await cp(
+    join(siteRoot, "data/branding/logo-sources.json"),
+    join(outputDirectory, "logos/sources.json"),
+  );
   if (input.reviewRefresh)
     await copyProaRefreshEvidence(dirname(siteRoot), outputDirectory, captures);
   await Promise.all(

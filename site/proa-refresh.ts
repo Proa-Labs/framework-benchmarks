@@ -113,7 +113,7 @@ export async function copyProaRefreshEvidence(
   sources: Record<View, string>,
 ) {
   const manifest = JSON.parse(
-    readFileSync(join(root, "site/proa-refresh.json"), "utf8"),
+    readFileSync(join(root, "site/data/performance/proa-refresh.json"), "utf8"),
   ) as RefreshManifest;
   const target = join(output, "data/proa-refresh");
   await mkdir(join(target, "baseline"), { recursive: true });

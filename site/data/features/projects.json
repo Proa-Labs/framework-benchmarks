@@ -55,17 +55,6 @@
     "logo": "logos/nuxt.svg"
   },
   {
-    "id": "sveltekit",
-    "colorSource": "https://svelte.dev",
-    "label": "SvelteKit",
-    "language": "TypeScript",
-    "kind": "Application framework",
-    "homepage": "https://svelte.dev/docs/kit",
-    "color": "#ff3e00",
-    "status": "feature-only",
-    "logo": "logos/sveltekit.svg"
-  },
-  {
     "id": "laravel",
     "colorSource": "https://laravel.com/art",
     "label": "Laravel",

@@ -5,7 +5,7 @@ import type roster from "../rendering/canonical/roster.json";
 import type workloadManifest from "../rendering/canonical/workloads.json";
 import type rendering from "../rendering/results/latest.json";
 import type streaming from "../suspense-load/results/latest.json";
-import type catalog from "./catalog.json";
+import type catalog from "./data/performance/catalog.json";
 import type { Project } from "./feature-schema.ts";
 
 export type Percentiles = { p50: number; p95: number; p99: number };

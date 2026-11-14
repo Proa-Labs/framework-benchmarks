@@ -7,8 +7,8 @@ import { verifyPublication } from "./publication.mjs";
 test("a selected Proa-only review blocks merging and production publication", async () => {
   const root = mkdtempSync(join(tmpdir(), "proa-review-gate-"));
   try {
-    mkdirSync(join(root, "site"));
-    writeFileSync(join(root, "site/proa-refresh.json"), "{}");
+    mkdirSync(join(root, "site/data/performance"), { recursive: true });
+    writeFileSync(join(root, "site/data/performance/proa-refresh.json"), "{}");
     await expect(verifyPublication(root)).rejects.toThrow(
       "Proa-only review refresh selected",
     );

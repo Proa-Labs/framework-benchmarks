@@ -171,7 +171,7 @@ export function validateProaPair(suite, pair, base, manifest) {
   );
 }
 export function loadProaRefresh(root, input, buffers) {
-  const manifest = read(join(root, "site/proa-refresh.json"));
+  const manifest = read(join(root, "site/data/performance/proa-refresh.json"));
   assert.equal(manifest.schemaVersion, 1);
   assert.equal(manifest.reviewOnly, true);
   assert.deepEqual(

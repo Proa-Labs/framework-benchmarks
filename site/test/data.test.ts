@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { summarize } from "../../suspense-load/stats.mjs";
 import type { Inputs } from "../benchmark-types.ts";
+import featureProjects from "../data/features/projects.json" with {
+  type: "json",
+};
 import { loadInputs, normalize } from "../data.ts";
 import { required } from "../required.ts";
 import { createDashboardModel } from "../src/charts/dashboard-model.ts";
@@ -321,6 +324,15 @@ test("server-suite engines appear once in the ecosystem", async () => {
   const data = normalize(input);
   assert.ok(data.http.rows.cards.some((r) => r.id === "sveltekit"));
   assert.equal(data.ecosystem.filter((r) => r.id === "sveltekit").length, 1);
+  const duplicate = structuredClone(input);
+  duplicate.catalog.push({
+    ...duplicate.catalog[0],
+    id: featureProjects[0].id,
+  });
+  assert.throws(
+    () => normalize(duplicate),
+    /project metadata must have unique IDs/,
+  );
 });
 
 test("shared URLs recover from invalid controls and preserve intentional empty filters", async () => {

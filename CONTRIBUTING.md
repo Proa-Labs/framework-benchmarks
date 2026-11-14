@@ -47,11 +47,12 @@ complete owned output using its declared native API. HTTP and streaming are sepa
 | HTTP / streaming contracts | `page-load/scenario.mjs` and `suspense-load/scenario.mjs` |
 | Files included in load/startup source fingerprints | `<suite>/sources.json` |
 | Measurement storage, source snapshots, atomic writes | `tooling/captures.mjs` |
-| Display metadata, logos and classifications | `site/catalog.json`, `site/public/logos/` |
-| Feature definitions / primary-source findings | `site/feature-definitions.json`, `site/feature-reviews.json`, `site/feature-projects.json` |
+| Display metadata, logos and classifications | `site/data/performance/catalog.json`, `site/data/branding/`, `site/public/logos/` |
+| Feature definitions / primary-source findings | `site/data/features/definitions.json`, `site/data/features/reviews/<framework>.json`, `site/data/features/projects.json` |
 
 The suite registry also supplies the website's capture paths. It does not put
 render-only timings, HTTP capacity and startup into a common scoring formula.
+See [`site/data/README.md`](site/data/README.md) for adding or updating site inputs.
 
 ## Add a renderer
 

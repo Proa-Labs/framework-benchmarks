@@ -105,13 +105,11 @@ export async function startServer({
     };
     watchers.push(
       watch(siteRoot, (_event, name) => {
-        if (
-          name &&
-          /^(feature.*\.(ts|json)|catalog\.json|proa-refresh\.json|data\.ts)$/.test(
-            name,
-          )
-        )
+        if (name && /^(feature.*\.ts|proa-refresh\.ts|data\.ts)$/.test(name))
           changed();
+      }),
+      watch(join(siteRoot, "data"), { recursive: true }, (_event, name) => {
+        if (name?.endsWith(".json")) changed();
       }),
     );
     for (const capture of Object.values(captures)) {

@@ -18,7 +18,9 @@ import type {
   Renderer,
   View,
 } from "./benchmark-types.ts";
-import featureProjects from "./feature-projects.json" with { type: "json" };
+import featureProjects from "./data/features/projects.json" with {
+  type: "json",
+};
 import { frameworkRows } from "./framework-data.ts";
 import { applyProaRefresh } from "./proa-refresh.ts";
 import { required } from "./required.ts";
@@ -142,7 +144,7 @@ export async function loadInputs(
   input.roster = contract.roster;
   input.workloadManifest = contract.workloads;
   input.catalog = JSON.parse(
-    await readFile(join(root, "site/catalog.json"), "utf8"),
+    await readFile(join(root, "site/data/performance/catalog.json"), "utf8"),
   );
   const processArtifact = input.rendering.raw_artifacts.find((artifact) =>
     /process summaries/i.test(artifact.label),
@@ -157,7 +159,10 @@ export async function loadInputs(
       "utf8",
     ),
   );
-  if (refresh && existsSync(join(root, "site/proa-refresh.json")))
+  if (
+    refresh &&
+    existsSync(join(root, "site/data/performance/proa-refresh.json"))
+  )
     applyProaRefresh(root, input, buffers);
   input.digests = Object.fromEntries(
     Object.entries(buffers).map(([id, buffer]) => [
@@ -181,6 +186,13 @@ export function normalize(input: Inputs): BenchmarkData {
     processSummaries,
     digests,
   } = input;
+  const projectIds = [...catalog, ...featureProjects].map(
+    (project) => project.id,
+  );
+  requireValue(
+    new Set(projectIds).size === projectIds.length,
+    "project metadata must have unique IDs across the rendering catalog and additional projects",
+  );
   for (const project of catalog) {
     for (const [workload, support] of Object.entries(
       project.renderingUnsupported || {},
@@ -539,7 +551,7 @@ export function normalize(input: Inputs): BenchmarkData {
     const refresh = input.reviewRefresh?.[view];
     if (!refresh) continue;
     output[view].reviewRefresh = refresh;
-    output[view].source = "site/proa-refresh.json";
+    output[view].source = "site/data/performance/proa-refresh.json";
     output[view].note += ` ${refresh.note}`;
     output[view].host = {
       ...output[view].host,

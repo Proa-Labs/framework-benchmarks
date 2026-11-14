@@ -40,7 +40,6 @@ import { join } from "node:path";
 import { chromium } from "playwright";
 import { siteRoot } from "../build.ts";
 import { startServer } from "../dev.ts";
-import featureProjects from "../feature-projects.json" with { type: "json" };
 import { features } from "../feature-schema.ts";
 import { contrastRatio, readableBrand } from "../src/brand-colors.ts";
 import { sortCoverageRows } from "../src/feature-summary.ts";
@@ -283,7 +282,7 @@ try {
   await page.locator('[data-section="ecosystem"]').click();
   assert.equal(
     await page.locator(".fw-catalog-row").count(),
-    20 + featureProjects.length,
+    benchmarkData.ecosystem.length,
   );
   await navigate(
     `${server.url}/?view=http&chart=table&workload=table&http=rss&selected=react,marko`,
