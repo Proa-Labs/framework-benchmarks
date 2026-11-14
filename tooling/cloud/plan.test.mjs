@@ -159,6 +159,16 @@ test("resume reuses complete archives and rejects a changed archive before launc
       success.stdout.toString().match(/reusing retained complete run/g)?.length,
     ).toBe(5);
     expect(JSON.parse(readFileSync(statePath)).status).toBe("smoke-complete");
+    const selection = join(stage, "site/data/performance/proa-refresh.json");
+    const original = readFileSync(selection);
+    state.options.smoke = false;
+    writeFileSync(statePath, JSON.stringify(state));
+    // Empty archives cannot promote old captures as a replacement campaign.
+    // Failed publication validation must retain the preview selection.
+    const invalidPublication = run();
+    expect(invalidPublication.status).not.toBe(0);
+    expect(readFileSync(selection)).toEqual(original);
+    expect(JSON.parse(readFileSync(statePath)).status).toBe("failed");
     writeFileSync(join(temp, "rendering.tar.gz"), "corrupted");
     expect(run().status).not.toBe(0);
     expect(JSON.parse(readFileSync(statePath)).status).toBe("failed");

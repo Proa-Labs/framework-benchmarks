@@ -48,7 +48,10 @@ case "$suite" in
       streaming) entry=suspense-load/run.mjs ;;
       startup) entry=cold-start/run.mjs ;;
     esac
-    if [[ "$suite" != startup ]]; then args+=(--workers 24); fi
+    # The faster Proa stream needs more request-generation capacity. Use the
+    # same 32-worker generator for every competitor in this comparison.
+    if [[ "$suite" == streaming ]]; then args+=(--workers 32)
+    elif [[ "$suite" == http ]]; then args+=(--workers 24); fi
     taskset -c 1-7,9-15 bun "$entry" "${args[@]}"
     ;;
   *) echo "Unknown suite: $suite" >&2; exit 2 ;;

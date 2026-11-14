@@ -3,7 +3,14 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
-import { mkdir, readFile, rename, symlink, writeFile } from "node:fs/promises";
+import {
+  mkdir,
+  readFile,
+  rename,
+  rm,
+  symlink,
+  writeFile,
+} from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
@@ -384,13 +391,25 @@ try {
         "Smoke orchestration complete; these results cannot satisfy publication readiness.",
       );
     } else {
-      const verified = await verifyPublication(stage);
-      assert.equal(
-        verified.campaignId,
-        options.campaignId,
-        "Collected results belong to a different campaign",
-      );
-      assert.equal(verified.protocol, "per-suite-host-v1");
+      // A complete campaign replaces the preview's partial selection only in
+      // the staging checkout. Keep the PR's merge/deploy gate intact, and put
+      // the selection back if any capture or source verification fails.
+      const selection = join(stage, "site/data/performance/proa-refresh.json");
+      const original = existsSync(selection) ? await readFile(selection) : null;
+      let verified;
+      try {
+        await rm(selection, { force: true });
+        verified = await verifyPublication(stage);
+        assert.equal(
+          verified.campaignId,
+          options.campaignId,
+          "Collected results belong to a different campaign",
+        );
+        assert.equal(verified.protocol, "per-suite-host-v1");
+      } catch (error) {
+        if (original) await writeFile(selection, original);
+        throw error;
+      }
       console.log(
         `Publication ready: ${verified.campaignId} (${verified.protocol})`,
       );

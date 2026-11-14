@@ -25,6 +25,8 @@ Run the five independent comparison suites concurrently, each on its own
 its product-scaling diagnostic run sequentially on the same worker. Competitors
 inside a suite are never sharded or measured concurrently. Compilation and
 setup finish before that worker starts measuring.
+Streaming uses 32 load-generator workers for every competitor; HTTP and
+Framework SSR use 24. Generator validity remains mandatory.
 
 Install all JavaScript workspaces with `bun install --frozen-lockfile` first. The controller needs
 Python 3.12+, `git`, `tar` and an authenticated `kubectl` context.
@@ -63,7 +65,11 @@ A forced process kill can leave a job until that deadline; the campaign manifest
 retains its name for inspection. Resume does not splice partial suite results.
 
 A complete campaign is extracted into `<out>/validated`, then checked with
-`tooling/publication.mjs`. Archive extraction rejects traversal, links, duplicate
+`tooling/publication.mjs`. The staging checkout drops the old Proa-only preview
+selection before validating the full replacement campaign and restores it if
+validation fails. The original checkout's selection and merge/deploy gate stay
+in place until the validated campaign is selected there.
+Archive extraction rejects traversal, links, duplicate
 entries and non-result paths. Existing working-tree results are not replaced.
 Review the staged result diff before copying it into a task branch. Regenerate
 all derived reports and figures with `bun run refresh`, then run `bun run check`
