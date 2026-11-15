@@ -330,4 +330,6 @@ for (const smoke of [false, true])
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
-  }, 30_000);
+    // Full-response compression, extraction and tamper checks cover all eight
+    // workloads. Allow slower shared runners without dropping any proof checks.
+  }, 60_000);

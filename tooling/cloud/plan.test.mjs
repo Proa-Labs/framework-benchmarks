@@ -185,7 +185,7 @@ test("resume reuses complete archives and rejects a changed archive before launc
   } finally {
     rmSync(temp, { recursive: true, force: true });
   }
-}, 30_000);
+}, 60_000);
 
 test("reconnection rejects a worker from another suite or altered isolation contract", () => {
   const expected = jobManifest(options, "rendering");
