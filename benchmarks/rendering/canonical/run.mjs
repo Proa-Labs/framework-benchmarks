@@ -25,6 +25,11 @@ import {
   captureId as newCaptureId,
   retainCapture,
 } from "../../../tooling/capture/captures.mjs";
+import {
+  runWithMemory,
+  summarizeMemory,
+  validateProcessMemory,
+} from "../../../tooling/capture/process-memory.mjs";
 import { writeRawJson } from "../../../tooling/capture/raw.mjs";
 import { acquireRunLock, hostMetadata } from "../../../tooling/load/driver.mjs";
 import { repositoryRoot } from "../../../tooling/repository.mjs";
@@ -434,9 +439,30 @@ function invocation(rendererId, workloadId, extraArguments) {
   };
 }
 
-function runCell(rendererId, workloadId, extraArguments) {
+function runCell(
+  rendererId,
+  workloadId,
+  extraArguments,
+  collectMemory = false,
+) {
   const selected = invocation(rendererId, workloadId, extraArguments);
-  return run(selected.command, selected.args, selected.options);
+  // Showcase dispatch records its own native child's RSS. Measuring the outer
+  // Bun dispatcher here would rank launcher memory instead of the renderer.
+  const showcase =
+    workloadManifest.workloads.find((w) => w.id === workloadId)?.fixture ===
+    "showcase-v1";
+  if (!collectMemory || showcase)
+    return run(selected.command, selected.args, selected.options);
+  const result = runWithMemory(
+    selected.command,
+    selected.args,
+    selected.options,
+  );
+  const path = extraArguments[extraArguments.indexOf("--out") + 1];
+  const cell = JSON.parse(readFileSync(path, "utf8"));
+  cell.memory = result.memory;
+  writeFileSync(path, JSON.stringify(cell));
+  return result.stdout;
 }
 
 function sha256(value) {
@@ -663,15 +689,21 @@ function benchmark(temporaryDirectory, activeWorkloads = workloads) {
           temporaryDirectory,
           `run-${repeat}-${workload.id}-${rendererId}.json`,
         );
-        const output = runCell(rendererId, workload.id, [
-          "--iterations",
-          String(iterations),
-          "--warmup",
-          String(warmup),
-          "--out",
-          resultPath,
-        ]).trim();
+        const output = runCell(
+          rendererId,
+          workload.id,
+          [
+            "--iterations",
+            String(iterations),
+            "--warmup",
+            String(warmup),
+            "--out",
+            resultPath,
+          ],
+          true,
+        ).trim();
         const cell = JSON.parse(readFileSync(resultPath, "utf8"));
+        validateProcessMemory(cell.memory);
         if (rendererId === "proa") validateProaRenderRun(cell);
         if (cell.framework_id !== rendererId || cell.workload !== workload.id) {
           throw new Error(
@@ -750,6 +782,7 @@ function benchmark(temporaryDirectory, activeWorkloads = workloads) {
         warmups_per_process: cells[0].warmup,
         output_bytes: cells[0].output_bytes,
         allocation_policy: cells[0].allocation_policy,
+        memory: summarizeMemory(cells),
       };
     }
   }

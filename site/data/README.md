@@ -57,7 +57,8 @@ Generation needs Playwright Chromium (`bun node_modules/playwright/cli.js instal
 
 Showcase previews retain the CSS embedded in each pinned Proa page.
 `performance/showcase/proa.css` is the original utility sheet requested by the
-Airbnb page, with its revision and SHA-256 in `assets.json`. It replaces that
+legacy Airbnb page, with its revision and SHA-256 in `assets.json`. The current
+public Airbnb fixture contains its own stylesheet and does not request it. It replaces that
 page's `/proa.css` link in the same cascade position. Do not add the site's
 Tailwind stylesheet to these documents: its reset changes their typography and
 layout. Refresh the snapshot alongside the upstream showcase fixtures.

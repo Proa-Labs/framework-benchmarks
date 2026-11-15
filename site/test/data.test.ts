@@ -66,11 +66,18 @@ test("renderer refreshes preserve native output and peer dates, and reject stale
       data.rendering.rows[workload.id].find((r) => r.id === "askama"),
     );
     assert.equal(proa.captureId, input.rendering.capture_id);
-    assert.equal(proa.capturedAt, input.rendering.captured_at);
+    assert.equal(
+      proa.capturedAt,
+      input.rendering.workloadCaptures?.[workload.id]?.capturedAt ??
+        input.rendering.captured_at,
+    );
     assert.equal(
       peer.capturedAt,
-      input.rendering.refresh?.baseline_captured_at ||
-        input.rendering.captured_at,
+      input.rendering.workloadCaptures?.[workload.id]?.capturedAt ??
+        (input.reviewRefresh?.rendering?.rendererIds?.includes("askama")
+          ? input.rendering.captured_at
+          : input.rendering.refresh?.baseline_captured_at ||
+            input.rendering.captured_at),
     );
     assert.match(proa.outputBoundary, /RenderBuffer/);
     assert.equal(
@@ -279,7 +286,10 @@ test("full-framework measurements stay separate and reject invalid publication c
       `?view=framework&workload=${workload.id}`,
     );
     assert.equal(model.state.workload, workload.id);
-    assert.equal(model.getRows().length, 5);
+    assert.equal(
+      model.getRows().length,
+      data.framework.pendingWorkloads?.[workload.id] ? 0 : 5,
+    );
     for (const engine of input.framework.engines) {
       const row = required(
         data.framework.workloads[workload.id].find((r) => r.id === engine.id),

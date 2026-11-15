@@ -5,8 +5,10 @@
   "source": {
     "repository": "https://github.com/Proa-Labs/proa",
     "revision": "ceffd9f305acabbb0584fa181df4f4e2d7883e94",
-    "exporterSha256": "ec8b9c5d7fef71be5b85718366d6c5bcd57c8606e01c9e82335fdd879f483237",
+    "exporterSha256": "5f5431ffba17d16c7a62daf7848944bb0c32935823fe8a848e4ba6d371d00460",
     "projection": "SSR business HTML and original CSS; browser scripts and activation attributes omitted",
+    "route": "/showcase/nike/proa",
+    "renderer": "proa_showcase::nike::catalog::render_into",
     "htmlSha256": "7b1567731178697fc315441422f519ed1295f43ffb80d5fc77335819e74a49f4"
   },
   "root": 0,

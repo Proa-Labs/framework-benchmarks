@@ -105,7 +105,12 @@ export async function startServer({
     };
     watchers.push(
       watch(siteRoot, (_event, name) => {
-        if (name && /^(feature.*\.ts|proa-refresh\.ts|data\.ts)$/.test(name))
+        if (
+          name &&
+          /^(feature.*\.ts|proa-refresh\.ts|showcase-status\.ts|data\.ts)$/.test(
+            name,
+          )
+        )
           changed();
       }),
       watch(join(siteRoot, "data"), { recursive: true }, (_event, name) => {

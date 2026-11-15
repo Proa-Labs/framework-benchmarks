@@ -12,18 +12,21 @@ const reviewTest = test.skipIf(
 );
 
 reviewTest(
-  "review selection updates every Proa suite while retaining peer measurements and capture dates",
+  "review selection updates selected runs while retaining other measurements and capture dates",
   async () => {
     const base = (await loadInputs(repositoryRoot, { refresh: false })).input;
     const review = (await loadInputs()).input;
     const data = normalize(review);
+    const refreshedIds = review.reviewRefresh?.rendering?.rendererIds ?? [
+      "proa",
+    ];
     assert.equal(
       data.rendering.rows.cards.find((r) => r.id === "proa")?.p50,
-      1.091,
+      review.rendering.measurements.proa.cards.p50_us,
     );
     assert.equal(createDashboardModel(data).visibleRows()[0].id, "proa");
     for (const renderer of base.rendering.renderers.filter(
-      (r) => r.id !== "proa",
+      (r) => !refreshedIds.includes(r.id),
     ))
       assert.deepEqual(
         review.rendering.measurements[renderer.id],
@@ -34,21 +37,30 @@ reviewTest(
         review[view].engines.filter((e) => e.id !== "proa"),
         base[view].engines.filter((e) => e.id !== "proa"),
       );
-      assert.ok(
-        data[view].reviewRefresh?.note.includes("Separate runs") ||
-          data[view].reviewRefresh?.note.includes("separate runs"),
-      );
+      if (data[view].reviewRefresh)
+        assert.match(data[view].reviewRefresh.note, /separate runs/i);
     }
     for (const row of data.rendering.rows.cards)
       assert.equal(
         row.capturedAt,
-        row.id === "proa"
+        refreshedIds.includes(row.id)
           ? review.rendering.captured_at
           : base.rendering.captured_at,
       );
-    assert.ok(
-      data.streaming.reviewRefresh?.note.includes("32 generator workers"),
-    );
+    if (data.streaming.reviewRefresh)
+      assert.ok(
+        data.streaming.reviewRefresh.note.includes("32 generator workers"),
+      );
+    for (const workload of base.rendering.workloads) {
+      for (const id of refreshedIds) {
+        const row = data.rendering.rows[workload.id].find((r) => r.id === id);
+        assert.equal(
+          row?.p50,
+          review.rendering.measurements[id][workload.id].p50_us,
+        );
+        assert.equal(row?.captureId, review.rendering.capture_id);
+      }
+    }
   },
 );
 

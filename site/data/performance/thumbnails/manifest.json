@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "thumbnails": {
     "airbnb-home.html": {
-      "sourceSha256": "809f24ef9a028b14ce1efeefba2d9dec94e46bd436a2a7215a39796aa46468e8",
+      "sourceSha256": "0022e084e75dd60f032fb0c0af76e551c4ba1aa5b839c16b110eef4845ce9df9",
       "file": "airbnb-home.webp"
     },
     "cards.html": {
@@ -14,8 +14,8 @@
       "file": "espn.webp"
     },
     "framework-airbnb-home.html": {
-      "sourceSha256": "9c4580e557df04b7d73261a961e2d541fcc871cb254c086442b6065b338d6cb7",
-      "file": "framework-airbnb-home.webp"
+      "sourceSha256": "0022e084e75dd60f032fb0c0af76e551c4ba1aa5b839c16b110eef4845ce9df9",
+      "file": "airbnb-home.webp"
     },
     "framework-cards.html": {
       "sourceSha256": "3e994a39f71b6b07e894a870d32763047ab82c9313e3f6ea3b823f6e5b261925",

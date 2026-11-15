@@ -62,6 +62,13 @@
   "overrides": [
     {
       "includes": [
+        "benchmarks/framework-ssr/contract.json",
+        "benchmarks/framework-ssr/contract-v3.json"
+      ],
+      "json": { "formatter": { "expand": "always" } }
+    },
+    {
+      "includes": [
         "benchmarks/framework-ssr/adapters/next/app/(core)/catalog/page.jsx"
       ],
       "linter": {

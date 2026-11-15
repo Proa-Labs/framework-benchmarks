@@ -236,12 +236,17 @@ export function nativeTemplate(
         return ` ${name}="${escaped(value, ctx, root)}"`;
       })
       .join("");
+    // Marko's pinned HTML tag catalog predates <search>. A native dynamic
+    // string tag emits the same element through Marko's normal serializer.
+    const dynamicNativeTag =
+      kind === "marko" && (n.tag === "search" || n.tag.includes("-"));
+    const tag = dynamicNativeTag ? `\${${quote(n.tag)}}` : n.tag;
     return (
-      `<${n.tag}${attrs}>` +
+      `<${tag}${attrs}>` +
       (voidTags.has(n.tag)
         ? ""
         : n.children.map((c) => node(c, ctx, depth, root)).join("") +
-          `</${n.tag}>`)
+          (dynamicNativeTag ? "</>" : `</${n.tag}>`))
     );
   }
   const literal = (value) =>

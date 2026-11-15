@@ -32,6 +32,8 @@ export function applyProaRefresh(
     "startup",
   ] as const) {
     const suite = view;
+    if (!manifest.runs[suite]) continue;
+    const rendererIds = manifest.rendererIds ?? ["proa"];
     const base = input[view];
     const peerId = "capture_id" in base ? base.capture_id : base.captureId;
     const peerDate = "captured_at" in base ? base.captured_at : base.capturedAt;
@@ -39,9 +41,13 @@ export function applyProaRefresh(
     const proaId = "capture_id" in fresh ? fresh.capture_id : fresh.captureId;
     const proaDate =
       "captured_at" in fresh ? fresh.captured_at : fresh.capturedAt;
-    const note = `Proa refreshed to ${manifest.afterRevision.slice(0, 8)} on ${proaDate.slice(0, 10)} at ${proaDate.slice(11, 16)} UTC. Peers retain the ${peerDate.slice(0, 10)} ${peerDate.slice(11, 16)} UTC campaign. Matching isolated GCP C4 machines; separate runs.${view === "streaming" ? " Proa used 32 generator workers; peers used 24. Server limits and offered loads are unchanged." : ""}`;
+    const note =
+      manifest.schemaVersion === 2
+        ? `${manifest.label ?? "Render preview"}: Proa ${manifest.afterRevision.slice(0, 8)}, Sailfish and Askama measured together on ${proaDate.slice(0, 10)} at ${proaDate.slice(11, 16)} UTC. Other rows retain the ${peerDate.slice(0, 10)} ${peerDate.slice(11, 16)} UTC campaign on matching isolated GCP C4 machines. Separate runs; this is not a full-cohort rerun.`
+        : `Proa refreshed to ${manifest.afterRevision.slice(0, 8)} on ${proaDate.slice(0, 10)} at ${proaDate.slice(11, 16)} UTC. Peers retain the ${peerDate.slice(0, 10)} ${peerDate.slice(11, 16)} UTC campaign. Matching isolated GCP C4 machines; separate runs.${view === "streaming" ? " Proa used 32 generator workers; peers used 24. Server limits and offered loads are unchanged." : ""}`;
     const info = {
       renderer: "proa",
+      rendererIds,
       baseline_capture_id: peerId,
       baseline_captured_at: peerDate,
       baseline_sha256: manifest.baseline[suite].sha256,
@@ -65,9 +71,14 @@ export function applyProaRefresh(
         refresh: info,
         proa_output: r.proa_output,
       });
-      input.rendering.measurements.proa = r.measurements.proa;
-      input.rendering.parity.proa = r.parity.proa;
-      input.rendering.versions.Proa = r.versions.Proa;
+      for (const id of rendererIds) {
+        input.rendering.measurements[id] = r.measurements[id];
+        input.rendering.parity[id] = r.parity[id];
+        const label = r.renderers.find((renderer) => renderer.id === id)?.label;
+        if (label)
+          input.rendering.versions[label as keyof typeof r.versions] =
+            r.versions[label as keyof typeof r.versions];
+      }
       const processArtifact = r.raw_artifacts.find((a) =>
         /process summaries/i.test(a.label),
       );
@@ -76,7 +87,9 @@ export function applyProaRefresh(
         join(root, "benchmarks/rendering/results", processArtifact.path),
       ) as Inputs["processSummaries"];
       input.processSummaries = [
-        ...input.processSummaries.filter((r) => r.framework_id !== "proa"),
+        ...input.processSummaries.filter(
+          (r) => !rendererIds.includes(r.framework_id),
+        ),
         ...records,
       ];
     } else {
@@ -119,20 +132,22 @@ export async function copyProaRefreshEvidence(
     `${JSON.stringify(manifest, null, 2)}\n`,
   );
   await Promise.all(
-    Object.entries(sources).map(async ([view, path]) => {
-      await cp(join(root, path), join(target, "baseline", `${view}.json`));
-      const suite = view;
-      await cp(
-        join(
-          root,
-          refreshFolders[suite],
-          "results/raw",
-          manifest.baseline[suite].captureId,
-          "source.tar.gz",
-        ),
-        join(target, "baseline", `${view}-source.tar.gz`),
-      );
-    }),
+    Object.entries(sources)
+      .filter(([view]) => manifest.runs[view])
+      .map(async ([view, path]) => {
+        await cp(join(root, path), join(target, "baseline", `${view}.json`));
+        const suite = view;
+        await cp(
+          join(
+            root,
+            refreshFolders[suite],
+            "results/raw",
+            manifest.baseline[suite].captureId,
+            "source.tar.gz",
+          ),
+          join(target, "baseline", `${view}-source.tar.gz`),
+        );
+      }),
   );
   await Promise.all(
     Object.entries(manifest.runs).flatMap(([suite, lanes]) =>

@@ -5,8 +5,10 @@
   "source": {
     "repository": "https://github.com/Proa-Labs/proa",
     "revision": "ceffd9f305acabbb0584fa181df4f4e2d7883e94",
-    "exporterSha256": "ec8b9c5d7fef71be5b85718366d6c5bcd57c8606e01c9e82335fdd879f483237",
+    "exporterSha256": "5f5431ffba17d16c7a62daf7848944bb0c32935823fe8a848e4ba6d371d00460",
     "projection": "SSR business HTML and original CSS; browser scripts and activation attributes omitted",
+    "route": "/showcase/sentry-otel/proa",
+    "renderer": "proa_showcase::sentry_otel::render_benchmark_rows_into",
     "htmlSha256": "87f28a6ffba0933dc551667be63433d0946ff80ac65760365e9e862ca49dfe19"
   },
   "root": 0,

@@ -83,6 +83,16 @@ function Methodology() {
         process P50s.
       </p>
       {metadata.renderingOutput && <p>{metadata.renderingOutput}</p>}
+      <p>
+        Peak RSS is the most physical memory used by a native renderer process
+        over its lifetime, including startup, prepared data, template
+        initialization, warmup, rendering and output verification. The chart
+        shows the median of the independent process peaks in MiB, with each peak
+        retained in the raw data. The operating system records this separately
+        from the render timer. It is whole-process memory, not bytes allocated
+        per render. Older captures without RSS remain unmeasured. Build tools
+        and benchmark launchers are excluded.
+      </p>
       <h2>Framework SSR</h2>
       <p>
         {metadata.framework.scenario.boundary} This is a separate shared

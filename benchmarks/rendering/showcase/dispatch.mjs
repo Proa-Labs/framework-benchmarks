@@ -2,11 +2,11 @@
 // Process adapter selection and result normalization are untimed. The native
 // driver starts and stops its own clock around fresh owned output construction.
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { runWithMemory } from "../../../tooling/capture/process-memory.mjs";
 import { summarize } from "../../../tooling/stats.mjs";
 import { fixtures } from "./fixture.mjs";
 import { generateTemplates } from "./generate-templates.mjs";
@@ -130,14 +130,14 @@ try {
     }
     if (id === "go-html-template") command = join(generated, "go-admission");
   }
-  execFileSync(command, childArgs, {
+  const native = runWithMemory(command, childArgs, {
     cwd,
     env: { ...process.env, NODE_ENV: "production" },
-    stdio: ["ignore", "pipe", "pipe"],
     maxBuffer: 4 * 1024 * 1024,
   });
   if (!args.includes("--dump-only")) {
     const result = JSON.parse(readFileSync(output, "utf8"));
+    result.memory = native.memory;
     assert.equal(result.framework_id, id);
     assert.equal(result.samples_us.length, result.iterations);
     assert.ok(result.samples_us.every((n) => Number.isFinite(n) && n >= 0));

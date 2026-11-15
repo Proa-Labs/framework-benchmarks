@@ -212,7 +212,7 @@ export function PerformancePage({
             <div
               className="fw-main-heading"
               data-results-title=""
-              hidden={state.view === "rendering"}
+              hidden={state.view === "rendering" && state.render !== "rss"}
             >
               <div>
                 <h2 data-heading="">{model.heading()}</h2>
@@ -271,6 +271,16 @@ export function PerformancePage({
                   Table
                 </button>
               </fieldset>
+              <select
+                data-render-view
+                className="fw-native-select"
+                aria-label="SSR Rendering analysis"
+                hidden={state.view !== "rendering"}
+                defaultValue={state.render}
+              >
+                <option value="p50">Render time</option>
+                <option value="rss">Peak RSS</option>
+              </select>
               <select
                 data-framework-view
                 className="fw-native-select"
@@ -333,8 +343,7 @@ export function PerformancePage({
               hidden={!capture.reviewRefresh}
               className="mt-4 text-sm leading-relaxed text-muted"
             >
-              Proa uses the newer PR #86 run; peers retain the previous
-              campaign. Separate runs on matching C4 machines.{" "}
+              {capture.reviewRefresh?.note}{" "}
               <a
                 href="/data/proa-refresh/manifest.json"
                 className="underline underline-offset-4"

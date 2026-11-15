@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { hydrateRecords, prepareStyles } from "./prepare.mjs";
 
 export const fixtures = [
-  ["airbnb-home", "Airbnb landing page", 49],
+  ["airbnb-home", "Airbnb landing page", 64],
   ["nike-catalog", "Nike catalog", 117],
   ["github-pr", "GitHub PR review", 16],
   ["sentry-otel", "Sentry logs", 400],

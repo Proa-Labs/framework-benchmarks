@@ -50,7 +50,12 @@ const benchmarkData: BenchmarkData = await (
   await fetch(`${server.url}/data/results.json`)
 ).json();
 const renderCount = benchmarkData.rendering.rows.cards.length;
-const renderCells = Object.values(benchmarkData.rendering.rows).flat().length;
+const memoryCount = benchmarkData.rendering.rows.cards.filter(
+  (row) => row.memory,
+).length;
+const renderCells = Object.entries(benchmarkData.rendering.rows)
+  .filter(([id]) => !benchmarkData.rendering.pendingWorkloads?.[id])
+  .flatMap(([, rows]) => rows).length;
 const unrankedIds = benchmarkData.framework.rows
   .filter(
     (row) =>
@@ -135,6 +140,60 @@ try {
     path: join(siteRoot, "test-results/desktop.png"),
     fullPage: true,
   });
+  await page
+    .getByLabel("SSR Rendering analysis", { exact: true })
+    .selectOption("rss");
+  assert.equal(new URL(page.url()).searchParams.get("render"), "rss");
+  assert.equal(await page.locator(".fw-row").count(), memoryCount);
+  if (!memoryCount)
+    assert.match(
+      required(await page.locator(".fw-empty").textContent()),
+      /RSS was not recorded/,
+    );
+  else
+    assert.match(
+      required(await page.locator(".fw-row").first().textContent()),
+      /MiB/,
+    );
+  assert.equal(await page.locator('[data-chart="balls"]').isVisible(), false);
+  await reload();
+  assert.equal(await page.locator("[data-render-view]").inputValue(), "rss");
+  await page.getByText("Method & data", { exact: true }).click();
+  const memoryExport = JSON.parse(
+    decodeURIComponent(
+      required(await page.locator("[data-json]").getAttribute("href"))
+        .split(",")
+        .slice(1)
+        .join(","),
+    ),
+  );
+  assert.equal(
+    memoryExport.measurementStatus,
+    memoryCount ? "measured" : "not measured",
+  );
+  assert.equal(memoryExport.rows.length, memoryCount);
+  await page.locator('[data-chart="compare"]').click();
+  assert.match(
+    required(await page.locator(".fw-comparison").textContent()),
+    /MiB/,
+  );
+  assert.doesNotMatch(
+    required(await page.locator(".fw-comparison").textContent()),
+    /µs/,
+  );
+  await page.locator('[data-workload="cards"]').click();
+  await page.locator('[data-chart="bars"]').click();
+  await page.screenshot({
+    path: join(siteRoot, "test-results/render-memory.png"),
+    fullPage: true,
+  });
+  await page
+    .getByLabel("SSR Rendering analysis", { exact: true })
+    .selectOption("p50");
+  assert.equal(await page.locator(".fw-row").count(), renderCount);
+  checks.push(
+    "render RSS selection survives reload and exports only recorded memory",
+  );
   const initialTheme = required(
     await page.locator("html").getAttribute("data-theme"),
   );
@@ -385,6 +444,20 @@ try {
     await navigate(
       `${server.url}/?view=streaming&chart=lines&stream=completion`,
     );
+    // App readiness precedes the ResizeObserver's chart redraw. Wait for the
+    // measured drawing size before checking typography, including on busy CI.
+    await page.waitForFunction(() => {
+      const charts = [...document.querySelectorAll<SVGSVGElement>(".fw-chart")];
+      return (
+        charts.length === 2 &&
+        charts.every(
+          (svg) =>
+            Math.abs(
+              svg.getBoundingClientRect().width - svg.viewBox.baseVal.width,
+            ) < 1,
+        )
+      );
+    });
     const charts = await page.locator(".fw-chart").evaluateAll((elements) =>
       elements.map((element) => {
         const svg = element as SVGSVGElement;
@@ -515,7 +588,11 @@ try {
     assert.ok(comparisonExport.unmeasured?.some((row) => row.id === id));
   assert.deepEqual(
     new Set(comparisonExport.rows.map((r) => r.workload)),
-    new Set(benchmarkData.workloads.map((w) => w.id)),
+    new Set(
+      benchmarkData.workloads
+        .filter((w) => !benchmarkData.rendering.pendingWorkloads?.[w.id])
+        .map((w) => w.id),
+    ),
   );
   await page.locator('[data-workload="products"]').click();
   assert.equal(await page.locator(".fw-row").count(), renderCount);
@@ -538,9 +615,12 @@ try {
     unrankedIds.length,
   );
   for (const workload of benchmarkData.workloads) {
-    const adapted = benchmarkData.rendering.rows[workload.id].find(
-      (row) => row.id === "exact",
-    );
+    const pending = benchmarkData.rendering.pendingWorkloads?.[workload.id];
+    const adapted = pending
+      ? undefined
+      : benchmarkData.rendering.rows[workload.id].find(
+          (row) => row.id === "exact",
+        );
     const cell = page.locator(
       adapted
         ? `[data-stat-suite="rendering"][data-focus="exact"][data-stat-workload="${workload.id}"]`
@@ -548,12 +628,20 @@ try {
     );
     if (adapted)
       assert.match(adapted.fixture ?? "", /^exact-(?:showcase-)?native-v1$/);
-    else assert.match(required(await cell.textContent()), /Unsupported/);
+    else
+      assert.match(
+        required(await cell.textContent()),
+        pending ? /Not measured/ : /Unsupported/,
+      );
     await cell.hover();
     const popup = page.locator("[data-percentile-popup]");
     await popup.waitFor({ state: "visible" });
-    const support = benchmarkData.renderers.find((row) => row.id === "exact")
-      ?.renderingUnsupported?.[workload.id];
+    const exactProject = benchmarkData.renderers.find(
+      (row) => row.id === "exact",
+    );
+    const support = pending
+      ? { reason: pending, version: exactProject?.version ?? "" }
+      : exactProject?.renderingUnsupported?.[workload.id];
     assert.equal(
       await popup.locator(".fw-popover-scope p").first().textContent(),
       adapted ? required(adapted.adaptation).reason : required(support).reason,
@@ -607,7 +695,12 @@ try {
   }
   const adaptedRows = comparisonExport.rows.filter((row) => row.id === "exact");
   if (adaptedRows.length) {
-    assert.equal(adaptedRows.length, benchmarkData.workloads.length);
+    assert.equal(
+      adaptedRows.length,
+      benchmarkData.workloads.filter(
+        (w) => !benchmarkData.rendering.pendingWorkloads?.[w.id],
+      ).length,
+    );
     for (const row of adaptedRows) {
       assert.match(row.fixture ?? "", /^exact-(?:showcase-)?native-v1$/);
       assert.ok(row.adaptation?.source);
@@ -689,7 +782,12 @@ try {
   await page.locator("[data-framework-view]").selectOption("p50");
   for (const workload of relatedData.framework.workloadDefinitions) {
     await page.locator(`[data-workload="${workload.id}"]`).click();
-    assert.equal(await page.locator(".fw-row").count(), 5);
+    const pending = relatedData.framework.pendingWorkloads?.[workload.id];
+    assert.equal(await page.locator(".fw-row").count(), pending ? 0 : 5);
+    if (pending) {
+      assert.equal(await page.locator(".fw-empty").textContent(), pending);
+      continue;
+    }
     for (const row of relatedData.framework.workloads[workload.id]) {
       const cell = page.locator(`.fw-row[data-focus="${row.id}"]`);
       assert.equal(
@@ -889,8 +987,9 @@ try {
       await navigate(
         `${server.url}/?view=${view}&workload=${workload.id}&chart=bars`,
       );
-      const expectedRows =
-        view === "rendering"
+      const expectedRows = benchmarkData[view].pendingWorkloads?.[workload.id]
+        ? 0
+        : view === "rendering"
           ? benchmarkData.rendering.rows[workload.id].length
           : benchmarkData.framework.workloads[workload.id].length;
       assert.equal(await page.locator(".fw-row").count(), expectedRows);

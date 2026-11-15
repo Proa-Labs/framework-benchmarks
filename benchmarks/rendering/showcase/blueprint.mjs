@@ -6,6 +6,13 @@ import { parse } from "parse5";
 const omitted = new Set(["script"]);
 export function readDocument(html, { addRequest = false } = {}) {
   const document = parse(html);
+  const countIslands = (node) =>
+    Number(node.tagName === "rsjs-island") +
+    (node.childNodes ?? []).reduce(
+      (sum, child) => sum + countIslands(child),
+      0,
+    );
+  const singleIslandRoot = countIslands(document) === 1;
   function read(node) {
     if (node.nodeName === "#comment" || node.nodeName === "#documentType")
       return null;
@@ -55,7 +62,15 @@ export function readDocument(html, { addRequest = false } = {}) {
         prefix ? `${prefix}:${name}` : name,
         value,
       ]);
-    if (node.tagName === "rsjs-island" && attrs.length === 0) return children;
+    // A single activation root is transport. In a multi-island page only the
+    // outer document wrapper is transport: nested wrappers affect CSS selectors
+    // (notably Airbnb rail spacing) and must remain ordinary native elements.
+    if (
+      node.tagName === "rsjs-island" &&
+      attrs.length === 0 &&
+      (singleIslandRoot || node.parentNode?.tagName === "body")
+    )
+      return children;
     return { kind: "element", tag: node.tagName, attrs, children };
   }
   const tree = read(document);

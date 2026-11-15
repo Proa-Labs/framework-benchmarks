@@ -50,6 +50,11 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
   )
     fail("PROA refresh provenance is missing");
   const expectedRendererIds = roster.renderers.map(({ id }) => id);
+  const refreshedIds = result.refresh?.rendererIds ?? ["proa"];
+  if (!Array.isArray(refreshedIds) || !refreshedIds.includes("proa") ||
+      new Set(refreshedIds).size !== refreshedIds.length ||
+      refreshedIds.some((id) => !expectedRendererIds.includes(id)))
+    fail("refresh renderer IDs are invalid");
   const expectedWorkloadIds = workloadManifest.workloads.map(({ id }) => id);
   const resultWorkloadIds = (result.workloads ?? []).map(({ id }) => id);
   if (
@@ -129,7 +134,7 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
         }
         if (
           measurement.capture_id !==
-          (result.capture_kind === "proa_refresh" && renderer.id !== "proa"
+          (result.capture_kind === "proa_refresh" && !refreshedIds.includes(renderer.id)
             ? result.refresh?.baseline_capture_id
             : result.capture_id)
         ) {

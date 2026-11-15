@@ -88,7 +88,11 @@ export async function prepareNativeJS(id, engine) {
       ssr = require("vue/server-renderer");
     const { compile } = require("@vue/compiler-ssr");
     const { markup, styles, styleContents } = nativeTemplate(definition, "vue");
-    const code = compile(markup, { mode: "function" }).code;
+    const code = compile(markup, {
+      mode: "function",
+      // Vue's pinned HTML catalog does not include the semantic <search> tag.
+      isCustomElement: (tag) => tag === "search" || tag.includes("-"),
+    }).code;
     const ssrRender = new Function("require", code)((name) =>
       name === "vue"
         ? Vue

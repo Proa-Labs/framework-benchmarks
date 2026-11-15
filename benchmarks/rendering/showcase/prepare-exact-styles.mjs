@@ -92,7 +92,10 @@ try {
     deviceScaleFactor: 1,
   });
   await page.route("**/*", (route) => route.abort());
-  for (const { id } of fixtures) {
+  const selected = process.argv.indexOf("--workload");
+  for (const { id } of fixtures.filter(
+    (f) => selected < 0 || f.id === process.argv[selected + 1],
+  )) {
     const { definition, data, prepared } = loadFixture(id);
     await page.setContent(renderReference(definition, data), {
       waitUntil: "domcontentloaded",

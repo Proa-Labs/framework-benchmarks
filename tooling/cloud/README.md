@@ -1,5 +1,44 @@
 # Parallel GCP benchmark campaigns
 
+## SSR Rendering workload runs
+
+An SSR Rendering rerun can split the eight workloads across isolated matching
+C4 workers. Each worker must measure the **entire 21-renderer roster** for its
+workload, sequentially, using the unchanged five-process warmup/sample policy.
+Build everything before measuring and pin the native processes to CPU 0, leaving
+its SMT sibling idle. Use the same source snapshot, campaign ID, toolchain
+versions and hardware/OS profile on every worker.
+
+On each worker, use `--workloads <id> --out
+benchmarks/rendering/results/local/rss-<id>.json` with the canonical runner.
+These individual engineering captures are not complete scoreboards. Retain
+their raw directories and source archives when downloading them.
+
+After all eight workers succeed, combine their JSON paths with:
+
+```sh
+bun tooling/capture/rendering-shards.mjs /path/to/framework-benchmarks \
+  /downloads/cards/rss-cards.json /downloads/table/rss-table.json \
+  /downloads/products/rss-products.json /downloads/airbnb-home/rss-airbnb-home.json \
+  /downloads/nike-catalog/rss-nike-catalog.json /downloads/github-pr/rss-github-pr.json \
+  /downloads/sentry-otel/rss-sentry-otel.json /downloads/espn/rss-espn.json
+```
+
+The merger verifies source archives, roster, parity, versions, sampling policy,
+hardware, process repeats and raw RSS observations before changing rendering's
+`latest.json`. It retains the original workload captures and raw process
+summaries, plus a shared source snapshot. The aggregate explicitly records
+separate workload hosts; it never claims that the whole run used one machine.
+Site preparation rechecks the retained shard hashes and reproduces the aggregate.
+
+Peak RSS includes the native process's runtime, prepared data, initialization,
+warmup, rendering and verification. It is distinct from render latency and
+per-render allocations. An SSR-only rerun does not satisfy the separate
+five-suite merge/deployment publication gate.
+Linux workers require GNU time, installed by the pinned cloud bootstrap. The
+collector's regression check allocates a large resident launcher and verifies
+that those pages do not appear in the native child's RSS.
+
 ## Proa-only review refreshes
 
 `site/data/performance/proa-refresh.json` selects the retained before/after Proa captures for a

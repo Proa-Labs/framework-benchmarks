@@ -5,8 +5,10 @@
   "source": {
     "repository": "https://github.com/Proa-Labs/proa",
     "revision": "ceffd9f305acabbb0584fa181df4f4e2d7883e94",
-    "exporterSha256": "ec8b9c5d7fef71be5b85718366d6c5bcd57c8606e01c9e82335fdd879f483237",
+    "exporterSha256": "5f5431ffba17d16c7a62daf7848944bb0c32935823fe8a848e4ba6d371d00460",
     "projection": "SSR business HTML and original CSS; browser scripts and activation attributes omitted",
+    "route": "/showcase/espn/proa",
+    "renderer": "proa_showcase::espn::render_into",
     "htmlSha256": "e387a87863697e9353357c02a9be01abf6f29ca333051e24cf7435b9f5cbefb3"
   },
   "root": 0,

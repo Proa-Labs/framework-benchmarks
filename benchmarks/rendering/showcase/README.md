@@ -8,7 +8,7 @@ They are shared by the SSR Rendering and Framework SSR experiments.
 
 - `fixtures/`: one shared layout and prepared record set per page. The layouts
   retain real collection loops and branches. No checked-in response HTML is
-  needed. Source revision, exporter digest, source HTML digest, and expected
+  needed. Source revision, public route, renderer entrypoint, exporter digest, source HTML digest, and expected
   DOM digest are recorded with each fixture.
 - `import.mjs`: imports freshly exported upstream HTML into those layouts.
   `tooling/fixtures/showcase-import/` is the pinned, linked Proa exporter.
@@ -30,16 +30,28 @@ and renders into it; flattening, parity checks, encoding and destruction remain
 outside its render timer. Full-request measurements additionally include HTTP
 routing and response serialization.
 
-The pages contain 49 Airbnb cards, 117 Nike products, 16 GitHub files with 603
+The pages contain 64 Airbnb cards (32 homes plus the initial hidden experiences/services panels), 117 Nike products, 16 GitHub files with 603
 code rows, 400 Sentry log rows, and the ESPN game with 27 plays. Assets, browser
 activation, image loading, font loading, layout and paint are separate from
 these HTML-rendering measurements.
+
+The Airbnb reference is `/showcase/airbnb/proa`, served by
+`proa_showcase::airbnb::parity::render`. The older `airbnb::home::render_into`
+serves a different demo and must not supply this fixture. Compare exported pages
+with their public routes as well as comparing implementations with each other;
+passing against the same incorrect reference is insufficient.
+
+When a fixture changes, site preparation detects a mismatch with the captured
+DOM/semantic digest. It shows the corrected preview and withholds that workload's
+old rankings and CSV cells until replacement captures pass admission. The raw
+historical capture remains intact. This applies to both SSR experiments.
 
 ## HTML admission
 
 Business elements, classes, attributes, text, collection lengths, branches and
 original inline CSS must match. The shared projection removes scripts, preload
-links, RSJS activation attributes and empty activation wrappers. It adds a
+links, RSJS activation attributes and the outer document activation wrapper. Nested activation wrappers remain
+ordinary native elements because they affect CSS sibling/child selectors. It adds a
 request-control attribute to the first existing body element.
 
 The DOM comparison ignores comments and document-shell edge whitespace,
@@ -47,7 +59,9 @@ coalesces adjacent text nodes, and permits equivalent boolean attributes and
 percent-encoding in image filenames. It preserves whitespace inside page
 elements. React may hoist the title; Next may add equivalent charset/viewport
 metadata and an empty metadata Suspense boundary. Only these known transport
-differences are normalized. CSS rule order and inline declaration order remain
+differences are normalized. Empty inline styles (including serializers' empty
+semicolon) are equivalent to omission; nonempty visibility rules are retained.
+CSS rule order and inline declaration order remain
 significant; differing classes or styles fail admission.
 
 Dioxus SSR 0.6.2 writes dynamic attribute strings verbatim. Its adapter escapes

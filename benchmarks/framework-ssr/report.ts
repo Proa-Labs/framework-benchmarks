@@ -3,6 +3,7 @@ import { summarize } from "../../tooling/stats.mjs";
 import contract from "./contract.json";
 import legacyContract from "./contract-v1.json";
 import threeWorkloads from "./contract-v2.json";
+import originalShowcases from "./contract-v3.json";
 export interface Phase {
   repeat: number;
   concurrency?: number | null;
@@ -103,7 +104,9 @@ export function validateResult(result: Capture, publication = true) {
       ? legacyContract
       : result.scenario.id === threeWorkloads.id
         ? threeWorkloads
-        : contract;
+        : result.scenario.id === originalShowcases.id
+          ? originalShowcases
+          : contract;
   const shard = result.captureKind === "shard";
   const diagnostic = result.captureKind === "smoke" || result.shard?.smoke;
   if (shard) {

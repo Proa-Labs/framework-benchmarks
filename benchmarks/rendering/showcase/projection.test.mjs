@@ -48,3 +48,36 @@ for (const { id } of fixtures)
       assert.throws(() => validateShowcaseHtml(changed, id, "fresh-b"));
     }
   });
+
+test("Airbnb is the public interactive showcase SSR document, including native search landmarks and every mode", () => {
+  const { definition, data } = loadFixture("airbnb-home");
+  assert.equal(definition.source.route, "/showcase/airbnb/proa");
+  assert.equal(
+    definition.source.renderer,
+    "proa_showcase::airbnb::parity::render",
+  );
+  const html = renderReference(definition, data);
+  assert.equal((html.match(/<search[ >]/g) || []).length, 2);
+  assert.equal(
+    (html.match(/<rsjs-island>/g) || []).length,
+    8,
+    "Nested rail wrappers affect CSS sibling selectors",
+  );
+  assert.equal((html.match(/class="air-parity-card"/g) || []).length, 64);
+  assert.equal(fixtures.find((f) => f.id === "airbnb-home").cardinality, 64);
+});
+
+test("empty reactive styles are equivalent to omission, while visibility styles remain contractual", () => {
+  const html = document(
+    "",
+    '<main><span style="">Visible</span><aside style="display:none">Hidden</aside></main>',
+  );
+  assert.equal(
+    canonicalDigest(html),
+    canonicalDigest(html.replace(' style=""', "")),
+  );
+  assert.notEqual(
+    canonicalDigest(html),
+    canonicalDigest(html.replace(' style="display:none"', "")),
+  );
+});

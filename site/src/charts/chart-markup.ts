@@ -66,12 +66,20 @@ export function createChartMarkup(model: DashboardModel) {
   }
   function drawComparison(_rows: ChartRow[]) {
     const workloads = orderedWorkloads();
-    const rowsFor = (workload: string) => data.rendering.rows[workload] || [];
+    const rowsFor = model.renderingRows;
     const measuredIds = new Set(
       workloads.flatMap((w) => rowsFor(w.id).map((r) => r.id)),
     );
     const ids = [
-      ...new Set([...measuredIds, ...data.framework.rows.map((r) => r.id)]),
+      ...new Set([
+        ...measuredIds,
+        ...(state.render === "rss"
+          ? Object.values(data.rendering.rows)
+              .flat()
+              .map((r) => r.id)
+          : []),
+        ...data.framework.rows.map((r) => r.id),
+      ]),
     ].filter((id) => isVisible({ id }));
     if (!ids.length) {
       output.html =
@@ -94,7 +102,7 @@ export function createChartMarkup(model: DashboardModel) {
         ) * 1.04,
       ]),
     );
-    output.html = `<div class="fw-table-scroll" tabindex="0" role="region" aria-label="SSR render latency comparison"><table class="fw-comparison" role="table" style="--fw-workload-count:${workloads.length}" data-renderer-comparison><caption class="sr-only">Prepared data to freshly owned HTML. Every measured cell reports median render latency in microseconds. HTTP request timings are in the Framework SSR experiment.</caption><thead><tr><th scope="col">Framework / renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" aria-label="${esc(w.label)}${state.workload === w.id ? " ↓" : ""} µs: sort by render latency">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>µs</small></button></th>`).join("")}</tr></thead><tbody>${ids
+    output.html = `<div class="fw-table-scroll" tabindex="0" role="region" aria-label="SSR rendering ${metric() === "rss" ? "peak process RSS" : "latency"} comparison"><table class="fw-comparison" role="table" style="--fw-workload-count:${workloads.length}" data-renderer-comparison><caption class="sr-only">Prepared data to freshly owned HTML. ${metric() === "rss" ? "Every measured cell reports median native-process peak RSS in MiB, not per-render allocations." : "Every measured cell reports median render latency in microseconds."} HTTP request timings are in the Framework SSR experiment.</caption><thead><tr><th scope="col">Framework / renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" aria-label="${esc(w.label)}${state.workload === w.id ? " ↓" : ""} ${unit()}: sort by ${metric() === "rss" ? "peak process RSS" : "render latency"}">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>${unit()}</small></button></th>`).join("")}</tr></thead><tbody>${ids
       .map(
         (id) =>
           `<tr ${measuredIds.has(id) ? "data-renderer-row" : "data-renderer-pending"} style="--brand:${required(renderer(id)).color}" class="${state.focus === id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" ${renderer(id)?.renderingAdaptation ? `data-render-adaptation="${id}" data-support-workload="${state.workload}"` : ""} data-focus="${id}" aria-pressed="${state.focus === id}">${label(id, false)}</button></th>${workloads
@@ -110,7 +118,7 @@ export function createChartMarkup(model: DashboardModel) {
                       : "Not measured";
                 return `<td><button type="button" class="fw-support-button text-muted" data-render-support="${id}" data-support-workload="${w.id}" aria-label="${esc(name(id))}, ${esc(w.label)}, ${status}. ${esc(coverage.reason)}" title="${esc(coverage.reason)}">${status}<span aria-hidden="true"> ⓘ</span></button></td>`;
               }
-              return `<td class="fw-comparison-cell"><button type="button" class="fw-comparison-value" data-focus="${id}" data-stat-suite="rendering" data-stat-workload="${w.id}" aria-pressed="${state.focus === id}" aria-label="${esc(name(id))}, ${esc(w.label)}, render, ${fmt(required(cell.p50))} µs" style="--fw-bar-width:${(100 * required(cell.p50)) / required(maxima.get(w.id))}%">${fmt(required(cell.p50))}</button></td>`;
+              return `<td class="fw-comparison-cell"><button type="button" class="fw-comparison-value" data-focus="${id}" data-stat-suite="rendering" data-stat-workload="${w.id}" aria-pressed="${state.focus === id}" aria-label="${esc(name(id))}, ${esc(w.label)}, ${metric() === "rss" ? "peak process RSS" : "render"}, ${fmt(required(cell.p50))} ${unit()}" style="--fw-bar-width:${(100 * required(cell.p50)) / required(maxima.get(w.id))}%">${fmt(required(cell.p50))}</button></td>`;
             })
             .join("")}</tr>`,
       )
@@ -123,7 +131,9 @@ export function createChartMarkup(model: DashboardModel) {
       output.html +=
         '<p class="mt-4 text-sm leading-relaxed text-muted" data-renderer-coverage>Strict rows pass the unchanged HTML fixture; adapted rows are explicitly marked. Hover, focus or tap a status for details. HTTP results are in <a href="?view=framework" class="underline underline-offset-2">Framework SSR ↗</a>.</p>';
     output.note =
-      "Median SSR render latency · µs · lower is better · prepared data → freshly owned HTML · sort by any workload heading · bars scale within each column";
+      metric() === "rss"
+        ? "Median native-process peak RSS · MiB · includes runtime, prepared data and initialization · not per-render allocation · sort by any workload heading"
+        : "Median SSR render latency · µs · lower is better · prepared data → freshly owned HTML · sort by any workload heading · bars scale within each column";
   }
   function renderCatalog() {
     const groups = [
@@ -173,7 +183,9 @@ export function createChartMarkup(model: DashboardModel) {
     const x = (v: number) => (100 * v) / high;
     const note =
       state.view === "rendering"
-        ? "Bar: median render time · box: five process medians · whiskers: min–max"
+        ? metric() === "rss"
+          ? "Bar: median process peak RSS · box: independent process peaks · whiskers: min–max"
+          : "Bar: median render time · box: five process medians · whiskers: min–max"
         : state.view === "startup"
           ? "Bar: median cold start · box: middle 50% of 15 starts · whiskers: min–max"
           : "Bar: median · box: middle 50% of three runs · whiskers: min–max";
@@ -400,6 +412,12 @@ export function createChartMarkup(model: DashboardModel) {
     return chart;
   }
   function drawTable(rows: ChartRow[]) {
+    if (state.view === "rendering" && metric() === "rss") {
+      output.html = `<div class="fw-table-scroll"><table class="fw-data-table"><caption class="sr-only">Native process peak RSS</caption><thead><tr><th scope="col">Renderer</th><th scope="col">Median peak RSS (MiB)</th><th scope="col">Process range (MiB)</th><th scope="col">Processes</th></tr></thead><tbody>${rows.map((r) => `<tr><th scope="row">${label(r.id)}</th><td>${pctFmt(value(r))}</td><td>${pctFmt(Math.min(...samples(r)))}–${pctFmt(Math.max(...samples(r)))}</td><td>${samples(r).length}</td></tr>`).join("")}</tbody></table></div>`;
+      output.note =
+        "Whole-process memory includes runtime and prepared data; not per-render allocation.";
+      return;
+    }
     const stats = rows.map((r) => ({ r, stats: latencyStats(r) }));
     const latencyUnit = stats.find((v) => v.stats)?.stats?.unit || "ms";
     output.html = `<div class="fw-table-scroll"><table class="fw-data-table"><caption class="sr-only">${esc(suites[state.view].title)} · ${esc(unit())}</caption><thead><tr><th scope="col">Renderer</th><th scope="col">${esc(metric() === "p50" ? "Median" : metric())} (${esc(unit())})</th><th scope="col">Latency P50 (${latencyUnit})</th><th scope="col">P95 (${latencyUnit})</th><th scope="col">P99 (${latencyUnit})</th><th scope="col">Errors</th></tr></thead><tbody>${stats.map(({ r, stats }) => `<tr><th scope="row">${label(r.id)}</th><td>${pctFmt(value(r))}</td><td>${pctFmt(stats?.values?.p50)}</td><td>${pctFmt(stats?.values?.p95)}</td><td>${pctFmt(stats?.values?.p99)}</td><td>${r.errors === undefined ? "—" : fmt(r.errors)}</td></tr>`).join("")}</tbody></table></div>`;
@@ -472,8 +490,7 @@ export function createChartMarkup(model: DashboardModel) {
     output = { html: "", note: "", heading: heading() };
     if (mode === "compare") drawComparison(rows);
     else if (!rows.length)
-      output.html =
-        '<div class="fw-empty">No measurements for this selection.</div>';
+      output.html = `<div class="fw-empty">${esc(data[state.view].pendingWorkloads?.[state.workload] ?? (state.view === "rendering" && state.render === "rss" ? "Peak RSS was not recorded in these captures. New benchmark runs will include it." : "No measurements for this selection."))}</div>`;
     else if (
       mode === "lines" &&
       state.view === "streaming" &&

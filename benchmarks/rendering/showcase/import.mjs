@@ -62,7 +62,12 @@ export function canonicalTree(node) {
     return {
       kind: node.kind,
       tag: node.tag,
+      // RSJS condition markers can leave an empty style attribute. Native
+      // serializers omit it; retain every nonempty rule, especially display:none.
       attrs: node.attrs
+        .filter(
+          ([name, value]) => name !== "style" || !/^[;\t\n\f\r ]*$/.test(value),
+        )
         .map(([name, value]) => [name, canonicalAttribute(node, name, value)])
         .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
       children: canonicalChildren(
@@ -205,7 +210,20 @@ async function main() {
       const html = readFileSync(join(directory, `${id}.html`), "utf8");
       assert.equal(digest(html), manifest.pages[id].sha256);
       assert.equal(Buffer.byteLength(html), manifest.pages[id].bytes);
-      const definition = writeFixture(id, html, { ...source });
+      const page = manifest.pages[id];
+      assert.ok(
+        page.route?.startsWith("/showcase/"),
+        "Export the public showcase route",
+      );
+      assert.ok(
+        page.renderer?.startsWith("proa_"),
+        "Record the route's upstream renderer",
+      );
+      const definition = writeFixture(id, html, {
+        ...source,
+        route: page.route,
+        renderer: page.renderer,
+      });
       console.log(
         `${id}: ${definition.templates.length} native component definitions; source ${definition.source.htmlSha256}`,
       );

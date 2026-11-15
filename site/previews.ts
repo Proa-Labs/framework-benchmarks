@@ -214,12 +214,37 @@ export async function buildPreviews(
         `../benchmarks/framework-ssr/results/raw/${frameworkCapture.captureId}/${filename}`,
         import.meta.url,
       );
-      const body = readRaw(
+      let body = readRaw(
         existsSync(rawPath) ? rawPath.pathname : `${rawPath.pathname}.gz`,
       ).toString("utf8");
-      const expected = (proa.parityByWorkload?.[id] || proa.parity)
-        .semanticSha256;
-      if (validateSemanticHtml(body, "fresh-b", id) !== expected)
+      const parity = proa.parityByWorkload?.[id] || proa.parity;
+      const expected = parity.semanticSha256;
+      if (isShowcase(id)) {
+        const { definition, data } = loadFixture(id);
+        const { canonicalDigest } = await import(
+          "../benchmarks/rendering/showcase/import.mjs"
+        );
+        data.texts[definition.controls.requestIndex] = "fresh-b";
+        const reference = renderReference(definition, data);
+        if (canonicalDigest(body) !== canonicalDigest(reference)) {
+          // A corrected fixture must not inherit the old page's latency. The
+          // dashboard detects this same mismatch and withholds stale rankings.
+          if (
+            createHash("sha256").update(body).digest("hex") !==
+            ("responseSha256" in parity ? parity.responseSha256 : undefined)
+          )
+            throw new Error(`Framework ${id} retained preview was modified`);
+          body = reference;
+          validateSemanticHtml(body, "fresh-b", id);
+        } else if (validateSemanticHtml(body, "fresh-b", id) !== expected)
+          throw new Error(
+            `Framework ${id} preview differs from admitted business content`,
+          );
+      }
+      if (
+        !isShowcase(id) &&
+        validateSemanticHtml(body, "fresh-b", id) !== expected
+      )
         throw new Error(
           `Framework ${id} preview differs from admitted business content`,
         );

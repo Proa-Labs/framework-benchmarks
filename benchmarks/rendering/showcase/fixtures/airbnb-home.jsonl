@@ -1,348 +1,411 @@
-{"texts":["Airbnb - Vacation Rentals, Cabins, Beach Houses","benchmark-request"],"groups":[[1,2,3],[19,20,21],[332,333]],"variants":[]}
-{"texts":["airbnb","/showcase/airbnb/proa","Search modes","Become a host","/showcase/airbnb/proa","display:block;height:16px;width:16px;fill:currentcolor","Language"],"groups":[[4,5,6],[7,8,9]],"variants":[0]}
-{"texts":["","","","","","","mt-5 md:hidden"],"groups":[[10,11,12]],"variants":[1,0]}
-{"texts":["display:block;fill:none;height:16px;width:16px;stroke:currentColor;stroke-width:4;overflow:visible","Search","Where do you want to go?","Choose a preset to update the search bar.","Done","home-search-popover","mt-6 flex justify-center"],"groups":[[13,14],[15,16],[17,18]],"variants":[1,1]}
-{"texts":["/images/airbnb/external/4aae4ed7-5939-4e76-b100-e69440ebeae4.png","","","Homes","home-mode-tab active","homes","true"],"groups":[],"variants":[0]}
-{"texts":["/images/airbnb/external/search-icon-1.png","","NEW","Experiences","home-mode-tab","experiences","false"],"groups":[],"variants":[1]}
-{"texts":["/images/airbnb/external/search-icon-2.png","","NEW","Services","home-mode-tab","services","false"],"groups":[],"variants":[1]}
-{"texts":["9","9"],"groups":[],"variants":[]}
-{"texts":["16","16"],"groups":[],"variants":[]}
-{"texts":["23","23"],"groups":[],"variants":[]}
-{"texts":["/images/airbnb/external/4aae4ed7-5939-4e76-b100-e69440ebeae4.png","","","Homes","home-mode-tab active","homes"],"groups":[],"variants":[0]}
-{"texts":["/images/airbnb/external/search-icon-1.png","","NEW","Experiences","home-mode-tab","experiences"],"groups":[],"variants":[1]}
-{"texts":["/images/airbnb/external/search-icon-2.png","","NEW","Services","home-mode-tab","services"],"groups":[],"variants":[1]}
-{"texts":["Where","home-search-label"],"groups":[],"variants":[]}
-{"texts":["Search destinations","home-search-value"],"groups":[],"variants":[]}
-{"texts":["When","home-search-label"],"groups":[],"variants":[]}
-{"texts":["Add dates","home-search-value"],"groups":[],"variants":[]}
-{"texts":["Who","home-search-label"],"groups":[],"variants":[]}
-{"texts":["Add guests","home-search-value"],"groups":[],"variants":[]}
-{"texts":["home-mode-panel active","homes"],"groups":[[22,23,24]],"variants":[]}
-{"texts":["home-mode-panel","experiences"],"groups":[[25,26]],"variants":[]}
-{"texts":["home-mode-panel","services"],"groups":[[27,28]],"variants":[]}
-{"texts":["Popular homes in Los Angeles","","homes-rail-0","Scroll left","homes-rail-0","Scroll right","homes-rail-0"],"groups":[[29,30,31],[38,39,40,41,42,43,44]],"variants":[0]}
-{"texts":["Featured hotels in Los Angeles","A collection of independent and handpicked hotels","homes-rail-1","Scroll left","homes-rail-1","Scroll right","homes-rail-1"],"groups":[[32,33,34],[45,46,47,48,49,50,51]],"variants":[1]}
-{"texts":["Stay by the beach in Malibu","Ocean-facing stays with relaxed design details","homes-rail-2","Scroll left","homes-rail-2","Scroll right","homes-rail-2"],"groups":[[35,36,37],[52,53,54,55,56,57,58]],"variants":[1]}
-{"texts":["Book experiences led by locals","Design-minded activities around Los Angeles","experiences-rail-0","Scroll left","experiences-rail-0","Scroll right","experiences-rail-0"],"groups":[[],[59,60,61,62,63,64,65]],"variants":[2]}
-{"texts":["Food, movement, and culture","Small-group experiences with polished presentation","experiences-rail-1","Scroll left","experiences-rail-1","Scroll right","experiences-rail-1"],"groups":[[],[66,67,68,69,70,71,72]],"variants":[2]}
-{"texts":["Services for your stay","Private chefs, photography, and wellness add-ons","services-rail-0","Scroll left","services-rail-0","Scroll right","services-rail-0"],"groups":[[],[73,74,75,76,77,78,79]],"variants":[2]}
-{"texts":["Top-rated service pros nearby","Curated services that feel native to the Airbnb flow","services-rail-1","Scroll left","services-rail-1","Scroll right","services-rail-1"],"groups":[[],[80,81,82,83,84,85,86]],"variants":[2]}
-{"texts":["5","12"],"groups":[],"variants":[]}
-{"texts":["12","5"],"groups":[],"variants":[]}
-{"texts":["12","19"],"groups":[],"variants":[]}
-{"texts":["5","12"],"groups":[],"variants":[]}
-{"texts":["12","5"],"groups":[],"variants":[]}
-{"texts":["12","19"],"groups":[],"variants":[]}
-{"texts":["5","12"],"groups":[],"variants":[]}
-{"texts":["12","5"],"groups":[],"variants":[]}
-{"texts":["12","19"],"groups":[],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[87,88]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[89,90]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[91,92]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[93,94]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[95,96]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[97,98]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[99,100]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[101,102]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[103,104]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[105,106]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[107,108]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[109,110]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[111,112]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[113,114]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[115,116]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[117,118]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[119,120]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[121,122]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[123,124]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[125,126]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/listing"],"groups":[[127,128]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[129,130]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[131,132]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[133,134]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[135,136]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[137,138]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[139,140]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[141,142]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[143,144]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[145,146]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[147,148]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[149,150]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[151,152]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[153,154]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[155,156]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[157,158]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[159,160]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[161,162]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[163,164]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[165,166]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[167,168]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[169,170]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[171,172]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[173,174]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[175,176]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[177,178]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[179,180]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[181,182]],"variants":[]}
-{"texts":["/showcase/airbnb/proa/search"],"groups":[[183,184]],"variants":[]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Beach House","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[185,186,187]],"variants":[1]}
-{"texts":["/images/airbnb/deck-wine.jpg","Santa Monica Studio","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[188,189,190]],"variants":[1]}
-{"texts":["/images/airbnb/exterior.jpg","Pacific Palisades Villa","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[191,192,193]],"variants":[1]}
-{"texts":["/images/airbnb/ocean-view.jpg","Topanga Canyon Cabin","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[194,195,196]],"variants":[1]}
-{"texts":["/images/airbnb/deck.jpg","Venice Beach Loft","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[197,198,199]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Airstream Suite","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[200,201,202]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Beach House","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[203,204,205]],"variants":[1]}
-{"texts":["/images/airbnb/exterior.jpg","Pacific Palisades Villa","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[206,207,208]],"variants":[1]}
-{"texts":["/images/airbnb/deck.jpg","Venice Beach Loft","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[209,210,211]],"variants":[1]}
-{"texts":["/images/airbnb/deck-wine.jpg","Santa Monica Studio","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[212,213,214]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Airstream Suite","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[215,216,217]],"variants":[1]}
-{"texts":["/images/airbnb/ocean-view.jpg","Topanga Canyon Cabin","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[218,219,220]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Beach House","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[221,222,223]],"variants":[1]}
-{"texts":["/images/airbnb/exterior.jpg","Pacific Palisades Villa","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[224,225,226]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Airstream Suite","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[227,228,229]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Beach House","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[230,231,232]],"variants":[1]}
-{"texts":["/images/airbnb/deck-wine.jpg","Santa Monica Studio","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[233,234,235]],"variants":[1]}
-{"texts":["/images/airbnb/deck.jpg","Venice Beach Loft","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[236,237,238]],"variants":[1]}
-{"texts":["/images/airbnb/exterior.jpg","Pacific Palisades Villa","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[239,240,241]],"variants":[1]}
-{"texts":["/images/airbnb/ocean-view.jpg","Topanga Canyon Cabin","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[242,243,244]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Airstream Suite","Guest favorite","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[245,246,247]],"variants":[1]}
-{"texts":["/images/airbnb/deck-wine.jpg","Santa Monica Studio","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[248,249,250]],"variants":[1]}
-{"texts":["/images/airbnb/ocean-view.jpg","Topanga Canyon Cabin","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[251,252,253]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Airstream Suite","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[254,255,256]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Beach House","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[257,258,259]],"variants":[1]}
-{"texts":["/images/airbnb/exterior.jpg","Pacific Palisades Villa","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[260,261,262]],"variants":[1]}
-{"texts":["/images/airbnb/deck.jpg","Venice Beach Loft","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[263,264,265]],"variants":[1]}
-{"texts":["/images/airbnb/deck-wine.jpg","Santa Monica Studio","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[266,267,268]],"variants":[1]}
-{"texts":["/images/airbnb/deck.jpg","Venice Beach Loft","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[269,270,271]],"variants":[1]}
-{"texts":["/images/airbnb/exterior.jpg","Pacific Palisades Villa","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[272,273,274]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Beach House","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[275,276,277]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Airstream Suite","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[278,279,280]],"variants":[1]}
-{"texts":["/images/airbnb/deck-wine.jpg","Santa Monica Studio","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[281,282,283]],"variants":[1]}
-{"texts":["/images/airbnb/ocean-view.jpg","Topanga Canyon Cabin","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[284,285,286]],"variants":[1]}
-{"texts":["/images/airbnb/deck.jpg","Venice Beach Loft","Most loved","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[287,288,289]],"variants":[1]}
-{"texts":["/images/airbnb/exterior.jpg","Pacific Palisades Villa","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[290,291,292]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Airstream Suite","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[293,294,295]],"variants":[1]}
-{"texts":["/images/airbnb/ocean-view.jpg","Topanga Canyon Cabin","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[296,297,298]],"variants":[1]}
-{"texts":["/images/airbnb/deck-wine.jpg","Santa Monica Studio","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[299,300,301]],"variants":[1]}
-{"texts":["/images/airbnb/deck.jpg","Venice Beach Loft","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[302,303,304]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Beach House","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[305,306,307]],"variants":[1]}
-{"texts":["/images/airbnb/exterior.jpg","Pacific Palisades Villa","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[308,309,310]],"variants":[1]}
-{"texts":["/images/airbnb/ocean-view.jpg","Topanga Canyon Cabin","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[311,312,313]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Beach House","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[314,315,316]],"variants":[1]}
-{"texts":["/images/airbnb/deck.jpg","Venice Beach Loft","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[317,318,319]],"variants":[1]}
-{"texts":["/images/airbnb/deck-wine.jpg","Santa Monica Studio","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[320,321,322]],"variants":[1]}
-{"texts":["/images/airbnb/bedroom.jpg","Malibu Airstream Suite","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[323,324,325]],"variants":[1]}
-{"texts":["/images/airbnb/exterior.jpg","Pacific Palisades Villa","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[326,327,328]],"variants":[1]}
-{"texts":["/images/airbnb/ocean-view.jpg","Topanga Canyon Cabin","Top rated","filter:drop-shadow(0 1px 2px rgba(0,0,0,.4))","Save to favorites"],"groups":[],"variants":[0]}
-{"texts":[],"groups":[[329,330,331]],"variants":[1]}
-{"texts":["Malibu Beach House","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire home","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$700 for 2 nights","4.92"],"groups":[],"variants":[1]}
-{"texts":["Santa Monica Studio","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire guest suite","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$370 for 2 nights","4.87"],"groups":[],"variants":[1]}
-{"texts":["Pacific Palisades Villa","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire villa","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$1040 for 2 nights","4.95"],"groups":[],"variants":[1]}
-{"texts":["Topanga Canyon Cabin","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire cabin","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$420 for 2 nights","4.89"],"groups":[],"variants":[1]}
-{"texts":["Venice Beach Loft","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire loft","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$550 for 2 nights","4.78"],"groups":[],"variants":[1]}
-{"texts":["Malibu Airstream Suite","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Tiny home","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$590 for 2 nights","4.80"],"groups":[],"variants":[1]}
-{"texts":["Malibu Beach House","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire home","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$700 for 2 nights","4.92"],"groups":[],"variants":[1]}
-{"texts":["Pacific Palisades Villa","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire villa","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$1040 for 2 nights","4.95"],"groups":[],"variants":[1]}
-{"texts":["Venice Beach Loft","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire loft","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$550 for 2 nights","4.78"],"groups":[],"variants":[1]}
-{"texts":["Santa Monica Studio","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire guest suite","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$370 for 2 nights","4.87"],"groups":[],"variants":[1]}
-{"texts":["Malibu Airstream Suite","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Tiny home","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$590 for 2 nights","4.80"],"groups":[],"variants":[1]}
-{"texts":["Topanga Canyon Cabin","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire cabin","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$420 for 2 nights","4.89"],"groups":[],"variants":[1]}
-{"texts":["Malibu Beach House","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire home","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$700 for 2 nights","4.92"],"groups":[],"variants":[1]}
-{"texts":["Pacific Palisades Villa","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire villa","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$1040 for 2 nights","4.95"],"groups":[],"variants":[1]}
-{"texts":["Malibu Airstream Suite","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Tiny home","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$590 for 2 nights","4.80"],"groups":[],"variants":[1]}
-{"texts":["Malibu Beach House","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire home","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$700 for 2 nights","4.92"],"groups":[],"variants":[1]}
-{"texts":["Santa Monica Studio","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire guest suite","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$370 for 2 nights","4.87"],"groups":[],"variants":[1]}
-{"texts":["Venice Beach Loft","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire loft","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$550 for 2 nights","4.78"],"groups":[],"variants":[1]}
-{"texts":["Pacific Palisades Villa","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire villa","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$1040 for 2 nights","4.95"],"groups":[],"variants":[1]}
-{"texts":["Topanga Canyon Cabin","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Entire cabin","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$420 for 2 nights","4.89"],"groups":[],"variants":[1]}
-{"texts":["Malibu Airstream Suite","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Tiny home","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["$590 for 2 nights","4.80"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Santa Monica, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $134 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Topanga, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $147 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Malibu, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $189 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Malibu, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $217 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Pacific Palisades, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $302 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Venice, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $179 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Santa Monica, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $134 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Venice, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $179 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Pacific Palisades, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $302 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Malibu, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $217 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Malibu, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $189 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Santa Monica, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $134 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Topanga, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $147 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Design walk inspired by Venice, California","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Hosted experience","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $179 per guest","4.95"],"groups":[],"variants":[1]}
-{"texts":["Private service for Pacific Palisades Villa","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $325 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Malibu Airstream Suite","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $212 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Topanga Canyon Cabin","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $170 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Santa Monica Studio","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $157 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Venice Beach Loft","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $202 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Malibu Beach House","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $240 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Pacific Palisades Villa","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $325 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Topanga Canyon Cabin","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $170 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Malibu Beach House","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $240 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Venice Beach Loft","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $202 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Santa Monica Studio","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $157 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Malibu Airstream Suite","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $212 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Pacific Palisades Villa","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $325 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":["Private service for Topanga Canyon Cabin","truncate text-[17px] font-medium leading-5 text-[#222]"],"groups":[],"variants":[0]}
-{"texts":["Professional service","mt-1 text-[15px] leading-5 text-[var(--air-muted)]"],"groups":[],"variants":[0]}
-{"texts":["From $170 per visit","5.0"],"groups":[],"variants":[1]}
-{"texts":[],"groups":[[334,335,336]],"variants":[0]}
-{"texts":[],"groups":[[346,347]],"variants":[1]}
-{"texts":["Support"],"groups":[[337,338,339]],"variants":[]}
-{"texts":["Hosting"],"groups":[[340,341,342]],"variants":[]}
-{"texts":["Airbnb"],"groups":[[343,344,345]],"variants":[]}
-{"texts":["Help Center","#support"],"groups":[],"variants":[]}
-{"texts":["AirCover","#support"],"groups":[],"variants":[]}
-{"texts":["Cancellation options","#support"],"groups":[],"variants":[]}
-{"texts":["Airbnb your home","#hosting"],"groups":[],"variants":[]}
-{"texts":["Hosting resources","#hosting"],"groups":[],"variants":[]}
-{"texts":["Community forum","#hosting"],"groups":[],"variants":[]}
-{"texts":["Newsroom","#about"],"groups":[],"variants":[]}
-{"texts":["Careers","#about"],"groups":[],"variants":[]}
-{"texts":["Investors","#about"],"groups":[],"variants":[]}
-{"texts":["© 2026 Proa Labs, Inc. · This is a demo, not a real Airbnb site · Airbnb® is a registered trademark of Airbnb, Inc."],"groups":[],"variants":[0]}
-{"texts":["Built with ","Proa UI","/"," (showcase demo)"],"groups":[],"variants":[1]}
+{"texts":["Airbnb public-home interaction fixture — Proa","benchmark-request"],"groups":[[1,2,3],[4,5,6],[7,8],[9,10,11],[12,13,14,15],[22,23],[37,38,39],[154,155,156,157],[198,199],[244,245],[266,267,268,269,270,271,272],[357,358,359,360,361,362],[363,364],[407,408]],"variants":[]}
+{"texts":["viewport","width=device-width,initial-scale=1"],"groups":[],"variants":[]}
+{"texts":["robots","noindex,nofollow"],"groups":[],"variants":[]}
+{"texts":["proa-preview-smoke-legacy","Coast Stays"],"groups":[],"variants":[]}
+{"texts":["Homes","/images/airbnb/external/search-homes.png","Homes"],"groups":[],"variants":[0]}
+{"texts":["NEW","Experiences","/images/airbnb/external/search-experiences.png","Experiences"],"groups":[],"variants":[1]}
+{"texts":["NEW","Services","/images/airbnb/external/search-services.png","Services"],"groups":[],"variants":[1]}
+{"texts":["display:block;height:16px;width:16px;fill:currentcolor","Choose a language and currency"],"groups":[],"variants":[0]}
+{"texts":["Main navigation menu"],"groups":[],"variants":[1]}
+{"texts":["Refer a Host","#refer"],"groups":[],"variants":[]}
+{"texts":["Find a co-host","#cohost"],"groups":[],"variants":[]}
+{"texts":["Gift cards","#gift"],"groups":[],"variants":[]}
+{"texts":["Homes","/images/airbnb/external/search-homes.png","Anywhere","Where"],"groups":[],"variants":[0]}
+{"texts":["Anytime","When"],"groups":[[16,17]],"variants":[1]}
+{"texts":["Add guests","Who"],"groups":[[18]],"variants":[1]}
+{"texts":["Search"],"groups":[],"variants":[2]}
+{"texts":["Jul ","0"],"groups":[[19,20,21]],"variants":[0]}
+{"texts":["August"],"groups":[],"variants":[1]}
+{"texts":["0"," guests"],"groups":[],"variants":[2]}
+{"texts":["Aug "],"groups":[],"variants":[]}
+{"texts":["Sep "],"groups":[],"variants":[]}
+{"texts":["Oct "],"groups":[],"variants":[]}
+{"texts":[],"groups":[[24,25]],"variants":[]}
+{"texts":[],"groups":[[26,27]],"variants":[]}
+{"texts":["When"],"groups":[],"variants":[0]}
+{"texts":["Add dates"],"groups":[[28,29]],"variants":[1]}
+{"texts":["Who"],"groups":[],"variants":[0]}
+{"texts":["Add guests"],"groups":[[30]],"variants":[1]}
+{"texts":["Jul ","0"," – ","Jul ","0"],"groups":[[31,32,33],[34,35,36]],"variants":[0]}
+{"texts":["weekend"," in ","August"],"groups":[],"variants":[1]}
+{"texts":["0"," guests"],"groups":[],"variants":[2]}
+{"texts":["Aug "],"groups":[],"variants":[]}
+{"texts":["Sep "],"groups":[],"variants":[]}
+{"texts":["Oct "],"groups":[],"variants":[]}
+{"texts":["Aug "],"groups":[],"variants":[]}
+{"texts":["Sep "],"groups":[],"variants":[]}
+{"texts":["Oct "],"groups":[],"variants":[]}
+{"texts":["Suggested destinations","Choose a destination to continue to dates.","Close","Suggested destinations"],"groups":[[40,41,42,43,44,45,46,47,48,49,50,51]],"variants":[0]}
+{"texts":["Choose date type","‹","Move backward to switch to the previous month.","Choose dates","›","Move forward to switch to the next month.","Select a check-in date and then a checkout date.","How long would you like to stay?","Choose a trip length and a month.","How long?","When?","Next","Choose dates"],"groups":[[52,53],[54,55],[144,145,146],[147,148,149]],"variants":[1]}
+{"texts":["Who is coming?","Done","Choose guests"],"groups":[[150,151,152,153]],"variants":[2]}
+{"texts":["⌖","Nearby","Find what is around you"],"groups":[],"variants":[]}
+{"texts":["⌖","Lake Tahoe","Because your wishlist has stays here"],"groups":[],"variants":[]}
+{"texts":["⌖","South Lake Tahoe, CA","Popular lake destination"],"groups":[],"variants":[]}
+{"texts":["⌖","Los Angeles, CA","For sights and city stays"],"groups":[],"variants":[]}
+{"texts":["⌖","San Diego, CA","For its seaside allure"],"groups":[],"variants":[]}
+{"texts":["⌖","San Jose, CA","Near you"],"groups":[],"variants":[]}
+{"texts":["⌖","Yosemite, CA","Popular outdoor destination"],"groups":[],"variants":[]}
+{"texts":["⌖","Las Vegas, NV","For sights and nightlife"],"groups":[],"variants":[]}
+{"texts":["⌖","Tokyo, Japan","For its food and nightlife"],"groups":[],"variants":[]}
+{"texts":["⌖","Joshua Tree, CA","For nature-lovers"],"groups":[],"variants":[]}
+{"texts":["⌖","Paris, France","For its architecture"],"groups":[],"variants":[]}
+{"texts":["⌖","Santa Cruz, CA","Popular beach destination"],"groups":[],"variants":[]}
+{"texts":["Dates","true","true"],"groups":[],"variants":[]}
+{"texts":["Flexible","false","false"],"groups":[],"variants":[]}
+{"texts":[],"groups":[[56,57]],"variants":[0]}
+{"texts":[],"groups":[[142,143]],"variants":[1]}
+{"texts":["July 2026"],"groups":[[58,59],[62,63]],"variants":[]}
+{"texts":["August 2026"],"groups":[[60,61],[64,65]],"variants":[]}
+{"texts":["August 2026"],"groups":[],"variants":[]}
+{"texts":["September 2026"],"groups":[],"variants":[]}
+{"texts":["September 2026"],"groups":[],"variants":[]}
+{"texts":["October 2026"],"groups":[],"variants":[]}
+{"texts":[],"groups":[[66,67,68,69,70,71,72]],"variants":[0]}
+{"texts":[],"groups":[[80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101],[102,103,104,105,106,107,108,109,110]],"variants":[1]}
+{"texts":[],"groups":[[73,74,75,76,77,78,79]],"variants":[0]}
+{"texts":[],"groups":[[111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141]],"variants":[2]}
+{"texts":["S"],"groups":[],"variants":[]}
+{"texts":["M"],"groups":[],"variants":[]}
+{"texts":["T"],"groups":[],"variants":[]}
+{"texts":["W"],"groups":[],"variants":[]}
+{"texts":["T"],"groups":[],"variants":[]}
+{"texts":["F"],"groups":[],"variants":[]}
+{"texts":["S"],"groups":[],"variants":[]}
+{"texts":["S"],"groups":[],"variants":[]}
+{"texts":["M"],"groups":[],"variants":[]}
+{"texts":["T"],"groups":[],"variants":[]}
+{"texts":["W"],"groups":[],"variants":[]}
+{"texts":["T"],"groups":[],"variants":[]}
+{"texts":["F"],"groups":[],"variants":[]}
+{"texts":["S"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["5"],"groups":[],"variants":[]}
+{"texts":["6"],"groups":[],"variants":[]}
+{"texts":["7"],"groups":[],"variants":[]}
+{"texts":["8"],"groups":[],"variants":[]}
+{"texts":["9"],"groups":[],"variants":[]}
+{"texts":["10"],"groups":[],"variants":[]}
+{"texts":["11"],"groups":[],"variants":[]}
+{"texts":["12"],"groups":[],"variants":[]}
+{"texts":["13"],"groups":[],"variants":[]}
+{"texts":["14"],"groups":[],"variants":[]}
+{"texts":["15"],"groups":[],"variants":[]}
+{"texts":["16"],"groups":[],"variants":[]}
+{"texts":["17"],"groups":[],"variants":[]}
+{"texts":["18"],"groups":[],"variants":[]}
+{"texts":["19"],"groups":[],"variants":[]}
+{"texts":["20"],"groups":[],"variants":[]}
+{"texts":["21"],"groups":[],"variants":[]}
+{"texts":["22"],"groups":[],"variants":[]}
+{"texts":["23"],"groups":[],"variants":[]}
+{"texts":["24"],"groups":[],"variants":[]}
+{"texts":["25"],"groups":[],"variants":[]}
+{"texts":["26"],"groups":[],"variants":[]}
+{"texts":["27"],"groups":[],"variants":[]}
+{"texts":["28"],"groups":[],"variants":[]}
+{"texts":["29"],"groups":[],"variants":[]}
+{"texts":["30"],"groups":[],"variants":[]}
+{"texts":["31"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["5"],"groups":[],"variants":[]}
+{"texts":["6"],"groups":[],"variants":[]}
+{"texts":["7"],"groups":[],"variants":[]}
+{"texts":["8"],"groups":[],"variants":[]}
+{"texts":["9"],"groups":[],"variants":[]}
+{"texts":["10"],"groups":[],"variants":[]}
+{"texts":["11"],"groups":[],"variants":[]}
+{"texts":["12"],"groups":[],"variants":[]}
+{"texts":["13"],"groups":[],"variants":[]}
+{"texts":["14"],"groups":[],"variants":[]}
+{"texts":["15"],"groups":[],"variants":[]}
+{"texts":["16"],"groups":[],"variants":[]}
+{"texts":["17"],"groups":[],"variants":[]}
+{"texts":["18"],"groups":[],"variants":[]}
+{"texts":["19"],"groups":[],"variants":[]}
+{"texts":["20"],"groups":[],"variants":[]}
+{"texts":["21"],"groups":[],"variants":[]}
+{"texts":["22"],"groups":[],"variants":[]}
+{"texts":["23"],"groups":[],"variants":[]}
+{"texts":["24"],"groups":[],"variants":[]}
+{"texts":["25"],"groups":[],"variants":[]}
+{"texts":["26"],"groups":[],"variants":[]}
+{"texts":["27"],"groups":[],"variants":[]}
+{"texts":["28"],"groups":[],"variants":[]}
+{"texts":["29"],"groups":[],"variants":[]}
+{"texts":["30"],"groups":[],"variants":[]}
+{"texts":["31"],"groups":[],"variants":[]}
+{"texts":["Clear dates"],"groups":[],"variants":[]}
+{"texts":["Close"],"groups":[],"variants":[]}
+{"texts":["A weekend","true"],"groups":[],"variants":[]}
+{"texts":["A week","false"],"groups":[],"variants":[]}
+{"texts":["A month","false"],"groups":[],"variants":[]}
+{"texts":["August","true"],"groups":[],"variants":[]}
+{"texts":["September","false"],"groups":[],"variants":[]}
+{"texts":["October","false"],"groups":[],"variants":[]}
+{"texts":["Adults","Ages 13 or above","−","Decrease Adults","0","＋","Increase Adults"],"groups":[],"variants":[]}
+{"texts":["Children","Ages 2 – 12","−","Decrease Children","0","＋","Increase Children"],"groups":[],"variants":[]}
+{"texts":["Infants","Under 2","−","Decrease Infants","0","＋","Increase Infants"],"groups":[],"variants":[]}
+{"texts":["Pets","Bringing a service animal?","−","Decrease Pets","0","＋","Increase Pets"],"groups":[],"variants":[]}
+{"texts":["Popular homes in Lake Tahoe"],"groups":[[158,159]],"variants":[]}
+{"texts":["Great hotels for your next trip"],"groups":[[160,161]],"variants":[]}
+{"texts":["Available in South Lake Tahoe this weekend"],"groups":[[162,163]],"variants":[]}
+{"texts":["Stay in San Jose"],"groups":[[164,165]],"variants":[]}
+{"texts":["Popular homes in Lake Tahoe","›","","/showcase/airbnb/proa/search","6 of 9 items showing","‹","Previous","›","Next"],"groups":[],"variants":[0,0]}
+{"texts":[],"groups":[[166,167,168,169,170,171,172,173]],"variants":[1]}
+{"texts":["Great hotels for your next trip","›","Plus, get Airbnb credit when you stay at a featured hotel.","/showcase/airbnb/proa/search","6 of 9 items showing","‹","Previous","›","Next"],"groups":[],"variants":[0,1]}
+{"texts":[],"groups":[[174,175,176,177,178,179,180,181]],"variants":[1]}
+{"texts":["Available in South Lake Tahoe this weekend","›","","/showcase/airbnb/proa/search","6 of 9 items showing","‹","Previous","›","Next"],"groups":[],"variants":[0,0]}
+{"texts":[],"groups":[[182,183,184,185,186,187,188,189]],"variants":[1]}
+{"texts":["Stay in San Jose","›","","/showcase/airbnb/proa/search","6 of 9 items showing","‹","Previous","›","Next"],"groups":[],"variants":[0,0]}
+{"texts":[],"groups":[[190,191,192,193,194,195,196,197]],"variants":[1]}
+{"texts":["/images/airbnb/external/lake-tahoe-01.jpeg","Cabin in Twin Bridges","/showcase/airbnb/proa/listing","Cabin in Twin Bridges","Guest favorite","display:none","Add to wishlist","Cabin in Twin Bridges","$1,255 for 2 nights"," · ★ ","4.89","/showcase/airbnb/proa/listing","Cabin in Twin Bridges"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/lake-tahoe-02.jpeg","Cabin in Carnelian Bay","/showcase/airbnb/proa/listing","Cabin in Carnelian Bay","Guest favorite","display:none","Add to wishlist","Cabin in Carnelian Bay","$1,274 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Cabin in Carnelian Bay"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/lake-tahoe-03.jpeg","Home in South Lake Tahoe","/showcase/airbnb/proa/listing","Home in South Lake Tahoe","Guest favorite","","Add to wishlist","Home in South Lake Tahoe","$1,130 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in South Lake Tahoe"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/lake-tahoe-04.jpeg","Cabin in Tahoe City","/showcase/airbnb/proa/listing","Cabin in Tahoe City","Guest favorite","display:none","Add to wishlist","Cabin in Tahoe City","$1,300 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Cabin in Tahoe City"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/lake-tahoe-05.jpeg","Home in South Lake Tahoe","/showcase/airbnb/proa/listing","Home in South Lake Tahoe","Guest favorite","","Add to wishlist","Home in South Lake Tahoe","$1,445 for 2 nights"," · ★ ","4.98","/showcase/airbnb/proa/listing","Home in South Lake Tahoe"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/lake-tahoe-06.jpeg","Home in Kings Beach","/showcase/airbnb/proa/listing","Home in Kings Beach","Guest favorite","","Add to wishlist","Home in Kings Beach","$953 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in Kings Beach"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/lake-tahoe-07.jpeg","Chalet in Kings Beach","/showcase/airbnb/proa/listing","Chalet in Kings Beach","Guest favorite","","Add to wishlist","Chalet in Kings Beach","$930 for 2 nights"," · ★ ","4.98","/showcase/airbnb/proa/listing","Chalet in Kings Beach"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/lake-tahoe-08.jpeg","Cabin in Kings Beach","/showcase/airbnb/proa/listing","Cabin in Kings Beach","Guest favorite","","Add to wishlist","Cabin in Kings Beach","$733 for 2 nights"," · ★ ","4.85","/showcase/airbnb/proa/listing","Cabin in Kings Beach"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-01.jpeg","Hotel June West L.A","/showcase/airbnb/proa/listing","Hotel June West L.A","Guest favorite","display:none","Add to wishlist","Hotel June West L.A","$468 for 2 nights"," · ★ ","4.81","/showcase/airbnb/proa/listing","Hotel June West L.A"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-02.jpeg","Vagabond Inn Los Angeles at USC","/showcase/airbnb/proa/listing","Vagabond Inn Los Angeles at USC","Guest favorite","display:none","Add to wishlist","Vagabond Inn Los Angeles at USC","$318 for 2 nights"," · ★ ","4.86","/showcase/airbnb/proa/listing","Vagabond Inn Los Angeles at USC"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-03.jpeg","Inn at Venice Beach","/showcase/airbnb/proa/listing","Inn at Venice Beach","Guest favorite","display:none","Add to wishlist","Inn at Venice Beach","$597 for 2 nights"," · ★ ","4.77","/showcase/airbnb/proa/listing","Inn at Venice Beach"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-04.jpeg","Ayres Hotel Manhattan Beach/Hawthorne","/showcase/airbnb/proa/listing","Ayres Hotel Manhattan Beach/Hawthorne","Guest favorite","display:none","Add to wishlist","Ayres Hotel Manhattan Beach/Hawthorne","$366 for 2 nights"," · ★ ","4.63","/showcase/airbnb/proa/listing","Ayres Hotel Manhattan Beach/Hawthorne"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-05.jpeg","The Hills Inn Eagle Rock","/showcase/airbnb/proa/listing","The Hills Inn Eagle Rock","Guest favorite","","Add to wishlist","The Hills Inn Eagle Rock","$396 for 2 nights"," · ★ ","4.75","/showcase/airbnb/proa/listing","The Hills Inn Eagle Rock"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-06.jpeg","Chamberlain West Hollywood","/showcase/airbnb/proa/listing","Chamberlain West Hollywood","Guest favorite","display:none","Add to wishlist","Chamberlain West Hollywood","$716 for 2 nights"," · ★ ","4.8","/showcase/airbnb/proa/listing","Chamberlain West Hollywood"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-07.jpeg","Santa Monica Hotel","/showcase/airbnb/proa/listing","Santa Monica Hotel","Guest favorite","display:none","Add to wishlist","Santa Monica Hotel","$486 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Santa Monica Hotel"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-08.jpeg","Los Angeles Athletic Club","/showcase/airbnb/proa/listing","Los Angeles Athletic Club","Guest favorite","display:none","Add to wishlist","Los Angeles Athletic Club","$470 for 2 nights"," · ★ ","4.83","/showcase/airbnb/proa/listing","Los Angeles Athletic Club"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/tahoe-weekend-01.jpeg","Chalet in South Lake Tahoe","/showcase/airbnb/proa/listing","Chalet in South Lake Tahoe","Guest favorite","","Add to wishlist","Chalet in South Lake Tahoe","$2,671 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Chalet in South Lake Tahoe"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/tahoe-weekend-02.jpeg","Home in Stateline","/showcase/airbnb/proa/listing","Home in Stateline","Guest favorite","","Add to wishlist","Home in Stateline","$3,515 for 2 nights"," · ★ ","4.83","/showcase/airbnb/proa/listing","Home in Stateline"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/tahoe-weekend-03.jpeg","Home in Kingsbury","/showcase/airbnb/proa/listing","Home in Kingsbury","Guest favorite","","Add to wishlist","Home in Kingsbury","$2,836 for 2 nights"," · ★ ","4.91","/showcase/airbnb/proa/listing","Home in Kingsbury"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/tahoe-weekend-04.jpeg","Chalet in Tahoe City","/showcase/airbnb/proa/listing","Chalet in Tahoe City","Guest favorite","","Add to wishlist","Chalet in Tahoe City","$932 for 2 nights"," · ★ ","4.96","/showcase/airbnb/proa/listing","Chalet in Tahoe City"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/tahoe-weekend-05.jpeg","Villa in Genoa","/showcase/airbnb/proa/listing","Villa in Genoa","Guest favorite","display:none","Add to wishlist","Villa in Genoa","$1,296 for 2 nights"," · ★ ","4.8","/showcase/airbnb/proa/listing","Villa in Genoa"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/tahoe-weekend-06.jpeg","Guesthouse in Olympic Valley","/showcase/airbnb/proa/listing","Guesthouse in Olympic Valley","Guest favorite","","Add to wishlist","Guesthouse in Olympic Valley","$672 for 2 nights"," · ★ ","4.93","/showcase/airbnb/proa/listing","Guesthouse in Olympic Valley"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/tahoe-weekend-07.jpeg","Townhouse in Truckee","/showcase/airbnb/proa/listing","Townhouse in Truckee","Guest favorite","","Add to wishlist","Townhouse in Truckee","$1,811 for 2 nights"," · ★ ","4.98","/showcase/airbnb/proa/listing","Townhouse in Truckee"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/tahoe-weekend-08.jpeg","Home in Truckee","/showcase/airbnb/proa/listing","Home in Truckee","Guest favorite","","Add to wishlist","Home in Truckee","$1,501 for 2 nights"," · ★ ","4.98","/showcase/airbnb/proa/listing","Home in Truckee"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-01.jpeg","Home in San Jose","/showcase/airbnb/proa/listing","Home in San Jose","Guest favorite","","Add to wishlist","Home in San Jose","$4,724 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-02.jpeg","Home in San Jose","/showcase/airbnb/proa/listing","Home in San Jose","Guest favorite","","Add to wishlist","Home in San Jose","$1,078 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-03.jpeg","Home in South San Jose","/showcase/airbnb/proa/listing","Home in South San Jose","Guest favorite","display:none","Add to wishlist","Home in South San Jose","$846 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in South San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-04.jpeg","Home in East San Jose","/showcase/airbnb/proa/listing","Home in East San Jose","Guest favorite","","Add to wishlist","Home in East San Jose","$4,280 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in East San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-05.jpeg","Home in Berryessa","/showcase/airbnb/proa/listing","Home in Berryessa","Guest favorite","","Add to wishlist","Home in Berryessa","$1,026 for 2 nights"," · ★ ","4.89","/showcase/airbnb/proa/listing","Home in Berryessa"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-06.jpeg","Room in East San Jose","/showcase/airbnb/proa/listing","Room in East San Jose","Guest favorite","","Add to wishlist","Room in East San Jose","$167 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Room in East San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-07.jpeg","Home in San Jose","/showcase/airbnb/proa/listing","Home in San Jose","Guest favorite","display:none","Add to wishlist","Home in San Jose","$447 for 2 nights"," · ★ ","4.86","/showcase/airbnb/proa/listing","Home in San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-08.jpeg","Home in Willow Glen","/showcase/airbnb/proa/listing","Home in Willow Glen","Guest favorite","display:none","Add to wishlist","Home in Willow Glen","$1,943 for 2 nights"," · ★ ","4.85","/showcase/airbnb/proa/listing","Home in Willow Glen"],"groups":[],"variants":[]}
+{"texts":[],"groups":[[200,201]],"variants":[]}
+{"texts":[],"groups":[[202,203]],"variants":[]}
+{"texts":["Experiences hosted by locals"],"groups":[[204,205]],"variants":[]}
+{"texts":["Popular near Los Angeles"],"groups":[[206,207]],"variants":[]}
+{"texts":["Services for your stay"],"groups":[[208,209]],"variants":[]}
+{"texts":["Top-rated service providers"],"groups":[[210,211]],"variants":[]}
+{"texts":["Experiences hosted by locals","›","Food, culture, and outdoor activities.","/showcase/airbnb/proa/search","6 of 9 items showing","‹","Previous","›","Next"],"groups":[],"variants":[0,0]}
+{"texts":[],"groups":[[212,213,214,215,216,217,218,219]],"variants":[1]}
+{"texts":["Popular near Los Angeles","›","","/showcase/airbnb/proa/search","6 of 9 items showing","‹","Previous","›","Next"],"groups":[],"variants":[0,1]}
+{"texts":[],"groups":[[220,221,222,223,224,225,226,227]],"variants":[1]}
+{"texts":["Services for your stay","›","Chefs, photography, wellness, and more.","/showcase/airbnb/proa/search","6 of 9 items showing","‹","Previous","›","Next"],"groups":[],"variants":[0,0]}
+{"texts":[],"groups":[[228,229,230,231,232,233,234,235]],"variants":[1]}
+{"texts":["Top-rated service providers","›","","/showcase/airbnb/proa/search","6 of 9 items showing","‹","Previous","›","Next"],"groups":[],"variants":[0,1]}
+{"texts":[],"groups":[[236,237,238,239,240,241,242,243]],"variants":[1]}
+{"texts":["/images/airbnb/external/la-hotel-01.jpeg","Hotel June West L.A","/showcase/airbnb/proa/listing","Hotel June West L.A","Guest favorite","display:none","Add to wishlist","Hotel June West L.A","$468 for 2 nights"," · ★ ","4.81","/showcase/airbnb/proa/listing","Hotel June West L.A"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-02.jpeg","Vagabond Inn Los Angeles at USC","/showcase/airbnb/proa/listing","Vagabond Inn Los Angeles at USC","Guest favorite","display:none","Add to wishlist","Vagabond Inn Los Angeles at USC","$318 for 2 nights"," · ★ ","4.86","/showcase/airbnb/proa/listing","Vagabond Inn Los Angeles at USC"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-03.jpeg","Inn at Venice Beach","/showcase/airbnb/proa/listing","Inn at Venice Beach","Guest favorite","display:none","Add to wishlist","Inn at Venice Beach","$597 for 2 nights"," · ★ ","4.77","/showcase/airbnb/proa/listing","Inn at Venice Beach"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-04.jpeg","Ayres Hotel Manhattan Beach/Hawthorne","/showcase/airbnb/proa/listing","Ayres Hotel Manhattan Beach/Hawthorne","Guest favorite","display:none","Add to wishlist","Ayres Hotel Manhattan Beach/Hawthorne","$366 for 2 nights"," · ★ ","4.63","/showcase/airbnb/proa/listing","Ayres Hotel Manhattan Beach/Hawthorne"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-05.jpeg","The Hills Inn Eagle Rock","/showcase/airbnb/proa/listing","The Hills Inn Eagle Rock","Guest favorite","","Add to wishlist","The Hills Inn Eagle Rock","$396 for 2 nights"," · ★ ","4.75","/showcase/airbnb/proa/listing","The Hills Inn Eagle Rock"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-06.jpeg","Chamberlain West Hollywood","/showcase/airbnb/proa/listing","Chamberlain West Hollywood","Guest favorite","display:none","Add to wishlist","Chamberlain West Hollywood","$716 for 2 nights"," · ★ ","4.8","/showcase/airbnb/proa/listing","Chamberlain West Hollywood"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-07.jpeg","Santa Monica Hotel","/showcase/airbnb/proa/listing","Santa Monica Hotel","Guest favorite","display:none","Add to wishlist","Santa Monica Hotel","$486 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Santa Monica Hotel"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-08.jpeg","Los Angeles Athletic Club","/showcase/airbnb/proa/listing","Los Angeles Athletic Club","Guest favorite","display:none","Add to wishlist","Los Angeles Athletic Club","$470 for 2 nights"," · ★ ","4.83","/showcase/airbnb/proa/listing","Los Angeles Athletic Club"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-01.jpeg","Home in San Jose","/showcase/airbnb/proa/listing","Home in San Jose","Guest favorite","","Add to wishlist","Home in San Jose","$4,724 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-02.jpeg","Home in San Jose","/showcase/airbnb/proa/listing","Home in San Jose","Guest favorite","","Add to wishlist","Home in San Jose","$1,078 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-03.jpeg","Home in South San Jose","/showcase/airbnb/proa/listing","Home in South San Jose","Guest favorite","display:none","Add to wishlist","Home in South San Jose","$846 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in South San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-04.jpeg","Home in East San Jose","/showcase/airbnb/proa/listing","Home in East San Jose","Guest favorite","","Add to wishlist","Home in East San Jose","$4,280 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in East San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-05.jpeg","Home in Berryessa","/showcase/airbnb/proa/listing","Home in Berryessa","Guest favorite","","Add to wishlist","Home in Berryessa","$1,026 for 2 nights"," · ★ ","4.89","/showcase/airbnb/proa/listing","Home in Berryessa"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-06.jpeg","Room in East San Jose","/showcase/airbnb/proa/listing","Room in East San Jose","Guest favorite","","Add to wishlist","Room in East San Jose","$167 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Room in East San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-07.jpeg","Home in San Jose","/showcase/airbnb/proa/listing","Home in San Jose","Guest favorite","display:none","Add to wishlist","Home in San Jose","$447 for 2 nights"," · ★ ","4.86","/showcase/airbnb/proa/listing","Home in San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-08.jpeg","Home in Willow Glen","/showcase/airbnb/proa/listing","Home in Willow Glen","Guest favorite","display:none","Add to wishlist","Home in Willow Glen","$1,943 for 2 nights"," · ★ ","4.85","/showcase/airbnb/proa/listing","Home in Willow Glen"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-01.jpeg","Home in San Jose","/showcase/airbnb/proa/listing","Home in San Jose","Guest favorite","","Add to wishlist","Home in San Jose","$4,724 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-02.jpeg","Home in San Jose","/showcase/airbnb/proa/listing","Home in San Jose","Guest favorite","","Add to wishlist","Home in San Jose","$1,078 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-03.jpeg","Home in South San Jose","/showcase/airbnb/proa/listing","Home in South San Jose","Guest favorite","display:none","Add to wishlist","Home in South San Jose","$846 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in South San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-04.jpeg","Home in East San Jose","/showcase/airbnb/proa/listing","Home in East San Jose","Guest favorite","","Add to wishlist","Home in East San Jose","$4,280 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Home in East San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-05.jpeg","Home in Berryessa","/showcase/airbnb/proa/listing","Home in Berryessa","Guest favorite","","Add to wishlist","Home in Berryessa","$1,026 for 2 nights"," · ★ ","4.89","/showcase/airbnb/proa/listing","Home in Berryessa"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-06.jpeg","Room in East San Jose","/showcase/airbnb/proa/listing","Room in East San Jose","Guest favorite","","Add to wishlist","Room in East San Jose","$167 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Room in East San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-07.jpeg","Home in San Jose","/showcase/airbnb/proa/listing","Home in San Jose","Guest favorite","display:none","Add to wishlist","Home in San Jose","$447 for 2 nights"," · ★ ","4.86","/showcase/airbnb/proa/listing","Home in San Jose"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/san-jose-08.jpeg","Home in Willow Glen","/showcase/airbnb/proa/listing","Home in Willow Glen","Guest favorite","display:none","Add to wishlist","Home in Willow Glen","$1,943 for 2 nights"," · ★ ","4.85","/showcase/airbnb/proa/listing","Home in Willow Glen"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-01.jpeg","Hotel June West L.A","/showcase/airbnb/proa/listing","Hotel June West L.A","Guest favorite","display:none","Add to wishlist","Hotel June West L.A","$468 for 2 nights"," · ★ ","4.81","/showcase/airbnb/proa/listing","Hotel June West L.A"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-02.jpeg","Vagabond Inn Los Angeles at USC","/showcase/airbnb/proa/listing","Vagabond Inn Los Angeles at USC","Guest favorite","display:none","Add to wishlist","Vagabond Inn Los Angeles at USC","$318 for 2 nights"," · ★ ","4.86","/showcase/airbnb/proa/listing","Vagabond Inn Los Angeles at USC"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-03.jpeg","Inn at Venice Beach","/showcase/airbnb/proa/listing","Inn at Venice Beach","Guest favorite","display:none","Add to wishlist","Inn at Venice Beach","$597 for 2 nights"," · ★ ","4.77","/showcase/airbnb/proa/listing","Inn at Venice Beach"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-04.jpeg","Ayres Hotel Manhattan Beach/Hawthorne","/showcase/airbnb/proa/listing","Ayres Hotel Manhattan Beach/Hawthorne","Guest favorite","display:none","Add to wishlist","Ayres Hotel Manhattan Beach/Hawthorne","$366 for 2 nights"," · ★ ","4.63","/showcase/airbnb/proa/listing","Ayres Hotel Manhattan Beach/Hawthorne"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-05.jpeg","The Hills Inn Eagle Rock","/showcase/airbnb/proa/listing","The Hills Inn Eagle Rock","Guest favorite","","Add to wishlist","The Hills Inn Eagle Rock","$396 for 2 nights"," · ★ ","4.75","/showcase/airbnb/proa/listing","The Hills Inn Eagle Rock"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-06.jpeg","Chamberlain West Hollywood","/showcase/airbnb/proa/listing","Chamberlain West Hollywood","Guest favorite","display:none","Add to wishlist","Chamberlain West Hollywood","$716 for 2 nights"," · ★ ","4.8","/showcase/airbnb/proa/listing","Chamberlain West Hollywood"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-07.jpeg","Santa Monica Hotel","/showcase/airbnb/proa/listing","Santa Monica Hotel","Guest favorite","display:none","Add to wishlist","Santa Monica Hotel","$486 for 2 nights"," · ★ ","5.0","/showcase/airbnb/proa/listing","Santa Monica Hotel"],"groups":[],"variants":[]}
+{"texts":["/images/airbnb/external/la-hotel-08.jpeg","Los Angeles Athletic Club","/showcase/airbnb/proa/listing","Los Angeles Athletic Club","Guest favorite","display:none","Add to wishlist","Los Angeles Athletic Club","$470 for 2 nights"," · ★ ","4.83","/showcase/airbnb/proa/listing","Los Angeles Athletic Club"],"groups":[],"variants":[]}
+{"texts":[],"groups":[[246,247,248,249,250,251,252,253]],"variants":[0]}
+{"texts":[],"groups":[[254,255,256,257,258,259,260,261,262,263,264,265]],"variants":[1]}
+{"texts":["Popular","true","true"],"groups":[],"variants":[]}
+{"texts":["Arts & culture","false","false"],"groups":[],"variants":[]}
+{"texts":["Beach","false","false"],"groups":[],"variants":[]}
+{"texts":["Mountains","false","false"],"groups":[],"variants":[]}
+{"texts":["Outdoors","false","false"],"groups":[],"variants":[]}
+{"texts":["Things to do","false","false"],"groups":[],"variants":[]}
+{"texts":["Travel tips & inspiration","false","false"],"groups":[],"variants":[]}
+{"texts":["Extended-stay apartments","false","false"],"groups":[],"variants":[]}
+{"texts":["Santo Domingo","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Montreal","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Traverse City","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Savannah","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Manhattan","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Kansas City","Monthly rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Oahu","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Milan","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["San Diego","Cottage rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Honolulu","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Nashville","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Amsterdam","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":[],"groups":[[273,274,275,276,277,278,279,280,281,282,283,284]],"variants":[]}
+{"texts":[],"groups":[[285,286,287,288,289,290,291,292,293,294,295,296]],"variants":[]}
+{"texts":[],"groups":[[297,298,299,300,301,302,303,304,305,306,307,308]],"variants":[]}
+{"texts":[],"groups":[[309,310,311,312,313,314,315,316,317,318,319,320]],"variants":[]}
+{"texts":[],"groups":[[321,322,323,324,325,326,327,328,329,330,331,332]],"variants":[]}
+{"texts":[],"groups":[[333,334,335,336,337,338,339,340,341,342,343,344]],"variants":[]}
+{"texts":[],"groups":[[345,346,347,348,349,350,351,352,353,354,355,356]],"variants":[]}
+{"texts":["Phoenix","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Prague","Apartment rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Tokyo","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Charleston","Cottage rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Barcelona","Beach house rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["New Orleans","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Rome","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Kyoto","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Vienna","Apartment rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Mexico City","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Lisbon","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Edinburgh","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Dauphin Island","Beach house rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Fort Lauderdale","Beach condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Myrtle Beach","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Key West","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Sanibel Island","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Cape May","Cottage rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Destin","Beach house rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Malibu","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Tulum","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Kauai","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Outer Banks","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Puerto Vallarta","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Lake Tahoe","Cabin rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Aspen","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Big Bear Lake","Cabin rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Breckenridge","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Blue Ridge","Cabin rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Banff","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Gatlinburg","Cabin rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Jackson Hole","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Park City","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Stowe","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Vail","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Whistler","Chalet rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Lake Tahoe","Cabin rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Aspen","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Big Bear Lake","Cabin rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Breckenridge","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Blue Ridge","Cabin rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Banff","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Gatlinburg","Cabin rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Jackson Hole","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Park City","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Stowe","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Vail","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Whistler","Chalet rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Santo Domingo","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Montreal","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Traverse City","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Savannah","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Manhattan","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Kansas City","Monthly rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Oahu","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Milan","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["San Diego","Cottage rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Honolulu","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Nashville","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Amsterdam","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Phoenix","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Prague","Apartment rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Tokyo","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Charleston","Cottage rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Barcelona","Beach house rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["New Orleans","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Rome","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Kyoto","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Vienna","Apartment rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Mexico City","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Lisbon","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Edinburgh","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Dauphin Island","Beach house rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Fort Lauderdale","Beach condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Myrtle Beach","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Key West","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Sanibel Island","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Cape May","Cottage rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Destin","Beach house rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Malibu","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Tulum","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Kauai","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Outer Banks","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Puerto Vallarta","Villa rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Fort Lauderdale","House rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Philadelphia","Monthly rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Charlotte","Condo rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Pittsburgh","Monthly rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Santa Barbara","Vacation rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["Monterey","Cottage rentals","#destination"],"groups":[],"variants":[]}
+{"texts":["×","Close","Choose a language and currency"],"groups":[],"variants":[0]}
+{"texts":["Translation","Automatically translate descriptions and reviews to English.","Translation","Choose a language and region","Choose a currency"],"groups":[[365,366],[367,368,369,370,371,372,373,374,375,376,377,378,379,380,381,382,383,384,385,386,387,388,389,390],[391,392,393,394,395,396,397,398,399,400,401,402,403,404,405,406]],"variants":[1]}
+{"texts":["Language and region","true","true"],"groups":[],"variants":[]}
+{"texts":["Currency","false","false"],"groups":[],"variants":[]}
+{"texts":["English","United States"],"groups":[],"variants":[]}
+{"texts":["Azərbaycan dili","Azərbaycan"],"groups":[],"variants":[]}
+{"texts":["Bahasa Indonesia","Indonesia"],"groups":[],"variants":[]}
+{"texts":["Bosanski","Bosna i Hercegovina"],"groups":[],"variants":[]}
+{"texts":["Català","Espanya"],"groups":[],"variants":[]}
+{"texts":["Čeština","Česká republika"],"groups":[],"variants":[]}
+{"texts":["Dansk","Danmark"],"groups":[],"variants":[]}
+{"texts":["Deutsch","Deutschland"],"groups":[],"variants":[]}
+{"texts":["English","Australia"],"groups":[],"variants":[]}
+{"texts":["English","Canada"],"groups":[],"variants":[]}
+{"texts":["English","United Kingdom"],"groups":[],"variants":[]}
+{"texts":["Español","España"],"groups":[],"variants":[]}
+{"texts":["Español","México"],"groups":[],"variants":[]}
+{"texts":["Français","France"],"groups":[],"variants":[]}
+{"texts":["Italiano","Italia"],"groups":[],"variants":[]}
+{"texts":["日本語","日本"],"groups":[],"variants":[]}
+{"texts":["한국어","대한민국"],"groups":[],"variants":[]}
+{"texts":["Nederlands","Nederland"],"groups":[],"variants":[]}
+{"texts":["Polski","Polska"],"groups":[],"variants":[]}
+{"texts":["Português","Brasil"],"groups":[],"variants":[]}
+{"texts":["Svenska","Sverige"],"groups":[],"variants":[]}
+{"texts":["Türkçe","Türkiye"],"groups":[],"variants":[]}
+{"texts":["Українська","Україна"],"groups":[],"variants":[]}
+{"texts":["中文","中国"],"groups":[],"variants":[]}
+{"texts":["US dollar","USD – $"],"groups":[],"variants":[]}
+{"texts":["Australian dollar","AUD – $"],"groups":[],"variants":[]}
+{"texts":["Brazilian real","BRL – R$"],"groups":[],"variants":[]}
+{"texts":["Canadian dollar","CAD – $"],"groups":[],"variants":[]}
+{"texts":["Chinese yuan","CNY – ￥"],"groups":[],"variants":[]}
+{"texts":["Euro","EUR – €"],"groups":[],"variants":[]}
+{"texts":["Hong Kong dollar","HKD – $"],"groups":[],"variants":[]}
+{"texts":["Indian rupee","INR – ₹"],"groups":[],"variants":[]}
+{"texts":["Japanese yen","JPY – ¥"],"groups":[],"variants":[]}
+{"texts":["Mexican peso","MXN – $"],"groups":[],"variants":[]}
+{"texts":["New Zealand dollar","NZD – $"],"groups":[],"variants":[]}
+{"texts":["Pound sterling","GBP – £"],"groups":[],"variants":[]}
+{"texts":["Singapore dollar","SGD – $"],"groups":[],"variants":[]}
+{"texts":["South Korean won","KRW – ₩"],"groups":[],"variants":[]}
+{"texts":["Swiss franc","CHF"],"groups":[],"variants":[]}
+{"texts":["Turkish lira","TRY – ₺"],"groups":[],"variants":[]}
+{"texts":["×","Close","Log in or sign up"],"groups":[],"variants":[0]}
+{"texts":["Welcome to Airbnb","air-parity-auth-title","Enter a phone number or email to continue. Authentication itself is outside this public benchmark fixture.","Phone number or email","Continue","or"],"groups":[[409,410]],"variants":[1]}
+{"texts":["Continue with Google"],"groups":[],"variants":[]}
+{"texts":["Continue with Apple"],"groups":[],"variants":[]}

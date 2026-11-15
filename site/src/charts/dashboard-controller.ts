@@ -124,6 +124,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       "workload",
       "chart",
       "rate",
+      "render",
       "http",
       "framework",
       "stream",
@@ -326,7 +327,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         framework
           ? data.framework.workloads[required(workload)]
           : workload
-            ? data.rendering.rows[workload]
+            ? model.renderingRows(workload)
             : getRows()
       ).find((r) => r.id === row.dataset.focus),
       stats =
@@ -809,7 +810,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     });
     $("[data-performance]").hidden = state.section !== "performance";
     $("[data-ecosystem]").hidden = state.section !== "ecosystem";
-    $("[data-results-title]").hidden = state.view === "rendering";
+    $("[data-results-title]").hidden =
+      state.view === "rendering" && state.render !== "rss";
     const description = $("[data-experiment-description]");
     description.textContent = model.experimentDescription();
     description.hidden = !description.textContent;
@@ -835,9 +837,18 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     $$<HTMLButtonElement>("[data-chart]").forEach((b) => {
       b.setAttribute("aria-pressed", String(b.dataset.chart === state.chart));
     });
-    $('[data-chart="balls"]').hidden = ["framework", "streaming"].includes(
-      state.view,
-    );
+    $('[data-chart="balls"]').hidden =
+      ["framework", "streaming"].includes(state.view) ||
+      (state.view === "rendering" && state.render === "rss");
+    if (
+      state.view === "rendering" &&
+      state.render === "rss" &&
+      state.chart === "balls"
+    )
+      state.chart = "bars";
+    $<HTMLSelectElement>("[data-render-view]").hidden =
+      state.view !== "rendering";
+    $<HTMLSelectElement>("[data-render-view]").value = state.render;
     $('[data-chart="table"]').hidden = state.view === "streaming";
     $(".fw-view-switch").hidden = state.view === "streaming";
     $<HTMLSelectElement>("[data-framework-view]").hidden =
@@ -890,7 +901,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     if (state.chart === "compare") drawComparison(rows);
     else if (!rows.length) {
       $("[data-results]").innerHTML =
-        '<div class="fw-empty">No measurements for this selection.</div>';
+        `<div class="fw-empty">${esc(data[state.view].pendingWorkloads?.[state.workload] ?? (state.view === "rendering" && state.render === "rss" ? "Peak RSS was not recorded in these captures. New benchmark runs will include it." : "No measurements for this selection."))}</div>`;
       $("[data-chart-note]").textContent = "";
     } else if (
       state.chart === "lines" &&
@@ -1002,7 +1013,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     const exportData = {
       reviewRefresh: s.reviewRefresh,
       measurementStatus:
-        metric() === "breakdown" ? "not instrumented" : "measured",
+        metric() === "breakdown"
+          ? "not instrumented"
+          : exportRows.length
+            ? "measured"
+            : "not measured",
       experiment: state.view,
       captures:
         state.chart === "compare"
@@ -1323,6 +1338,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       state.types = (el as HTMLInputElement).checked
         ? [...new Set([...state.types, el.dataset.type])]
         : state.types.filter((id) => id !== el.dataset.type);
+    else if (el.hasAttribute("data-render-view"))
+      state.render = el.value as "p50" | "rss";
     else if (el.hasAttribute("data-framework-view"))
       state.framework = el.value as Metric;
     else if (el.hasAttribute("data-http-view")) state.http = el.value as Metric;

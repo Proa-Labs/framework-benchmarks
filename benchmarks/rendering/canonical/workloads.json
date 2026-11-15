@@ -40,8 +40,8 @@
     {
       "id": "airbnb-home",
       "label": "Airbnb landing page",
-      "cardinality": 49,
-      "description": "49 home, experience and service cards, plus the complete navigation and search panels",
+      "cardinality": 64,
+      "description": "64 home, experience and service cards from the public showcase, plus navigation, search panels and footer",
       "warmup": 20,
       "iterations": 200,
       "fixture": "showcase-v1"

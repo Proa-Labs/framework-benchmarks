@@ -21,7 +21,12 @@ test("SSR comparison uses one render-only column per workload and exports only t
     (chart.html.match(/class="fw-comparison-value"/g) || []).length,
     rows.length,
   );
-  assert.equal(rows.length, Object.values(data.rendering.rows).flat().length);
+  assert.equal(
+    rows.length,
+    Object.entries(data.rendering.rows)
+      .filter(([id]) => !data.rendering.pendingWorkloads?.[id])
+      .flatMap(([, rows]) => rows).length,
+  );
   assert.ok(!chart.html.includes('data-stat-suite="framework"'));
   assert.ok(!chart.html.includes("data-framework-comparison"));
   for (const row of rows) {
@@ -85,7 +90,12 @@ test("Exact discloses native fixture differences and keeps strict-fixture limita
   }
   for (const workload of data.workloads) {
     const support = model.renderingCoverage("exact", workload.id);
-    assert.equal(support.status, "unsupported");
+    assert.equal(
+      support.status,
+      data.rendering.pendingWorkloads?.[workload.id]
+        ? "unmeasured"
+        : "unsupported",
+    );
     assert.ok(support.reason.length > 0);
     assert.match(support.version, /94b8671f70fe/);
     if (!data.rendering.rows[workload.id].some((r) => r.id === "exact"))
@@ -117,5 +127,33 @@ test("the directory is server-rendered on its own route and deferred on performa
   assert.equal(
     (direct.match(/class="fw-catalog-row"/g) || []).length,
     data.ecosystem.length,
+  );
+});
+
+test("changed showcase fixtures retain historical samples but withhold every stale chart and export cell", async () => {
+  const data = normalize((await loadInputs()).input);
+  const workload = "airbnb-home";
+  for (const view of ["rendering", "framework"] as const) {
+    data[view].pendingWorkloads = {
+      [workload]: "Changed fixture: fresh measurements pending.",
+    };
+    for (const chart of ["bars", "table", "lines", "balls"]) {
+      const model = createDashboardModel(
+        data,
+        `?view=${view}&workload=${workload}&chart=${chart}`,
+      );
+      assert.deepEqual(model.getRows(), []);
+      const html = createChartMarkup(model).draw(model.visibleRows()).html;
+      assert.match(html, /fresh measurements pending/);
+      assert.doesNotMatch(html, /data-stat-suite|class="fw-number"/);
+    }
+  }
+  const model = createDashboardModel(data);
+  assert.ok(
+    model.comparisonMeasurements().every((r) => r.workload !== workload),
+  );
+  assert.ok(
+    data.rendering.rows[workload].length > 0,
+    "Keep the original evidence intact",
   );
 });

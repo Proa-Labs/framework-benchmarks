@@ -403,3 +403,32 @@ test("only the declared Exact adaptation can bypass strict DOM/class equality", 
     assert.throws(() => validateCanonicalResult(changed, roster, workloads));
   }
 });
+
+
+test("review controls retain their new capture while untouched peers retain the baseline", () => {
+  const result = JSON.parse(readFileSync(join(renderingDirectory, "results/latest.json"), "utf8"));
+  const contract = capturedRenderingContract(workspaceDirectory, result);
+  const baselineId = result.capture_id;
+  result.capture_kind = "proa_refresh";
+  result.capture_id = "review-control-capture";
+  result.refresh = {
+    renderer: "proa",
+    rendererIds: ["proa", "sailfish", "askama"],
+    baseline_capture_id: baselineId,
+    baseline_captured_at: result.captured_at,
+    baseline_sha256: "a".repeat(64),
+  };
+  for (const id of result.refresh.rendererIds)
+    for (const measurement of Object.values(result.measurements[id]))
+      measurement.capture_id = result.capture_id;
+  const validate = () => validateCanonicalResult(result, contract.roster, contract.workloads);
+  validate();
+  result.measurements.sailfish.cards.capture_id = baselineId;
+  assert.throws(validate, /sailfish\/cards comes from a different capture/);
+  result.measurements.sailfish.cards.capture_id = result.capture_id;
+  result.measurements.react.cards.capture_id = result.capture_id;
+  assert.throws(validate, /react\/cards comes from a different capture/);
+  result.measurements.react.cards.capture_id = baselineId;
+  result.refresh.rendererIds.push("unknown");
+  assert.throws(validate, /refresh renderer IDs are invalid/);
+});

@@ -74,6 +74,24 @@ export function viewModule(definition, engine, quote) {
       : engine === "dioxus"
         ? "use dioxus::prelude::*;\n"
         : "use ::topcoat::{context::Cx,view::view,Result};\n";
+  // Dioxus 0.6 predates HTML's <search>. Extend its native element metadata
+  // so RSX emits the real semantic element instead of substituting a div.
+  if (engine === "dioxus")
+    output += `
+use ::dioxus::prelude::dioxus_elements as native_elements;
+#[allow(unused_imports, dead_code)]
+mod dioxus_elements {
+    pub use super::native_elements::*;
+    pub mod search {
+        pub const TAG_NAME: &str = "search";
+        pub const NAME_SPACE: Option<&str> = None;
+    }
+    pub mod elements {
+        pub use super::super::native_elements::elements::*;
+        pub use super::search;
+    }
+}
+`;
   output += "use super::super::Data;\n";
   for (const [i, t] of definition.templates.entries()) {
     current = i;
