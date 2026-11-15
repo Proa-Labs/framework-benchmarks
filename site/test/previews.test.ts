@@ -1,6 +1,93 @@
 import { test } from "bun:test";
 import assert from "node:assert/strict";
-import { thumbnailHtml, thumbnailSourceHash } from "../previews.ts";
+import { type DefaultTreeAdapterMap, parse } from "parse5";
+import {
+  fixtures,
+  loadFixture,
+  renderReference,
+} from "../../benchmarks/rendering/showcase/fixture.mjs";
+import showcaseAssets from "../data/performance/showcase/assets.json";
+import {
+  showcasePreview,
+  thumbnailHtml,
+  thumbnailSourceHash,
+} from "../previews.ts";
+
+test("showcase previews preserve page CSS and replace only the requested utility sheet in cascade order", () => {
+  const ownCss = "<style>body{line-height:normal}svg{display:inline}</style>";
+  const standalone = `<html><head>${ownCss}</head><body><svg></svg></body></html>`;
+  assert.equal(showcasePreview(standalone), standalone);
+  const linked = `<html><head><link rel="stylesheet" href="/proa.css">${ownCss}</head><body><img src="/images/sample.jpg"></body></html>`;
+  const preview = showcasePreview(linked);
+  assert.equal((preview.match(/<style/g) || []).length, 2);
+  assert.ok(preview.indexOf("data-preview-utility") < preview.indexOf(ownCss));
+  assert.doesNotMatch(preview, /href="\/proa.css"/);
+  assert.match(preview, /src="https:\/\/proa.so\/images\/sample.jpg"/);
+});
+
+test("preview asset paths encode literal percent signs without double encoding existing escapes", () => {
+  const source =
+    '<img src="/images/nike/NEXT%+4.png" srcset="/images/nike/NEXT%+4.png 1x, /images/nike/NEXT%25+4.png 2x"><style>.hero{background:url("/images/nike/NEXT%+4.png")}</style>';
+  const preview = showcasePreview(source);
+  assert.match(
+    preview,
+    /src="https:\/\/proa.so\/images\/nike\/NEXT%25\+4.png"/,
+  );
+  assert.match(
+    preview,
+    /NEXT%25\+4.png 1x, https:\/\/proa.so\/images\/nike\/NEXT%25\+4.png 2x/,
+  );
+  assert.match(
+    preview,
+    /url\("https:\/\/proa.so\/images\/nike\/NEXT%25\+4.png"\)/,
+  );
+  assert.doesNotMatch(preview, /%2525/);
+});
+
+test("every showcase keeps its original style rules and stylesheet order", () => {
+  const sheets = (html: string) => {
+    const result: string[] = [];
+    function visit(node: DefaultTreeAdapterMap["node"]) {
+      if ("tagName" in node && node.tagName === "style")
+        result.push(
+          node.childNodes.map((c) => ("value" in c ? c.value : "")).join(""),
+        );
+      if ("childNodes" in node)
+        for (const child of node.childNodes) visit(child);
+    }
+    for (const child of parse(html).childNodes) visit(child);
+    return result;
+  };
+  for (const { id } of fixtures) {
+    const { definition, data } = loadFixture(id);
+    assert.equal(definition.source.revision, showcaseAssets.revision, id);
+    const source = renderReference(definition, data);
+    const preview = showcasePreview(source);
+    const requestedUtility = source.includes('href="/proa.css"');
+    const originalRules = sheets(source).map((css) =>
+      css.replace(
+        /url\((\s*["']?)\/images\//g,
+        "url($1https://proa.so/images/",
+      ),
+    );
+    const previewRules = sheets(preview);
+    assert.deepEqual(
+      previewRules.slice(requestedUtility ? 1 : 0),
+      originalRules,
+      id,
+    );
+    assert.equal(
+      previewRules.length,
+      originalRules.length + Number(requestedUtility),
+      id,
+    );
+    assert.equal(
+      preview.includes("data-preview-utility"),
+      requestedUtility,
+      id,
+    );
+  }
+});
 
 test("thumbnail documents bound hidden rows without changing visible inputs or full fixtures", () => {
   const html = `<html><head><title>Fixture</title></head><body><table><tbody>${Array.from({ length: 1000 }, (_, index) => `<tr data-row="${index}"><td>User ${index} &amp; team</td></tr>`).join("")}</tbody></table></body></html>`;

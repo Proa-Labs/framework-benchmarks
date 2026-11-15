@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "thumbnails": {
     "airbnb-home.html": {
-      "sourceSha256": "02e7788efe00d5b313805e5e90d3098280cc11c32538bfb4f17f6c3b3e02b4f2",
+      "sourceSha256": "809f24ef9a028b14ce1efeefba2d9dec94e46bd436a2a7215a39796aa46468e8",
       "file": "airbnb-home.webp"
     },
     "cards.html": {
@@ -10,11 +10,11 @@
       "file": "cards.webp"
     },
     "espn.html": {
-      "sourceSha256": "794d6f6af574091590e417ef8f3d889ae5571ea7da05e0e720a87041bce57a10",
+      "sourceSha256": "762ed06e186add520043b6dd0eecdf64faa13e86ec786b8a5fb9256da38dbbe7",
       "file": "espn.webp"
     },
     "framework-airbnb-home.html": {
-      "sourceSha256": "9ed9cbe588e2c403eb433f3fef7e06ae254fad0d090fd077a073fd30d041499d",
+      "sourceSha256": "9c4580e557df04b7d73261a961e2d541fcc871cb254c086442b6065b338d6cb7",
       "file": "framework-airbnb-home.webp"
     },
     "framework-cards.html": {
@@ -22,15 +22,15 @@
       "file": "framework-cards.webp"
     },
     "framework-espn.html": {
-      "sourceSha256": "20d5e7f930645d99bc9d3daffb80f17a24527c899246f06e599d1618f5c40b13",
+      "sourceSha256": "2aee5bce1ca805a14cec25747109d4836588f379c8dd8200c7997c2d81c439ca",
       "file": "framework-espn.webp"
     },
     "framework-github-pr.html": {
-      "sourceSha256": "323720996fae576a32c34ca1cf5912b8fe4952618eeca39746fc2078c72308ff",
+      "sourceSha256": "e65c020256d5c33da53657e9f46575c6dcb3e986f84d9341fd7e29695343c750",
       "file": "framework-github-pr.webp"
     },
     "framework-nike-catalog.html": {
-      "sourceSha256": "e128df6dc5fb7c7836040310d60a2055ee17ad92807199300567d3505f85727a",
+      "sourceSha256": "8fa8fb7678f808a45f518ea9e3bc67f8a176984673bf5527bc2dae80b74914b9",
       "file": "framework-nike-catalog.webp"
     },
     "framework-products.html": {
@@ -38,7 +38,7 @@
       "file": "framework-products.webp"
     },
     "framework-sentry-otel.html": {
-      "sourceSha256": "c34fdca1203725e429abd01307ba28ab596268799c12e17544836bb96476a056",
+      "sourceSha256": "e2eaaac2aec9f01236ada3d7f5dc700d3acab11e1334e4ef67ba54e6a17cd7df",
       "file": "framework-sentry-otel.webp"
     },
     "framework-table.html": {
@@ -46,11 +46,11 @@
       "file": "framework-table.webp"
     },
     "github-pr.html": {
-      "sourceSha256": "b0eca362a4a90f986ce5d78d35bc1ab1014266d287941f7f2da0741f9524bbbc",
+      "sourceSha256": "45ee6dc858bf4820c94363b85af2d299eca2c8ffdeca1ce1a824ee00b709d94b",
       "file": "github-pr.webp"
     },
     "nike-catalog.html": {
-      "sourceSha256": "5ef29962a6e815d3f4b4567ef2b62965e23b4eadd60ddfd70c8734400f095123",
+      "sourceSha256": "a4712f6784795e0335b9c5e36dae6f1121ab1dbc65dcd1d9de8f34d6ebb693ef",
       "file": "nike-catalog.webp"
     },
     "products.html": {
@@ -58,7 +58,7 @@
       "file": "products.webp"
     },
     "sentry-otel.html": {
-      "sourceSha256": "3439bdcd136284068058f6892020449afbbb60bcddab0ef2808324150bad8faf",
+      "sourceSha256": "b93ff792bd1fa217a168d149af3f722212d19736f4926d66e4f1bf5be33020a8",
       "file": "sentry-otel.webp"
     },
     "table.html": {

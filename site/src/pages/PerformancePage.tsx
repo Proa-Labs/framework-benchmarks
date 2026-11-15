@@ -535,8 +535,9 @@ export function PerformancePage({
         </div>
         <p>
           Tags shown as text, such as <code>&lt;b&gt;plain text&lt;/b&gt;</code>
-          , intentionally test that dynamic data is escaped safely. Preview
-          labels, styling and images are illustrative.
+          , intentionally test that dynamic data is escaped safely. Showcase
+          pages retain their original styles; sample-workload labels and images
+          are illustrative.
         </p>
         <div data-fixture-mount="" />
       </dialog>

@@ -5,8 +5,8 @@ import {
   loadFixture,
   renderReference,
 } from "../benchmarks/rendering/showcase/fixture.mjs";
-import { utilityStylesheet } from "../benchmarks/rendering/showcase/styles.mjs";
 import { readRaw } from "../tooling/capture/raw.mjs";
+import showcaseAssets from "./data/performance/showcase/assets.json";
 import rasterManifest from "./data/performance/thumbnails/manifest.json";
 import { copyGenerated } from "./generated-files.ts";
 import { required } from "./required.ts";
@@ -83,6 +83,63 @@ export function thumbnailSourceHash(html: string) {
   strip(doc);
   return createHash("sha256").update(serialize(doc)).digest("hex");
 }
+
+export function showcasePreview(html: string) {
+  const css = readFileSync(
+    new URL("./data/performance/showcase/proa.css", import.meta.url),
+    "utf8",
+  );
+  if (
+    createHash("sha256").update(css).digest("hex") !==
+    showcaseAssets.utilityStylesheet.sha256
+  )
+    throw new Error("Upstream showcase stylesheet snapshot changed");
+  // Replace only a stylesheet the original page actually requests, in place:
+  // its order relative to the page's own rules is part of the cascade.
+  const document = parse(html);
+  const asset = (value: string) => {
+    if (!value.startsWith("/images/")) return value;
+    // Nike's source filenames include literal percent signs. Preserve valid
+    // escapes while encoding stray % characters that the asset server rejects.
+    return `https://proa.so${value.replace(/%(?![\da-f]{2})/gi, "%25")}`;
+  };
+  const cssAssets = (value: string) =>
+    value.replace(
+      /url\((\s*["']?)(\/images\/[^)"']+)/g,
+      (_, quote, path) => `url(${quote}${asset(path)}`,
+    );
+  function visit(node: DefaultTreeAdapterMap["node"]) {
+    if (!("childNodes" in node)) return;
+    if ("attrs" in node) {
+      const attr = (name: string) => node.attrs.find((a) => a.name === name);
+      if (
+        node.tagName === "link" &&
+        attr("rel")?.value === "stylesheet" &&
+        attr("href")?.value === "/proa.css"
+      ) {
+        node.tagName = node.nodeName = "style";
+        node.attrs = [{ name: "data-preview-utility", value: "" }];
+        node.childNodes = [{ nodeName: "#text", value: css, parentNode: node }];
+      }
+      for (const a of node.attrs) {
+        if (["src", "href", "poster"].includes(a.name))
+          a.value = asset(a.value);
+        if (a.name === "srcset")
+          a.value = a.value.replace(
+            /(^|,\s*)(\/images\/\S+)/g,
+            (_, separator, path) => `${separator}${asset(path)}`,
+          );
+        if (a.name === "style") a.value = cssAssets(a.value);
+      }
+      if (node.tagName === "style")
+        for (const child of node.childNodes)
+          if ("value" in child) child.value = cssAssets(child.value);
+    }
+    for (const child of node.childNodes) visit(child);
+  }
+  visit(document);
+  return serialize(document);
+}
 export async function buildPreviews(
   directory: string,
   frameworkCapture: Capture,
@@ -137,17 +194,6 @@ export async function buildPreviews(
       );
     }
   }
-  const utilityCss = workloads.some((w) => isShowcase(w.id))
-    ? await utilityStylesheet()
-    : "";
-  async function showcasePreview(html: string) {
-    // The measured document is unchanged. Preview-only assets use the upstream public
-    // asset host; scripts remain excluded from the imported SSR projection.
-    return html
-      .replace(/<link[^>]+href="\/proa.css"[^>]*>/g, "")
-      .replace("</head>", `<style>${utilityCss}</style></head>`)
-      .replaceAll('src="/images/', 'src="https://proa.so/images/');
-  }
   if (frameworkCapture) {
     const { validateSemanticHtml } = await import(
       "../benchmarks/framework-ssr/parity.mjs"
@@ -181,7 +227,7 @@ export async function buildPreviews(
       await writePreview(
         `framework-${id}.html`,
         isShowcase(id)
-          ? await showcasePreview(body)
+          ? showcasePreview(body)
           : body.replace("<head>", `<head><style>${frameworkStyle}</style>`),
       );
       if (id === "catalog")
@@ -196,7 +242,7 @@ export async function buildPreviews(
       const { definition, data } = loadFixture(id);
       await writePreview(
         `${id}.html`,
-        await showcasePreview(renderReference(definition, data)),
+        showcasePreview(renderReference(definition, data)),
       );
       continue;
     }

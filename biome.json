@@ -36,6 +36,7 @@
       "!**/bun.lock",
       "!benchmarks/framework-ssr/results",
       "!site/src/routeTree.gen.ts",
+      "!site/data/performance/showcase/proa.css",
       "package.json",
       "turbo.json",
       "benchmarks/rendering/external/*/package.json",

@@ -8,7 +8,7 @@ import type {
   View,
 } from "../../benchmark-types.ts";
 import { required } from "../../required.ts";
-import type { ChartPoint } from "./chart-markup.ts";
+import type { ChartOutput, ChartPoint } from "./chart-markup.ts";
 
 type Latency = { values: Percentiles; unit: string; scope: string };
 type StatEntry = { id: string; stats: Latency | null };
@@ -91,7 +91,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   const restore = () => model.restore(location.search);
   const markup = createChartMarkup(model);
   const { lineKey, pointMarker } = markup;
-  function showChart(rows: ChartRow[], mode: ChartMode) {
+  function showChart(rows: ChartRow[], mode: ChartMode): ChartOutput {
     const target = $("[data-results]");
     // Comparison tables already have the exact server-rendered state and use
     // CSS for sizing. Preserve those nodes instead of parsing and laying out
@@ -100,10 +100,12 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       mode === "compare" &&
       target.dataset.initialChart === JSON.stringify(state);
     delete target.dataset.initialChart;
+    if (reuse)
+      return { html: "", note: $("[data-chart-note]").textContent || "" };
     const width =
       mode === "compare" ? 720 : target.getBoundingClientRect().width || 720;
     const chart = markup.draw(rows, mode, width);
-    if (!reuse) target.innerHTML = chart.html;
+    target.innerHTML = chart.html;
     $("[data-chart-note]").textContent = chart.note;
     return chart;
   }

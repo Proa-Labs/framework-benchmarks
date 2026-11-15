@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/Proa-Labs/proa",
+  "revision": "ceffd9f305acabbb0584fa181df4f4e2d7883e94",
+  "utilityStylesheet": {
+    "path": "proa_marketing/public/styles.css",
+    "file": "proa.css",
+    "sha256": "a2e0de22c3dbc1a3bc0433cd7cb1ebaf6d9f3a4b2d6afb3f51dd005230032a32",
+    "bytes": 117892,
+    "tailwindVersion": "3.4.18",
+    "license": "MIT",
+    "licenseFile": "TAILWIND-LICENSE.txt"
+  }
+}
