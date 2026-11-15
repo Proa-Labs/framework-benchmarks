@@ -15,7 +15,12 @@ import { required } from "./required.ts";
 import { mkdir } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { join } from "node:path";
-import { type DefaultTreeAdapterMap, parse, serialize } from "parse5";
+import {
+  type DefaultTreeAdapterMap,
+  parse,
+  parseFragment,
+  serialize,
+} from "parse5";
 import type { ComponentType } from "react";
 import type { Capture } from "../benchmarks/framework-ssr/report.ts";
 import { writeGenerated as writeFile } from "./generated-files.ts";
@@ -148,13 +153,43 @@ export function staticPreviewState(filename: string, html: string) {
   if (!/^(?:framework-)?sentry-otel\.html$/.test(filename)) return html;
   const document = parse(html);
   let rows = 0;
+  let lastBatch = 1;
+  let head: DefaultTreeAdapterMap["element"] | undefined;
   const footers: DefaultTreeAdapterMap["element"][] = [];
+  const batchControls: DefaultTreeAdapterMap["element"][] = [];
+  const counters: DefaultTreeAdapterMap["element"][] = [];
   function visit(node: DefaultTreeAdapterMap["node"]) {
     if (!("childNodes" in node)) return;
     if ("tagName" in node) {
       const classes =
         node.attrs.find((a) => a.name === "class")?.value.split(/\s+/) ?? [];
       if (classes.includes("log-row")) rows++;
+      if (node.tagName === "head") head = node;
+      for (const attr of node.attrs) {
+        if (attr.name === "data-batch")
+          lastBatch = Math.max(lastBatch, Number(attr.value));
+        if (attr.name === "data-visible-batches") batchControls.push(node);
+      }
+      if (classes.includes("trace-stats")) {
+        for (const group of node.childNodes) {
+          if (!("childNodes" in group)) continue;
+          const label = group.childNodes.find(
+            (child) => "tagName" in child && child.tagName === "dt",
+          );
+          if (
+            label &&
+            "childNodes" in label &&
+            label.childNodes.some(
+              (child) => "value" in child && child.value === "Logs",
+            )
+          ) {
+            const count = group.childNodes.find(
+              (child) => "tagName" in child && child.tagName === "dd",
+            );
+            if (count && "tagName" in count) counters.push(count);
+          }
+        }
+      }
       if (classes.includes("loading-more")) footers.push(node);
       if (classes.includes("auto-refresh")) {
         node.attrs = node.attrs.filter(
@@ -174,6 +209,25 @@ export function staticPreviewState(filename: string, html: string) {
     for (const child of node.childNodes) visit(child);
   }
   visit(document);
+  for (const control of batchControls) {
+    const attr = control.attrs.find(
+      (attr) => attr.name === "data-visible-batches",
+    );
+    if (attr) attr.value = String(lastBatch);
+  }
+  for (const counter of counters)
+    counter.childNodes = [
+      { nodeName: "#text", value: String(rows), parentNode: counter },
+    ];
+  const style = parseFragment(
+    `<style data-preview-sentry>${readFileSync(new URL("./src/sentry-preview.css", import.meta.url), "utf8")}</style>`,
+  ).childNodes[0];
+  if (!head || !style || !("parentNode" in style))
+    throw new Error(
+      "Sentry preview document is missing its stylesheet container",
+    );
+  style.parentNode = head;
+  head.childNodes.push(style);
   for (const footer of footers) {
     footer.attrs.push({ name: "role", value: "note" });
     footer.childNodes = [

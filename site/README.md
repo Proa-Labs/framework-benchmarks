@@ -69,6 +69,13 @@ The official Cloudflare Vite adapter builds the TanStack Start server entry. Wra
 
 Preview versions do not change production traffic. Pushes to `main` deploy the just-validated build to `frameworks.run`; an explicitly selected manual deployment on `main` is also supported. The scoped `CLOUDFLARE_API_TOKEN` Actions secret authorizes the existing `frameworks-run` Worker. Rotate it before expiration; credentials never belong in source.
 
+The apex hostname uses a Worker Custom Domain. `www.frameworks.run/*` uses a
+zone Worker Route to the same service because that hostname has pre-existing,
+externally managed DNS records. Keep `www` proxied and retain both entries in
+`wrangler.json`; otherwise `www` can fall through to the registrar's parking
+origin. Hostname routing can be repaired independently of the application
+version; the publication gate still governs application deployments.
+
 ```sh
 bun run --cwd site deploy:check  # Build and Wrangler dry-run
 bun run --cwd site deploy        # Publish production when authorized
@@ -77,6 +84,13 @@ bun run --cwd site deploy        # Publish production when authorized
 The browser suite checks the built app through Cloudflare's local runtime. It includes JavaScript-disabled requests for comparison tables, selected workload bars, Framework SSR, streaming panels and filtered feature matrices, plus hydration and interaction checks.
 
 Old `.html` document URLs redirect through `public/_redirects`; they do not need application routes.
+
+Static Sentry previews share `src/sentry-preview.css` for responsive layout,
+metric spacing and vector navigation icons. `previews.ts` reveals every rendered
+log batch, matches the displayed count to those rows, and disables the live-demo
+controls. These presentation changes are applied to both preview variants after
+fixture validation; the measured source documents and thumbnail bindings stay
+intact.
 
 ## Mobile and sharing checks
 

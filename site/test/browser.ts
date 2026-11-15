@@ -224,6 +224,86 @@ try {
   checks.push(
     "render RSS selection survives reload and exports only recorded memory",
   );
+  const sentryPreview = await context.newPage();
+  for (const filename of ["sentry-otel", "framework-sentry-otel"]) {
+    await sentryPreview.goto(`${server.url}/previews/${filename}.html`);
+    for (const width of [375, 751, 1280]) {
+      await sentryPreview.setViewportSize({ width, height: 934 });
+      assert.equal(
+        await sentryPreview.locator(".log-row:visible").count(),
+        400,
+      );
+      assert.equal(
+        await sentryPreview
+          .locator(".trace-stats > div:last-child dd")
+          .textContent(),
+        "400",
+      );
+      assert.equal(
+        await sentryPreview.locator(".auto-refresh").isEnabled(),
+        false,
+      );
+      assert.equal(await sentryPreview.locator(".loading-more i").count(), 0);
+      const layout = await sentryPreview.evaluate(() => ({
+        width: innerWidth,
+        contentWidth: document.documentElement.scrollWidth,
+        badgeGaps: [...document.querySelectorAll(".web-vitals > span")].map(
+          (badge) => {
+            const label = badge.querySelector("b");
+            const text = [...badge.childNodes].find(
+              (node) =>
+                node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+            );
+            if (!label || !text)
+              throw new Error("Missing metric label or value");
+            const range = document.createRange();
+            range.selectNodeContents(text);
+            return (
+              range.getBoundingClientRect().left -
+              label.getBoundingClientRect().right
+            );
+          },
+        ),
+        masks: [...document.querySelectorAll(".primary-nav .nav-icon")].map(
+          (icon) => ({
+            mask: getComputedStyle(icon).maskImage,
+            before: getComputedStyle(icon, "::before").content,
+            after: getComputedStyle(icon, "::after").content,
+          }),
+        ),
+      }));
+      assert.ok(
+        layout.contentWidth <= layout.width,
+        `${filename}/${width}: page overflows`,
+      );
+      assert.ok(
+        layout.badgeGaps.every((gap) => gap >= 7),
+        `${filename}/${width}: cramped metric badges`,
+      );
+      assert.equal(layout.masks.length, 5);
+      assert.ok(
+        layout.masks.every(
+          (icon) =>
+            icon.mask.includes("data:image/svg+xml") &&
+            icon.before === "none" &&
+            icon.after === "none",
+        ),
+      );
+      if (filename === "sentry-otel" && width === 751)
+        await sentryPreview.screenshot({
+          path: join(siteRoot, "test-results/sentry-preview.png"),
+        });
+    }
+    await sentryPreview.locator(".loading-more").scrollIntoViewIfNeeded();
+    if (filename === "sentry-otel")
+      await sentryPreview.screenshot({
+        path: join(siteRoot, "test-results/sentry-preview-complete.png"),
+      });
+  }
+  await sentryPreview.close();
+  checks.push(
+    "both Sentry previews show all 400 rows, match metric spacing and vector icons, and fit mobile through desktop",
+  );
   const initialTheme = required(
     await page.locator("html").getAttribute("data-theme"),
   );

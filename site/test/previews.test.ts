@@ -25,6 +25,8 @@ test("Sentry previews finish visibly without changing any measured log rows", ()
   for (const filename of ["sentry-otel.html", "framework-sentry-otel.html"]) {
     const preview = staticPreviewState(filename, source);
     assert.deepEqual(rows(preview), rows(source));
+    assert.match(preview, /data-visible-batches="10"/);
+    assert.equal((preview.match(/data-preview-sentry/g) || []).length, 1);
     assert.match(preview, /class="loading-more" role="note">[^<]*400/);
     assert.doesNotMatch(preview, /class="loading-more"[^>]*>\s*<i/);
     assert.match(
@@ -33,6 +35,11 @@ test("Sentry previews finish visibly without changing any measured log rows", ()
     );
   }
   assert.match(source, /class="loading-more">\s*<i/);
+  assert.match(source, /data-visible-batches="1"/);
+  assert.equal(
+    staticPreviewState("sentry-otel.html", source),
+    staticPreviewState("framework-sentry-otel.html", source),
+  );
   assert.equal(staticPreviewState("cards.html", source), source);
 });
 

@@ -19,7 +19,7 @@ export function pendingShowcaseFixtures(
   for (const { id } of fixtures) {
     const { definition, data } = loadFixture(id);
     const reason =
-      "This preview now matches the public Proa showcase. Previous timings measured a different page; fresh measurements are pending for every implementation.";
+      "Results pending: this workload changed and must be remeasured across all frameworks.";
     if (
       input.rendering.parity.proa[id]?.canonical_sha256 !==
       definition.expectedDomSha256

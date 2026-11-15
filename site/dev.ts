@@ -107,7 +107,7 @@ export async function startServer({
       watch(siteRoot, (_event, name) => {
         if (
           name &&
-          /^(feature.*\.ts|proa-refresh\.ts|showcase-status\.ts|data\.ts)$/.test(
+          /^(feature.*\.ts|proa-refresh\.ts|showcase-status\.ts|previews\.ts|data\.ts)$/.test(
             name,
           )
         )
@@ -116,6 +116,7 @@ export async function startServer({
       watch(join(siteRoot, "data"), { recursive: true }, (_event, name) => {
         if (name?.endsWith(".json")) changed();
       }),
+      watch(join(siteRoot, "src/sentry-preview.css"), changed),
     );
     for (const capture of Object.values(captures)) {
       const file = join(repositoryRoot, capture);
