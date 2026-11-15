@@ -1,3 +1,4 @@
+#![recursion_limit = "256"]
 //! Reproducible SSR comparisons between Proa and peer renderers.
 //!
 //! Proa-only regression guards stay in the framework repository. This crate
@@ -19,6 +20,7 @@ pub mod http_load;
 pub mod integer_serialization;
 pub mod leptos_page;
 pub mod native_output;
+pub mod showcase;
 pub mod proa_airbnb_search;
 pub mod proa_page;
 #[cfg(feature = "topcoat")]

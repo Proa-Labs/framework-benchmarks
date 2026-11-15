@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { summarize } from "../../tooling/stats.mjs";
 import contract from "./contract.json";
 import legacyContract from "./contract-v1.json";
+import threeWorkloads from "./contract-v2.json";
 export interface Phase {
   repeat: number;
   workload?: string;
@@ -52,6 +53,12 @@ export interface Capture {
         responseBytes: number;
         semanticSha256: string;
         negativeControls: number;
+        adaptation?: {
+          engineRevision: string;
+          fixtureDomSha256: string;
+          nativeCssSha256: string;
+          omittedStyles: unknown[];
+        };
       }
     >;
   }[];
@@ -79,11 +86,19 @@ export function workloadDefinitions(result: Capture) {
 }
 export function validateResult(result: Capture, publication = true) {
   assert.ok([1, 2].includes(result.schemaVersion));
-  const expected = result.schemaVersion === 1 ? legacyContract : contract;
+  const expected =
+    result.schemaVersion === 1
+      ? legacyContract
+      : result.scenario.id === threeWorkloads.id
+        ? threeWorkloads
+        : contract;
   assert.equal(result.status, "pass");
   assert.equal(result.scenario.id, expected.id);
   if (result.schemaVersion === 2)
-    assert.deepEqual(result.scenario.workloads, contract.workloads);
+    assert.deepEqual(
+      result.scenario.workloads,
+      "workloads" in expected ? expected.workloads : undefined,
+    );
   assert.deepEqual(
     [...result.engines.map((e) => e.id)].sort(),
     result.captureKind === "engineering" && !publication
@@ -134,8 +149,9 @@ export function validateResult(result: Capture, publication = true) {
             result.captureKind !== "smoke" &&
               result.schemaVersion === 2 &&
               mode === "closed"
-              ? contract.workloads.find((w) => w.id === workload.id)
-                  ?.capacityDurationSeconds
+              ? ("workloads" in expected ? expected.workloads : []).find(
+                  (w) => w.id === workload.id,
+                )?.capacityDurationSeconds
               : result.methodology.durationSeconds,
             `${engine.id}/${workload.id} wrong observation window`,
           );

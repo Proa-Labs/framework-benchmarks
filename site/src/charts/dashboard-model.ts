@@ -100,7 +100,11 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
         .join(
           ". ",
         )}. Every response is validated; generator-limited phases are rejected.`,
-      scope: `Production HTTP routing → complete SSR HTML. Shared component page, product grid and table workloads with escaping, branches, lists and a request-specific value. Framework shells may differ. ${frameworkUsesJsSsr() ? "Exact uses its production JavaScript SSR backend on Bun; its native Rust render host is not measured in this capture. " : ""}No full-document cache, database, external I/O or browser hydration timing.`,
+      scope: `Production HTTP routing → complete SSR HTML. Shared workloads (${frameworkWorkloads()
+        .map((w) => w.label)
+        .join(
+          ", ",
+        )}) with escaping, branches, lists and a request-specific value. Framework shells may differ. ${frameworkUsesJsSsr() ? "Exact uses its production JavaScript SSR backend on Bun; its native Rust render host is not measured in this capture. " : ""}No full-document cache, database, external I/O or browser hydration timing.`,
     },
     rendering: {
       title: "SSR render latency",
@@ -453,6 +457,10 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
         state.workload = frameworkWorkloads()[0].id;
       if (state.chart === "balls") state.chart = "bars";
     } else if (state.workload === "catalog") state.workload = "cards";
+    if (state.view === "http" && !data.http.rows[state.workload])
+      state.workload = Object.keys(data.http.rows)[0];
+    if (state.view === "rendering" && !data.rendering.rows[state.workload])
+      state.workload = orderedWorkloads()[0].id;
     if (state.chart === "compare" && state.view !== "rendering")
       state.chart = "bars";
     if (["waterfall", "utilization", "breakdown"].includes(metric()))

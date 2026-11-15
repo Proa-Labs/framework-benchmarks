@@ -59,7 +59,9 @@ export function WorkloadChoices({ model }: { model: DashboardModel }) {
           hidden={
             state.view === "framework"
               ? !frameworkWorkloads().some((v) => v.id === w.id)
-              : w.id === "catalog"
+              : state.view === "http"
+                ? !model.data.http.rows[w.id]
+                : w.id === "catalog"
           }
         >
           <span className="fw-workload-thumb" aria-hidden="true">

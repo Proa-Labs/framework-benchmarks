@@ -40,7 +40,9 @@
       "turbo.json",
       "benchmarks/rendering/external/*/package.json",
       "benchmarks/framework-ssr/prepare-fixtures.ts",
-      "tooling/checks/workspace.test.mjs"
+      "tooling/checks/workspace.test.mjs",
+      "benchmarks/rendering/showcase/*.mjs",
+      "!benchmarks/rendering/showcase/fixtures"
     ]
   },
   "formatter": {
@@ -59,7 +61,7 @@
   "overrides": [
     {
       "includes": [
-        "benchmarks/framework-ssr/adapters/next/app/catalog/page.jsx"
+        "benchmarks/framework-ssr/adapters/next/app/(core)/catalog/page.jsx"
       ],
       "linter": {
         "rules": {

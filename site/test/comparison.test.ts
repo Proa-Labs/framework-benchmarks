@@ -69,7 +69,11 @@ test("Exact discloses native fixture differences and keeps strict-fixture limita
     (r) => r.id === "exact",
   )?.renderingAdaptation;
   assert.ok(adaptation?.source.includes("#styling-and-layout"));
-  assert.ok(adaptation?.details.endsWith("/exact/README.md"));
+  assert.ok(
+    adaptation?.details.includes(
+      "/benchmarks/rendering/showcase#exacts-explicit-adaptation",
+    ),
+  );
   assert.ok(html.includes('class="fw-fixture-adapted"'));
   assert.ok(html.includes('data-render-adaptation="exact"'));
   for (const row of model.comparisonMeasurements()) {

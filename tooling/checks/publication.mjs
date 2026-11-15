@@ -9,6 +9,7 @@ import { renderingSourceFiles } from "../../benchmarks/rendering/canonical/sourc
 import suites from "../../benchmarks/suites.json" with { type: "json" };
 import { sourceDigest } from "../capture/captures.mjs";
 import { readMeasuredSources } from "../capture/measured-sources.mjs";
+import { readRawJson } from "../capture/raw.mjs";
 import { repositoryRoot } from "../repository.mjs";
 import { verifyReportTestOnlyChange } from "./report-source.mjs";
 import { validateCapture } from "./validate.mjs";
@@ -216,17 +217,18 @@ export async function verifyPublication(root) {
         ),
         result,
       );
-      const runs = JSON.parse(
-        await readFile(
-          join(
-            root,
-            suite.directory,
-            "results/raw",
-            result.capture_id,
-            "process-summaries.json",
-          ),
-          "utf8",
-        ),
+      const processArtifact = result.raw_artifacts.find(
+        (a) => a.label === "Per-process summaries",
+      );
+      assert.ok(processArtifact);
+      assert.ok(
+        [
+          `raw/${result.capture_id}/process-summaries.json`,
+          `raw/${result.capture_id}/process-summaries.json.gz`,
+        ].includes(processArtifact.path),
+      );
+      const runs = readRawJson(
+        join(root, suite.directory, "results", processArtifact.path),
       );
       for (const workload of result.workloads) {
         const proa = runs.filter(

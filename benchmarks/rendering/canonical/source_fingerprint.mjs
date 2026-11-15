@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { workspaceSources } from "../../../tooling/capture/workspace-sources.mjs";
 
@@ -15,6 +15,7 @@ const sourcePaths = [
   "bun.lock",
   "tooling/adapters/adapters.mjs",
   "tooling/capture/captures.mjs",
+  "tooling/capture/raw.mjs",
   "tooling/capture/verify-source.mjs",
   "tooling/adapters/string-adapter.mjs",
   "tooling/adapters/owned-adapter.mjs",
@@ -25,6 +26,9 @@ const sourcePaths = [
   "benchmarks/rendering/build.rs",
   "benchmarks/rendering/canonical",
   "benchmarks/rendering/src",
+  "benchmarks/rendering/showcase",
+  "benchmarks/framework-ssr/prepare-fixtures.ts",
+  "benchmarks/framework-ssr/adapters",
   "fixtures/legacy-ebay-chrome",
   "benchmarks/rendering/templates",
   "benchmarks/rendering/external",
@@ -49,7 +53,16 @@ export function renderingSourceFiles(workspaceDirectory) {
       ...output.split("\0").filter(Boolean),
       ...workspaceSources(workspaceDirectory),
     ]),
-  ].sort();
+  ]
+    .filter(
+      (path) =>
+        existsSync(join(workspaceDirectory, path)) &&
+        !path.endsWith(".test.mjs") &&
+        !path.endsWith(".test.ts") &&
+        !path.endsWith(".test.tsx") &&
+        !path.endsWith(".md"),
+    )
+    .sort();
 }
 
 export function renderingSourceFingerprint(workspaceDirectory) {

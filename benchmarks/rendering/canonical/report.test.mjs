@@ -111,7 +111,7 @@ function fixture() {
       const outputBytes = 1_000 + index + (rendererId === "proa" ? 0 : 10);
       result.parity[rendererId][workload.id] = {
         status: "pass",
-        mode: "semantic DOM",
+        mode: workload.fixture === "showcase-v1" ? "shared showcase DOM/CSS" : "semantic DOM",
         canonical_sha256: "a".repeat(64),
         output_bytes: outputBytes,
         payload_delta_bytes: rendererId === "proa" ? 0 : 10,
@@ -313,7 +313,7 @@ test("the retained capture has one parity pass per roster/workload cell", () => 
       ).length,
     0,
   );
-  assert.equal(passes, latest.renderers.length * workloads.workloads.length);
+  assert.equal(passes, latest.renderers.length * latest.workloads.length);
 });
 
 test("source fingerprints ignore generated files but include source edits", () => {
@@ -373,6 +373,10 @@ test("only the declared Exact adaptation can bypass strict DOM/class equality", 
       style_checks: 100,
       negative_controls: "pass",
     });
+  for (const workload of workloads.workloads.filter(w=>w.fixture==="showcase-v1")) Object.assign(data.parity.exact[workload.id], {
+    fixture:"exact-showcase-native-v1",mode:"adapted business content and compiled native styles",semantic_sha256:"c".repeat(64),negative_controls:4,
+    adaptation:{engineRevision:"94b8671f70fe",nativeCssSha256:"d".repeat(64),styleValidationSha256:"e".repeat(64),omittedStyles:[],evidence:[]}
+  });
   validateCanonicalResult(data, roster, workloads);
   for (const mutate of [
     (d) => {

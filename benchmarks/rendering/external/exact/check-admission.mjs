@@ -5,6 +5,11 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { hostMetadata } from "../../../../tooling/load/driver.mjs";
 import { renderingSourceFingerprint } from "../../canonical/source_fingerprint.mjs";
+import {
+  loadFixture,
+  renderReference,
+  fixtures as showcases,
+} from "../../showcase/fixture.mjs";
 
 const root = fileURLToPath(new URL("../../../../", import.meta.url));
 const source =
@@ -21,14 +26,24 @@ assert.equal(
 const temporary = await mkdtemp(join(tmpdir(), "exact-fixture-admission-"));
 const cells = [];
 try {
-  for (const workload of ["cards", "products", "table"]) {
-    const fixture = await readFile(
-      join(
-        root,
-        `benchmarks/rendering/external/svelte/suite_${workload}.svelte`,
-      ),
-      "utf8",
-    );
+  for (const workload of [
+    "cards",
+    "products",
+    "table",
+    ...showcases.map((f) => f.id),
+  ]) {
+    const fixture = showcases.some((f) => f.id === workload)
+      ? (() => {
+          const { definition, data } = loadFixture(workload);
+          return renderReference(definition, data);
+        })()
+      : await readFile(
+          join(
+            root,
+            `benchmarks/rendering/external/svelte/suite_${workload}.svelte`,
+          ),
+          "utf8",
+        );
     const literalClass = /class="([^"]+)"/.exec(fixture)?.[1];
     assert.ok(literalClass);
     const app = join(temporary, workload);

@@ -115,6 +115,10 @@ export async function buildAll() {
     "-p",
     join(here, "tsconfig.adapters.json"),
   ]);
+  await command([
+    process.execPath,
+    "benchmarks/rendering/showcase/generate-exact.mjs",
+  ]);
   await buildProa();
   console.log("Built all five production framework adapters");
 }

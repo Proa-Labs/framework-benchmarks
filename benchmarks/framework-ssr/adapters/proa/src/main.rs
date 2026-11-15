@@ -21,6 +21,16 @@ struct Card {
 struct Parameters {
     request: Option<String>,
 }
+struct ShowcasePage {
+    id: &'static str,
+    data: &'static proa_bench::showcase::Data,
+    request: String,
+}
+impl<L: DataLoader> WebRenderSync<L> for ShowcasePage {
+    fn render(self, cx: &mut WebContext<L>) -> Result<(), WriteError> {
+        proa_bench::showcase::render_proa_into(self.id, self.data, &self.request, cx)
+    }
+}
 struct Currency(u64);
 impl<L: DataLoader> WebRenderSync<L> for Currency {
     fn render(self, cx: &mut WebContext<L>) -> Result<(), WriteError> {
@@ -70,8 +80,21 @@ impl<L: DataLoader> WebRenderSync<L> for Catalog {
 struct Health {
     status: &'static str,
     engine: &'static str,
-    framework: &'static str,
+    framework: String,
     worker_threads: usize,
+}
+fn locked_proa_revision() -> &'static str {
+    include_str!("../Cargo.lock")
+        .split("[[package]]")
+        .find(|package| package.lines().any(|line| line == "name = \"proa_core\""))
+        .unwrap()
+        .lines()
+        .find(|line| line.starts_with("source = "))
+        .unwrap()
+        .rsplit('#')
+        .next()
+        .unwrap()
+        .trim_end_matches('"')
 }
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -101,7 +124,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Json(Health {
                     status: "ok",
                     engine: "proa",
-                    framework: "Proa bbbc96843351",
+                    framework: format!("Proa {}", &locked_proa_revision()[..12]),
                     worker_threads: 1,
                 })
             }),
@@ -122,6 +145,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         fixture,
                         workload,
                         request: parameters.request.unwrap_or_default(),
+                    }),
+                )
+            }),
+        ));
+    }
+    for (id, path) in [
+        ("airbnb-home", "/showcase/airbnb-home"),
+        ("nike-catalog", "/showcase/nike-catalog"),
+        ("github-pr", "/showcase/github-pr"),
+        ("sentry-otel", "/showcase/sentry-otel"),
+        ("espn", "/showcase/espn"),
+    ] {
+        let prepared = proa_bench::showcase::prepare(id);
+        let data = prepared.data;
+        routes.push(Route::endpoint(
+            path,
+            get(move |Query(parameters): Query<Parameters>| async move {
+                (
+                    [(axum::http::header::CACHE_CONTROL, "no-store")],
+                    RouteResponse::ssr(ShowcasePage {
+                        id,
+                        data,
+                        request: parameters
+                            .request
+                            .unwrap_or_else(|| data.texts[prepared.controls.request_index].clone()),
                     }),
                 )
             }),

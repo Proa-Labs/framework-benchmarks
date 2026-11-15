@@ -1,8 +1,13 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { parse } from "parse5";
+import {
+  isShowcase,
+  showcaseNegativeControls,
+  validateShowcaseHtml,
+} from "../rendering/showcase/admission.mjs";
 import { cards, price } from "./fixture.mjs";
-import { validateWorkloadHtml } from "./workload-parity.ts";
+import { negativeControls, validateWorkloadHtml } from "./workload-parity.ts";
 
 const attr = (node, name) => node.attrs?.find((a) => a.name === name)?.value;
 const descendants = (node) => [
@@ -14,7 +19,19 @@ const text = (node) =>
     ? node.value
     : (node.childNodes || []).map(text).join("");
 export const sha256 = (body) => createHash("sha256").update(body).digest("hex");
-export function validateSemanticHtml(body, request, workload = "catalog") {
+export function negativeControlsFor(workload) {
+  return isShowcase(workload)
+    ? showcaseNegativeControls(workload)
+    : negativeControls(workload);
+}
+export function validateSemanticHtml(
+  body,
+  request,
+  workload = "catalog",
+  options = {},
+) {
+  if (isShowcase(workload))
+    return validateShowcaseHtml(body, workload, request, options);
   if (workload !== "catalog")
     return validateWorkloadHtml(body, request, workload);
   const nodes = descendants(parse(String(body)));

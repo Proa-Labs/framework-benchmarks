@@ -1180,8 +1180,9 @@
     @apply [min-height:36px];
   }
   #frameworks-explorer .fw-comparison {
-    @apply [width:100%] [min-width:36rem] border-collapse table-fixed text-sm tabular-nums;
-    --fw-name-column: 25%;
+    @apply [width:100%] border-collapse table-fixed text-sm tabular-nums;
+    --fw-name-column: 11rem;
+    min-width: calc(var(--fw-name-column) + var(--fw-workload-count) * 10rem);
     display: block;
   }
   #frameworks-explorer .fw-comparison thead,
@@ -1199,14 +1200,14 @@
   }
   #frameworks-explorer .fw-comparison tbody tr {
     content-visibility: auto;
-    contain-intrinsic-block-size: auto 45px;
+    contain-intrinsic-block-size: auto 56px;
   }
   #frameworks-explorer .fw-comparison th:first-child {
     @apply text-left;
   }
   #frameworks-explorer .fw-comparison th,
   #frameworks-explorer .fw-comparison td {
-    @apply [padding:8px_12px] font-normal text-right [vertical-align:middle];
+    @apply [padding:12px_16px] font-normal text-right [vertical-align:middle];
   }
   #frameworks-explorer .fw-comparison th:first-child {
     @apply [padding-left:0];
@@ -1242,7 +1243,7 @@
     @apply [padding:0];
   }
   #frameworks-explorer .fw-comparison-cell > button {
-    @apply block [width:100%] [padding:8px_12px] text-right;
+    @apply block [width:100%] [padding:12px_16px] text-right;
   }
   #frameworks-explorer
     .fw-comparison
@@ -1289,14 +1290,14 @@
       @apply [padding:7px_8px] text-sm text-center;
     }
     #frameworks-explorer .fw-comparison {
-      --fw-name-column: 32%;
+      --fw-name-column: 10rem;
     }
     #frameworks-explorer .fw-comparison th,
     #frameworks-explorer .fw-comparison td {
-      @apply [padding:8px_5px];
+      @apply [padding:12px_12px];
     }
     #frameworks-explorer .fw-comparison-cell > button {
-      @apply [padding:8px_5px];
+      @apply [padding:12px_12px];
     }
     #frameworks-explorer .fw-comparison .fw-renderer {
       @apply text-sm [gap:5px] [overflow-wrap:anywhere];
@@ -1342,10 +1343,10 @@
   }
   #frameworks-explorer .fw-comparison th,
   #frameworks-explorer .fw-comparison td {
-    @apply [padding-top:5px] [padding-bottom:5px];
+    @apply [padding-top:12px] [padding-bottom:12px];
   }
   #frameworks-explorer .fw-comparison thead th {
-    @apply [padding-top:7px] [padding-bottom:7px];
+    @apply [padding-top:12px] [padding-bottom:12px];
   }
   #frameworks-explorer .fw-top-actions {
     @apply [gap:4px] text-base [line-height:1.5];
@@ -1656,13 +1657,16 @@
   }
   @media (min-width: 700px) {
     #frameworks-explorer[data-compare="true"] {
-      --fw-comparison-heading-height: 48px;
+      --fw-comparison-heading-height: 5.5rem;
     }
     #frameworks-explorer[data-compare="true"] .fw-sidebar-label {
       @apply flex items-center [min-height:var(--fw-comparison-heading-height)] [margin:0];
     }
     #frameworks-explorer[data-compare="true"] .fw-comparison thead {
-      @apply [height:var(--fw-comparison-heading-height)];
+      @apply [min-height:var(--fw-comparison-heading-height)];
+    }
+    #frameworks-explorer[data-compare="true"] .fw-comparison thead tr {
+      @apply [min-height:var(--fw-comparison-heading-height)];
     }
     #frameworks-explorer[data-compare="true"] .fw-toolbar {
       @apply hidden;

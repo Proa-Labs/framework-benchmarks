@@ -1,5 +1,6 @@
 // Presentation adapters only. Benchmark execution, fixtures, and statistics stay
 // in their existing suites. Never add measurements to the site's source files.
+
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
@@ -8,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { workloadDefinitions } from "../benchmarks/framework-ssr/report.ts";
 import { validateCanonicalResult } from "../benchmarks/rendering/canonical/report.mjs";
 import suites from "../benchmarks/suites.json" with { type: "json" };
+import { readRawJson } from "../tooling/capture/raw.mjs";
 import { capturedRenderingContract } from "../tooling/capture/rendering-contract.mjs";
 import { summarize } from "../tooling/stats.mjs";
 import type {
@@ -153,11 +155,8 @@ export async function loadInputs(
     processArtifact,
     "rendering capture has no per-process artifact",
   );
-  input.processSummaries = JSON.parse(
-    await readFile(
-      join(root, "benchmarks/rendering/results", processArtifact.path),
-      "utf8",
-    ),
+  input.processSummaries = readRawJson<Inputs["processSummaries"]>(
+    join(root, "benchmarks/rendering/results", processArtifact.path),
   );
   if (
     refresh &&
@@ -382,6 +381,10 @@ export function normalize(input: Inputs): BenchmarkData {
           detail: `${m.output_bytes.toLocaleString("en-US")} output bytes. ${m.allocation_policy}.`,
         };
       });
+  }
+  // Suite coverage grows independently: showcase routes belong to rendering
+  // and Framework SSR; the transport-only HTTP suite keeps its own fixtures.
+  for (const workload of http.scenario.workloads) {
     output.http.rows[workload.id] = http.engines.map((engine) => {
       const fixture = engine.workloads[workload.id];
       requireValue(

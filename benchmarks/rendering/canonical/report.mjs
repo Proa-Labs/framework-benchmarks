@@ -161,8 +161,12 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
         if (parity[workloadId]?.status !== "pass") {
           fail(`${renderer.id}/${workloadId} parity pass is missing`);
         }
-        const adapted =
-          definitionFor(renderer.id)?.fixture === "exact-native-v1";
+        const showcase = workloadManifest.workloads.find(w => w.id === workloadId)?.fixture === "showcase-v1";
+        const adapted = !showcase && definitionFor(renderer.id)?.fixture === "exact-native-v1";
+        if (showcase && renderer.id === "exact") {
+          const evidence = parity[workloadId].adaptation;
+          if (parity[workloadId].fixture !== "exact-showcase-native-v1" || parity[workloadId].negative_controls !== 4 || !/^[a-f0-9]{64}$/.test(parity[workloadId].semantic_sha256??"") || !evidence?.engineRevision || !/^[a-f0-9]{64}$/.test(evidence.nativeCssSha256??"") || !/^[a-f0-9]{64}$/.test(evidence.styleValidationSha256??"") || !Array.isArray(evidence.omittedStyles) || !Array.isArray(evidence.evidence)) fail(`${renderer.id}/${workloadId}: incomplete showcase adaptation evidence`);
+        }
         if (
           adapted &&
           (renderer.id !== "exact" ||
@@ -179,7 +183,7 @@ export function validateCanonicalResult(result, roster, workloadManifest) {
           );
         if (
           parity[workloadId].mode !==
-          (adapted ? "adapted content and styles" : "semantic DOM")
+          (showcase ? renderer.id === "exact" ? "adapted business content and compiled native styles" : "shared showcase DOM/CSS" : adapted ? "adapted content and styles" : "semantic DOM")
         ) {
           fail(`${renderer.id}/${workloadId} parity mode is not semantic DOM`);
         }
@@ -629,7 +633,7 @@ export function assertReadmeCurrent(
     );
   }
   const outsideScoreboard = readme.replace(scoreboard, "");
-  if (/\b(?:µs|ms)\s+·\s+\d+(?:\.\d+)?×/.test(outsideScoreboard)) {
+  if (/(?:^|\s)(?:µs|ms)\s+·\s+\d+(?:\.\d+)?×/.test(outsideScoreboard)) {
     throw new Error("README contains a renderer result outside latest.json");
   }
 }

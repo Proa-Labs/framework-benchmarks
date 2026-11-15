@@ -462,7 +462,9 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       choice.hidden =
         state.view === "framework"
           ? !frameworkWorkloads().some((w) => w.id === button.dataset.workload)
-          : button.dataset.workload === "catalog";
+          : state.view === "http"
+            ? !data.http.rows[required(button.dataset.workload)]
+            : button.dataset.workload === "catalog";
       const miniature = choice.querySelector<HTMLImageElement>("img");
       const src = `/thumbnails/${state.view === "framework" && frameworkWorkloads().some((w) => w.id === button.dataset.workload) ? "framework-" : ""}${button.dataset.workload}.svg`;
       if (miniature && miniature.getAttribute("src") !== src)

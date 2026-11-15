@@ -6,6 +6,7 @@ import {
   type RefreshManifest,
   refreshFolders,
 } from "../tooling/capture/proa-refresh.mjs";
+import { readRawJson } from "../tooling/capture/raw.mjs";
 import type { Inputs, View } from "./benchmark-types.ts";
 import {
   copyGenerated as cp,
@@ -67,16 +68,12 @@ export function applyProaRefresh(
       input.rendering.measurements.proa = r.measurements.proa;
       input.rendering.parity.proa = r.parity.proa;
       input.rendering.versions.Proa = r.versions.Proa;
-      const records = JSON.parse(
-        readFileSync(
-          join(
-            root,
-            "benchmarks/rendering/results/raw",
-            r.capture_id,
-            "process-summaries.json",
-          ),
-          "utf8",
-        ),
+      const processArtifact = r.raw_artifacts.find((a) =>
+        /process summaries/i.test(a.label),
+      );
+      if (!processArtifact) throw new Error("Missing raw render samples");
+      const records = readRawJson(
+        join(root, "benchmarks/rendering/results", processArtifact.path),
       ) as Inputs["processSummaries"];
       input.processSummaries = [
         ...input.processSummaries.filter((r) => r.framework_id !== "proa"),

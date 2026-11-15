@@ -349,7 +349,7 @@ try {
     new Set(decoded.rows.map((r) => r.id)),
     new Set(["react", "marko"]),
   );
-  for (const width of [360, 390, 768]) {
+  for (const width of [360, 390, 751, 768]) {
     await page.setViewportSize({ width, height: 1000 });
     await navigate(`${server.url}/?chart=bars`);
     await page.locator(".fw-row").first().waitFor();
@@ -407,6 +407,34 @@ try {
         `${width}px: plotted labels must remain readable`,
       );
     }
+    await navigate(`${server.url}/?view=rendering&chart=compare`);
+    const comparisonLayout = await page
+      .locator(".fw-comparison")
+      .evaluate((table) => {
+        const headingBottom = Math.max(
+          ...Array.from(
+            table.querySelectorAll("thead th"),
+            (cell) => cell.getBoundingClientRect().bottom,
+          ),
+        );
+        const firstRow = table.querySelector("tbody tr");
+        const measurement = table.querySelector(".fw-comparison-cell > button");
+        if (!firstRow || !measurement)
+          throw new Error("Missing comparison layout");
+        return {
+          headingBottom,
+          firstRowTop: firstRow.getBoundingClientRect().top,
+          padding: Number.parseFloat(getComputedStyle(measurement).paddingTop),
+        };
+      });
+    assert.ok(
+      comparisonLayout.headingBottom <= comparisonLayout.firstRowTop + 1,
+      `${width}px: comparison headings overlap the measurements`,
+    );
+    assert.ok(
+      comparisonLayout.padding >= 12,
+      `${width}px: measurement cells need breathing room`,
+    );
     checks.push(`responsive/${width}`);
   }
   await navigate(server.url);
@@ -453,7 +481,7 @@ try {
     assert.ok(comparisonExport.unmeasured?.some((row) => row.id === id));
   assert.deepEqual(
     new Set(comparisonExport.rows.map((r) => r.workload)),
-    new Set(["cards", "products", "table"]),
+    new Set(benchmarkData.workloads.map((w) => w.id)),
   );
   await page.locator('[data-workload="products"]').click();
   assert.equal(await page.locator(".fw-row").count(), renderCount);

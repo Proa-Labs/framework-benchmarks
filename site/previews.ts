@@ -1,7 +1,15 @@
+import { existsSync } from "node:fs";
+import { isShowcase } from "../benchmarks/rendering/showcase/admission.mjs";
+import {
+  loadFixture,
+  renderReference,
+} from "../benchmarks/rendering/showcase/fixture.mjs";
+import { utilityStylesheet } from "../benchmarks/rendering/showcase/styles.mjs";
+import { readRaw } from "../tooling/capture/raw.mjs";
 import { required } from "./required.ts";
 // Render the existing canonical adapter; preview styling stays outside timing.
 
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import { type DefaultTreeAdapterMap, parse, serialize } from "parse5";
@@ -117,6 +125,17 @@ export async function buildPreviews(
       thumbnailSvg(html),
     );
   }
+  const utilityCss = workloads.some((w) => isShowcase(w.id))
+    ? await utilityStylesheet()
+    : "";
+  async function showcasePreview(html: string) {
+    // The measured document is unchanged. Preview-only assets use the upstream public
+    // asset host; scripts remain excluded from the imported SSR projection.
+    return html
+      .replace(/<link[^>]+href="\/proa.css"[^>]*>/g, "")
+      .replace("</head>", `<style>${utilityCss}</style></head>`)
+      .replaceAll('src="/images/', 'src="https://proa.so/images/');
+  }
   if (frameworkCapture) {
     const { validateSemanticHtml } = await import(
       "../benchmarks/framework-ssr/parity.mjs"
@@ -133,29 +152,25 @@ export async function buildPreviews(
         frameworkCapture.schemaVersion === 2
           ? `proa-${id}-parity.html`
           : "proa-parity.html";
-      const body = await readFile(
-        new URL(
-          `../benchmarks/framework-ssr/results/raw/${frameworkCapture.captureId}/${filename}`,
-          import.meta.url,
-        ),
-        "utf8",
+      const rawPath = new URL(
+        `../benchmarks/framework-ssr/results/raw/${frameworkCapture.captureId}/${filename}`,
+        import.meta.url,
       );
+      const body = readRaw(
+        existsSync(rawPath) ? rawPath.pathname : `${rawPath.pathname}.gz`,
+      ).toString("utf8");
       const expected = (proa.parityByWorkload?.[id] || proa.parity)
         .semanticSha256;
-      if (
-        validateSemanticHtml(
-          body,
-          "fresh-b",
-          id as "cards" | "products" | "table" | "catalog",
-        ) !== expected
-      )
+      if (validateSemanticHtml(body, "fresh-b", id) !== expected)
         throw new Error(
           `Framework ${id} preview differs from admitted business content`,
         );
       const frameworkStyle = `${style}main[data-bench-page=cards] section{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}main[data-bench-page=cards] section>h2{grid-column:1/-1}article{background:white;border:1px solid #dce1e8;border-radius:8px;padding:14px}main[data-bench-page=products],main[data-bench-page=catalog]{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}main[data-bench-page]>h1,main[data-bench-page]>[data-bench-request]{grid-column:1/-1}article h2,article h3{font-size:16px}[role=list]{font-size:12px;color:#64748b}@media(max-width:650px){main[data-bench-page=products],main[data-bench-page=catalog],main[data-bench-page=cards] section{grid-template-columns:repeat(2,minmax(0,1fr))}}`;
       await writePreview(
         `framework-${id}.html`,
-        body.replace("<head>", `<head><style>${frameworkStyle}</style>`),
+        isShowcase(id)
+          ? await showcasePreview(body)
+          : body.replace("<head>", `<head><style>${frameworkStyle}</style>`),
       );
       if (id === "catalog")
         await writePreview(
@@ -165,6 +180,14 @@ export async function buildPreviews(
     }
   }
   for (const { id } of workloads) {
+    if (isShowcase(id)) {
+      const { definition, data } = loadFixture(id);
+      await writePreview(
+        `${id}.html`,
+        await showcasePreview(renderReference(definition, data)),
+      );
+      continue;
+    }
     if (!ROOTS[id])
       throw new Error(
         `Preview fixture missing for ${id}: add it to benchmarks/rendering/external/react/suite_components.mjs`,

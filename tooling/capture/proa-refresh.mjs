@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { validateResult as validateFramework } from "../../benchmarks/framework-ssr/report.ts";
 import { validateProaRenderRun } from "../../benchmarks/rendering/canonical/render-contract.mjs";
 import suites from "../../benchmarks/suites.json" with { type: "json" };
+import { readRawJson } from "./raw.mjs";
 
 export const refreshFolders = {
   rendering: suites.rendering.directory,
@@ -15,7 +16,7 @@ export const refreshFolders = {
   streaming: suites.streaming.directory,
   startup: suites.startup.directory,
 };
-const read = (path) => JSON.parse(readFileSync(path, "utf8"));
+const read = readRawJson;
 const idOf = (d) => d.capture_id ?? d.captureId;
 const sourcePath = (root, suite, d) =>
   join(root, refreshFolders[suite], "results/raw", idOf(d), "source.tar.gz");
@@ -226,9 +227,17 @@ export function loadProaRefresh(root, input, buffers) {
             ? d.raw_artifact
             : d.raw_artifacts.find((r) => r.label === "Per-process summaries")
                 .path;
-        assert.equal(raw, `raw/${id}/process-summaries.json`);
+        assert.ok(
+          [
+            `raw/${id}/process-summaries.json`,
+            `raw/${id}/process-summaries.json.gz`,
+          ].includes(raw),
+        );
         const records = read(join(root, folder, "results", raw));
-        assert.equal(records.length, 15);
+        assert.equal(
+          records.length,
+          Object.keys(d.measurements.proa).length * 5,
+        );
         records.forEach(validateProaRenderRun);
         for (const key of Object.keys(d.measurements.proa)) {
           const rows = records.filter((r) =>

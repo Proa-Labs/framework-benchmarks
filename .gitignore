@@ -37,3 +37,12 @@ experiments/travel-agent/results/*.partial
 
 # Shared Turborepo task cache.
 .turbo/
+
+# Native showcase templates/components generated from the shared fixture sources.
+benchmarks/rendering/showcase/.generated/
+
+# Native showcase routes are generated before production framework builds.
+benchmarks/framework-ssr/adapters/astro/src/pages/showcase/
+benchmarks/framework-ssr/adapters/sveltekit/src/routes/showcase/
+benchmarks/framework-ssr/adapters/sveltekit/.showcase-generated/
+benchmarks/framework-ssr/adapters/next/app/(showcase)/
