@@ -363,7 +363,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       } else hidePercentiles();
     }
   });
-  listen(root, "pointermove", (event) => {
+  listen(document, "pointermove", (event) => {
     // movementX/Y can stay zero outside pointer lock. Compare viewport
     // coordinates so a real move can reopen a dismissed explanation reliably.
     const moved = event.clientX !== pointerX || event.clientY !== pointerY;
@@ -372,7 +372,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     if (!dismissedHover || !moved) return;
     dismissedHover = false;
     const row = closest(event, percentileTarget);
-    if (row) showRowPercentiles(row);
+    if (row && root.contains(row)) showRowPercentiles(row);
   });
   listen(percentilePopup, "pointerenter", () => clearTimeout(supportHideTimer));
   listen(percentilePopup, "pointerleave", () => {
