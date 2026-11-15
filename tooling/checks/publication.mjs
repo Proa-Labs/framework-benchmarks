@@ -12,6 +12,7 @@ import { readMeasuredSources } from "../capture/measured-sources.mjs";
 import { readRawJson } from "../capture/raw.mjs";
 import { repositoryRoot } from "../repository.mjs";
 import { verifyFrameworkShardEvidence } from "./framework-shards.mjs";
+import { validateProaPins } from "./proa-pins.mjs";
 import { verifyReportTestOnlyChange } from "./report-source.mjs";
 import { validateCapture } from "./validate.mjs";
 
@@ -209,6 +210,7 @@ export function validateAdmissionChecks(checks, result) {
 }
 
 export async function verifyPublication(root) {
+  validateProaPins(root);
   assert.ok(
     !existsSync(join(root, "site/data/performance/proa-refresh.json")),
     "Proa-only review refresh selected: rerun the complete comparison campaign before merge or launch, then remove site/data/performance/proa-refresh.json",

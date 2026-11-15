@@ -12,6 +12,7 @@ suite="$3"
 mode="$4"
 export BENCH_HOST_LABEL="GCP C4 c4-standard-16-lssd · ${BENCH_NODE_NAME} · isolated node"
 test "$(git rev-parse HEAD)" = "$BENCH_SOURCE_REVISION"
+bun tooling/checks/proa-pins.mjs
 test "$(cat /sys/devices/system/cpu/cpu0/topology/thread_siblings_list)" = "0,8"
 test "$(nproc --all)" = 16
 lscpu -e=CPU,CORE,SOCKET,ONLINE > /work/cpu-topology.txt
