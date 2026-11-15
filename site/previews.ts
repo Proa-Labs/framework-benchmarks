@@ -1,4 +1,5 @@
-import { existsSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
 import { isShowcase } from "../benchmarks/rendering/showcase/admission.mjs";
 import {
   loadFixture,
@@ -6,6 +7,8 @@ import {
 } from "../benchmarks/rendering/showcase/fixture.mjs";
 import { utilityStylesheet } from "../benchmarks/rendering/showcase/styles.mjs";
 import { readRaw } from "../tooling/capture/raw.mjs";
+import rasterManifest from "./data/performance/thumbnails/manifest.json";
+import { copyGenerated } from "./generated-files.ts";
 import { required } from "./required.ts";
 // Render the existing canonical adapter; preview styling stays outside timing.
 
@@ -62,44 +65,29 @@ export function thumbnailHtml(html: string) {
   trim(document);
   return serialize(document);
 }
-// An SVG image is inert: browsers cannot run scripts or inject frame tools into
-// its XHTML illustration. Serialize parsed nodes as XML, including SVG namespaces.
-export function thumbnailSvg(html: string) {
-  const document = parse(thumbnailHtml(html));
-  const escapeXml = (value: string) =>
-    value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;");
-  function xml(
-    node: DefaultTreeAdapterMap["node"],
-    namespace = "http://www.w3.org/2000/svg",
-  ): string {
-    if ("tagName" in node) {
-      if (node.tagName === "script") return "";
-      const attributes = node.attrs
-        .filter(({ name }) => name !== "xmlns")
-        .map(
-          ({ name, value, prefix }) =>
-            ` ${prefix ? `${prefix}:` : ""}${name}="${escapeXml(value)}"`,
-        )
-        .join("");
-      const declaration =
-        node.namespaceURI !== namespace ? ` xmlns="${node.namespaceURI}"` : "";
-      return `<${node.tagName}${declaration}${attributes}>${node.childNodes.map((child) => xml(child, node.namespaceURI)).join("")}</${node.tagName}>`;
-    }
-    if ("value" in node) return escapeXml(node.value);
-    if ("childNodes" in node)
-      return node.childNodes.map((child) => xml(child, namespace)).join("");
-    return "";
+// Bind raster illustrations to their source HTML, excluding request attributes
+// and framework scripts that do not change the workload's appearance.
+export function thumbnailSourceHash(html: string) {
+  const doc = parse(thumbnailHtml(html));
+  function strip(node: DefaultTreeAdapterMap["node"]) {
+    if (!("childNodes" in node)) return;
+    node.childNodes = node.childNodes.filter(
+      (child) => !("tagName" in child) || child.tagName !== "script",
+    );
+    if ("attrs" in node)
+      node.attrs = node.attrs.filter(
+        (attr) => attr.name !== "data-bench-request",
+      );
+    for (const child of node.childNodes) strip(child);
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="640" viewBox="0 0 800 640"><foreignObject width="800" height="640">${xml(document)}</foreignObject></svg>`;
+  strip(doc);
+  return createHash("sha256").update(serialize(doc)).digest("hex");
 }
 export async function buildPreviews(
   directory: string,
   frameworkCapture: Capture,
   workloads: { id: string }[],
+  { raster = true } = {},
 ) {
   let React: typeof import("react"),
     renderToString: typeof import("react-dom/server").renderToString,
@@ -120,10 +108,34 @@ export async function buildPreviews(
   await mkdir(join(directory, "thumbnails"), { recursive: true });
   async function writePreview(filename: string, html: string) {
     await writeFile(join(directory, "previews", filename), html);
-    await writeFile(
-      join(directory, "thumbnails", filename.replace(/\.html$/, ".svg")),
-      thumbnailSvg(html),
-    );
+    if (raster) {
+      const snapshots = rasterManifest.thumbnails as Record<
+        string,
+        { sourceSha256: string; file: string }
+      >;
+      const snapshot = snapshots[filename];
+      if (!snapshot || snapshot.sourceSha256 !== thumbnailSourceHash(html))
+        throw new Error(
+          `Thumbnail source changed for ${filename}; run bun site/generate-thumbnails.ts`,
+        );
+      if (!/^[a-z0-9-]+\.webp$/.test(snapshot.file))
+        throw new Error("Invalid thumbnail path");
+      const source = new URL(
+        `./data/performance/thumbnails/${snapshot.file}`,
+        import.meta.url,
+      );
+      // A damaged/missing source asset must fail the build, not become a blank icon.
+      const image = readFileSync(source);
+      if (
+        image.subarray(0, 4).toString() !== "RIFF" ||
+        image.subarray(8, 12).toString() !== "WEBP"
+      )
+        throw new Error("Invalid WebP thumbnail");
+      await copyGenerated(
+        source.pathname,
+        join(directory, "thumbnails", filename.replace(/\.html$/, ".webp")),
+      );
+    }
   }
   const utilityCss = workloads.some((w) => isShowcase(w.id))
     ? await utilityStylesheet()

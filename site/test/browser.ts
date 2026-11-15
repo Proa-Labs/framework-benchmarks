@@ -800,6 +800,16 @@ try {
     .first()
     .elementHandle();
   assert.ok(miniature);
+  assert.ok(
+    await miniature.evaluate((el) => {
+      const box = el.getBoundingClientRect(),
+        parent = el.parentElement?.getBoundingClientRect();
+      return (
+        parent && box.width >= 20 && Math.abs(box.width - parent.width) < 1
+      );
+    }),
+    "Raster miniature must fill its slot without the old SVG scale transform",
+  );
   await page.locator('[data-workload="products"]').click();
   assert.equal(await miniature.evaluate((el) => el.isConnected), true);
   const firstRow = page.locator(".fw-row").first();

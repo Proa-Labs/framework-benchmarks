@@ -1,6 +1,6 @@
 import { test } from "bun:test";
 import assert from "node:assert/strict";
-import { thumbnailHtml, thumbnailSvg } from "../previews.ts";
+import { thumbnailHtml, thumbnailSourceHash } from "../previews.ts";
 
 test("thumbnail documents bound hidden rows without changing visible inputs or full fixtures", () => {
   const html = `<html><head><title>Fixture</title></head><body><table><tbody>${Array.from({ length: 1000 }, (_, index) => `<tr data-row="${index}"><td>User ${index} &amp; team</td></tr>`).join("")}</tbody></table></body></html>`;
@@ -13,14 +13,17 @@ test("thumbnail documents bound hidden rows without changing visible inputs or f
   assert.equal(thumbnailHtml(thumbnail), thumbnail);
 });
 
-test("thumbnail images serialize inert XHTML with escaped values", () => {
-  const svg = thumbnailSvg(
-    '<html><head><style>p > span{color:red}</style></head><body><p title="&quot;&amp;">&lt;hello&gt;<img src="data:image/png;base64,AA=="></p><script>throw new Error("no")</script></body></html>',
+test("thumbnail source hashes ignore runtime scripts and request attributes, while retaining business content", () => {
+  const doc = (request: string, text: string) =>
+    `<html><head><title>Fixture</title></head><body><main data-bench-request="${request}"><p>${text}</p></main><script>${request}</script></body></html>`;
+  assert.equal(
+    thumbnailSourceHash(doc("first", "Content")),
+    thumbnailSourceHash(doc("second", "Content")),
   );
-  assert.match(svg, /xmlns="http:\/\/www.w3.org\/1999\/xhtml"/);
-  assert.match(svg, /&lt;hello&gt;/);
-  assert.match(svg, /title="&quot;&amp;"/);
-  assert.doesNotMatch(svg, /<script/);
+  assert.notEqual(
+    thumbnailSourceHash(doc("first", "Content")),
+    thumbnailSourceHash(doc("first", "Changed")),
+  );
 });
 
 test("thumbnail cards are bounded for div-based and article-based fixtures", () => {

@@ -466,7 +466,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
             ? !data.http.rows[required(button.dataset.workload)]
             : button.dataset.workload === "catalog";
       const miniature = choice.querySelector<HTMLImageElement>("img");
-      const src = `/thumbnails/${state.view === "framework" && frameworkWorkloads().some((w) => w.id === button.dataset.workload) ? "framework-" : ""}${button.dataset.workload}.svg`;
+      const src = `/thumbnails/${state.view === "framework" && frameworkWorkloads().some((w) => w.id === button.dataset.workload) ? "framework-" : ""}${button.dataset.workload}.webp`;
       if (miniature && miniature.getAttribute("src") !== src)
         miniature.src = src;
       choice.dataset.active = String(selected);

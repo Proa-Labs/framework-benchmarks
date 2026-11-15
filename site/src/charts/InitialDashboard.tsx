@@ -66,10 +66,10 @@ export function WorkloadChoices({ model }: { model: DashboardModel }) {
         >
           <span className="fw-workload-thumb" aria-hidden="true">
             <img
-              src={`/thumbnails/${state.view === "framework" && frameworkWorkloads().some((v) => v.id === w.id) ? "framework-" : ""}${w.id}.svg`}
+              src={`/thumbnails/${state.view === "framework" && frameworkWorkloads().some((v) => v.id === w.id) ? "framework-" : ""}${w.id}.webp`}
               alt=""
-              width="800"
-              height="640"
+              width="320"
+              height="256"
               loading="lazy"
               tabIndex={-1}
               title={`${w.label} miniature`}

@@ -48,3 +48,9 @@ watches this directory recursively, including added and removed review files.
 
 Run `bun run test:site` and `bun run typecheck` from the repository root after
 editing data; run `bun run --cwd site test:browser` to check the built UI.
+
+Workload miniatures live in `performance/thumbnails/`. Refresh them with
+`bun site/generate-thumbnails.ts` after changing a fixture. The source hash
+manifest binds each small WebP to its preview HTML; normal site builds verify
+those hashes without needing Chrome. Full HTML previews remain available.
+Generation needs Playwright Chromium (`bun node_modules/playwright/cli.js install chromium`).

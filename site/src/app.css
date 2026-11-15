@@ -1401,7 +1401,7 @@
     @apply relative block [width:40px] [height:32px] overflow-hidden shrink-0 [background:#fafbfc] [margin:4px_0_4px_4px] [border-radius:2px] pointer-events-none;
   }
   #frameworks-explorer .fw-workload-thumb img {
-    @apply [width:800px] [height:640px] [max-width:none] [border:0] [transform:scale(0.05)] [transform-origin:top_left] pointer-events-none;
+    @apply block [width:100%] [height:100%] [border:0] object-cover [object-position:top_left] pointer-events-none;
   }
   #frameworks-explorer .fw-fixture-dialog {
     @apply fixed [inset:0] [margin:auto] [width:min(1100px,_calc(100%_-_32px))] [height:min(850px,_calc(100dvh_-_40px))] [padding:16px] [border:1px_solid_var(--fw-border)] [border-radius:9px] text-ink [background:var(--fw-bg)];
@@ -1482,9 +1482,6 @@
   @media (max-width: 560px) {
     #frameworks-explorer .fw-workload-thumb {
       @apply block [width:24px] [height:22px] [margin:3px_0_3px_3px];
-    }
-    #frameworks-explorer .fw-workload-thumb img {
-      @apply [transform:scale(0.03)];
     }
     #frameworks-explorer .fw-workload-choice button {
       @apply [padding:6px_4px] text-sm;
@@ -1579,9 +1576,6 @@
   }
   #frameworks-explorer .fw-workload-thumb {
     @apply [width:32px] [height:28px];
-  }
-  #frameworks-explorer .fw-workload-thumb img {
-    @apply [transform:scale(0.04)];
   }
   #frameworks-explorer .fw-type-filters {
     @apply [margin-top:22px] flex-col items-stretch [gap:6px];
