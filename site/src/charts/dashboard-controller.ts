@@ -150,6 +150,12 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const percentilePopup = $("[data-percentile-popup]");
   let popupAnchor: Element | null = null;
+  // Interactive source notes retain keyboard focus; plain numeric tooltips
+  // can still follow the pointer between measurements.
+  const popupHasFocus = () =>
+    percentilePopup.hasAttribute("data-support-popover") &&
+    (percentilePopup.contains(document.activeElement) ||
+      Boolean(popupAnchor?.contains(document.activeElement)));
   let popupPinned = false;
   let supportHideTimer = 0;
   let returningPopupFocus = false;
@@ -160,7 +166,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     ".fw-row[data-focus], .fw-comparison [data-focus], .fw-comparison [data-render-support]";
   function hidePercentiles(force = false) {
     clearTimeout(supportHideTimer);
-    if (popupPinned && !force) return;
+    if (!force && (popupPinned || popupHasFocus())) return;
     // Hiding a popup can uncover a different cell beneath the stationary mouse.
     // Wait for actual pointer movement before accepting another hover.
     if (force) dismissedHover = true;
@@ -217,6 +223,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     anchor: Element,
     heading = "",
   ) {
+    if (popupHasFocus()) return;
     const ready = entries.filter((e): e is StatEntry & { stats: Latency } =>
       Boolean(e.stats?.values),
     );
@@ -260,6 +267,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   }
   function showRowPercentiles(row: HTMLElement) {
     clearTimeout(supportHideTimer);
+    if (popupHasFocus()) return;
     if (row.dataset.renderAdaptation) {
       const id = row.dataset.renderAdaptation;
       const adapted = required(renderer(id)?.renderingAdaptation);

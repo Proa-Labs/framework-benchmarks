@@ -652,6 +652,18 @@ try {
       true,
     );
     assert.equal(await adaptedPopup.isVisible(), true);
+    // Pointer movement must not replace a note while its source link has focus.
+    await page
+      .locator('.fw-comparison-cell [data-focus="proa"]')
+      .first()
+      .hover();
+    assert.equal(
+      await adaptedPopup
+        .getByRole("link")
+        .first()
+        .evaluate((el) => el === document.activeElement),
+      true,
+    );
     await adaptedPopup.getByRole("link").first().press("Escape");
     assert.equal(await adaptedPopup.isVisible(), false);
     assert.equal(
