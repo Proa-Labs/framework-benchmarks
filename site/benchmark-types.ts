@@ -1,10 +1,10 @@
-import type startup from "../cold-start/results/latest.json";
-import type { Capture as FrameworkCapture } from "../framework-ssr/report.ts";
-import type http from "../page-load/results/latest.json";
-import type roster from "../rendering/canonical/roster.json";
-import type workloadManifest from "../rendering/canonical/workloads.json";
-import type rendering from "../rendering/results/latest.json";
-import type streaming from "../suspense-load/results/latest.json";
+import type startup from "../benchmarks/cold-start/results/latest.json";
+import type { Capture as FrameworkCapture } from "../benchmarks/framework-ssr/report.ts";
+import type http from "../benchmarks/http/results/latest.json";
+import type roster from "../benchmarks/rendering/canonical/roster.json";
+import type workloadManifest from "../benchmarks/rendering/canonical/workloads.json";
+import type rendering from "../benchmarks/rendering/results/latest.json";
+import type streaming from "../benchmarks/streaming/results/latest.json";
 import type catalog from "./data/performance/catalog.json";
 import type { Project } from "./feature-schema.ts";
 

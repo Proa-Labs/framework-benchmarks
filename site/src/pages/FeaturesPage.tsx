@@ -397,26 +397,33 @@ export function CoverageBar({
   onSelect: (selection: Selection) => void;
 }) {
   const { counts, total } = summarizeCapabilities(row, group);
-  return SUPPORTED_STATES.filter((status) => counts[status] > 0).map(
-    (status) => {
-      const label = `${row.label}: ${counts[status]} of ${total} ${supportStates[status].label.toLowerCase()}`;
-      return (
-        <button
+  const states = SUPPORTED_STATES.filter((status) => counts[status] > 0);
+  const breakdown = states
+    .map(
+      (status) =>
+        `${counts[status]} ${supportStates[status].label.toLowerCase()}`,
+    )
+    .join(", ");
+  return (
+    <button
+      type="button"
+      className="fw-coverage-open"
+      aria-label={`${row.label}: ${breakdown || "no documented support"}. View all findings`}
+      onClick={() => onSelect({ row: row.id })}
+    >
+      {states.map((status) => (
+        <span
           key={status}
-          type="button"
           data-coverage={status}
-          data-coverage-detail={`${row.id}/${status}`}
           style={{ "--coverage-width": `${(counts[status] / total) * 100}%` }}
-          aria-label={`${label}. View findings`}
-          title={label}
-          onClick={() => onSelect({ row: row.id, status })}
+          aria-hidden="true"
         >
           {counts[status] / total >= 0.075 && (
             <span className="fw-coverage-count">{counts[status]}</span>
           )}
-        </button>
-      );
-    },
+        </span>
+      ))}
+    </button>
   );
 }
 
@@ -429,7 +436,8 @@ export function FeaturesPage({
   const [settings, setSettings] = useState(() =>
     readSettings(location.searchStr),
   );
-  const [ready, setReady] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const previousSearch = useRef(location.searchStr);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<string | null>(null);
@@ -440,8 +448,13 @@ export function FeaturesPage({
   const { group, display, sort, order, tools, types } = settings;
   useLayoutEffect(() => {
     document.title = "Features · Frameworks";
-    setSettings(readSettings(location.searchStr));
-    setReady(true);
+    // useState already read the initial server URL. Do not render the entire
+    // feature comparison a second time merely to mark hydration complete.
+    if (previousSearch.current !== location.searchStr) {
+      previousSearch.current = location.searchStr;
+      setSettings(readSettings(location.searchStr));
+    }
+    if (root.current) root.current.dataset.appReady = "true";
   }, [location.searchStr]);
   useLayoutEffect(() => {
     if (pickerOpen) search.current?.focus();
@@ -529,7 +542,8 @@ export function FeaturesPage({
     <div
       id="frameworks-explorer"
       className="fw-features-shell"
-      data-app-ready={ready}
+      ref={root}
+      data-app-ready="false"
     >
       <Header active="features" />
       <section className="fw-intro" aria-labelledby="site-title">
@@ -865,7 +879,7 @@ export function FeaturesPage({
                 hidden={display !== "overview"}
               >
                 <p className="fw-feature-summary-note">
-                  Bar length shows supported features. Select a segment for
+                  Bar length shows supported features. Select a bar for
                   evidence.
                 </p>
                 <div className="fw-coverage-key">

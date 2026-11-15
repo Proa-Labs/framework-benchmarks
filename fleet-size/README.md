@@ -17,7 +17,7 @@ CPU-time per successful closed-loop response.
 ```sh
 node fleet-size/run.mjs
 node fleet-size/run.mjs --target-rps 1000,10000,50000 --headroom 0.3 --max-cores 16
-node fleet-size/run.mjs --capture page-load/results/latest.json --json
+node fleet-size/run.mjs --capture benchmarks/http/results/latest.json --json
 ```
 
 `--headroom` is a fraction (`0.3` is 30%). `--max-cores` flags cells whose
@@ -25,7 +25,7 @@ provisioned value exceeds that budget and exits `2` when any cell does.
 Generator-limited or non-publication captures are refused.
 
 Reproduce the published 10,000 responses/s table with the default command
-against `page-load/results/latest.json`.
+against `benchmarks/http/results/latest.json`.
 
 ## Tests
 

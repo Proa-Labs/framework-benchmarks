@@ -13,7 +13,7 @@ import {
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "..");
-const defaultCapture = join(root, "page-load", "results", "latest.json");
+const defaultCapture = join(root, "benchmarks", "http", "results", "latest.json");
 
 export function parseArgs(argv) {
   const options = {
@@ -58,10 +58,10 @@ export function usage() {
 Usage:
   node fleet-size/run.mjs
   node fleet-size/run.mjs --target-rps 1000,10000,50000 --headroom 0.3 --max-cores 16
-  node fleet-size/run.mjs --capture page-load/results/latest.json --json
+  node fleet-size/run.mjs --capture benchmarks/http/results/latest.json --json
 
 Options:
-  --capture <path>     Publication page-load JSON (default: page-load/results/latest.json)
+  --capture <path>     Publication page-load JSON (default: benchmarks/http/results/latest.json)
   --target-rps <list>  Comma-separated rates (default: 10000)
   --headroom <n>       Extra capacity as a fraction (0.3 is 30%)
   --max-cores <n>      Flag cells whose provisioned cores exceed this budget

@@ -3,11 +3,11 @@ import pathlib
 import sys
 import tarfile
 
-prefixes = ('rendering/results/', 'framework-ssr/results/', 'page-load/results/',
-            'suspense-load/results/', 'cold-start/results/')
+prefixes = ('benchmarks/rendering/results/', 'benchmarks/framework-ssr/results/', 'benchmarks/http/results/',
+            'benchmarks/streaming/results/', 'benchmarks/cold-start/results/')
 reports = {f'{suite}/README.md' for suite in
-           ('rendering', 'framework-ssr', 'page-load', 'suspense-load', 'cold-start')}
-reports |= {'scoreboard.md', 'engineering.md'}
+           ('benchmarks/rendering', 'benchmarks/framework-ssr', 'benchmarks/http', 'benchmarks/streaming', 'benchmarks/cold-start')}
+reports |= {'docs/reports/scoreboard.md', 'docs/reports/engineering.md'}
 with tarfile.open(sys.argv[1]) as archive:
     members = archive.getmembers()
     seen = set()

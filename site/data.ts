@@ -5,11 +5,11 @@ import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { workloadDefinitions } from "../framework-ssr/report.ts";
-import { validateCanonicalResult } from "../rendering/canonical/report.mjs";
-import { summarize } from "../suspense-load/stats.mjs";
-import { capturedRenderingContract } from "../tooling/rendering-contract.mjs";
-import suites from "../tooling/suites.json" with { type: "json" };
+import { workloadDefinitions } from "../benchmarks/framework-ssr/report.ts";
+import { validateCanonicalResult } from "../benchmarks/rendering/canonical/report.mjs";
+import suites from "../benchmarks/suites.json" with { type: "json" };
+import { capturedRenderingContract } from "../tooling/capture/rendering-contract.mjs";
+import { summarize } from "../tooling/stats.mjs";
 import type {
   BenchmarkData,
   CaptureMeta,
@@ -155,7 +155,7 @@ export async function loadInputs(
   );
   input.processSummaries = JSON.parse(
     await readFile(
-      join(root, "rendering/results", processArtifact.path),
+      join(root, "benchmarks/rendering/results", processArtifact.path),
       "utf8",
     ),
   );

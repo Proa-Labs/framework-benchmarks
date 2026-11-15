@@ -23,7 +23,7 @@ import { main, parseArgs, usage } from "./run.mjs";
 const exec = promisify(execFile);
 const cli = fileURLToPath(new URL("./run.mjs", import.meta.url));
 const workspace = fileURLToPath(new URL("..", import.meta.url));
-const publicationPath = join(workspace, "page-load", "results", "latest.json");
+const publicationPath = join(workspace, "benchmarks", "http", "results", "latest.json");
 
 function phase(mode, cpu, valid = true) {
   return {
@@ -132,12 +132,12 @@ test("Markdown names the capture and prints one table per request rate", () => {
   assert.match(markdown, /Product grid \/ React/);
 });
 
-test("CLI defaults to the retained page-load capture and reproduces the published 10k table", async () => {
+test("CLI defaults to the retained HTTP capture and reproduces the published 10k table", async () => {
   const { stdout } = await exec(process.execPath, [cli], { cwd: workspace, maxBuffer: 1024 * 1024 });
   assert.match(stdout, /Fleet size from CPU per response/);
-  assert.match(stdout, /\| Component page \| 0\.1 \| 1\.6 \| 0\.3 \| 1\.9 \| 1\.9 \|/);
-  assert.match(stdout, /\| Product grid \| 0\.7 \| 7\.7 \| 2\.4 \| 13\.2 \| 9\.3 \|/);
-  assert.match(stdout, /\| 1,000-row table \| 6\.2 \| 83\.8 \| 23\.1 \| 161\.7 \| 58\.0 \|/);
+  assert.match(stdout, /\| Component page \| 0\.1 \| 1\.6 \| 0\.3 \| 1\.8 \| 1\.7 \|/);
+  assert.match(stdout, /\| Product grid \| 0\.6 \| 7\.6 \| 2\.3 \| 13\.0 \| 9\.0 \|/);
+  assert.match(stdout, /\| 1,000-row table \| 6\.1 \| 80\.5 \| 22\.7 \| 159\.3 \| 57\.6 \|/);
 });
 
 test("CLI writes JSON, honors headroom, and exits 2 when a max-cores budget is exceeded", async () => {
@@ -178,7 +178,7 @@ test("CLI writes JSON, honors headroom, and exits 2 when a max-cores budget is e
 
 test("CLI help and argument parsing reject unknown flags", () => {
   assert.match(usage(), /CPU per response/);
-  assert.equal(parseArgs([]).capture.endsWith("page-load/results/latest.json"), true);
+  assert.equal(parseArgs([]).capture.endsWith("benchmarks/http/results/latest.json"), true);
   assert.throws(() => parseArgs(["--nope"]), /unknown option/);
   assert.throws(() => parseArgs(["extra.json"]), /unexpected argument/);
 });
@@ -194,5 +194,5 @@ test("retained publication capture is readable through planFleet", async () => {
     "sveltekit",
   ]);
   const table = plan.tables[0].rows.find((row) => row.workloadId === "table");
-  assert.equal(table.cells.find((cell) => cell.engineId === "proa").display, "6.2");
+  assert.equal(table.cells.find((cell) => cell.engineId === "proa").display, "6.1");
 });

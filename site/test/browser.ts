@@ -28,6 +28,7 @@ import type { BenchmarkData } from "../benchmark-types.ts";
 declare global {
   interface Window {
     reactNavigationProbe?: string;
+    initialComparisonProbe?: Element;
     axe: typeof axe;
   }
 }
@@ -81,16 +82,41 @@ try {
   page = await context.newPage();
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("console", (message) => {
-    if (
-      message.type() === "error" &&
-      /hydrat|server.rendered|didn.t match/i.test(message.text())
-    )
-      errors.push(message.text());
+    if (message.type() === "error") {
+      const { url, lineNumber } = message.location();
+      errors.push(`${message.text()} (${url}:${lineNumber + 1})`);
+    }
   });
   page.on("response", (response) => {
     if (response.status() >= 400)
       errors.push(`${response.status()} ${response.url()}`);
   });
+  // Keep this instrumentation on its own page: Playwright injects init scripts
+  // into every future frame too, while fixture previews intentionally ban scripts.
+  const hydrationPage = await context.newPage();
+  await hydrationPage.addInitScript(() => {
+    const observer = new MutationObserver(() => {
+      const table = document.querySelector("[data-renderer-comparison]");
+      if (table) {
+        window.initialComparisonProbe = table;
+        observer.disconnect();
+      }
+    });
+    observer.observe(document, { childList: true, subtree: true });
+  });
+  await hydrationPage.goto(server.url);
+  await hydrationPage.locator('[data-app-ready="true"]').waitFor();
+  assert.equal(
+    await hydrationPage.evaluate(
+      () =>
+        window.initialComparisonProbe ===
+        document.querySelector("[data-renderer-comparison]"),
+    ),
+    true,
+    "Hydration must preserve the server-rendered comparison table",
+  );
+  await hydrationPage.close();
+  checks.push("server-rendered comparison nodes survive hydration");
   await navigate(`${server.url}/?chart=bars`);
   await page.locator(".fw-row").first().waitFor();
   assert.equal(await page.locator(".fw-row").count(), renderCount);
@@ -280,10 +306,33 @@ try {
   );
   await navigate(server.url);
   await page.locator('[data-section="ecosystem"]').click();
+  assert.equal(await page.getByRole("main").count(), 1);
+  assert.equal(await page.getByRole("main").getAttribute("data-ecosystem"), "");
   assert.equal(
     await page.locator(".fw-catalog-row").count(),
     benchmarkData.ecosystem.length,
   );
+  for (const width of [360, 390]) {
+    await page.setViewportSize({ width, height: 1000 });
+    assert.equal(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+      true,
+    );
+    assert.equal(
+      await page
+        .locator(".fw-catalog-row > small:nth-of-type(2)")
+        .evaluateAll((nodes) =>
+          nodes.every(
+            (node) => node.getBoundingClientRect().right <= innerWidth,
+          ),
+        ),
+      true,
+    );
+  }
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  checks.push("Ecosystem main landmark and readable mobile directory columns");
   await navigate(
     `${server.url}/?view=http&chart=table&workload=table&http=rss&selected=react,marko`,
   );
@@ -312,10 +361,52 @@ try {
       size.content <= size.viewport + 1,
       `${width}px viewport overflows: ${size.content}`,
     );
+    for (const selector of [
+      ".fw-renderer",
+      ".fw-number",
+      ".fw-workload-choice button[data-workload]",
+    ]) {
+      const sizes = await page
+        .locator(`${selector}:visible`)
+        .evaluateAll((elements) =>
+          elements.map((el) =>
+            Number.parseFloat(getComputedStyle(el).fontSize),
+          ),
+        );
+      assert.ok(
+        sizes.length > 0 && sizes.every((size) => size >= 14),
+        `${width}px: ${selector} must remain readable`,
+      );
+    }
     await page.screenshot({
       path: join(siteRoot, `test-results/mobile-${width}.png`),
       fullPage: true,
     });
+    await navigate(
+      `${server.url}/?view=streaming&chart=lines&stream=completion`,
+    );
+    const charts = await page.locator(".fw-chart").evaluateAll((elements) =>
+      elements.map((element) => {
+        const svg = element as SVGSVGElement;
+        const text = svg.querySelector("text");
+        return {
+          width: svg.getBoundingClientRect().width,
+          drawing: svg.viewBox.baseVal.width,
+          textHeight: text?.getBoundingClientRect().height || 0,
+        };
+      }),
+    );
+    assert.equal(charts.length, 2);
+    for (const chart of charts) {
+      assert.ok(
+        Math.abs(chart.width - chart.drawing) < 1,
+        `${width}px: SVG labels must not shrink with the chart`,
+      );
+      assert.ok(
+        chart.textHeight >= 12,
+        `${width}px: plotted labels must remain readable`,
+      );
+    }
     checks.push(`responsive/${width}`);
   }
   await navigate(server.url);
@@ -422,7 +513,20 @@ try {
     } else
       assert.ok(required(await popup.textContent()).includes(support.version));
     await popup.hover();
+    // Scrolling while reading a linked explanation must preserve the popup,
+    // including when the pointer has already left its original table cell.
+    await page.evaluate(() => window.scrollBy(0, 32));
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        ),
+    );
     assert.equal(await popup.isVisible(), true);
+    assert.equal(
+      await cell.getAttribute("aria-describedby"),
+      "fw-percentile-popover",
+    );
     await cell.focus();
     await cell.press("Escape");
     // Let the hidden popup uncover any other cell beneath the stationary mouse.
@@ -663,7 +767,7 @@ try {
   );
   await navigate(`${server.url}/?chart=bars`);
   const miniature = await page
-    .locator(".fw-workload-thumb iframe")
+    .locator(".fw-workload-thumb img")
     .first()
     .elementHandle();
   assert.ok(miniature);
@@ -683,7 +787,7 @@ try {
     popupBefore,
   );
   assert.equal(await page.locator("[data-percentile-popup]").isVisible(), true);
-  checks.push("workload iframe identity and stable row/popover geometry");
+  checks.push("workload thumbnail identity and stable row/popover geometry");
   await firstRow.press("Escape");
   const jte = page.locator('.fw-row[data-focus="jte"]');
   await jte.hover();
@@ -1332,7 +1436,7 @@ try {
   await page.locator('[data-section="ecosystem"]').click();
   await page.locator("[data-ecosystem]").waitFor({ state: "visible" });
   await page
-    .getByRole("link", { name: "Frameworks home", exact: true })
+    .getByRole("link", { name: "frameworks.run home", exact: true })
     .click();
   await page.locator("[data-performance]").waitFor({ state: "visible" });
   assert.equal(

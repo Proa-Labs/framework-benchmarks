@@ -1,9 +1,9 @@
 import { mkdir } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import suites from "../tooling/suites.json" with { type: "json" };
-import { validateCapture } from "../tooling/validate.mjs";
-import { verifySourceSnapshot } from "../tooling/verify-source.mjs";
+import suites from "../benchmarks/suites.json" with { type: "json" };
+import { verifySourceSnapshot } from "../tooling/capture/verify-source.mjs";
+import { validateCapture } from "../tooling/checks/validate.mjs";
 import type { View } from "./benchmark-types.ts";
 import { captures, loadInputs, normalize } from "./data.ts";
 import {
@@ -55,7 +55,7 @@ export async function prepareData() {
     verifySourceSnapshot(
       join(
         siteRoot,
-        "../framework-ssr/results/raw",
+        "../benchmarks/framework-ssr/results/raw",
         input.framework.captureId,
         "source.tar.gz",
       ),
@@ -65,7 +65,7 @@ export async function prepareData() {
     await cp(
       join(
         siteRoot,
-        "../framework-ssr/results/raw",
+        "../benchmarks/framework-ssr/results/raw",
         input.framework.captureId,
         "source.tar.gz",
       ),

@@ -21,14 +21,14 @@
         "typescript": "catalog:",
       },
     },
-    "framework-ssr/adapters/astro": {
+    "benchmarks/framework-ssr/adapters/astro": {
       "name": "framework-ssr-astro",
       "dependencies": {
         "@astrojs/node": "catalog:",
         "astro": "catalog:",
       },
     },
-    "framework-ssr/adapters/next": {
+    "benchmarks/framework-ssr/adapters/next": {
       "name": "framework-ssr-next",
       "dependencies": {
         "next": "catalog:",
@@ -36,7 +36,7 @@
         "react-dom": "catalog:",
       },
     },
-    "framework-ssr/adapters/sveltekit": {
+    "benchmarks/framework-ssr/adapters/sveltekit": {
       "name": "framework-ssr-sveltekit",
       "version": "0.0.0",
       "devDependencies": {
@@ -49,27 +49,27 @@
         "vite": "catalog:",
       },
     },
-    "rendering/external/astro": {
+    "benchmarks/rendering/external/astro": {
       "name": "canonical-astro-render",
       "dependencies": {
         "@astrojs/node": "catalog:",
         "astro": "catalog:",
       },
     },
-    "rendering/external/bun": {
+    "benchmarks/rendering/external/bun": {
       "name": "proa-bench-bun-react",
       "dependencies": {
         "react": "catalog:",
         "react-dom": "catalog:",
       },
     },
-    "rendering/external/handlebars": {
+    "benchmarks/rendering/external/handlebars": {
       "name": "proa-bench-handlebars",
       "dependencies": {
         "handlebars": "4.7.8",
       },
     },
-    "rendering/external/marko": {
+    "benchmarks/rendering/external/marko": {
       "name": "proa-bench-marko",
       "version": "0.0.0",
       "dependencies": {
@@ -77,7 +77,7 @@
         "marko": "6.0.150",
       },
     },
-    "rendering/external/next": {
+    "benchmarks/rendering/external/next": {
       "name": "canonical-next-admission",
       "dependencies": {
         "next": "catalog:",
@@ -85,21 +85,21 @@
         "react-dom": "catalog:",
       },
     },
-    "rendering/external/react": {
+    "benchmarks/rendering/external/react": {
       "name": "proa-bench-react",
       "dependencies": {
         "react": "catalog:",
         "react-dom": "catalog:",
       },
     },
-    "rendering/external/svelte": {
+    "benchmarks/rendering/external/svelte": {
       "name": "proa-bench-svelte",
       "version": "0.0.0",
       "dependencies": {
         "svelte": "catalog:",
       },
     },
-    "rendering/external/sveltekit": {
+    "benchmarks/rendering/external/sveltekit": {
       "name": "proa-bench-sveltekit",
       "version": "0.0.0",
       "devDependencies": {
@@ -112,7 +112,7 @@
         "vite": "catalog:",
       },
     },
-    "rendering/external/vue": {
+    "benchmarks/rendering/external/vue": {
       "name": "proa-bench-vue",
       "version": "0.0.0",
       "dependencies": {
@@ -780,9 +780,9 @@
 
     "caniuse-lite": ["caniuse-lite@1.0.30001826", "", {}, "sha512-wTB+9tIbLro/BCXwLuNV1meHE4L9dS6dArMDwgYfNBPMYScqClHyGunhkCSDtHhe/69Xl0sHlKgBVZ+fNsYtWA=="],
 
-    "canonical-astro-render": ["canonical-astro-render@workspace:rendering/external/astro"],
+    "canonical-astro-render": ["canonical-astro-render@workspace:benchmarks/rendering/external/astro"],
 
-    "canonical-next-admission": ["canonical-next-admission@workspace:rendering/external/next"],
+    "canonical-next-admission": ["canonical-next-admission@workspace:benchmarks/rendering/external/next"],
 
     "ccount": ["ccount@2.0.1", "", {}, "sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg=="],
 
@@ -924,11 +924,11 @@
 
     "fontkitten": ["fontkitten@1.0.3", "", { "dependencies": { "tiny-inflate": "^1.0.3" } }, "sha512-Wp1zXWPVUPBmfoa3Cqc9ctaKuzKAV6uLstRqlR56kSjplf5uAce+qeyYym7F+PHbGTk+tCEdkCW6RD7DX/gBZw=="],
 
-    "framework-ssr-astro": ["framework-ssr-astro@workspace:framework-ssr/adapters/astro"],
+    "framework-ssr-astro": ["framework-ssr-astro@workspace:benchmarks/framework-ssr/adapters/astro"],
 
-    "framework-ssr-next": ["framework-ssr-next@workspace:framework-ssr/adapters/next"],
+    "framework-ssr-next": ["framework-ssr-next@workspace:benchmarks/framework-ssr/adapters/next"],
 
-    "framework-ssr-sveltekit": ["framework-ssr-sveltekit@workspace:framework-ssr/adapters/sveltekit"],
+    "framework-ssr-sveltekit": ["framework-ssr-sveltekit@workspace:benchmarks/framework-ssr/adapters/sveltekit"],
 
     "frameworks-run-site": ["frameworks-run-site@workspace:site"],
 
@@ -1116,19 +1116,19 @@
 
     "prismjs": ["prismjs@1.30.0", "", {}, "sha512-DEvV2ZF2r2/63V+tK8hQvrR2ZGn10srHbXviTlcv7Kpzw8jWiNTqbVgjO3IY8RxrrOUF8VPMQQFysYYYv0YZxw=="],
 
-    "proa-bench-bun-react": ["proa-bench-bun-react@workspace:rendering/external/bun"],
+    "proa-bench-bun-react": ["proa-bench-bun-react@workspace:benchmarks/rendering/external/bun"],
 
-    "proa-bench-handlebars": ["proa-bench-handlebars@workspace:rendering/external/handlebars"],
+    "proa-bench-handlebars": ["proa-bench-handlebars@workspace:benchmarks/rendering/external/handlebars"],
 
-    "proa-bench-marko": ["proa-bench-marko@workspace:rendering/external/marko"],
+    "proa-bench-marko": ["proa-bench-marko@workspace:benchmarks/rendering/external/marko"],
 
-    "proa-bench-react": ["proa-bench-react@workspace:rendering/external/react"],
+    "proa-bench-react": ["proa-bench-react@workspace:benchmarks/rendering/external/react"],
 
-    "proa-bench-svelte": ["proa-bench-svelte@workspace:rendering/external/svelte"],
+    "proa-bench-svelte": ["proa-bench-svelte@workspace:benchmarks/rendering/external/svelte"],
 
-    "proa-bench-sveltekit": ["proa-bench-sveltekit@workspace:rendering/external/sveltekit"],
+    "proa-bench-sveltekit": ["proa-bench-sveltekit@workspace:benchmarks/rendering/external/sveltekit"],
 
-    "proa-bench-vue": ["proa-bench-vue@workspace:rendering/external/vue"],
+    "proa-bench-vue": ["proa-bench-vue@workspace:benchmarks/rendering/external/vue"],
 
     "process-ancestry": ["process-ancestry@0.1.0", "", {}, "sha512-tGqJW/UnclpYASFcM6Xh8D8l/BMtaQ9+CSG0vlJSJTcdMM4lDRv4c6H0Pdcsfted+bVczdYSfk2fdukg2gQkZg=="],
 

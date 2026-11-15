@@ -23,7 +23,7 @@ jobs:
   site:
     name: Build and validate TanStack Start website
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     permissions:
       contents: read
       deployments: write
@@ -46,6 +46,16 @@ jobs:
         run: bun node_modules/playwright/cli.js install --with-deps chromium
       - name: Verify browser interactions
         run: bun site/test/browser.ts
+      - name: Audit mobile and desktop Lighthouse scores
+        run: bun site/test/lighthouse.ts --runs 3 --save-assets
+      - name: Retain Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: lighthouse-reports
+          path: site/test-results/lighthouse/
+          if-no-files-found: ignore
+          retention-days: 14
       - name: Verify contributor benchmark path
         run: bun run bench run rendering --renderers react,vue --workloads cards
       - name: Publish Cloudflare PR preview
