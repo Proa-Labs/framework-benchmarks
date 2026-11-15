@@ -20,10 +20,12 @@ benchmarks/framework-ssr/results/local/proa.json`; it cannot replace a published
 
 ## Full comparison campaigns
 
-Run the five independent comparison suites concurrently, each on its own
+Run independent comparisons concurrently, each on its own
 `c4-standard-16-lssd` node in the existing GKE `runners-c4` pool. Rendering and
-its product-scaling diagnostic run sequentially on the same worker. Competitors
-inside a suite are never sharded or measured concurrently. Compilation and
+its product-scaling diagnostic run sequentially on the same worker. With `--framework-shards`, Framework SSR runs as eight workload jobs. Each job
+measures all five competitors on the same physical host. Workloads may use
+different matching hosts; the aggregate records their individual identities.
+Competitors within a workload are never split across hosts or measured concurrently. Compilation and
 setup finish before that worker starts measuring.
 Streaming uses 32 load-generator workers for every competitor; HTTP and
 Framework SSR use 24. Generator validity remains mandatory.
@@ -33,13 +35,13 @@ Python 3.12+, `git`, `tar` and an authenticated `kubectl` context.
 
 ```sh
 bun tooling/cloud/campaign.mjs --revision <full-40-character-commit-sha> \
-  --context gke_airy-cycle-504821-k9_us-west1-a_proa-ci --parallel 5 \
+  --context gke_airy-cycle-504821-k9_us-west1-a_proa-ci --parallel 5 --framework-shards \
   --out /tmp/framework-campaign
 ```
 
 Use `--plan` to inspect job manifests without allocating machines. Use `--smoke`
 to exercise the same orchestration with short, non-publishable captures. Default
-parallelism is five; `--parallel 1` runs whole suites sequentially. Each worker
+parallelism is five; the sharded plan queues twelve jobs through those slots. `--parallel 1` runs whole suites sequentially. Each worker
 requests 15 logical CPUs and 48 GiB, pins servers to CPU 0, leaves SMT sibling 8
 idle, and keeps generators on CPUs 1–7 and 9–15. Required node anti-affinity
 excludes other benchmark and ARC runner pods. This needs five free benchmark
@@ -95,3 +97,16 @@ mode, and uploads raw archives, logs and campaign state even on failure. It
 becomes dispatchable after the workflow is merged; the CLI works before then.
 To resume a failed Actions campaign locally, download its artifact and use its
 `campaign.json` directory with the command above.
+
+Workload shards are not publishable individually. Aggregation requires every
+workload, all five competitors, three independent starts, identical measured
+sources and policy, matching hardware/OS profiles, zero request errors, valid
+generators and retained parity artifacts. Original shard results are compressed
+under the selected capture; one verified source snapshot avoids duplicating
+eight copies of the same sources.
+
+The three core Framework SSR workloads retain 64 capacity connections. New
+showcase workloads use 16, except Sentry logs (8). Sentry uses a common 0.25
+requests/s latency rate and a 40-second window. The larger native response
+needs this rate to avoid overload. Every framework receives identical settings
+within that workload; these are bounded-concurrency capacity results.

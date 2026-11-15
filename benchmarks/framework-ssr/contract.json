@@ -19,8 +19,9 @@
     "Different framework shells and hydration protocols produce different payload sizes.",
     "This workload does not measure browser hydration, application startup, database I/O or developer experience.",
     "A separate contract and capture from the synchronous pure-renderer suite; numbers must not be combined.",
-    "Equal-load rates are fixed per workload (10 requests/s for component page, 5 for product grid, 1 for table and showcase pages), identical across frameworks; raw sample counts are retained.",
-    "Capacity windows are 10 seconds except table, GitHub PR and Sentry logs (60 seconds), identical across frameworks. Equal-load latency windows are 10 seconds; low-rate tail percentiles have few samples."
+    "Every framework uses identical settings within each workload. Core fixtures use 64 capacity connections; showcase fixtures use 16, except Sentry logs (8). These are bounded-concurrency capacity measurements, not a search for each server\u2019s optimal connection count.",
+    "Equal-load rates are 10 requests/s for component page, 5 for product grid, 1 for table and other showcase pages, and 0.25 for Sentry logs. Sentry latency runs for 40 seconds; other latency windows are 10 seconds. Lower rates keep the largest production response below overload. All raw sample counts are retained.",
+    "Capacity windows are 60 seconds for table, GitHub PR and Sentry logs, and 10 seconds otherwise. Settings are common to all five frameworks for each workload."
   ],
   "workloads": [
     {
@@ -49,35 +50,41 @@
       "label": "Airbnb landing page",
       "cardinality": 49,
       "fixedRateRps": 1,
-      "capacityDurationSeconds": 10
+      "capacityDurationSeconds": 10,
+      "capacityConcurrency": 16
     },
     {
       "id": "nike-catalog",
       "label": "Nike catalog",
       "cardinality": 117,
       "fixedRateRps": 1,
-      "capacityDurationSeconds": 10
+      "capacityDurationSeconds": 10,
+      "capacityConcurrency": 16
     },
     {
       "id": "github-pr",
       "label": "GitHub PR review",
       "cardinality": 16,
       "fixedRateRps": 1,
-      "capacityDurationSeconds": 60
+      "capacityDurationSeconds": 60,
+      "capacityConcurrency": 16
     },
     {
       "id": "sentry-otel",
       "label": "Sentry logs",
       "cardinality": 400,
-      "fixedRateRps": 1,
-      "capacityDurationSeconds": 60
+      "fixedRateRps": 0.25,
+      "capacityDurationSeconds": 60,
+      "capacityConcurrency": 8,
+      "latencyDurationSeconds": 40
     },
     {
       "id": "espn",
       "label": "ESPN game page",
       "cardinality": 2,
       "fixedRateRps": 1,
-      "capacityDurationSeconds": 10
+      "capacityDurationSeconds": 10,
+      "capacityConcurrency": 16
     }
   ]
 }

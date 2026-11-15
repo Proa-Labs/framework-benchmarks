@@ -13,7 +13,9 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
+  frameworkShardIds,
   jobManifest,
+  shardedSuiteIds,
   suiteIds,
   validateOptions,
   validateReconnect,
@@ -236,5 +238,18 @@ test("unknown or incomplete CLI flags fail before allocating or creating campaig
     }
   } finally {
     rmSync(temp, { recursive: true, force: true });
+  }
+});
+
+test("framework workload jobs keep every competitor on one isolated node", () => {
+  expect(frameworkShardIds).toHaveLength(8);
+  expect(shardedSuiteIds).toHaveLength(12);
+  for (const id of frameworkShardIds) {
+    const job = jobManifest(options, id);
+    expect(job.metadata.labels.suite).toBe(id);
+    expect(job.spec.template.spec.automountServiceAccountToken).toBe(false);
+    expect(job.spec.template.spec.containers[0].resources.requests.cpu).toBe(
+      "15",
+    );
   }
 });

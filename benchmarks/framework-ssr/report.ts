@@ -5,6 +5,9 @@ import legacyContract from "./contract-v1.json";
 import threeWorkloads from "./contract-v2.json";
 export interface Phase {
   repeat: number;
+  concurrency?: number | null;
+  requestValue?: string;
+  expectedResponseSha256?: string;
   workload?: string;
   offeredRps?: number | null;
   durationSeconds: number;
@@ -21,6 +24,7 @@ export interface Phase {
 }
 export interface Capture {
   captureId: string;
+  shard?: { workload: string; smoke: boolean };
   commands: { runtime: string; build: string; capture: string };
   limitations: string[];
   schemaVersion: number;
@@ -35,6 +39,8 @@ export interface Capture {
       label: string;
       fixedRateRps: number;
       capacityDurationSeconds?: number;
+      capacityConcurrency?: number;
+      latencyDurationSeconds?: number;
     }[];
   };
   methodology: typeof contract.publication | typeof legacyContract.publication;
@@ -53,6 +59,7 @@ export interface Capture {
         responseBytes: number;
         semanticSha256: string;
         negativeControls: number;
+        responseSha256?: string;
         adaptation?: {
           engineRevision: string;
           fixtureDomSha256: string;
@@ -75,13 +82,18 @@ export function workloadDefinitions(result: Capture) {
           : legacyContract.publication.fixedRateRps,
     },
   ];
+  const diagnostic = result.captureKind === "smoke" || result.shard?.smoke;
   return definitions.map((w) => ({
     ...w,
-    capacityDurationSeconds:
-      result.captureKind === "smoke"
-        ? result.methodology.durationSeconds
-        : w.capacityDurationSeconds || result.methodology.durationSeconds,
-    latencyDurationSeconds: result.methodology.durationSeconds,
+    capacityDurationSeconds: diagnostic
+      ? result.methodology.durationSeconds
+      : w.capacityDurationSeconds || result.methodology.durationSeconds,
+    capacityConcurrency: diagnostic
+      ? result.methodology.concurrency
+      : (w.capacityConcurrency ?? result.methodology.concurrency),
+    latencyDurationSeconds: diagnostic
+      ? result.methodology.durationSeconds
+      : (w.latencyDurationSeconds ?? result.methodology.durationSeconds),
   }));
 }
 export function validateResult(result: Capture, publication = true) {
@@ -92,12 +104,30 @@ export function validateResult(result: Capture, publication = true) {
       : result.scenario.id === threeWorkloads.id
         ? threeWorkloads
         : contract;
+  const shard = result.captureKind === "shard";
+  const diagnostic = result.captureKind === "smoke" || result.shard?.smoke;
+  if (shard) {
+    assert.equal(
+      publication,
+      false,
+      "A workload shard cannot be published by itself",
+    );
+    assert.ok(
+      result.shard &&
+        contract.workloads.some((w) => w.id === result.shard?.workload),
+    );
+    if (!diagnostic) assert.deepEqual(result.methodology, contract.publication);
+  }
   assert.equal(result.status, "pass");
   assert.equal(result.scenario.id, expected.id);
   if (result.schemaVersion === 2)
     assert.deepEqual(
       result.scenario.workloads,
-      "workloads" in expected ? expected.workloads : undefined,
+      "workloads" in expected
+        ? expected.workloads.filter(
+            (w) => !shard || w.id === result.shard?.workload,
+          )
+        : undefined,
     );
   assert.deepEqual(
     [...result.engines.map((e) => e.id)].sort(),
@@ -146,15 +176,17 @@ export function validateResult(result: Capture, publication = true) {
         for (const phase of phases) {
           assert.equal(
             phase.durationSeconds,
-            result.captureKind !== "smoke" &&
-              result.schemaVersion === 2 &&
-              mode === "closed"
-              ? ("workloads" in expected ? expected.workloads : []).find(
-                  (w) => w.id === workload.id,
-                )?.capacityDurationSeconds
-              : result.methodology.durationSeconds,
+            mode === "closed"
+              ? workload.capacityDurationSeconds
+              : workload.latencyDurationSeconds,
             `${engine.id}/${workload.id} wrong observation window`,
           );
+          if (phase.concurrency !== undefined && mode === "closed")
+            assert.equal(
+              phase.concurrency,
+              workload.capacityConcurrency,
+              `${engine.id}/${workload.id} unequal capacity concurrency`,
+            );
           if (result.schemaVersion === 2 && mode === "open")
             assert.equal(
               phase.offeredRps,
@@ -162,7 +194,7 @@ export function validateResult(result: Capture, publication = true) {
               `${engine.id}/${workload.id} unequal offered load`,
             );
           assert.equal(phase.errorCount, 0, `${engine.id} failed requests`);
-          if (result.captureKind !== "smoke")
+          if (!diagnostic)
             assert.equal(
               phase.loadGeneratorValid,
               true,

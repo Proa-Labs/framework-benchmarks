@@ -177,6 +177,7 @@ export interface BenchmarkData {
       label: string;
       fixedRateRps: number;
       capacityDurationSeconds: number;
+      capacityConcurrency: number;
       latencyDurationSeconds: number;
     }[];
     sourceSnapshot: string;

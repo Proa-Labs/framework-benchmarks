@@ -27,8 +27,7 @@ const sourcePaths = [
   "benchmarks/rendering/canonical",
   "benchmarks/rendering/src",
   "benchmarks/rendering/showcase",
-  "benchmarks/framework-ssr/prepare-fixtures.ts",
-  "benchmarks/framework-ssr/adapters",
+  "benchmarks/framework-ssr",
   "fixtures/legacy-ebay-chrome",
   "benchmarks/rendering/templates",
   "benchmarks/rendering/external",
@@ -57,6 +56,7 @@ export function renderingSourceFiles(workspaceDirectory) {
     .filter(
       (path) =>
         existsSync(join(workspaceDirectory, path)) &&
+        !path.startsWith("benchmarks/framework-ssr/results/") &&
         !path.endsWith(".test.mjs") &&
         !path.endsWith(".test.ts") &&
         !path.endsWith(".test.tsx") &&

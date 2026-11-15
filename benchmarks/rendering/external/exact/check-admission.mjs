@@ -116,5 +116,5 @@ await writeFile(
   `${JSON.stringify({ engine: "exact", version: expected, sourceSha256: renderingSourceFingerprint(root), host: hostMetadata(), cells }, null, 2)}\n`,
 );
 console.log(
-  "Exact: literal class attributes from all three unchanged fixtures rejected by pinned compiler. No timing admitted.",
+  "Exact: literal class attributes from all unchanged fixtures rejected by pinned compiler. No timing admitted.",
 );

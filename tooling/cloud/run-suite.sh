@@ -30,9 +30,11 @@ case "$suite" in
     taskset -c 0 bun benchmarks/rendering/canonical/run.mjs --no-setup "${smoke[@]}"
     taskset -c 0 bun benchmarks/rendering/canonical/run.mjs --product-scaling --no-setup "${smoke[@]}"
     ;;
-  framework)
+  framework|framework-*)
     bun benchmarks/framework-ssr/build.ts
-    taskset -c 1-7,9-15 bun benchmarks/framework-ssr/run.ts --no-build --workers 24 "${smoke[@]}"
+    workload=()
+    if [[ "$suite" == framework-* ]]; then workload=(--shard-workload "${suite#framework-}"); fi
+    taskset -c 1-7,9-15 bun benchmarks/framework-ssr/run.ts --no-build --workers 24 "${smoke[@]}" "${workload[@]}"
     ;;
   http|streaming|startup)
     args=()

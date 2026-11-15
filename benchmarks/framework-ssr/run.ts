@@ -56,8 +56,25 @@ if (proaOnly && smoke)
   throw new Error("Proa-only diagnostics use full sampling; omit --smoke");
 const argument = (name: string, fallback: string) => {
   const i = process.argv.indexOf(name);
-  return i < 0 ? fallback : process.argv[i + 1];
+  if (i < 0) return fallback;
+  assert.ok(
+    process.argv[i + 1] && !process.argv[i + 1].startsWith("--"),
+    `${name} requires a value`,
+  );
+  return process.argv[i + 1];
 };
+const shardWorkload = argument("--shard-workload", "");
+if (shardWorkload)
+  assert.ok(
+    !proaOnly && contract.workloads.some((w) => w.id === shardWorkload),
+    "Choose one known workload with all five frameworks",
+  );
+const activeWorkloads = contract.workloads.filter(
+  (w) => !shardWorkload || w.id === shardWorkload,
+);
+const resultsDirectory = shardWorkload
+  ? join(here, "results/shards", shardWorkload)
+  : join(here, "results");
 const policy = smoke
   ? {
       ...contract.publication,
@@ -67,13 +84,13 @@ const policy = smoke
       preRollSeconds: 0.2,
       // Leave room for the largest native pages to complete a full batch.
       // These diagnostic samples are never used for publication.
-      durationSeconds: 5,
+      durationSeconds: 10,
     }
   : contract.publication;
 const output = resolve(
   argument(
     "--out",
-    join(here, "results", smoke ? "smoke.json" : "latest.json"),
+    join(resultsDirectory, smoke ? "smoke.json" : "latest.json"),
   ),
 );
 assert.ok(output.endsWith(".json"), "Capture output must end in .json");
@@ -178,8 +195,7 @@ try {
   const source = await gitMetadata(root, sourceFiles);
   const captureId = newCaptureId("framework-ssr");
   const captureDirectory = join(
-    here,
-    "results",
+    resultsDirectory,
     smoke || parityOnly || proaOnly ? "local" : ".",
   );
   const raw = join(captureDirectory, "raw", captureId);
@@ -201,7 +217,7 @@ try {
       Capture["engines"][number]["parityByWorkload"]
     > = {};
     let engineHealth: Awaited<ReturnType<typeof ready>> | undefined;
-    for (const workload of contract.workloads) {
+    for (const workload of activeWorkloads) {
       const key = workload.id;
       const server = serverFor(id, key);
       try {
@@ -241,6 +257,7 @@ try {
           semanticSha256: semantic,
           negativeControls: controls.length,
           responseBytes: first.body.length,
+          responseSha256: sha256(first.body),
           ...(id === "exact" && isShowcase(key)
             ? {
                 adaptation: JSON.parse(
@@ -269,18 +286,18 @@ try {
       id,
       framework: engineHealth.framework,
       runtime: engineHealth.runtime || "Rust / Tokio",
-      parity: parityByWorkload.cards,
+      parity: parityByWorkload[activeWorkloads[0].id],
       parityByWorkload,
       phases: [] as Phase[],
     });
   }
   if (parityOnly) {
     console.log(
-      `All ${selectedEngines.length * contract.workloads.length} framework/workload admission cells passed; no timings collected.`,
+      `All ${selectedEngines.length * activeWorkloads.length} framework/workload admission cells passed; no timings collected.`,
     );
   } else {
     workers = await spawnWorkers(workersCount);
-    for (const workload of contract.workloads)
+    for (const workload of activeWorkloads)
       for (const mode of ["closed", "open"] as const)
         for (let repeat = 1; repeat <= policy.repeats; repeat++) {
           const order = selectedEngines.map(
@@ -312,13 +329,17 @@ try {
                 port: portFor(id),
                 path: `${workloadPath(workload.id)}?request=${encodeURIComponent(request)}`,
                 headers,
-                concurrency: policy.concurrency,
+                concurrency: smoke
+                  ? policy.concurrency
+                  : (workload.capacityConcurrency ?? policy.concurrency),
                 rate: workload.fixedRateRps,
                 preRollSeconds: policy.preRollSeconds,
-                durationSeconds:
-                  mode === "closed" && !smoke
+                durationSeconds: smoke
+                  ? policy.durationSeconds
+                  : mode === "closed"
                     ? workload.capacityDurationSeconds
-                    : policy.durationSeconds,
+                    : (workload.latencyDurationSeconds ??
+                      policy.durationSeconds),
                 timeoutMs: policy.requestTimeoutMs,
                 validatorModule: pathToFileURL(join(here, "parity.mjs")).href,
                 validatorOptions: { expectedSha256: sha256(expected.body) },
@@ -353,7 +374,13 @@ try {
                   true,
                   `${id} load generator limited`,
                 );
-              engine.phases.push({ ...phase, repeat, workload: workload.id });
+              engine.phases.push({
+                ...phase,
+                repeat,
+                workload: workload.id,
+                requestValue: request,
+                expectedResponseSha256: sha256(expected.body),
+              });
               console.log(
                 `${id}/${workload.id} ${mode} ${repeat}: ${phase.completionThroughputRps.toFixed(1)} responses/s; P99 ${phase.latencyMs.scheduledComplete.p99.toFixed(2)}ms`,
               );
@@ -365,7 +392,14 @@ try {
     const result = {
       schemaVersion: 2,
       status: "pass",
-      captureKind: smoke ? "smoke" : proaOnly ? "engineering" : "publication",
+      captureKind: shardWorkload
+        ? "shard"
+        : smoke
+          ? "smoke"
+          : proaOnly
+            ? "engineering"
+            : "publication",
+      ...(shardWorkload ? { shard: { workload: shardWorkload, smoke } } : {}),
       captureId,
       capturedAt: new Date().toISOString(),
       host: {
@@ -373,7 +407,7 @@ try {
         cloud: process.env.BENCH_HOST_LABEL || null,
         serverCpu: process.env.BENCH_SERVER_CPU || null,
       },
-      scenario: contract,
+      scenario: { ...contract, workloads: activeWorkloads },
       methodology: policy,
       source,
       engines,
@@ -391,7 +425,7 @@ try {
           : []),
       ],
     } satisfies Capture;
-    validateResult(result, !smoke && !proaOnly);
+    validateResult(result, !smoke && !proaOnly && !shardWorkload);
     await mkdir(join(here, "results"), { recursive: true });
     retainCapture(root, captureDirectory, result, sourceFiles);
     atomicWrite(output, `${JSON.stringify(result, null, 2)}\n`);

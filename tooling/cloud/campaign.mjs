@@ -14,9 +14,11 @@ import {
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { aggregateFrameworkShards } from "../capture/framework-shards.mjs";
 import { verifyPublication } from "../checks/publication.mjs";
 import {
   jobManifest,
+  shardedSuiteIds,
   suiteIds,
   validateOptions,
   validateReconnect,
@@ -32,6 +34,7 @@ const { values: args } = parseArgs({
     out: { type: "string" },
     context: { type: "string" },
     smoke: { type: "boolean" },
+    "framework-shards": { type: "boolean" },
     plan: { type: "boolean" },
   },
   strict: true,
@@ -54,8 +57,12 @@ const options = {
   ),
   campaignId: previous?.options.campaignId || `publication-${randomUUID()}`,
   smoke: args.smoke || previous?.options.smoke || false,
+  ...(args["framework-shards"] || previous?.options.frameworkShards
+    ? { frameworkShards: true }
+    : {}),
 };
 validateOptions(options);
+const workerSuiteIds = options.frameworkShards ? shardedSuiteIds : suiteIds;
 if (previous)
   assert.deepEqual(
     options,
@@ -336,7 +343,7 @@ async function runSuite(suite) {
 }
 try {
   if (args.plan) {
-    for (const suite of suiteIds)
+    for (const suite of workerSuiteIds)
       console.log(JSON.stringify(jobManifest(options, suite)));
   } else {
     // Concurrency applies to whole suites. Rendering and its scaling diagnostic
@@ -344,7 +351,7 @@ try {
     state.status = "running";
     delete state.error;
     await save();
-    const queue = [...suiteIds];
+    const queue = [...workerSuiteIds];
     const outcomes = await Promise.allSettled(
       Array.from({ length: options.parallel }, async () => {
         while (queue.length && !stopping) await runSuite(queue.shift());
@@ -379,12 +386,14 @@ try {
       await command("git", ["rev-parse", "HEAD"], { cwd: stage }),
       options.revision,
     );
-    for (const suite of suiteIds)
+    for (const suite of workerSuiteIds)
       await command("python3", [
         join(root, "tooling/cloud/extract.py"),
         join(output, `${suite}.tar.gz`),
         stage,
       ]);
+    if (options.frameworkShards)
+      aggregateFrameworkShards(stage, { smoke: options.smoke });
     if (options.smoke) {
       state.status = "smoke-complete";
       console.log(
@@ -405,7 +414,12 @@ try {
           options.campaignId,
           "Collected results belong to a different campaign",
         );
-        assert.equal(verified.protocol, "per-suite-host-v1");
+        assert.equal(
+          verified.protocol,
+          options.frameworkShards
+            ? "per-workload-host-v1"
+            : "per-suite-host-v1",
+        );
       } catch (error) {
         if (original) await writeFile(selection, original);
         throw error;

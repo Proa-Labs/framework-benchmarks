@@ -92,10 +92,10 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     framework: {
       title: "Framework SSR",
       path: "benchmarks/framework-ssr/results/latest.json",
-      method: `${data.framework.methodology.repeats} rotated independent production server processes per phase kind. Capacity: ${data.framework.methodology.concurrency} connections. ${frameworkWorkloads()
+      method: `${data.framework.methodology.repeats} rotated independent production server processes per phase kind. Capacity settings are shared within each workload. ${frameworkWorkloads()
         .map(
           (w) =>
-            `${w.label}: ${w.capacityDurationSeconds}s capacity window; latency at ${w.fixedRateRps} scheduled requests/s for ${w.latencyDurationSeconds}s`,
+            `${w.label}: ${w.capacityConcurrency} connections, ${w.capacityDurationSeconds}s capacity window; latency at ${w.fixedRateRps} scheduled requests/s for ${w.latencyDurationSeconds}s`,
         )
         .join(
           ". ",

@@ -32,6 +32,9 @@ experiments/travel-agent/results/*.partial
 # Local experiment outputs; retained publication archives stay reviewable.
 **/results/local/
 
+# Intermediate per-workload captures are aggregated into one retained result.
+benchmarks/framework-ssr/results/shards/
+
 # Local GCP campaign artifacts and staging checkouts.
 /cloud-results/
 

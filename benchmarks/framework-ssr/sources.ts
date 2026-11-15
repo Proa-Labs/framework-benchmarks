@@ -17,6 +17,7 @@ export function frameworkSourceFiles(root: string) {
       "benchmarks/framework-ssr",
       "tooling/capture/captures.mjs",
       "tooling/capture/raw.mjs",
+      "tooling/capture/framework-shards.mjs",
       "tooling/capture/verify-source.mjs",
       "tooling/load/driver.mjs",
       "tooling/load/worker.mjs",

@@ -1,8 +1,21 @@
 import assert from "node:assert/strict";
+import frameworkContract from "../../benchmarks/framework-ssr/contract.json" with {
+  type: "json",
+};
 
 export const suiteIds = [
   "rendering",
   "framework",
+  "http",
+  "streaming",
+  "startup",
+];
+export const frameworkShardIds = frameworkContract.workloads.map(
+  (w) => `framework-${w.id}`,
+);
+export const shardedSuiteIds = [
+  "rendering",
+  ...frameworkShardIds,
   "http",
   "streaming",
   "startup",
@@ -24,7 +37,7 @@ export function validateOptions({ revision, parallel, namespace, campaignId }) {
 }
 export function jobManifest(options, suite, attempt = 1) {
   validateOptions(options);
-  assert.ok(suiteIds.includes(suite));
+  assert.ok([...suiteIds, ...frameworkShardIds].includes(suite));
   const name = `bench-${options.campaignId.slice(-12)}-${suite}-${attempt}`;
   const labels = {
     app: "framework-benchmarks",
