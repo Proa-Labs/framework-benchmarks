@@ -90,6 +90,19 @@ If you see an issue with the benchmarks or would like to add any, please open an
   </tr>
 </table>
 
+## Continuous integration
+
+Pull requests, main-branch pushes, and manual CI runs use standard GitHub-hosted
+`ubuntu-24.04` runners. Rust compiler caching uses the GitHub Actions cache;
+CI needs no GCP runner, GCS bucket, or `CI_RUNNER` repository variable.
+The read-only `PROA_FRAMEWORK_TOKEN` secret is still required to fetch Proa.
+Standard GitHub-hosted runner minutes are
+[free for public repositories](https://docs.github.com/en/actions/reference/runners/github-hosted-runners).
+
+Changing the workflow does not delete existing GCP infrastructure. Runner
+services, disks, and the old compiler-cache bucket need separate cleanup after
+checking whether other repositories still use them.
+
 ## Reproducing a capture
 
 Install the JavaScript dependencies once. You need Node.js 24.20.0 exactly — the canonical runner compares `process.version` and refuses to run on anything else — with pnpm, the Rust toolchain in [`rust-toolchain.toml`](rust-toolchain.toml), and Go 1.25. The full scoreboard also needs Ruby 3.2+, a JDK 17+ with Gradle, PHP 8, and Python 3.13+.

@@ -25,10 +25,8 @@ env:
 jobs:
   checks:
     name: ${{ matrix.name }}
-    # PR build scripts and browser tooling run on disposable GitHub-hosted VMs,
-    # without depending on the availability of the self-hosted PR runner pool.
-    # Trusted events continue to use the configured GCP runner.
-    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-24.04' || vars.CI_RUNNER }}
+    # Every event runs on a disposable GitHub-hosted VM; no GCP runner is needed.
+    runs-on: ubuntu-24.04
     timeout-minutes: ${{ matrix.timeout }}
     strategy:
       fail-fast: false
@@ -146,8 +144,6 @@ jobs:
       - name: Configure compiler cache
         if: matrix.suite == 'rendering'
         uses: ./.github/actions/rust-cache
-        with:
-          cache-backend: ${{ github.event_name == 'pull_request' && 'gha' || startsWith(vars.CI_RUNNER, 'gcp') && 'gcs' || 'gha' }}
 
       - name: Install browser parity dependencies
         if: matrix.suite == 'rendering'
@@ -217,11 +213,10 @@ jobs:
 
   ci:
     name: lint, clippy, build, test
-    # Do not create a final runner-dependent job after the workflow itself was
-    # canceled; otherwise an unavailable pool can retain the concurrency lock.
+    # Do not create a final job after the workflow itself was canceled.
     if: ${{ always() && !cancelled() }}
     needs: [checks]
-    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-24.04' || vars.CI_RUNNER }}
+    runs-on: ubuntu-24.04
     timeout-minutes: 2
     steps:
       - name: Require every merge prerequisite
