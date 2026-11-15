@@ -47,10 +47,10 @@ function About() {
         </a>
       </p>
       <p className="disclosure">
-        <strong>Who runs this:</strong> Andrew Hariri maintains this site and
-        founded <a href="https://github.com/Proa-Labs">Proa Labs</a>.{" "}
-        <a href="https://github.com/Proa-Labs/proa">Proa</a> is included in the
-        benchmarks.
+        <strong>Who runs this:</strong>{" "}
+        <a href="https://github.com/Proa-Labs">Proa Labs</a> maintains this site
+        and develops <a href="https://github.com/Proa-Labs/proa">Proa</a>, which
+        is included in the benchmarks.
       </p>
       <p>
         Project names and logos identify their respective owners. Inclusion does
