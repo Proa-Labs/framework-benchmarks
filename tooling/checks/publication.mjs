@@ -210,11 +210,11 @@ export function validateAdmissionChecks(checks, result) {
 }
 
 export async function verifyPublication(root) {
-  validateProaPins(root);
   assert.ok(
     !existsSync(join(root, "site/data/performance/proa-refresh.json")),
     "Proa-only review refresh selected: rerun the complete comparison campaign before merge or launch, then remove site/data/performance/proa-refresh.json",
   );
+  validateProaPins(root);
   const results = {};
   // Check the campaign first so historical data reports the actionable blocker.
   for (const [id, suite] of Object.entries(suites)) {
