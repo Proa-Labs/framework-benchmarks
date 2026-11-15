@@ -52,6 +52,7 @@ export interface Workload {
   label: string;
   description: string;
   cardinality: number;
+  fixture?: string;
 }
 export interface BaseRow {
   id: string;

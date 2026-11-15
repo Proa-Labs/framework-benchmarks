@@ -116,7 +116,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       title: "SSR render latency",
       path: "benchmarks/rendering/results/latest.json",
       method:
-        "Five independent processes. Bars show the median process P50; boxes summarize those five process medians, not individual render latency.",
+        "Five independent processes. Bars show the median process P50; boxes summarize those five process medians, not individual render latency. Each render allocates fresh output using its native API. Sailfish learns the output size during warmup. There is no separate allocator-priming step.",
       scope:
         "Prepared data → a complete, freshly owned HTML output. Each adapter uses its declared native output type; Proa may return a RenderBuffer without String conversion. Includes rendering, formatting, and output allocation. Excludes data setup, HTTP, routing, databases, hydration, and network transfer. Strict rows passed unchanged DOM/class parity. Exact† uses separately checked native styles and markup; its adaptation is disclosed.",
     },
@@ -507,6 +507,13 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   }
 
   function experimentDescription() {
+    if (
+      state.view === "rendering" &&
+      state.chart !== "compare" &&
+      data.workloads.find((w) => w.id === state.workload)?.fixture ===
+        "showcase-v1"
+    )
+      return "Each tool renders a shared re-creation of this page from prepared data. These timings are separate from benchmarks of Proa’s original app code.";
     return state.view === "startup"
       ? "Time from launching a fresh server process to receiving its first complete product-grid response. Includes runtime startup and rendering; builds run beforehand and the disk cache is warm."
       : "";

@@ -113,7 +113,7 @@ test("Flow throughput and latency always come from the same recorded run", async
   const { input } = await loadInputs();
   const data = normalize(input);
   for (const engine of input.http.engines)
-    for (const workload of input.rendering.workloads) {
+    for (const workload of input.http.scenario.workloads) {
       const flow = required(
         required(data.http.rows[workload.id].find((r) => r.id === engine.id))
           .flow,

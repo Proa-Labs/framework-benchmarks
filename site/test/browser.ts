@@ -531,7 +531,7 @@ try {
   assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
   assert.equal(
     await page.locator("[data-renderer-comparison] thead th").count(),
-    4,
+    benchmarkData.workloads.length + 1,
   );
   assert.equal(
     await page.locator("[data-renderer-pending]").count(),
@@ -871,6 +871,13 @@ try {
     ].includes(w.id),
   )) {
     for (const view of ["rendering", "framework"] as const) {
+      // Historical captures can cover fewer workloads than the current renderer
+      // suite. The publication gate separately requires the complete new cohort.
+      if (
+        view === "framework" &&
+        !benchmarkData.framework.workloads[workload.id]
+      )
+        continue;
       await navigate(
         `${server.url}/?view=${view}&workload=${workload.id}&chart=bars`,
       );
