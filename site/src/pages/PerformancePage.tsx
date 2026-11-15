@@ -21,6 +21,7 @@ import {
 } from "../charts/InitialDashboard.tsx";
 import { Footer } from "../components/Footer.tsx";
 import { Header } from "../components/Header.tsx";
+import { InfoCallout } from "../components/InfoCallout.tsx";
 export function PerformancePage({
   data = benchmarkData as BenchmarkData,
 }: {
@@ -212,7 +213,7 @@ export function PerformancePage({
             <div
               className="fw-main-heading"
               data-results-title=""
-              hidden={state.view === "rendering"}
+              hidden={state.view === "rendering" && state.render !== "rss"}
             >
               <div>
                 <h2 data-heading="">{model.heading()}</h2>
@@ -225,6 +226,10 @@ export function PerformancePage({
             >
               {experimentDescription}
             </p>
+            <InfoCallout data-coverage-note hidden={state.view === "rendering"}>
+              Coverage is a work in progress. We aim to extend these tests to
+              the remaining frameworks listed in SSR Rendering.
+            </InfoCallout>
             <p
               className="fw-validation-note"
               data-validation-note
@@ -271,6 +276,16 @@ export function PerformancePage({
                   Table
                 </button>
               </fieldset>
+              <select
+                data-render-view
+                className="fw-native-select"
+                aria-label="SSR Rendering analysis"
+                hidden={state.view !== "rendering"}
+                defaultValue={state.render}
+              >
+                <option value="p50">Render time</option>
+                <option value="rss">Peak RSS</option>
+              </select>
               <select
                 data-framework-view
                 className="fw-native-select"
@@ -333,8 +348,7 @@ export function PerformancePage({
               hidden={!capture.reviewRefresh}
               className="mt-4 text-sm leading-relaxed text-muted"
             >
-              Proa uses the newer PR #86 run; peers retain the previous
-              campaign. Separate runs on matching C4 machines.{" "}
+              {capture.reviewRefresh?.note}{" "}
               <a
                 href="/data/proa-refresh/manifest.json"
                 className="underline underline-offset-4"
@@ -535,8 +549,9 @@ export function PerformancePage({
         </div>
         <p>
           Tags shown as text, such as <code>&lt;b&gt;plain text&lt;/b&gt;</code>
-          , intentionally test that dynamic data is escaped safely. Preview
-          labels, styling and images are illustrative.
+          , intentionally test that dynamic data is escaped safely. Showcase
+          pages retain their original styles; sample-workload labels and images
+          are illustrative.
         </p>
         <div data-fixture-mount="" />
       </dialog>

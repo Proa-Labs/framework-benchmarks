@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { readRawJson } from "../capture/raw.mjs";
 import { repositoryRoot } from "../repository.mjs";
 // Checks the generated figures against the evidence pages they were drawn from.
 //   node tooling/charts/verify.mjs
@@ -260,14 +261,11 @@ console.log('\nSource fidelity');
   const expectedRawArtifact =
     `raw/${scalingCapture.capture_id}/process-summaries.json`;
   let raw = [];
-  if (scalingCapture.raw_artifact !== expectedRawArtifact) {
+  if (![expectedRawArtifact, expectedRawArtifact+".gz"].includes(scalingCapture.raw_artifact)) {
     artifactFailures.push(`raw artifact path should be ${expectedRawArtifact}`);
   } else {
     try {
-      raw = JSON.parse(readFileSync(
-        join(ROOT, 'benchmarks/rendering', 'results', scalingCapture.raw_artifact),
-        'utf8',
-      ));
+      raw = readRawJson(join(ROOT, 'benchmarks/rendering', 'results', scalingCapture.raw_artifact));
     } catch (error) {
       artifactFailures.push(`raw artifact cannot be read: ${error.message}`);
     }

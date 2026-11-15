@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import http from "node:http";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { gzipSync } from "node:zlib";
 import {
   atomicWrite,
   captureId as newCaptureId,
@@ -21,6 +22,7 @@ import {
   stopServer,
   waitForHealth,
 } from "../../tooling/load/driver.mjs";
+import { isShowcase, showcasePath } from "../rendering/showcase/admission.mjs";
 import {
   buildAll,
   buildProa,
@@ -30,7 +32,11 @@ import {
   targetDirectory,
 } from "./build.ts";
 import contract from "./contract.json";
-import { sha256, validateSemanticHtml } from "./parity.mjs";
+import {
+  negativeControlsFor,
+  sha256,
+  validateSemanticHtml,
+} from "./parity.mjs";
 import {
   type Capture,
   type Phase,
@@ -38,8 +44,6 @@ import {
   validateResult,
 } from "./report.ts";
 import { frameworkSourceFiles } from "./sources.ts";
-import { negativeControls } from "./workload-parity.ts";
-import type { Workload } from "./workloads.ts";
 
 if (!globalThis.Bun || Bun.version !== "1.4.2")
   throw new Error("Use Bun 1.4.2");
@@ -52,24 +56,41 @@ if (proaOnly && smoke)
   throw new Error("Proa-only diagnostics use full sampling; omit --smoke");
 const argument = (name: string, fallback: string) => {
   const i = process.argv.indexOf(name);
-  return i < 0 ? fallback : process.argv[i + 1];
+  if (i < 0) return fallback;
+  assert.ok(
+    process.argv[i + 1] && !process.argv[i + 1].startsWith("--"),
+    `${name} requires a value`,
+  );
+  return process.argv[i + 1];
 };
+const shardWorkload = argument("--shard-workload", "");
+if (shardWorkload)
+  assert.ok(
+    !proaOnly && contract.workloads.some((w) => w.id === shardWorkload),
+    "Choose one known workload with all five frameworks",
+  );
+const activeWorkloads = contract.workloads.filter(
+  (w) => !shardWorkload || w.id === shardWorkload,
+);
+const resultsDirectory = shardWorkload
+  ? join(here, "results/shards", shardWorkload)
+  : join(here, "results");
 const policy = smoke
   ? {
       ...contract.publication,
       repeats: 1,
-      concurrency: 4,
+      concurrency: 2,
       warmupRequests: 2,
       preRollSeconds: 0.2,
-      // At the table's 1 req/s rate, one second would schedule only the
-      // pre-roll request and leave the measured window empty.
-      durationSeconds: 2,
+      // Leave room for the largest native pages to complete a full batch.
+      // These diagnostic samples are never used for publication.
+      durationSeconds: 10,
     }
   : contract.publication;
 const output = resolve(
   argument(
     "--out",
-    join(here, "results", smoke ? "smoke.json" : "latest.json"),
+    join(resultsDirectory, smoke ? "smoke.json" : "latest.json"),
   ),
 );
 assert.ok(output.endsWith(".json"), "Capture output must end in .json");
@@ -101,7 +122,9 @@ const labels: Record<string, string> = {
   sveltekit: "SvelteKit",
 };
 const portFor = (id: string) => 16230 + contract.engines.indexOf(id);
-function serverFor(id: string) {
+const workloadPath = (id: string) =>
+  isShowcase(id) ? showcasePath(id) : `/${id}`;
+function serverFor(id: string, workload: string) {
   const dir = id === "nextjs" ? "next" : id;
   return startServer(
     {
@@ -113,17 +136,28 @@ function serverFor(id: string) {
       args:
         id === "proa"
           ? []
-          : [
-              join(
-                here,
-                "adapters",
-                dir,
-                id === "sveltekit" ? "server.ts" : "server.mjs",
-              ),
-            ],
+          : id === "exact" && isShowcase(workload)
+            ? [
+                join(
+                  root,
+                  "benchmarks/rendering/showcase/full-exact-server.mjs",
+                ),
+              ]
+            : [
+                join(
+                  here,
+                  "adapters",
+                  dir,
+                  id === "sveltekit" ? "server.ts" : "server.mjs",
+                ),
+              ],
       cwd: root,
     },
-    { ...environment, PORT: String(portFor(id)) },
+    {
+      ...environment,
+      PORT: String(portFor(id)),
+      EXACT_SHOWCASE_WORKLOAD: workload,
+    },
   );
 }
 async function ready(server: ReturnType<typeof startServer>, id: string) {
@@ -144,7 +178,7 @@ async function ready(server: ReturnType<typeof startServer>, id: string) {
 async function response(id: string, request: string, workload: string) {
   const result = await fetchBody(
     portFor(id),
-    `/${workload}?request=${encodeURIComponent(request)}`,
+    `${workloadPath(workload)}?request=${encodeURIComponent(request)}`,
     agent,
     headers,
   );
@@ -161,8 +195,7 @@ try {
   const source = await gitMetadata(root, sourceFiles);
   const captureId = newCaptureId("framework-ssr");
   const captureDirectory = join(
-    here,
-    "results",
+    resultsDirectory,
     smoke || parityOnly || proaOnly ? "local" : ".",
   );
   const raw = join(captureDirectory, "raw", captureId);
@@ -177,71 +210,94 @@ try {
       };
     }
   > = [];
-  // Complete the entire admission matrix before any timed phase starts.
+  // Admit every engine/workload before timing. Each production app gets a fresh
+  // process; Exact's showcase builds have separate native application manifests.
   for (const id of selectedEngines) {
-    const server = serverFor(id);
-    try {
-      const health = await ready(server, id);
-      const parityByWorkload: NonNullable<
-        Capture["engines"][number]["parityByWorkload"]
-      > = {};
-      for (const workload of contract.workloads) {
-        const key = workload.id as Workload;
+    const parityByWorkload: NonNullable<
+      Capture["engines"][number]["parityByWorkload"]
+    > = {};
+    let engineHealth: Awaited<ReturnType<typeof ready>> | undefined;
+    for (const workload of activeWorkloads) {
+      const key = workload.id;
+      const server = serverFor(id, key);
+      try {
+        engineHealth = await ready(server, id);
+        const options = { adapted: id === "exact" && isShowcase(key) };
         await response(id, "fresh-a", key);
-        const first = await response(id, "fresh-b", key),
-          second = await response(id, "fresh-b", key);
+        const first = await response(id, "fresh-b", key);
+        const second = await response(id, "fresh-b", key);
         const semantic = validateSemanticHtml(
           first.body.toString(),
           "fresh-b",
           key,
+          options,
         );
         assert.equal(
           sha256(first.body),
           sha256(second.body),
           "same-URL responses must be byte stable",
         );
-        const controls = negativeControls(key);
+        const controls = negativeControlsFor(key);
         for (const [from, to] of controls) {
           const changed = first.body.toString().replaceAll(from, to);
           assert.notEqual(changed, first.body.toString());
           assert.throws(
-            () => validateSemanticHtml(changed, "fresh-b", key),
+            () => validateSemanticHtml(changed, "fresh-b", key, options),
             "negative control must fail",
           );
         }
         const fresh = await response(id, "fresh-c", key);
-        validateSemanticHtml(fresh.body.toString(), "fresh-c", key);
-        await writeFile(join(raw, `${id}-${key}-parity.html`), first.body);
+        validateSemanticHtml(fresh.body.toString(), "fresh-c", key, options);
+        await writeFile(
+          join(raw, `${id}-${key}-parity.html.gz`),
+          gzipSync(first.body, { level: 9 }),
+        );
         parityByWorkload[key] = {
           pass: true,
           semanticSha256: semantic,
           negativeControls: controls.length,
           responseBytes: first.body.length,
+          responseSha256: sha256(first.body),
+          ...(id === "exact" && isShowcase(key)
+            ? {
+                adaptation: JSON.parse(
+                  await readFile(
+                    join(
+                      root,
+                      "benchmarks/rendering/showcase/.generated/exact",
+                      key,
+                      "adaptation.json",
+                    ),
+                    "utf8",
+                  ),
+                ),
+              }
+            : {}),
         };
         console.log(
           `${labels[id]}/${key}: production SSR parity, negative controls and freshness passed`,
         );
+      } finally {
+        await stopServer(server);
       }
-      engines.push({
-        id,
-        framework: health.framework,
-        runtime: health.runtime || "Rust / Tokio",
-        parity: parityByWorkload.cards,
-        parityByWorkload,
-        phases: [] as Phase[],
-      });
-      console.log(`${labels[id]}: production SSR parity and freshness passed`);
-    } finally {
-      await stopServer(server);
     }
+    assert.ok(engineHealth);
+    engines.push({
+      id,
+      framework: engineHealth.framework,
+      runtime: engineHealth.runtime || "Rust / Tokio",
+      parity: parityByWorkload[activeWorkloads[0].id],
+      parityByWorkload,
+      phases: [] as Phase[],
+    });
   }
   if (parityOnly) {
     console.log(
-      `All ${selectedEngines.length * contract.workloads.length} framework/workload admission cells passed; no timings collected.`,
+      `All ${selectedEngines.length * activeWorkloads.length} framework/workload admission cells passed; no timings collected.`,
     );
   } else {
     workers = await spawnWorkers(workersCount);
-    for (const workload of contract.workloads)
+    for (const workload of activeWorkloads)
       for (const mode of ["closed", "open"] as const)
         for (let repeat = 1; repeat <= policy.repeats; repeat++) {
           const order = selectedEngines.map(
@@ -251,7 +307,7 @@ try {
           for (const id of order) {
             const engine = engines.find((e) => e.id === id);
             assert.ok(engine, `Missing admitted adapter: ${id}`);
-            const server = serverFor(id);
+            const server = serverFor(id, workload.id);
             try {
               await ready(server, id);
               const request = `${captureId}-${workload.id}-${mode}-${repeat}`;
@@ -259,7 +315,8 @@ try {
               validateSemanticHtml(
                 expected.body.toString(),
                 request,
-                workload.id as Workload,
+                workload.id,
+                { adapted: id === "exact" && isShowcase(workload.id) },
               );
               for (let i = 0; i < policy.warmupRequests; i++)
                 assert.equal(
@@ -270,15 +327,19 @@ try {
                 workers,
                 server,
                 port: portFor(id),
-                path: `/${workload.id}?request=${encodeURIComponent(request)}`,
+                path: `${workloadPath(workload.id)}?request=${encodeURIComponent(request)}`,
                 headers,
-                concurrency: policy.concurrency,
+                concurrency: smoke
+                  ? policy.concurrency
+                  : (workload.capacityConcurrency ?? policy.concurrency),
                 rate: workload.fixedRateRps,
                 preRollSeconds: policy.preRollSeconds,
-                durationSeconds:
-                  mode === "closed" && !smoke
+                durationSeconds: smoke
+                  ? policy.durationSeconds
+                  : mode === "closed"
                     ? workload.capacityDurationSeconds
-                    : policy.durationSeconds,
+                    : (workload.latencyDurationSeconds ??
+                      policy.durationSeconds),
                 timeoutMs: policy.requestTimeoutMs,
                 validatorModule: pathToFileURL(join(here, "parity.mjs")).href,
                 validatorOptions: { expectedSha256: sha256(expected.body) },
@@ -313,7 +374,13 @@ try {
                   true,
                   `${id} load generator limited`,
                 );
-              engine.phases.push({ ...phase, repeat, workload: workload.id });
+              engine.phases.push({
+                ...phase,
+                repeat,
+                workload: workload.id,
+                requestValue: request,
+                expectedResponseSha256: sha256(expected.body),
+              });
               console.log(
                 `${id}/${workload.id} ${mode} ${repeat}: ${phase.completionThroughputRps.toFixed(1)} responses/s; P99 ${phase.latencyMs.scheduledComplete.p99.toFixed(2)}ms`,
               );
@@ -325,7 +392,14 @@ try {
     const result = {
       schemaVersion: 2,
       status: "pass",
-      captureKind: smoke ? "smoke" : proaOnly ? "engineering" : "publication",
+      captureKind: shardWorkload
+        ? "shard"
+        : smoke
+          ? "smoke"
+          : proaOnly
+            ? "engineering"
+            : "publication",
+      ...(shardWorkload ? { shard: { workload: shardWorkload, smoke } } : {}),
       captureId,
       capturedAt: new Date().toISOString(),
       host: {
@@ -333,7 +407,7 @@ try {
         cloud: process.env.BENCH_HOST_LABEL || null,
         serverCpu: process.env.BENCH_SERVER_CPU || null,
       },
-      scenario: contract,
+      scenario: { ...contract, workloads: activeWorkloads },
       methodology: policy,
       source,
       engines,
@@ -351,7 +425,7 @@ try {
           : []),
       ],
     } satisfies Capture;
-    validateResult(result, !smoke && !proaOnly);
+    validateResult(result, !smoke && !proaOnly && !shardWorkload);
     await mkdir(join(here, "results"), { recursive: true });
     retainCapture(root, captureDirectory, result, sourceFiles);
     atomicWrite(output, `${JSON.stringify(result, null, 2)}\n`);

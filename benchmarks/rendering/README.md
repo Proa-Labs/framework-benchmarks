@@ -4,19 +4,21 @@ This directory separates one public comparison from the renderer engineering lab
 
 ## Canonical scoreboard
 
-The canonical suite asks one question: how long does each renderer take to turn the same prepared data into the same three server-rendered pages while returning an independently owned response?
+The canonical suite measures how long each renderer takes to turn the same prepared data into the same eight server-rendered pages while returning an independently owned response. It also records the native process's peak resident memory separately from the render timer.
 
 The fixed roster is in [`canonical/roster.json`](canonical/roster.json), the workloads are in [`canonical/workloads.json`](canonical/workloads.json), and the contract is in [`protocol.md`](protocol.md). Run the entire gate and measurement pipeline with:
 
 ```sh
-./rendering/run-all
+./benchmarks/rendering/run-all
 ```
 
-That command builds every adapter, dumps all 51 renderer/workload outputs, refuses to measure if any parity cell fails, benchmarks a complete roster with one sampling policy, writes [`results/latest.json`](results/latest.json), and generates [`results/latest.md`](results/latest.md) plus the root scoreboard.
+That command builds every adapter, checks all 168 renderer/workload outputs, refuses to measure if any parity cell fails, benchmarks a complete roster with one sampling policy, writes [`results/latest.json`](results/latest.json), and generates [`results/latest.md`](results/latest.md) plus the root scoreboard. Exact uses its explicitly disclosed native adaptation.
 
 The render-only Proa lane returns a fresh independently owned `RenderBuffer`; it does not flatten the pages into a `String`. Parity dumps flatten only outside timing. String conversion remains a separate engineering control.
 
-The current result refreshes only Proa at `bbbc968` after PR #84 on the same Apple M4 Max used for the October 21 baseline. All other renderer measurements and versions retain that baseline date. The retained baseline, its hash, and the new process summaries are linked from the capture; peer measurements are checked for exact preservation.
+The selected capture records the tested revisions, per-workload host identities, dates and source fingerprint. Parallel workload captures keep all 21 competitors together on the same isolated host for each workload, then retain every original shard and raw process observation in the combined result. See the [GCP campaign instructions](../../tooling/cloud/README.md).
+
+Peak RSS is the native process's lifetime high-water mark, including runtime startup, prepared data, warmup, rendering and verification. The site shows the median of five process peaks in MiB. This is whole-process memory, not bytes allocated per render; older captures without RSS remain unmeasured. See the [memory protocol](protocol.md#process-memory).
 
 ## Engineering laboratory
 

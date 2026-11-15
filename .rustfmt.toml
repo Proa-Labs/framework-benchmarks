@@ -1,0 +1,2 @@
+# Preserve module declaration order, including grouped and captured fixtures.
+reorder_modules = false

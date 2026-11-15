@@ -135,24 +135,19 @@ export async function refreshProa({
     .split("[[package]]")
     .find((b) => b.includes('name = "proa_core"'));
   result.versions.Proa = `${block.match(/version = "([^"]+)"/)[1]} @ ${block.match(/#([a-f0-9]{40})/)[1]} / ${execFileSync("rustc", ["--version"], { encoding: "utf8" }).trim()}`;
-  const raw = `raw/${id}/process-summaries.json`;
+  const raw = `raw/${id}/process-summaries.json.gz`;
   const oldRaw = scaling
     ? baseline.raw_artifact
     : baseline.raw_artifacts.find((x) => /process summaries/i.test(x.label))
         .path;
-  const retainedRecords = JSON.parse(
-    readFileSync(join(directory, oldRaw), "utf8"),
-  )
+  const retainedRecords = readRawJson(join(directory, oldRaw))
     .filter((x) => x.framework_id !== "proa")
     .map((x) => ({ ...x, source_capture_id: baseline.capture_id }));
   const allRecords = [
     ...retainedRecords,
     ...records.map((x) => ({ ...x, source_capture_id: id })),
   ];
-  writeFileSync(
-    join(directory, raw),
-    `${JSON.stringify(allRecords, null, 2)}\n`,
-  );
+  writeRawJson(join(directory, raw), allRecords);
   result.commands = [
     `./rendering/run-all --refresh-proa${scaling ? " --product-scaling" : ""}`,
   ];
