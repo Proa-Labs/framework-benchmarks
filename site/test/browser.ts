@@ -435,6 +435,19 @@ try {
       comparisonLayout.padding >= 12,
       `${width}px: measurement cells need breathing room`,
     );
+    const scrollingNames = await page
+      .locator(".fw-table-scroll")
+      .evaluate((scroll) => {
+        const name = scroll.querySelector("tbody th");
+        if (!name) throw new Error("Missing framework name");
+        const before = name.getBoundingClientRect().left;
+        scroll.scrollLeft = scroll.scrollWidth;
+        return { before, after: name.getBoundingClientRect().left };
+      });
+    assert.ok(
+      Math.abs(scrollingNames.before - scrollingNames.after) < 1,
+      `${width}px: framework names must stay visible while measurements scroll`,
+    );
     checks.push(`responsive/${width}`);
   }
   await navigate(server.url);

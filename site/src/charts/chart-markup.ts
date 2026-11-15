@@ -83,13 +83,17 @@ export function createChartMarkup(model: DashboardModel) {
         rowsFor(state.workload).find((r) => r.id === id)?.p50 ?? Infinity;
       return value(a) - value(b) || name(a).localeCompare(name(b));
     });
-    const maximum = (workload: string) =>
-      Math.max(
-        1,
-        ...rowsFor(workload)
-          .filter(isVisible)
-          .map((r) => required(r.p50)),
-      ) * 1.04;
+    const maxima = new Map(
+      workloads.map((w) => [
+        w.id,
+        Math.max(
+          1,
+          ...rowsFor(w.id)
+            .filter(isVisible)
+            .map((r) => required(r.p50)),
+        ) * 1.04,
+      ]),
+    );
     output.html = `<div class="fw-table-scroll" tabindex="0" role="region" aria-label="SSR render latency comparison"><table class="fw-comparison" role="table" style="--fw-workload-count:${workloads.length}" data-renderer-comparison><caption class="sr-only">Prepared data to freshly owned HTML. Every measured cell reports median render latency in microseconds. HTTP request timings are in the Framework SSR experiment.</caption><thead><tr><th scope="col">Framework / renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" aria-label="${esc(w.label)}${state.workload === w.id ? " ↓" : ""} µs: sort by render latency">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>µs</small></button></th>`).join("")}</tr></thead><tbody>${ids
       .map(
         (id) =>
@@ -106,7 +110,7 @@ export function createChartMarkup(model: DashboardModel) {
                       : "Not measured";
                 return `<td><button type="button" class="fw-support-button text-muted" data-render-support="${id}" data-support-workload="${w.id}" aria-label="${esc(name(id))}, ${esc(w.label)}, ${status}. ${esc(coverage.reason)}" title="${esc(coverage.reason)}">${status}<span aria-hidden="true"> ⓘ</span></button></td>`;
               }
-              return `<td class="fw-comparison-cell"><button type="button" data-focus="${id}" data-stat-suite="rendering" data-stat-workload="${w.id}" aria-pressed="${state.focus === id}" aria-label="${esc(name(id))}, ${esc(w.label)}, render, ${fmt(required(cell.p50))} µs"><span class="fw-comparison-value">${fmt(required(cell.p50))}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${(100 * required(cell.p50)) / maximum(w.id)}%"></span></span></button></td>`;
+              return `<td class="fw-comparison-cell"><button type="button" data-focus="${id}" data-stat-suite="rendering" data-stat-workload="${w.id}" aria-pressed="${state.focus === id}" aria-label="${esc(name(id))}, ${esc(w.label)}, render, ${fmt(required(cell.p50))} µs"><span class="fw-comparison-value">${fmt(required(cell.p50))}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${(100 * required(cell.p50)) / required(maxima.get(w.id))}%"></span></span></button></td>`;
             })
             .join("")}</tr>`,
       )

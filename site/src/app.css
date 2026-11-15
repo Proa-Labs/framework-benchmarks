@@ -1204,6 +1204,11 @@
   }
   #frameworks-explorer .fw-comparison th:first-child {
     @apply text-left;
+    /* Keep names beside their measurements when the wider workload set scrolls. */
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--fw-bg);
   }
   #frameworks-explorer .fw-comparison th,
   #frameworks-explorer .fw-comparison td {
@@ -1226,6 +1231,13 @@
   }
   #frameworks-explorer .fw-comparison tbody tr:hover {
     @apply [background:var(--fw-hover)];
+  }
+  #frameworks-explorer
+    .fw-comparison
+    tbody
+    tr:is(:hover, .fw-comparison-focused)
+    > th:first-child {
+    background: inherit;
   }
   #frameworks-explorer .fw-comparison-focused {
     @apply [background:var(--fw-selected)];

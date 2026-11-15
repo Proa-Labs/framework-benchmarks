@@ -33,6 +33,13 @@ export interface StatTarget {
 export type DashboardModel = ReturnType<typeof createDashboardModel>;
 
 import { ALL_GROUPS, matchesGroups } from "../filters.ts";
+
+const fineNumbers = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2,
+});
+const regularNumbers = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 1,
+});
 export function createDashboardModel(data: BenchmarkData, search = "") {
   const esc = (v: unknown) =>
     String(v).replace(
@@ -49,16 +56,15 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
         )[c],
     );
   const fmt = (n: number) =>
-    Number(n).toLocaleString("en-US", {
-      maximumFractionDigits: n < 10 ? 2 : 1,
-    });
+    (n < 10 ? fineNumbers : regularNumbers).format(Number(n));
   const workloadOrder = data.workloadOrder ?? data.workloads.map((w) => w.id);
   const orderedWorkloads = () =>
     workloadOrder.map((id) =>
       required(data.workloads.find((w) => w.id === id)),
     );
+  const renderersById = new Map(data.ecosystem.map((r) => [r.id, r]));
   const renderer = (id: string | null): Renderer | undefined =>
-      data.ecosystem.find((r) => r.id === id),
+      id === null ? undefined : renderersById.get(id),
     name = (id: string) => renderer(id)?.label || id;
   const logo = (id: string) =>
     `<span class="fw-logo-mark" style="--logo-mask:url('${id === "jte" ? "/logos/jte-mark.svg" : `/${required(renderer(id)).logo}`}')" aria-hidden="true"><img class="fw-logo" data-logo="${id}" src="/${required(renderer(id)).logo}" width="18" height="18" decoding="async" alt=""></span>`;
