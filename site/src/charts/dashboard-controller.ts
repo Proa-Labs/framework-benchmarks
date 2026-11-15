@@ -169,7 +169,6 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         ? popupAnchor
         : null;
     popupPinned = false;
-    percentilePopup.hidden = true;
     if (popupAnchor) {
       popupAnchor.removeAttribute("aria-describedby");
       popupAnchor = null;
@@ -179,6 +178,9 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       restore.focus({ preventScroll: true });
       returningPopupFocus = false;
     }
+    // Move focus first: hiding its focused child can queue browser focus
+    // fixup that would otherwise steal focus back from the restored trigger.
+    percentilePopup.hidden = true;
   }
   function placePercentiles(event: MouseEvent | null, anchor: Element) {
     const rootRect = root.getBoundingClientRect(),
@@ -396,6 +398,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     }
   });
   listen(root, "focusout", (event) => {
+    if (returningPopupFocus) return;
     const next =
       event.relatedTarget instanceof Node ? event.relatedTarget : null;
     if (percentilePopup.contains(next)) return;
