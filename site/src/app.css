@@ -215,6 +215,11 @@
   #frameworks-explorer [hidden] {
     @apply hidden!;
   }
+  /* Follow the active tab even when React refreshes the initial snapshot. */
+  #frameworks-explorer:has([data-view="rendering"][aria-selected="true"])
+    [data-coverage-note] {
+    @apply hidden!;
+  }
   #frameworks-explorer button,
   #frameworks-explorer select,
   #frameworks-explorer input {
