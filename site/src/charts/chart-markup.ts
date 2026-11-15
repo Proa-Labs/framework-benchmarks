@@ -110,7 +110,7 @@ export function createChartMarkup(model: DashboardModel) {
                       : "Not measured";
                 return `<td><button type="button" class="fw-support-button text-muted" data-render-support="${id}" data-support-workload="${w.id}" aria-label="${esc(name(id))}, ${esc(w.label)}, ${status}. ${esc(coverage.reason)}" title="${esc(coverage.reason)}">${status}<span aria-hidden="true"> ⓘ</span></button></td>`;
               }
-              return `<td class="fw-comparison-cell"><button type="button" data-focus="${id}" data-stat-suite="rendering" data-stat-workload="${w.id}" aria-pressed="${state.focus === id}" aria-label="${esc(name(id))}, ${esc(w.label)}, render, ${fmt(required(cell.p50))} µs"><span class="fw-comparison-value">${fmt(required(cell.p50))}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${(100 * required(cell.p50)) / required(maxima.get(w.id))}%"></span></span></button></td>`;
+              return `<td class="fw-comparison-cell"><button type="button" class="fw-comparison-value" data-focus="${id}" data-stat-suite="rendering" data-stat-workload="${w.id}" aria-pressed="${state.focus === id}" aria-label="${esc(name(id))}, ${esc(w.label)}, render, ${fmt(required(cell.p50))} µs" style="--fw-bar-width:${(100 * required(cell.p50)) / required(maxima.get(w.id))}%">${fmt(required(cell.p50))}</button></td>`;
             })
             .join("")}</tr>`,
       )

@@ -373,6 +373,22 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
   });
   listen(root, "focusin", (event) => {
+    const cell = closest(
+      event,
+      ".fw-comparison td > button, .fw-comparison thead button",
+    );
+    if (cell && !returningPopupFocus) {
+      const scroll = cell.closest(".fw-table-scroll");
+      const name = cell.closest(".fw-comparison")?.querySelector("thead th");
+      if (scroll && name) {
+        const bounds = cell.getBoundingClientRect();
+        if (
+          bounds.left < name.getBoundingClientRect().right - 1 ||
+          bounds.right > scroll.getBoundingClientRect().right + 1
+        )
+          cell.scrollIntoView({ block: "nearest", inline: "nearest" });
+      }
+    }
     const row = closest(event, percentileTarget);
     if (row && !returningPopupFocus) {
       dismissedHover = false;

@@ -1251,6 +1251,10 @@
   #frameworks-explorer .fw-comparison th > button {
     @apply [width:100%];
   }
+  #frameworks-explorer .fw-comparison td > button,
+  #frameworks-explorer .fw-comparison thead button {
+    scroll-margin-inline-start: var(--fw-name-column);
+  }
   #frameworks-explorer .fw-comparison .fw-comparison-cell {
     @apply [padding:0];
   }
@@ -1261,9 +1265,8 @@
     .fw-comparison
     tbody
     tr:is(:hover, :focus-within, .fw-comparison-focused)
-    .fw-comparison-track
-    > span {
-    @apply [background:var(--brand)];
+    .fw-comparison-value {
+    --fw-bar-color: var(--brand);
   }
   #frameworks-explorer
     .fw-comparison
@@ -1285,11 +1288,14 @@
   #frameworks-explorer .fw-comparison-value {
     @apply [font:0.875rem_/_1.5_ui-monospace,_monospace];
   }
-  #frameworks-explorer .fw-comparison-track {
-    @apply block [height:3px] [margin-top:5px] [background:var(--fw-track)];
-  }
-  #frameworks-explorer .fw-comparison-track > span {
-    @apply block [height:100%] [background:var(--fw-plot)];
+  #frameworks-explorer .fw-comparison-value::after {
+    content: "";
+    @apply block [height:3px] [margin-top:5px];
+    background: linear-gradient(
+      to right,
+      var(--fw-bar-color, var(--fw-plot)) var(--fw-bar-width),
+      var(--fw-track) var(--fw-bar-width)
+    );
   }
   @media (max-width: 560px) {
     #frameworks-explorer .fw-intro {

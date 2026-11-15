@@ -68,7 +68,7 @@ export async function verifyPreview(url: string, expectedEntryScript?: string) {
         assert.equal(
           await table
             .locator(
-              `td [data-stat-suite="rendering"][data-focus="${row.id}"][data-stat-workload="${workload.id}"] .fw-comparison-value`,
+              `td [data-stat-suite="rendering"][data-focus="${row.id}"][data-stat-workload="${workload.id}"].fw-comparison-value`,
             )
             .textContent(),
           expected,

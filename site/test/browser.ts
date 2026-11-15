@@ -448,6 +448,27 @@ try {
       Math.abs(scrollingNames.before - scrollingNames.after) < 1,
       `${width}px: framework names must stay visible while measurements scroll`,
     );
+    const lastMeasurement = page
+      .locator(".fw-comparison tbody tr")
+      .first()
+      .locator("td button")
+      .last();
+    await lastMeasurement.focus();
+    await lastMeasurement.press("Shift+Tab");
+    const focusedCell = await page.evaluate(() => {
+      const cell = document.activeElement;
+      const name = document.querySelector(".fw-comparison thead th");
+      if (!cell || !name) throw new Error("Missing keyboard comparison target");
+      return {
+        left: cell.getBoundingClientRect().left,
+        nameRight: name.getBoundingClientRect().right,
+      };
+    });
+    assert.ok(
+      focusedCell.left >= focusedCell.nameRight - 1,
+      `${width}px: keyboard measurements must not hide behind pinned names`,
+    );
+    await page.keyboard.press("Escape");
     checks.push(`responsive/${width}`);
   }
   await navigate(server.url);
