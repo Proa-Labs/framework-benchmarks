@@ -17,7 +17,11 @@ export function ChartMarkup({
   const chart =
     initialChart ||
     (slot === "catalog"
-      ? { html: markup.catalog() }
+      ? {
+          // Keep the directory server-rendered on its own URL. The performance
+          // page mounts it on demand instead of hydrating a hidden duplicate.
+          html: model.state.section === "ecosystem" ? markup.catalog() : "",
+        }
       : markup.draw(model.visibleRows()));
   return (
     <div

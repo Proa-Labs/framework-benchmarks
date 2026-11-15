@@ -1,8 +1,11 @@
 import { test } from "bun:test";
 import assert from "node:assert/strict";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { loadInputs, normalize } from "../data.ts";
 import { createChartMarkup } from "../src/charts/chart-markup.ts";
 import { createDashboardModel } from "../src/charts/dashboard-model.ts";
+import { ChartMarkup } from "../src/charts/InitialDashboard.tsx";
 
 test("SSR comparison uses one render-only column per workload and exports only that experiment", async () => {
   const data = normalize((await loadInputs()).input);
@@ -98,4 +101,21 @@ test("adapted measurements cannot be published without their linked disclosure",
   assert.ok(exact);
   delete exact.renderingAdaptation;
   assert.throws(() => normalize(changed), /linked disclosure/);
+});
+
+test("the directory is server-rendered on its own route and deferred on performance pages", async () => {
+  const data = normalize((await loadInputs()).input);
+  const catalog = (search: string) =>
+    renderToStaticMarkup(
+      createElement(ChartMarkup, {
+        model: createDashboardModel(data, search),
+        slot: "catalog",
+      }),
+    );
+  assert.equal(catalog(""), '<div data-catalog=""></div>');
+  const direct = catalog("?section=ecosystem");
+  assert.equal(
+    (direct.match(/class="fw-catalog-row"/g) || []).length,
+    data.ecosystem.length,
+  );
 });
