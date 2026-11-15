@@ -1,4 +1,4 @@
-import { summarize } from "../suspense-load/stats.mjs";
+import { summarize } from "../tooling/stats.mjs";
 
 const median = (values) => summarize(values).p50;
 

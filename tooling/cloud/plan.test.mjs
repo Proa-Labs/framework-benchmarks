@@ -76,8 +76,11 @@ test("artifact extraction rejects traversal, links, duplicate and unrelated file
       ["../escape"],
       ["/absolute"],
       ["tooling/code.mjs"],
-      ["rendering/results/link"],
-      ["rendering/results/a.json", "rendering/results/a.json"],
+      ["benchmarks/rendering/results/link"],
+      [
+        "benchmarks/rendering/results/a.json",
+        "benchmarks/rendering/results/a.json",
+      ],
     ]) {
       const archive = join(temp, "test.tar.gz");
       expect(spawnSync("python3", [generator, archive, ...paths]).status).toBe(
@@ -96,7 +99,7 @@ test("artifact extraction rejects traversal, links, duplicate and unrelated file
       spawnSync("python3", [
         generator,
         archive,
-        "rendering/results/raw/capture/samples.json",
+        "benchmarks/rendering/results/raw/capture/samples.json",
       ]).status,
     ).toBe(0);
     expect(
@@ -111,6 +114,8 @@ test("artifact extraction rejects traversal, links, duplicate and unrelated file
   }
 });
 
+// This integration check clones retained evidence and starts three controller
+// processes. Give shared CI runners room beyond Bun's 5-second unit-test limit.
 test("resume reuses complete archives and rejects a changed archive before launching machines", () => {
   const temp = mkdtempSync(join(tmpdir(), "bench-resume-"));
   try {
@@ -177,7 +182,7 @@ test("resume reuses complete archives and rejects a changed archive before launc
   } finally {
     rmSync(temp, { recursive: true, force: true });
   }
-});
+}, 30_000);
 
 test("reconnection rejects a worker from another suite or altered isolation contract", () => {
   const expected = jobManifest(options, "rendering");

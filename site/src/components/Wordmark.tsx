@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 
 export function Wordmark({
   className = "",
-  label = "Frameworks home",
+  label = "frameworks.run home",
 }: {
   className?: string;
   label?: string;

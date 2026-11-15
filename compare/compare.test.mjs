@@ -246,7 +246,7 @@ test("CLI writes JSON or Markdown and fails on mixed suites", async () => {
   await main(["--out", outPath, earlier, later], { stdout: { write() {} }, writeFile });
   assert.match(await readFile(outPath, "utf8"), /canonical-test-b/);
   await assert.rejects(
-    exec(process.execPath, [cli, earlier, join(workspace, "page-load/results/latest.json")]),
+    exec(process.execPath, [cli, earlier, join(workspace, "benchmarks/http/results/latest.json")]),
     /cannot compare canonical with page-load/,
   );
 });
@@ -261,8 +261,8 @@ test("CLI help and argument parsing reject unknown flags", () => {
 test("compares the retained September and October canonical archives", async () => {
   const { stdout } = await exec(process.execPath, [
     cli,
-    "rendering/results/archive/canonical-ssr-v1-2026-09-05-9363fc29b790.json",
-    "rendering/results/archive/canonical-ssr-v1-2026-10-21-77c5c5fce085.json",
+    "benchmarks/rendering/results/archive/canonical-ssr-v1-2026-09-05-9363fc29b790.json",
+    "benchmarks/rendering/results/archive/canonical-ssr-v1-2026-10-21-77c5c5fce085.json",
   ], { cwd: workspace, maxBuffer: 2 * 1024 * 1024 });
   assert.match(stdout, /canonical-ssr-v1-2026-09-05-9363fc29b790/);
   assert.match(stdout, /canonical-ssr-v1-2026-10-21-77c5c5fce085/);

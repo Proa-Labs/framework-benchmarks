@@ -37,16 +37,16 @@ complete owned output using its declared native API. HTTP and streaming are sepa
 
 | Change | Owning file or directory |
 | --- | --- |
-| Discoverable suites, entrypoints, smoke presets, output locations | `tooling/suites.json` |
-| Rendering adapter commands and build families | `rendering/canonical/adapters.json` |
-| Public rendering roster | `rendering/canonical/roster.json` |
-| Workload sizes, iteration budgets, labels, display order and negative controls | `rendering/canonical/workloads.json` |
-| JavaScript fixture inputs / reference rendering | `rendering/external/shared/suite_data.mjs` / `rendering/external/react/suite_components.mjs` |
-| Native implementations | `rendering/src/` and `rendering/external/<tool>/` |
-| Full-framework request contract | `framework-ssr/contract.json` and `framework-ssr/adapters/` |
-| HTTP / streaming contracts | `page-load/scenario.mjs` and `suspense-load/scenario.mjs` |
-| Files included in load/startup source fingerprints | `<suite>/sources.json` |
-| Measurement storage, source snapshots, atomic writes | `tooling/captures.mjs` |
+| Discoverable suites, entrypoints, smoke presets, output locations | `benchmarks/suites.json` |
+| Rendering adapter commands and build families | `benchmarks/rendering/canonical/adapters.json` |
+| Public rendering roster | `benchmarks/rendering/canonical/roster.json` |
+| Workload sizes, iteration budgets, labels, display order and negative controls | `benchmarks/rendering/canonical/workloads.json` |
+| JavaScript fixture inputs / reference rendering | `benchmarks/rendering/external/shared/suite_data.mjs` / `benchmarks/rendering/external/react/suite_components.mjs` |
+| Native implementations | `benchmarks/rendering/src/` and `benchmarks/rendering/external/<tool>/` |
+| Full-framework request contract | `benchmarks/framework-ssr/contract.json` and `benchmarks/framework-ssr/adapters/` |
+| HTTP / streaming contracts | `benchmarks/http/scenario.mjs` and `benchmarks/streaming/scenario.mjs` |
+| Files included in HTTP/streaming/startup source fingerprints | `<suite>/sources.json` |
+| Measurement storage, source snapshots, atomic writes | `tooling/capture/captures.mjs` |
 | Display metadata, logos and classifications | `site/data/performance/catalog.json`, `site/data/branding/`, `site/public/logos/` |
 | Feature definitions / primary-source findings | `site/data/features/definitions.json`, `site/data/features/reviews/<framework>.json`, `site/data/features/projects.json` |
 
@@ -60,17 +60,17 @@ See [`site/data/README.md`](site/data/README.md) for adding or updating site inp
 bun run bench new-adapter my-renderer
 ```
 
-This creates `rendering/external/my-renderer/suite_bench.mjs` and registers a local
+This creates `benchmarks/rendering/external/my-renderer/suite_bench.mjs` and registers a local
 adapter. Its placeholder throws until you implement the real renderer. It does
 **not** add an unmeasured project to the public scoreboard.
 
-1. Install/pin the renderer in its own adapter directory and commit its Bun
-   lockfile when proposing the change. Compile templates and build fixture data
+1. Install/pin the renderer in its adapter workspace and update the root
+   `bun.lock` when proposing the change. Compile templates and build fixture data
    outside the timed callback. Use the renderer's documented production API.
 2. Implement the generated `render(workload)` callback. The shared synchronous
    string harness handles arguments, warmup, sampling and result JSON. Async or
    non-JavaScript engines can use a native harness following
-   [`adapters/README.md`](rendering/canonical/adapters/README.md).
+   [`adapters/README.md`](benchmarks/rendering/canonical/adapters/README.md).
 3. Run `bun run bench run rendering --renderers my-renderer --workloads cards`.
    Add the other workloads and rerun. A bad DOM, missing card, changed escaping,
    wrong output size, nonfinite duration or reused-output declaration stops the
@@ -215,7 +215,7 @@ by running a suite, not by editing those files.
 
 ## Automatic website updates
 
-The website reads each suite’s selected `results/latest.json` through `tooling/suites.json`. A merged capture change triggers the website workflow, which validates contracts, immutable raw records and source snapshots, rebuilds the site, tests browser interactions and deploys the same validated artifact to Cloudflare. No timings are copied into UI code. Set the repository secret `CLOUDFLARE_API_TOKEN` for the existing `frameworks-run` Worker.
+The website reads each suite’s selected `results/latest.json` through `benchmarks/suites.json`. A merged capture change triggers the website workflow, which validates contracts, immutable raw records and source snapshots, rebuilds the site, tests browser interactions and deploys the same validated artifact to Cloudflare. No timings are copied into UI code. Set the repository secret `CLOUDFLARE_API_TOKEN` for the existing `frameworks-run` Worker.
 
 Keep capture JSON, its archive, referenced raw runs and verified source snapshot together in the PR. A Proa-only rendering refresh preserves the original peer measurements and dates; the site discloses the mixed capture and native output boundaries. A new Proa revision does not automatically become a new benchmark result: run the publication protocol and submit its validated evidence.
 
@@ -225,7 +225,7 @@ Same-repository PRs publish a non-production Cloudflare version after website va
 
 ## Merge and launch gate
 
-PR #9 stays draft until every public suite has a validated fresh campaign.
+Changes to measured sources require a validated fresh campaign before merging.
 `bun run check:publication` and CI's **Publication readiness** check require full
 renderer, framework SSR, HTTP, streaming and cold-start publication captures.
 They must share `BENCH_CAMPAIGN_ID` and single-CPU server affinity. Each complete
@@ -236,7 +236,7 @@ sources that differ from the checkout are rejected.
 
 Use a fresh `BENCH_CAMPAIGN_ID=publication-<unique-id>` for a complete campaign.
 The [parallel GCP runner](tooling/cloud/README.md) creates one for five isolated
-workers. The legacy `framework-ssr/cloud/capture.sh` runs all five suites on one
+workers. The legacy `benchmarks/framework-ssr/cloud/capture.sh` runs all five suites on one
 isolated host. Both verify CPU/SMT topology before measurement. Keep
 the measured source archives and raw captures together when downloading results.
 Portable contributor checks and PR previews remain available while publication
@@ -282,7 +282,7 @@ The pinned Exact compiler rejects literal class attributes taken from all three
 fixtures. Reproduce that result after building the normal framework adapters:
 
 ```sh
-bun rendering/external/exact/check-admission.mjs
+bun benchmarks/rendering/external/exact/check-admission.mjs
 ```
 
 The check publishes no latency. Cloud workers run it before rendering and retain

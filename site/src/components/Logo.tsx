@@ -19,6 +19,7 @@ export function Logo({
         src={`/${row.logo}`}
         width={size}
         height={size}
+        decoding="async"
         alt=""
       />
     </span>

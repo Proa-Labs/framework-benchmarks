@@ -24,15 +24,15 @@ case "$suite" in
   rendering)
     # Exact's official builder supplies the versioned exclusion proof. Setup
     # and compilation finish before any of the timed processes are started.
-    bun framework-ssr/build.ts
-    bun rendering/canonical/run.mjs --setup-only
-    bun rendering/external/exact/check-admission.mjs
-    taskset -c 0 bun rendering/canonical/run.mjs --no-setup "${smoke[@]}"
-    taskset -c 0 bun rendering/canonical/run.mjs --product-scaling --no-setup "${smoke[@]}"
+    bun benchmarks/framework-ssr/build.ts
+    bun benchmarks/rendering/canonical/run.mjs --setup-only
+    bun benchmarks/rendering/external/exact/check-admission.mjs
+    taskset -c 0 bun benchmarks/rendering/canonical/run.mjs --no-setup "${smoke[@]}"
+    taskset -c 0 bun benchmarks/rendering/canonical/run.mjs --product-scaling --no-setup "${smoke[@]}"
     ;;
   framework)
-    bun framework-ssr/build.ts
-    taskset -c 1-7,9-15 bun framework-ssr/run.ts --no-build --workers 24 "${smoke[@]}"
+    bun benchmarks/framework-ssr/build.ts
+    taskset -c 1-7,9-15 bun benchmarks/framework-ssr/run.ts --no-build --workers 24 "${smoke[@]}"
     ;;
   http|streaming|startup)
     args=()
@@ -44,9 +44,9 @@ case "$suite" in
       esac
     fi
     case "$suite" in
-      http) entry=page-load/run.mjs ;;
-      streaming) entry=suspense-load/run.mjs ;;
-      startup) entry=cold-start/run.mjs ;;
+      http) entry=benchmarks/http/run.mjs ;;
+      streaming) entry=benchmarks/streaming/run.mjs ;;
+      startup) entry=benchmarks/cold-start/run.mjs ;;
     esac
     # The faster Proa stream needs more request-generation capacity. Use the
     # same 32-worker generator for every competitor in this comparison.
@@ -61,9 +61,9 @@ esac
 python3 - <<'PY'
 import subprocess, tarfile
 paths = subprocess.check_output(['git', 'ls-files', '-z', '--modified', '--others', '--exclude-standard']).decode().split('\0')
-paths += subprocess.check_output(['git', 'ls-files', '-z', '--others', '--ignored', '--exclude-standard', '--', 'rendering/results', 'framework-ssr/results', 'page-load/results', 'suspense-load/results', 'cold-start/results']).decode().split('\0')
-allowed = ('rendering/results/', 'framework-ssr/results/', 'page-load/results/', 'suspense-load/results/', 'cold-start/results/')
-paths = sorted(set(p for p in paths if p and (p.startswith(allowed) or p in ('rendering/README.md','framework-ssr/README.md','page-load/README.md','suspense-load/README.md','cold-start/README.md', 'scoreboard.md', 'engineering.md'))))
+paths += subprocess.check_output(['git', 'ls-files', '-z', '--others', '--ignored', '--exclude-standard', '--', 'benchmarks/rendering/results', 'benchmarks/framework-ssr/results', 'benchmarks/http/results', 'benchmarks/streaming/results', 'benchmarks/cold-start/results']).decode().split('\0')
+allowed = ('benchmarks/rendering/results/', 'benchmarks/framework-ssr/results/', 'benchmarks/http/results/', 'benchmarks/streaming/results/', 'benchmarks/cold-start/results/')
+paths = sorted(set(p for p in paths if p and (p.startswith(allowed) or p in ('benchmarks/rendering/README.md','benchmarks/framework-ssr/README.md','benchmarks/http/README.md','benchmarks/streaming/README.md','benchmarks/cold-start/README.md', 'docs/reports/scoreboard.md', 'docs/reports/engineering.md'))))
 with tarfile.open('/work/results.tar.gz', 'w:gz') as archive:
     for path in paths:
         archive.add(path, arcname=path, recursive=False)

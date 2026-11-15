@@ -61,7 +61,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       data.ecosystem.find((r) => r.id === id),
     name = (id: string) => renderer(id)?.label || id;
   const logo = (id: string) =>
-    `<span class="fw-logo-mark" style="--logo-mask:url('${id === "jte" ? "/logos/jte-mark.svg" : `/${required(renderer(id)).logo}`}')" aria-hidden="true"><img class="fw-logo" data-logo="${id}" src="/${required(renderer(id)).logo}" width="18" height="18" alt=""></span>`;
+    `<span class="fw-logo-mark" style="--logo-mask:url('${id === "jte" ? "/logos/jte-mark.svg" : `/${required(renderer(id)).logo}`}')" aria-hidden="true"><img class="fw-logo" data-logo="${id}" src="/${required(renderer(id)).logo}" width="18" height="18" decoding="async" alt=""></span>`;
   const frameworkUsesJsSsr = () =>
     /\bBun\b/.test(data.framework.versions.exact || "");
   const label = (
@@ -91,7 +91,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   const suites = {
     framework: {
       title: "Framework SSR",
-      path: "framework-ssr/results/latest.json",
+      path: "benchmarks/framework-ssr/results/latest.json",
       method: `${data.framework.methodology.repeats} rotated independent production server processes per phase kind. Capacity: ${data.framework.methodology.concurrency} connections. ${frameworkWorkloads()
         .map(
           (w) =>
@@ -104,7 +104,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     },
     rendering: {
       title: "SSR render latency",
-      path: "rendering/results/latest.json",
+      path: "benchmarks/rendering/results/latest.json",
       method:
         "Five independent processes. Bars show the median process P50; boxes summarize those five process medians, not individual render latency.",
       scope:
@@ -112,7 +112,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     },
     http: {
       title: "HTTP capacity",
-      path: "page-load/results/latest.json",
+      path: "benchmarks/http/results/latest.json",
       method:
         "Three fresh server processes per workload. Capacity and CPU: 64 closed-loop connections. Equal-load latency: fixed-rate arrivals.",
       scope:
@@ -120,7 +120,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     },
     streaming: {
       title: "Streaming",
-      path: "suspense-load/results/latest.json",
+      path: "benchmarks/streaming/results/latest.json",
       method:
         "Median of three independent phases per offered rate. Latency starts at scheduled arrival and includes queueing.",
       scope:
@@ -128,7 +128,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     },
     startup: {
       title: "Cold start",
-      path: "cold-start/results/latest.json",
+      path: "benchmarks/cold-start/results/latest.json",
       method:
         "15 fresh process starts; two untimed starts warm the disk cache. Boxes show the start-time distribution, with min–max whiskers.",
       scope:
