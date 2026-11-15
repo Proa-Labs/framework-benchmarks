@@ -11,6 +11,7 @@ import { sourceDigest } from "../capture/captures.mjs";
 import { readMeasuredSources } from "../capture/measured-sources.mjs";
 import { readRawJson } from "../capture/raw.mjs";
 import { repositoryRoot } from "../repository.mjs";
+import { verifyFrameworkShardEvidence } from "./framework-shards.mjs";
 import { verifyReportTestOnlyChange } from "./report-source.mjs";
 import { validateCapture } from "./validate.mjs";
 
@@ -225,6 +226,11 @@ export async function verifyPublication(root) {
   const campaign = validatePublication(results);
   for (const [id, suite] of Object.entries(suites)) {
     const result = await validateCapture(id, undefined, root);
+    if (id === "framework")
+      verifyFrameworkShardEvidence(
+        result,
+        join(root, suite.directory, "results"),
+      );
     if (id === "rendering") {
       const admissions = result.raw_artifacts.find((artifact) =>
         [

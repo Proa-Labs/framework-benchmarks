@@ -14,10 +14,12 @@ import {
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { renderReport } from "../../benchmarks/framework-ssr/report.ts";
 import { aggregateFrameworkShards } from "../capture/framework-shards.mjs";
 import { verifyPublication } from "../checks/publication.mjs";
 import {
   jobManifest,
+  prioritizeSuites,
   shardedSuiteIds,
   suiteIds,
   validateOptions,
@@ -351,7 +353,7 @@ try {
     state.status = "running";
     delete state.error;
     await save();
-    const queue = [...workerSuiteIds];
+    const queue = prioritizeSuites(workerSuiteIds, state.suites);
     const outcomes = await Promise.allSettled(
       Array.from({ length: options.parallel }, async () => {
         while (queue.length && !stopping) await runSuite(queue.shift());
@@ -392,8 +394,19 @@ try {
         join(output, `${suite}.tar.gz`),
         stage,
       ]);
-    if (options.frameworkShards)
-      aggregateFrameworkShards(stage, { smoke: options.smoke });
+    if (options.frameworkShards) {
+      const framework = aggregateFrameworkShards(stage, {
+        smoke: options.smoke,
+      });
+      await writeFile(
+        join(
+          stage,
+          "benchmarks/framework-ssr/results",
+          options.smoke ? "local/smoke.md" : "latest.md",
+        ),
+        renderReport(framework),
+      );
+    }
     if (options.smoke) {
       state.status = "smoke-complete";
       console.log(

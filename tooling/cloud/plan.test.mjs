@@ -15,6 +15,7 @@ import { join } from "node:path";
 import {
   frameworkShardIds,
   jobManifest,
+  prioritizeSuites,
   shardedSuiteIds,
   suiteIds,
   validateOptions,
@@ -252,4 +253,35 @@ test("framework workload jobs keep every competitor on one isolated node", () =>
       "15",
     );
   }
+});
+
+test("long suites start early while resumed workers keep their concurrency slots", () => {
+  expect(shardedSuiteIds.slice(0, 4)).toEqual([
+    "rendering",
+    "streaming",
+    "http",
+    "startup",
+  ]);
+  expect(new Set(shardedSuiteIds)).toEqual(
+    new Set([
+      ...suiteIds.filter((id) => id !== "framework"),
+      ...frameworkShardIds,
+    ]),
+  );
+  const retained = {
+    "framework-cards": { status: "running" },
+    "framework-table": { status: "starting" },
+    rendering: { status: "collected" },
+  };
+  const ordered = prioritizeSuites(shardedSuiteIds, retained);
+  expect(new Set(ordered.slice(0, 2))).toEqual(
+    new Set(["framework-cards", "framework-table"]),
+  );
+  expect(ordered.slice(2, 6)).toEqual([
+    "rendering",
+    "streaming",
+    "http",
+    "startup",
+  ]);
+  expect(prioritizeSuites(shardedSuiteIds, {})).toEqual(shardedSuiteIds);
 });

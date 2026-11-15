@@ -1,14 +1,41 @@
 import { test } from "bun:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { gzipSync } from "node:zlib";
 import contract from "../../benchmarks/framework-ssr/contract.json" with {
   type: "json",
 };
 import {
+  sha256,
+  validateSemanticHtml,
+} from "../../benchmarks/framework-ssr/parity.mjs";
+import {
   validateResult,
   workloadDefinitions,
 } from "../../benchmarks/framework-ssr/report.ts";
+import {
+  loadFixture,
+  renderReference,
+} from "../../benchmarks/rendering/showcase/fixture.mjs";
+import { verifyFrameworkShardEvidence } from "../checks/framework-shards.mjs";
 import { validatePublication } from "../checks/publication.mjs";
-import { mergeFrameworkShards } from "./framework-shards.mjs";
+import { retainCapture, sourceDigest } from "./captures.mjs";
+import {
+  aggregateFrameworkShards,
+  mergeFrameworkShards,
+} from "./framework-shards.mjs";
+import { readRaw, readRawJson } from "./raw.mjs";
+import { verifyRetainedSource } from "./retained-source.mjs";
 
 function inputs() {
   return contract.workloads.map((w, index) => {
@@ -146,3 +173,161 @@ test("missing, duplicate, failed, mixed-source and mixed-machine-profile shards 
     assert.throws(() => mergeFrameworkShards(data));
   }
 });
+
+for (const smoke of [false, true])
+  test(`aggregation verifies raw bytes and retains original ${smoke ? "smoke" : "publication"} shards before cleanup`, () => {
+    const root = mkdtempSync(join(tmpdir(), "framework-shard-io-"));
+    try {
+      execFileSync("git", ["init", "--quiet", root]);
+      const files = ["benchmarks/framework-ssr/contract.json"];
+      mkdirSync(join(root, "benchmarks/framework-ssr"), { recursive: true });
+      writeFileSync(join(root, files[0]), JSON.stringify(contract));
+      execFileSync("git", ["add", files[0]], { cwd: root });
+      const sourceSha256 = sourceDigest(root, files);
+      const selected = JSON.parse(
+        readFileSync(
+          new URL(
+            "../../benchmarks/framework-ssr/results/latest.json",
+            import.meta.url,
+          ),
+          "utf8",
+        ),
+      );
+      const base = join(root, "benchmarks/framework-ssr/results");
+      const selectedDirectory = smoke ? join(base, "local") : base;
+      const pointer = smoke ? "smoke.json" : "latest.json";
+      const shards = inputs();
+      if (smoke)
+        for (const shard of shards) {
+          shard.shard.smoke = true;
+          shard.methodology = {
+            ...contract.publication,
+            repeats: 1,
+            concurrency: 2,
+            warmupRequests: 2,
+            preRollSeconds: 0.2,
+            durationSeconds: 10,
+          };
+          for (const engine of shard.engines)
+            engine.phases = engine.phases
+              .filter((p) => p.repeat === 1)
+              .map((p) => ({
+                ...p,
+                concurrency: p.mode === "closed" ? 2 : null,
+                durationSeconds: 10,
+              }));
+        }
+      for (const shard of shards) {
+        const id = shard.shard.workload;
+        shard.source.sourceSha256 = sourceSha256;
+        const folder = join(base, "shards", id);
+        const captureDirectory = smoke ? join(folder, "local") : folder;
+        const raw = join(captureDirectory, "raw", shard.captureId);
+        mkdirSync(raw, { recursive: true });
+        let html;
+        if (["cards", "products", "table"].includes(id)) {
+          const artifact = new URL(
+            `../../benchmarks/framework-ssr/results/raw/${selected.captureId}/proa-${id}-parity.html`,
+            import.meta.url,
+          );
+          html = readRaw(
+            existsSync(artifact)
+              ? artifact.pathname
+              : `${artifact.pathname}.gz`,
+          ).toString();
+        } else {
+          const { definition, data } = loadFixture(id);
+          data.texts[definition.controls.requestIndex] = "fresh-b";
+          html = renderReference(definition, data);
+        }
+        for (const engine of shard.engines) {
+          // Synthetic capture data exercises aggregation, never performance. The
+          // adapted test response adds a native class; its business tree is intact.
+          const body =
+            engine.id === "exact" &&
+            !["cards", "products", "table"].includes(id)
+              ? html
+                  .replace(
+                    "</head>",
+                    "<style>.c1{display:block}</style></head>",
+                  )
+                  .replace("<body", '<body class="c1"')
+              : html;
+          const proof = engine.parityByWorkload[id];
+          proof.responseBytes = Buffer.byteLength(body);
+          proof.responseSha256 = sha256(body);
+          proof.semanticSha256 = validateSemanticHtml(body, "fresh-b", id, {
+            adapted:
+              engine.id === "exact" &&
+              !["cards", "products", "table"].includes(id),
+          });
+          writeFileSync(
+            join(raw, `${engine.id}-${id}-parity.html.gz`),
+            gzipSync(body),
+          );
+        }
+        retainCapture(root, captureDirectory, shard, files);
+        writeFileSync(join(folder, pointer), JSON.stringify(shard));
+      }
+      const corrupt = join(
+        base,
+        `shards/cards/${smoke ? "local/" : ""}raw/shard-cards/proa-cards-parity.html.gz`,
+      );
+      const original = readFileSync(corrupt);
+      writeFileSync(corrupt, gzipSync("changed response"));
+      assert.throws(() => aggregateFrameworkShards(root, { smoke }));
+      assert.ok(existsSync(join(base, "shards")));
+      assert.ok(!existsSync(join(selectedDirectory, pointer)));
+      writeFileSync(corrupt, original);
+      const merged = aggregateFrameworkShards(root, { smoke });
+      assert.ok(!existsSync(join(base, "shards")));
+      assert.equal(
+        JSON.parse(readFileSync(join(selectedDirectory, pointer))).captureId,
+        merged.captureId,
+      );
+      verifyRetainedSource(selectedDirectory, merged);
+      verifyFrameworkShardEvidence(merged, selectedDirectory, { smoke });
+      const changed = structuredClone(merged);
+      changed.engines[0].phases[0].completionThroughputRps += 1;
+      assert.throws(() =>
+        verifyFrameworkShardEvidence(changed, selectedDirectory, { smoke }),
+      );
+      const retainedShard = join(
+        selectedDirectory,
+        merged.workloadCaptures.cards.artifact,
+      );
+      const originalShardBytes = readFileSync(retainedShard);
+      writeFileSync(retainedShard, gzipSync("changed shard"));
+      assert.throws(() =>
+        verifyFrameworkShardEvidence(merged, selectedDirectory, { smoke }),
+      );
+      writeFileSync(retainedShard, originalShardBytes);
+      for (const shard of shards) {
+        const proof = merged.workloadCaptures[shard.shard.workload];
+        assert.deepEqual(
+          readRawJson(join(selectedDirectory, proof.artifact)),
+          shard,
+        );
+        assert.equal(
+          sha256(readFileSync(join(selectedDirectory, proof.artifact))),
+          proof.artifactSha256,
+        );
+        for (const engine of shard.engines) {
+          const body = readRaw(
+            join(
+              selectedDirectory,
+              "raw",
+              merged.captureId,
+              `${engine.id}-${shard.shard.workload}-parity.html.gz`,
+            ),
+          );
+          assert.equal(
+            sha256(body),
+            engine.parityByWorkload[shard.shard.workload].responseSha256,
+          );
+        }
+      }
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  }, 30_000);

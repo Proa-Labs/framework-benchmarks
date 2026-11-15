@@ -47,6 +47,8 @@ idle, and keeps generators on CPUs 1–7 and 9–15. Required node anti-affinity
 excludes other benchmark and ARC runner pods. This needs five free benchmark
 nodes plus the Actions controller's node at full parallelism. Pending jobs wait
 for the existing pool autoscaler; this runner does not change its node limits.
+Long suites start early to reduce the final wait. On resume, active workers
+retain their slots before new jobs start, keeping the concurrency limit intact.
 
 Workers check out exactly the requested revision, install checksum-pinned
 cloud toolchains, retain raw samples and source archives, and expose no

@@ -15,11 +15,25 @@ export const frameworkShardIds = frameworkContract.workloads.map(
 );
 export const shardedSuiteIds = [
   "rendering",
-  ...frameworkShardIds,
-  "http",
   "streaming",
+  "http",
   "startup",
+  // Start long comparisons early so they do not occupy the final worker alone.
+  ...frameworkContract.workloads
+    .toSorted((a, b) => {
+      const window = (w) =>
+        w.capacityDurationSeconds +
+        (w.latencyDurationSeconds ??
+          frameworkContract.publication.durationSeconds);
+      return window(b) - window(a);
+    })
+    .map(({ id }) => `framework-${id}`),
 ];
+export function prioritizeSuites(ids, retained) {
+  const active = (id) => ["running", "starting"].includes(retained[id]?.status);
+  // Resume active workers first: they already consume the concurrency budget.
+  return [...ids].sort((a, b) => Number(active(b)) - Number(active(a)));
+}
 export const image =
   "us-west1-docker.pkg.dev/airy-cycle-504821-k9/ci-images/proa-runner@sha256:c1a3c3f6d822b777e29caa694b4a2c36571bfe1c0661f3a978970e828b5849ab";
 export function validateOptions({ revision, parallel, namespace, campaignId }) {
