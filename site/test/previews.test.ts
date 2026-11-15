@@ -60,7 +60,12 @@ test("every showcase keeps its original style rules and stylesheet order", () =>
   };
   for (const { id } of fixtures) {
     const { definition, data } = loadFixture(id);
-    assert.equal(definition.source.revision, showcaseAssets.revision, id);
+    assert.ok("source" in definition, `${id}: fixture source metadata missing`);
+    const metadata = definition.source;
+    assert.ok(
+      metadata && typeof metadata === "object" && "revision" in metadata,
+    );
+    assert.equal(metadata.revision, showcaseAssets.revision, id);
     const source = renderReference(definition, data);
     const preview = showcasePreview(source);
     const requestedUtility = source.includes('href="/proa.css"');
