@@ -226,6 +226,14 @@ export function PerformancePage({
               {experimentDescription}
             </p>
             <p
+              className="mb-4 text-sm leading-relaxed text-muted"
+              data-coverage-note
+              hidden={state.view === "rendering"}
+            >
+              Coverage is a work in progress. We aim to extend these tests to
+              the remaining frameworks listed in SSR Rendering.
+            </p>
+            <p
               className="fw-validation-note"
               data-validation-note
               role="status"

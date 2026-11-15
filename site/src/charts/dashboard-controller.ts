@@ -815,6 +815,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     const description = $("[data-experiment-description]");
     description.textContent = model.experimentDescription();
     description.hidden = !description.textContent;
+    $("[data-coverage-note]").hidden = state.view === "rendering";
     const validationNote = $("[data-validation-note]");
     const note = model.validationNote();
     validationNote.hidden = !note;

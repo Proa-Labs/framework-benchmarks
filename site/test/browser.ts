@@ -1871,6 +1871,24 @@ try {
   checks.push(
     "Cold Start definition renders on the server and follows experiment tab selection",
   );
+  for (const [view, label] of [
+    ["framework", "Framework SSR"],
+    ["http", "HTTP"],
+    ["streaming", "Streaming"],
+    ["startup", "Cold Start"],
+    ["rendering", "SSR Rendering"],
+  ]) {
+    await initial.goto(`${server.url}/?view=${view}`);
+    await page.getByRole("tab", { name: label, exact: true }).click();
+    for (const current of [initial, page])
+      assert.equal(
+        await current.locator("[data-coverage-note]").isVisible(),
+        view !== "rendering",
+      );
+  }
+  checks.push(
+    "partial experiment coverage is disclosed in SSR and follows all five experiment tabs",
+  );
   await initial.goto(`${server.url}/methodology`);
   const methodology = required(await initial.locator("main").textContent());
   for (const workload of captures.framework.workloadDefinitions) {
