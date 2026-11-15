@@ -25,6 +25,7 @@ import {
   validateOptions,
   validateReconnect,
 } from "./plan.mjs";
+import { retryObservation, transientTransportError } from "./transport.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const { values: args } = parseArgs({
@@ -118,8 +119,17 @@ async function command(
     });
   });
 }
-const kube = (args, config) =>
-  command("kubectl", [...kubeArgs, "--request-timeout=60s", ...args], config);
+let transportFailure = false;
+const kube = async (args, config) => {
+  const invoke = () =>
+    command("kubectl", [...kubeArgs, "--request-timeout=60s", ...args], config);
+  try {
+    return await (args[0] === "get" ? retryObservation(invoke) : invoke());
+  } catch (error) {
+    transportFailure ||= transientTransportError(error);
+    throw error;
+  }
+};
 const jobs = new Set();
 let stopping = false;
 for (const signal of ["SIGINT", "SIGTERM"])
@@ -454,5 +464,7 @@ try {
   await save();
   throw error;
 } finally {
-  await cleanup();
+  // A lost control connection is not a failed measurement. Retain active jobs
+  // for verified reconnection; Kubernetes still enforces their four-hour limit.
+  if (!transportFailure || stopping) await cleanup();
 }

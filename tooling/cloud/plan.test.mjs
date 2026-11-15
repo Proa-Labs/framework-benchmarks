@@ -285,3 +285,45 @@ test("long suites start early while resumed workers keep their concurrency slots
   ]);
   expect(prioritizeSuites(shardedSuiteIds, {})).toEqual(shardedSuiteIds);
 });
+
+test("an exhausted control-connection retry preserves the active job for resume", () => {
+  const temp = mkdtempSync(join(tmpdir(), "campaign-transport-"));
+  try {
+    const bin = join(temp, "bin"),
+      log = join(temp, "commands");
+    mkdirSync(bin);
+    const kubectl = join(bin, "kubectl");
+    writeFileSync(
+      kubectl,
+      `#!/bin/sh\nprintf '%s\\n' "$*" >> '${log}'\ncase " $* " in *" get "*) printf 'http2: client connection lost\\n' >&2; exit 1;; esac\ncat > /dev/null\n`,
+    );
+    chmodSync(kubectl, 0o755);
+    const result = spawnSync(
+      process.execPath,
+      [
+        "tooling/cloud/campaign.mjs",
+        "--revision",
+        "a".repeat(40),
+        "--parallel",
+        "1",
+        "--out",
+        join(temp, "output"),
+      ],
+      {
+        env: { ...process.env, PATH: `${bin}:${process.env.PATH}` },
+        timeout: 20_000,
+      },
+    );
+    expect(result.status).not.toBe(0);
+    const state = JSON.parse(
+      readFileSync(join(temp, "output/campaign.json"), "utf8"),
+    );
+    expect(state.status).toBe("failed");
+    expect(state.suites.rendering.status).toBe("starting");
+    const commands = readFileSync(log, "utf8");
+    expect(commands).toContain("apply -f -");
+    expect(commands).not.toContain("delete");
+  } finally {
+    rmSync(temp, { recursive: true, force: true });
+  }
+}, 25_000);

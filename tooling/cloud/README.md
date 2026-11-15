@@ -64,7 +64,11 @@ command with the same output directory** to resume: completed archives are
 SHA-256 checked and reused, active workers are reconnected after verifying their
 job definition and immutable launch revision, and failed suites restart in full. Spot eviction
 never reuses partial timings. Jobs have a four-hour deadline and cleanup TTL;
-the controller also deletes its jobs on success, failure or cancellation.
+the controller deletes its jobs on success, benchmark failure or cancellation.
+Transient control-connection reads retry with bounded backoff. If a transport
+outage persists, active jobs are kept for verified reconnection, subject to the
+same four-hour deadline; successful measurements are not discarded as failed
+merely because the controller could not observe their status.
 A forced process kill can leave a job until that deadline; the campaign manifest
 retains its name for inspection. Resume does not splice partial suite results.
 
