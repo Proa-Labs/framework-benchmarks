@@ -181,6 +181,36 @@ try {
     required(await page.locator(".fw-comparison").textContent()),
     /µs/,
   );
+  for (const width of [375, 751, 1440]) {
+    await page.setViewportSize({ width, height: 934 });
+    const analysis = page.getByLabel("SSR Rendering analysis", { exact: true });
+    assert.equal(
+      await analysis.isVisible(),
+      true,
+      `Measurement selector at ${width}px`,
+    );
+    await analysis.selectOption("p50");
+    assert.equal(new URL(page.url()).searchParams.get("chart"), "compare");
+    assert.ok(
+      (
+        await page.locator(".fw-comparison thead small").allTextContents()
+      ).every((unit) => unit === "µs"),
+    );
+    await analysis.selectOption("rss");
+    assert.ok(
+      (
+        await page.locator(".fw-comparison thead small").allTextContents()
+      ).every((unit) => unit === "MiB"),
+    );
+    if (width === 751)
+      await page.screenshot({
+        path: join(siteRoot, "test-results/render-memory-comparison.png"),
+      });
+  }
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  checks.push(
+    "all-workload measurement selector switches render time and RSS at mobile, tablet and desktop widths",
+  );
   await page.locator('[data-workload="cards"]').click();
   await page.locator('[data-chart="bars"]').click();
   await page.screenshot({
@@ -1782,6 +1812,10 @@ try {
   await initial.getByRole("link", { name: "Ecosystem", exact: true }).click();
   assert.equal(await initial.locator("h1").textContent(), "The ecosystem");
   await initial.getByRole("link", { name: "Performance", exact: true }).click();
+  await initial
+    .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
+    .first()
+    .waitFor();
   assert.equal(
     await initial
       .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")

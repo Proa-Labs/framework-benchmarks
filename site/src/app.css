@@ -1334,9 +1334,6 @@
     }
   }
 
-  #frameworks-explorer[data-compare="true"] .fw-toolbar {
-    @apply hidden;
-  }
   #frameworks-explorer .fw-main-heading {
     @apply [padding:16px_0_10px];
   }
@@ -1679,9 +1676,6 @@
     }
     #frameworks-explorer[data-compare="true"] .fw-comparison thead tr {
       @apply [min-height:var(--fw-comparison-heading-height)];
-    }
-    #frameworks-explorer[data-compare="true"] .fw-toolbar {
-      @apply hidden;
     }
   }
   @media (max-width: 560px) {

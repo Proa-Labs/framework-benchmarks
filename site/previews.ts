@@ -140,6 +140,52 @@ export function showcasePreview(html: string) {
   visit(document);
   return serialize(document);
 }
+
+// These are inert workload illustrations, not running showcase applications.
+// Annotate the emitted preview only; admission, timing and thumbnail bindings
+// continue to use the unchanged measured document supplied to writePreview.
+export function staticPreviewState(filename: string, html: string) {
+  if (!/^(?:framework-)?sentry-otel\.html$/.test(filename)) return html;
+  const document = parse(html);
+  let rows = 0;
+  const footers: DefaultTreeAdapterMap["element"][] = [];
+  function visit(node: DefaultTreeAdapterMap["node"]) {
+    if (!("childNodes" in node)) return;
+    if ("tagName" in node) {
+      const classes =
+        node.attrs.find((a) => a.name === "class")?.value.split(/\s+/) ?? [];
+      if (classes.includes("log-row")) rows++;
+      if (classes.includes("loading-more")) footers.push(node);
+      if (classes.includes("auto-refresh")) {
+        node.attrs = node.attrs.filter(
+          (a) => !["disabled", "aria-pressed", "title"].includes(a.name),
+        );
+        node.attrs.push(
+          { name: "disabled", value: "" },
+          { name: "aria-pressed", value: "false" },
+          {
+            name: "title",
+            value:
+              "Live updates are disabled in this static benchmark preview.",
+          },
+        );
+      }
+    }
+    for (const child of node.childNodes) visit(child);
+  }
+  visit(document);
+  for (const footer of footers) {
+    footer.attrs.push({ name: "role", value: "note" });
+    footer.childNodes = [
+      {
+        nodeName: "#text",
+        value: `Static preview · all ${rows.toLocaleString("en-US")} log entries are shown.`,
+        parentNode: footer,
+      },
+    ];
+  }
+  return serialize(document);
+}
 export async function buildPreviews(
   directory: string,
   frameworkCapture: Capture,
@@ -164,7 +210,10 @@ export async function buildPreviews(
   await mkdir(join(directory, "previews"), { recursive: true });
   await mkdir(join(directory, "thumbnails"), { recursive: true });
   async function writePreview(filename: string, html: string) {
-    await writeFile(join(directory, "previews", filename), html);
+    await writeFile(
+      join(directory, "previews", filename),
+      staticPreviewState(filename, html),
+    );
     if (raster) {
       const snapshots = rasterManifest.thumbnails as Record<
         string,

@@ -9,9 +9,32 @@ import {
 import showcaseAssets from "../data/performance/showcase/assets.json";
 import {
   showcasePreview,
+  staticPreviewState,
   thumbnailHtml,
   thumbnailSourceHash,
 } from "../previews.ts";
+
+test("Sentry previews finish visibly without changing any measured log rows", () => {
+  const { definition, data } = loadFixture("sentry-otel");
+  const source = showcasePreview(renderReference(definition, data));
+  const rows = (html: string) =>
+    [...html.matchAll(/<details class="log-row[\s\S]*?<\/details>/g)].map(
+      (match) => match[0],
+    );
+  assert.equal(rows(source).length, 400);
+  for (const filename of ["sentry-otel.html", "framework-sentry-otel.html"]) {
+    const preview = staticPreviewState(filename, source);
+    assert.deepEqual(rows(preview), rows(source));
+    assert.match(preview, /class="loading-more" role="note">[^<]*400/);
+    assert.doesNotMatch(preview, /class="loading-more"[^>]*>\s*<i/);
+    assert.match(
+      preview,
+      /class="auto-refresh"[^>]*disabled=""[^>]*aria-pressed="false"/,
+    );
+  }
+  assert.match(source, /class="loading-more">\s*<i/);
+  assert.equal(staticPreviewState("cards.html", source), source);
+});
 
 test("showcase previews preserve page CSS and replace only the requested utility sheet in cascade order", () => {
   const ownCss = "<style>body{line-height:normal}svg{display:inline}</style>";
