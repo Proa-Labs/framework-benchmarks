@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "status": "pass",
   "captureKind": "publication",
-  "captureId": "cold-start-2026-11-15T05-02-14-756Z-62c88ff0",
-  "capturedAt": "2026-11-15T05:02:14.757Z",
+  "captureId": "cold-start-2026-11-15T22-11-05-650Z-73234136",
+  "capturedAt": "2026-11-15T22:11:05.650Z",
   "scenario": {
     "id": "cold_start_products_v1",
     "workload": {
@@ -22,174 +22,174 @@
     "javascriptMode": "production: NODE_ENV=production is set for every spawn and confirmed by each JavaScript server's health endpoint after its first response"
   },
   "host": {
-    "machineId": "82a014e1625d4ea062018f19c1b9fe85870d6ca45ce199ba35cafecd8b56b8fb",
-    "campaignId": "publication-390a1d4a-4559-484a-8207-bb872c58874e",
+    "machineId": "747630d21ed02221ab740eb2742be236d8bace447f75bb15fab17578e82cbaed",
+    "campaignId": "publication-f582a29b-8ce2-4501-a508-167096801b71",
     "campaignProtocol": "per-suite-host-v1",
     "machineClass": "c4-standard-16-lssd",
-    "sourceRevision": "84daec3f7cc8aa98800edbdcb9d9106a3a5751f1",
-    "nodeName": "gke-proa-ci-runners-c4-19143b73-pfph",
+    "sourceRevision": "3b4453f04f36d15828f06a5cbcebbeda9c4e8374",
+    "nodeName": "gke-proa-ci-runners-c4-7003fc0e-gkfs",
     "platform": "linux",
     "release": "6.12.105+",
     "arch": "x64",
     "cpuModel": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
     "logicalCpuCount": 16,
-    "totalMemoryBytes": 63200772096,
+    "totalMemoryBytes": 63200759808,
     "node": "v26.3.0",
     "javascriptRuntime": "Bun 1.4.2",
     "serverCpuAffinity": "0",
-    "loadAverage1m": 5.3
+    "loadAverage1m": 6.08
   },
   "source": {
-    "repositoryCommit": "84daec3f7cc8aa98800edbdcb9d9106a3a5751f1",
+    "repositoryCommit": "3b4453f04f36d15828f06a5cbcebbeda9c4e8374",
     "dirty": false,
-    "proaRevision": "ceffd9f305acabbb0584fa181df4f4e2d7883e94",
+    "proaRevision": "367cc10ae520cdf00c16cb38b4ca46d4ab23ebd5",
     "proaBranch": "main",
-    "sourceSha256": "2e013af132658e71ad5eb2a4800538a9cb28031470e83a4ddaf180c794e51422"
+    "sourceSha256": "8db056584e774fe2ef693c5ddef017a2abd986e07e7b92a098a65d6a59352cd8"
   },
   "engines": [
     {
       "id": "proa",
       "label": "Proa",
       "language": "Rust",
-      "artifactBytes": 7110200,
+      "artifactBytes": 7228360,
       "canonicalDump": {
         "bytes": 284908,
         "sha256": "3fdf2c75f3ba484c266876bfa61832276a42af72b96a310213a3cb02c920b32c"
       },
       "starts": [
         {
-          "firstResponseMs": 4.16374899999937,
-          "firstByteMs": 4.001086000003852,
-          "attempts": 3,
-          "warmSecondResponseMs": 0.047512999997707084,
-          "rssAfterFirstResponseBytes": 6524928
-        },
-        {
-          "firstResponseMs": 5.117817999998806,
-          "firstByteMs": 4.9294059999811,
-          "attempts": 3,
-          "warmSecondResponseMs": 0.011694000015268102,
-          "rssAfterFirstResponseBytes": 6471680
-        },
-        {
-          "firstResponseMs": 8.571037999994587,
-          "firstByteMs": 8.398069999995641,
-          "attempts": 4,
-          "warmSecondResponseMs": 0.18609500001184642,
-          "rssAfterFirstResponseBytes": 6639616
-        },
-        {
-          "firstResponseMs": 6.629696000018157,
-          "firstByteMs": 6.446309000020847,
-          "attempts": 4,
-          "warmSecondResponseMs": 0.04832199998782016,
-          "rssAfterFirstResponseBytes": 6524928
-        },
-        {
-          "firstResponseMs": 5.947209999983897,
-          "firstByteMs": 5.7662469999922905,
-          "attempts": 3,
-          "warmSecondResponseMs": 0.03468400001293048,
-          "rssAfterFirstResponseBytes": 6459392
-        },
-        {
-          "firstResponseMs": 5.309058999991976,
-          "firstByteMs": 5.097715999989305,
-          "attempts": 3,
-          "warmSecondResponseMs": 0.04469099998823367,
-          "rssAfterFirstResponseBytes": 6512640
-        },
-        {
-          "firstResponseMs": 5.015496000007261,
-          "firstByteMs": 4.842617999995127,
-          "attempts": 3,
-          "warmSecondResponseMs": 0.08922200000961311,
-          "rssAfterFirstResponseBytes": 6586368
-        },
-        {
-          "firstResponseMs": 4.7124420000182,
-          "firstByteMs": 4.508507999998983,
-          "attempts": 3,
-          "warmSecondResponseMs": 0.03885700000682846,
-          "rssAfterFirstResponseBytes": 6524928
-        },
-        {
-          "firstResponseMs": 4.830281000002287,
-          "firstByteMs": 4.599611999990884,
-          "attempts": 3,
-          "warmSecondResponseMs": 0.029128999973181635,
-          "rssAfterFirstResponseBytes": 6549504
-        },
-        {
-          "firstResponseMs": 8.05430599997635,
-          "firstByteMs": 7.889595999993617,
+          "firstResponseMs": 7.505172000004677,
+          "firstByteMs": 7.345276999985799,
           "attempts": 5,
-          "warmSecondResponseMs": 0.006724000006215647,
+          "warmSecondResponseMs": 0.044025000010151416,
           "rssAfterFirstResponseBytes": 6545408
         },
         {
-          "firstResponseMs": 10.314191000012215,
-          "firstByteMs": 10.10712999998941,
-          "attempts": 7,
-          "warmSecondResponseMs": 0.04331499998806976,
-          "rssAfterFirstResponseBytes": 6615040
+          "firstResponseMs": 5.618676000012783,
+          "firstByteMs": 5.424128999991808,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.032061000005342066,
+          "rssAfterFirstResponseBytes": 6594560
         },
         {
-          "firstResponseMs": 4.694969999982277,
-          "firstByteMs": 4.514760999998543,
+          "firstResponseMs": 5.062300999998115,
+          "firstByteMs": 4.820008000009693,
           "attempts": 3,
-          "warmSecondResponseMs": 0.0557000000262633,
+          "warmSecondResponseMs": 0.13483799999812618,
+          "rssAfterFirstResponseBytes": 6582272
+        },
+        {
+          "firstResponseMs": 6.34601200002362,
+          "firstByteMs": 6.151100000017323,
+          "attempts": 4,
+          "warmSecondResponseMs": 0.06160700001055375,
           "rssAfterFirstResponseBytes": 6529024
         },
         {
-          "firstResponseMs": 7.232313000014983,
-          "firstByteMs": 7.072684999991907,
-          "attempts": 4,
-          "warmSecondResponseMs": 0.033001999981934205,
-          "rssAfterFirstResponseBytes": 6569984
-        },
-        {
-          "firstResponseMs": 5.544469999993453,
-          "firstByteMs": 5.385339999978896,
+          "firstResponseMs": 4.840567000006558,
+          "firstByteMs": 4.655685000005178,
           "attempts": 3,
-          "warmSecondResponseMs": 0.03723399998852983,
-          "rssAfterFirstResponseBytes": 6574080
+          "warmSecondResponseMs": 0.07411099999444559,
+          "rssAfterFirstResponseBytes": 6549504
         },
         {
-          "firstResponseMs": 12.254824000003282,
-          "firstByteMs": 12.020889000006719,
+          "firstResponseMs": 4.481960000004619,
+          "firstByteMs": 4.289277000003494,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.012763000006088987,
+          "rssAfterFirstResponseBytes": 6520832
+        },
+        {
+          "firstResponseMs": 3.931125000002794,
+          "firstByteMs": 3.7474360000051092,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.03913099999772385,
+          "rssAfterFirstResponseBytes": 6561792
+        },
+        {
+          "firstResponseMs": 5.7097519999952056,
+          "firstByteMs": 5.538051000010455,
+          "attempts": 4,
+          "warmSecondResponseMs": 0.05859000000054948,
+          "rssAfterFirstResponseBytes": 6627328
+        },
+        {
+          "firstResponseMs": 6.89162199999555,
+          "firstByteMs": 6.685525999986567,
           "attempts": 5,
-          "warmSecondResponseMs": 0.1319579999835696,
-          "rssAfterFirstResponseBytes": 6565888
+          "warmSecondResponseMs": 0.036266000010073185,
+          "rssAfterFirstResponseBytes": 6496256
+        },
+        {
+          "firstResponseMs": 5.879014000005554,
+          "firstByteMs": 5.715541000012308,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.03926600000704639,
+          "rssAfterFirstResponseBytes": 6582272
+        },
+        {
+          "firstResponseMs": 7.889160999999149,
+          "firstByteMs": 7.6966949999914505,
+          "attempts": 5,
+          "warmSecondResponseMs": 0.0434100000129547,
+          "rssAfterFirstResponseBytes": 6582272
+        },
+        {
+          "firstResponseMs": 7.639751999988221,
+          "firstByteMs": 7.420753000013065,
+          "attempts": 5,
+          "warmSecondResponseMs": 0.055210000020451844,
+          "rssAfterFirstResponseBytes": 6651904
+        },
+        {
+          "firstResponseMs": 6.558458999992581,
+          "firstByteMs": 6.360667000000831,
+          "attempts": 4,
+          "warmSecondResponseMs": 0.01966099999845028,
+          "rssAfterFirstResponseBytes": 6512640
+        },
+        {
+          "firstResponseMs": 4.832927000010386,
+          "firstByteMs": 4.52870300001814,
+          "attempts": 3,
+          "warmSecondResponseMs": 0.07044999999925494,
+          "rssAfterFirstResponseBytes": 6549504
+        },
+        {
+          "firstResponseMs": 5.740829000016674,
+          "firstByteMs": 5.421444000006886,
+          "attempts": 4,
+          "warmSecondResponseMs": 0.04019200001494028,
+          "rssAfterFirstResponseBytes": 6500352
         }
       ],
       "summary": {
         "firstResponseMs": {
           "count": 15,
-          "min": 4.16374899999937,
-          "mean": 6.55945753333314,
-          "p50": 5.544469999993453,
-          "p95": 10.896380900009532,
-          "p99": 11.983135380004532,
-          "max": 12.254824000003282
+          "min": 3.931125000002794,
+          "mean": 5.9284886000037655,
+          "p50": 5.740829000016674,
+          "p95": 7.714574699991498,
+          "p99": 7.854243739997619,
+          "max": 7.889160999999149
         },
         "firstByteMs": {
           "count": 15,
-          "min": 4.001086000003852,
-          "mean": 6.371998199995142,
-          "p50": 5.385339999978896,
-          "p95": 10.681257699994601,
-          "p99": 11.752962740004294,
-          "max": 12.020889000006719
+          "min": 3.7474360000051092,
+          "mean": 5.72001946667054,
+          "p50": 5.538051000010455,
+          "p95": 7.50353560000658,
+          "p99": 7.658063119994476,
+          "max": 7.6966949999914505
         },
         "rssAfterFirstResponseBytes": {
           "count": 15,
-          "min": 6459392,
-          "mean": 6546227.2,
-          "p50": 6545408,
-          "p95": 6622412.8,
-          "p99": 6636175.36,
-          "max": 6639616
+          "min": 6496256,
+          "mean": 6559061.333333333,
+          "p50": 6549504,
+          "p95": 6634700.8,
+          "p99": 6648463.36,
+          "max": 6651904
         }
       }
     },
@@ -204,138 +204,138 @@
       },
       "starts": [
         {
-          "firstResponseMs": 45.76066100000753,
-          "firstByteMs": 45.5834690000047,
+          "firstResponseMs": 47.9953009999881,
+          "firstByteMs": 47.76173800000106,
           "attempts": 21,
-          "warmSecondResponseMs": 0.04715100000612438,
-          "rssAfterFirstResponseBytes": 57597952
+          "warmSecondResponseMs": 0.049165000003995374,
+          "rssAfterFirstResponseBytes": 51019776
         },
         {
-          "firstResponseMs": 47.48339199999464,
-          "firstByteMs": 47.23600699999952,
-          "attempts": 21,
-          "warmSecondResponseMs": 0.04201699999975972,
-          "rssAfterFirstResponseBytes": 59105280
-        },
-        {
-          "firstResponseMs": 47.47381000002497,
-          "firstByteMs": 47.22137600000133,
-          "attempts": 23,
-          "warmSecondResponseMs": 0.04203800001414493,
-          "rssAfterFirstResponseBytes": 60149760
-        },
-        {
-          "firstResponseMs": 54.11091099999612,
-          "firstByteMs": 53.860705999977654,
-          "attempts": 23,
-          "warmSecondResponseMs": 0.05037300000549294,
-          "rssAfterFirstResponseBytes": 60203008
-        },
-        {
-          "firstResponseMs": 44.99104699998861,
-          "firstByteMs": 44.73973699999624,
-          "attempts": 21,
-          "warmSecondResponseMs": 0.04311900000902824,
-          "rssAfterFirstResponseBytes": 60297216
-        },
-        {
-          "firstResponseMs": 51.05832400001236,
-          "firstByteMs": 50.80433800001629,
+          "firstResponseMs": 55.33765100000892,
+          "firstByteMs": 55.082354000012856,
           "attempts": 25,
-          "warmSecondResponseMs": 0.04183199998806231,
-          "rssAfterFirstResponseBytes": 51707904
+          "warmSecondResponseMs": 0.06773599999723956,
+          "rssAfterFirstResponseBytes": 60841984
         },
         {
-          "firstResponseMs": 49.448810000001686,
-          "firstByteMs": 49.26845000000321,
-          "attempts": 22,
-          "warmSecondResponseMs": 0.03978299998561852,
-          "rssAfterFirstResponseBytes": 61292544
-        },
-        {
-          "firstResponseMs": 43.48494199998095,
-          "firstByteMs": 43.31123600000865,
-          "attempts": 22,
-          "warmSecondResponseMs": 0.09450300000025891,
-          "rssAfterFirstResponseBytes": 62660608
-        },
-        {
-          "firstResponseMs": 47.97367200002191,
-          "firstByteMs": 47.78313700002036,
-          "attempts": 22,
-          "warmSecondResponseMs": 0.04493400000501424,
-          "rssAfterFirstResponseBytes": 60297216
-        },
-        {
-          "firstResponseMs": 48.8411039999919,
-          "firstByteMs": 48.569501999998465,
+          "firstResponseMs": 48.09703599999193,
+          "firstByteMs": 47.876152999990154,
           "attempts": 21,
-          "warmSecondResponseMs": 0.060762999986764044,
-          "rssAfterFirstResponseBytes": 62050304
+          "warmSecondResponseMs": 0.044403000007150695,
+          "rssAfterFirstResponseBytes": 60674048
         },
         {
-          "firstResponseMs": 46.636713999992935,
-          "firstByteMs": 46.55304499997874,
-          "attempts": 23,
-          "warmSecondResponseMs": 0.05192999998689629,
-          "rssAfterFirstResponseBytes": 61054976
+          "firstResponseMs": 45.70559700002195,
+          "firstByteMs": 45.44089300002088,
+          "attempts": 22,
+          "warmSecondResponseMs": 0.05554199998732656,
+          "rssAfterFirstResponseBytes": 53784576
         },
         {
-          "firstResponseMs": 49.60457799999858,
-          "firstByteMs": 49.412679000000935,
-          "attempts": 23,
-          "warmSecondResponseMs": 0.03943400000571273,
-          "rssAfterFirstResponseBytes": 60481536
-        },
-        {
-          "firstResponseMs": 46.75639399999636,
-          "firstByteMs": 46.61247500000172,
+          "firstResponseMs": 47.63406000001123,
+          "firstByteMs": 47.37603900002432,
           "attempts": 21,
-          "warmSecondResponseMs": 0.08100200002081692,
-          "rssAfterFirstResponseBytes": 57434112
+          "warmSecondResponseMs": 0.04210700001567602,
+          "rssAfterFirstResponseBytes": 60526592
         },
         {
-          "firstResponseMs": 60.93708199998946,
-          "firstByteMs": 60.77328799999668,
-          "attempts": 30,
-          "warmSecondResponseMs": 0.006606999988434836,
-          "rssAfterFirstResponseBytes": 60256256
-        },
-        {
-          "firstResponseMs": 48.22994099999778,
-          "firstByteMs": 48.08429299999261,
+          "firstResponseMs": 56.19279500000994,
+          "firstByteMs": 55.93531400000211,
           "attempts": 24,
-          "warmSecondResponseMs": 0.03832300001522526,
-          "rssAfterFirstResponseBytes": 59949056
+          "warmSecondResponseMs": 0.04141400000662543,
+          "rssAfterFirstResponseBytes": 60923904
+        },
+        {
+          "firstResponseMs": 53.38821399997687,
+          "firstByteMs": 53.11706299998332,
+          "attempts": 26,
+          "warmSecondResponseMs": 0.039776000019628555,
+          "rssAfterFirstResponseBytes": 58859520
+        },
+        {
+          "firstResponseMs": 48.79358900000807,
+          "firstByteMs": 48.622159999998985,
+          "attempts": 23,
+          "warmSecondResponseMs": 0.06649600001401268,
+          "rssAfterFirstResponseBytes": 60166144
+        },
+        {
+          "firstResponseMs": 54.79771199999959,
+          "firstByteMs": 54.62083099997835,
+          "attempts": 23,
+          "warmSecondResponseMs": 0.04456999999820255,
+          "rssAfterFirstResponseBytes": 60870656
+        },
+        {
+          "firstResponseMs": 50.28280300000915,
+          "firstByteMs": 50.02839399999357,
+          "attempts": 22,
+          "warmSecondResponseMs": 0.039189000002807006,
+          "rssAfterFirstResponseBytes": 58920960
+        },
+        {
+          "firstResponseMs": 51.501491000002716,
+          "firstByteMs": 51.24135599998408,
+          "attempts": 22,
+          "warmSecondResponseMs": 0.0392639999918174,
+          "rssAfterFirstResponseBytes": 58077184
+        },
+        {
+          "firstResponseMs": 48.11099600000307,
+          "firstByteMs": 47.86188300000504,
+          "attempts": 22,
+          "warmSecondResponseMs": 0.038766999990912154,
+          "rssAfterFirstResponseBytes": 60276736
+        },
+        {
+          "firstResponseMs": 52.35270600000513,
+          "firstByteMs": 52.12179199999082,
+          "attempts": 25,
+          "warmSecondResponseMs": 0.03885100001934916,
+          "rssAfterFirstResponseBytes": 55201792
+        },
+        {
+          "firstResponseMs": 49.30144999999902,
+          "firstByteMs": 49.03373100000317,
+          "attempts": 22,
+          "warmSecondResponseMs": 0.03666800001519732,
+          "rssAfterFirstResponseBytes": 57298944
+        },
+        {
+          "firstResponseMs": 46.63507600000594,
+          "firstByteMs": 46.39664200000698,
+          "attempts": 22,
+          "warmSecondResponseMs": 0.038136000017402694,
+          "rssAfterFirstResponseBytes": 60203008
         }
       ],
       "summary": {
         "firstResponseMs": {
           "count": 15,
-          "min": 43.48494199998095,
-          "mean": 48.85275879999972,
-          "p50": 47.97367200002191,
-          "p95": 56.158762299994116,
-          "p99": 59.98141805999039,
-          "max": 60.93708199998946
+          "min": 45.70559700002195,
+          "mean": 50.408431800002774,
+          "p50": 49.30144999999902,
+          "p95": 55.59419420000922,
+          "p99": 56.073074840009795,
+          "max": 56.19279500000994
         },
         "firstByteMs": {
           "count": 15,
-          "min": 43.31123600000865,
-          "mean": 48.6542491999998,
-          "p50": 47.78313700002036,
-          "p95": 55.93448059998335,
-          "p99": 59.80552651999402,
-          "max": 60.77328799999668
+          "min": 45.44089300002088,
+          "mean": 50.167756199999715,
+          "p50": 49.03373100000317,
+          "p95": 55.33824200000963,
+          "p99": 55.81589960000361,
+          "max": 55.93531400000211
         },
         "rssAfterFirstResponseBytes": {
           "count": 15,
-          "min": 51707904,
-          "mean": 59635848.53333333,
-          "p50": 60256256,
-          "p95": 62233395.2,
-          "p99": 62575165.44,
-          "max": 62660608
+          "min": 51019776,
+          "mean": 58509721.6,
+          "p50": 60166144,
+          "p95": 60886630.4,
+          "p99": 60916449.28,
+          "max": 60923904
         }
       }
     },
@@ -350,138 +350,138 @@
       },
       "starts": [
         {
-          "firstResponseMs": 33.20862200000556,
-          "firstByteMs": 33.02076300000772,
+          "firstResponseMs": 33.936871999991126,
+          "firstByteMs": 33.72473099999479,
           "attempts": 21,
-          "warmSecondResponseMs": 0.19731200000387616,
-          "rssAfterFirstResponseBytes": 41979904
+          "warmSecondResponseMs": 0.025993999995989725,
+          "rssAfterFirstResponseBytes": 41926656
         },
         {
-          "firstResponseMs": 30.98335899997619,
-          "firstByteMs": 30.72400999997626,
-          "attempts": 19,
-          "warmSecondResponseMs": 0.046830000006593764,
-          "rssAfterFirstResponseBytes": 42004480
-        },
-        {
-          "firstResponseMs": 29.503071000013733,
-          "firstByteMs": 29.34755700000096,
-          "attempts": 17,
-          "warmSecondResponseMs": 0.012745999993057922,
-          "rssAfterFirstResponseBytes": 41947136
-        },
-        {
-          "firstResponseMs": 33.40114500001073,
-          "firstByteMs": 33.22048399999039,
-          "attempts": 20,
-          "warmSecondResponseMs": 0.021240000001853332,
-          "rssAfterFirstResponseBytes": 42057728
-        },
-        {
-          "firstResponseMs": 31.223927999992156,
-          "firstByteMs": 31.024695000000065,
-          "attempts": 19,
-          "warmSecondResponseMs": 0.058751000004122034,
-          "rssAfterFirstResponseBytes": 41922560
-        },
-        {
-          "firstResponseMs": 33.66485799997463,
-          "firstByteMs": 33.48355599999195,
-          "attempts": 21,
-          "warmSecondResponseMs": 0.022002999990945682,
-          "rssAfterFirstResponseBytes": 41799680
-        },
-        {
-          "firstResponseMs": 37.16423600001144,
-          "firstByteMs": 36.91976900000009,
-          "attempts": 24,
-          "warmSecondResponseMs": 0.01826499999151565,
-          "rssAfterFirstResponseBytes": 41816064
-        },
-        {
-          "firstResponseMs": 35.572248000011314,
-          "firstByteMs": 35.319954999984475,
+          "firstResponseMs": 37.171054000005824,
+          "firstByteMs": 36.99495799999568,
           "attempts": 23,
-          "warmSecondResponseMs": 0.06129499999224208,
-          "rssAfterFirstResponseBytes": 41611264
+          "warmSecondResponseMs": 0.0446689999953378,
+          "rssAfterFirstResponseBytes": 41930752
         },
         {
-          "firstResponseMs": 36.4606410000124,
-          "firstByteMs": 35.97563699999591,
+          "firstResponseMs": 31.113073999993503,
+          "firstByteMs": 30.92441300000064,
+          "attempts": 19,
+          "warmSecondResponseMs": 0.14347799998358823,
+          "rssAfterFirstResponseBytes": 41807872
+        },
+        {
+          "firstResponseMs": 35.904573000007076,
+          "firstByteMs": 35.66403200000059,
           "attempts": 23,
-          "warmSecondResponseMs": 0.05819999999948777,
-          "rssAfterFirstResponseBytes": 41828352
-        },
-        {
-          "firstResponseMs": 35.63166499999352,
-          "firstByteMs": 35.151416999986395,
-          "attempts": 22,
-          "warmSecondResponseMs": 0.016432000003987923,
-          "rssAfterFirstResponseBytes": 41979904
-        },
-        {
-          "firstResponseMs": 32.728312999999616,
-          "firstByteMs": 32.51066999998875,
-          "attempts": 20,
-          "warmSecondResponseMs": 0.016933000006247312,
+          "warmSecondResponseMs": 0.017147000005934387,
           "rssAfterFirstResponseBytes": 42008576
         },
         {
-          "firstResponseMs": 33.425390999997035,
-          "firstByteMs": 33.217281999997795,
+          "firstResponseMs": 35.710281000006944,
+          "firstByteMs": 35.45923700000276,
+          "attempts": 22,
+          "warmSecondResponseMs": 0.061686000000918284,
+          "rssAfterFirstResponseBytes": 41852928
+        },
+        {
+          "firstResponseMs": 31.417709000001196,
+          "firstByteMs": 31.162704999995185,
+          "attempts": 19,
+          "warmSecondResponseMs": 1.879518999980064,
+          "rssAfterFirstResponseBytes": 41783296
+        },
+        {
+          "firstResponseMs": 34.22306099999696,
+          "firstByteMs": 34.047580999991624,
           "attempts": 21,
-          "warmSecondResponseMs": 0.02658000000519678,
-          "rssAfterFirstResponseBytes": 41959424
+          "warmSecondResponseMs": 0.06137099998886697,
+          "rssAfterFirstResponseBytes": 42123264
         },
         {
-          "firstResponseMs": 36.91785100000561,
-          "firstByteMs": 36.69815500002005,
-          "attempts": 23,
-          "warmSecondResponseMs": 0.01573000001371838,
-          "rssAfterFirstResponseBytes": 41816064
+          "firstResponseMs": 34.61634700000286,
+          "firstByteMs": 34.336642000009306,
+          "attempts": 22,
+          "warmSecondResponseMs": 0.059905000001890585,
+          "rssAfterFirstResponseBytes": 41975808
         },
         {
-          "firstResponseMs": 37.70420899998862,
-          "firstByteMs": 37.515497999993386,
+          "firstResponseMs": 30.81338800000958,
+          "firstByteMs": 30.54866299999412,
+          "attempts": 20,
+          "warmSecondResponseMs": 0.1059430000022985,
+          "rssAfterFirstResponseBytes": 42242048
+        },
+        {
+          "firstResponseMs": 36.30279600000358,
+          "firstByteMs": 36.12557599999127,
+          "attempts": 22,
+          "warmSecondResponseMs": 0.06417299999156967,
+          "rssAfterFirstResponseBytes": 42143744
+        },
+        {
+          "firstResponseMs": 38.63222199998563,
+          "firstByteMs": 38.44210699998075,
           "attempts": 24,
-          "warmSecondResponseMs": 0.01857799998833798,
+          "warmSecondResponseMs": 0.059329999989131466,
+          "rssAfterFirstResponseBytes": 41914368
+        },
+        {
+          "firstResponseMs": 33.311604999995325,
+          "firstByteMs": 33.02910499999416,
+          "attempts": 21,
+          "warmSecondResponseMs": 0.21853700000792742,
+          "rssAfterFirstResponseBytes": 41934848
+        },
+        {
+          "firstResponseMs": 37.32623900001636,
+          "firstByteMs": 37.14969099999871,
+          "attempts": 24,
+          "warmSecondResponseMs": 0.018152000004192814,
+          "rssAfterFirstResponseBytes": 41861120
+        },
+        {
+          "firstResponseMs": 38.8265980000142,
+          "firstByteMs": 38.58243000000948,
+          "attempts": 26,
+          "warmSecondResponseMs": 0.03792800000519492,
           "rssAfterFirstResponseBytes": 41897984
         },
         {
-          "firstResponseMs": 35.97177699999884,
-          "firstByteMs": 35.79279899998801,
-          "attempts": 23,
-          "warmSecondResponseMs": 0.013550999981816858,
-          "rssAfterFirstResponseBytes": 41693184
+          "firstResponseMs": 35.01627799999551,
+          "firstByteMs": 34.750631999981124,
+          "attempts": 22,
+          "warmSecondResponseMs": 0.05481100000906736,
+          "rssAfterFirstResponseBytes": 41984000
         }
       ],
       "summary": {
         "firstResponseMs": {
           "count": 15,
-          "min": 29.503071000013733,
-          "mean": 34.23742093333276,
-          "p50": 33.66485799997463,
-          "p95": 37.3262279000046,
-          "p99": 37.62861277999182,
-          "max": 37.70420899998862
+          "min": 30.81338800000958,
+          "mean": 34.95480646666838,
+          "p50": 35.01627799999551,
+          "p95": 38.690534799994204,
+          "p99": 38.7993853600102,
+          "max": 38.8265980000142
         },
         "firstByteMs": {
           "count": 15,
-          "min": 29.34755700000096,
-          "mean": 33.99481646666148,
-          "p50": 33.48355599999195,
-          "p95": 37.098487699998074,
-          "p99": 37.432095939994326,
-          "max": 37.515497999993386
+          "min": 30.54866299999412,
+          "mean": 34.72950019999601,
+          "p50": 34.750631999981124,
+          "p95": 38.48420389998937,
+          "p99": 38.56278478000546,
+          "max": 38.58243000000948
         },
         "rssAfterFirstResponseBytes": {
           "count": 15,
-          "min": 41611264,
-          "mean": 41888153.6,
-          "p50": 41922560,
-          "p95": 42023321.6,
-          "p99": 42050846.72,
-          "max": 42057728
+          "min": 41783296,
+          "mean": 41959150.93333333,
+          "p50": 41930752,
+          "p95": 42173235.2,
+          "p99": 42228285.44,
+          "max": 42242048
         }
       }
     },
@@ -496,137 +496,137 @@
       },
       "starts": [
         {
-          "firstResponseMs": 10.984441999986302,
-          "firstByteMs": 9.777506999991601,
-          "attempts": 7,
-          "warmSecondResponseMs": 1.186029000004055,
-          "rssAfterFirstResponseBytes": 10334208
-        },
-        {
-          "firstResponseMs": 10.119888000015635,
-          "firstByteMs": 8.690577000001213,
+          "firstResponseMs": 8.978987999988021,
+          "firstByteMs": 7.710083999991184,
           "attempts": 6,
-          "warmSecondResponseMs": 1.2488779999839608,
-          "rssAfterFirstResponseBytes": 10379264
-        },
-        {
-          "firstResponseMs": 9.17381999999634,
-          "firstByteMs": 7.929066999990027,
-          "attempts": 6,
-          "warmSecondResponseMs": 1.2395740000065416,
-          "rssAfterFirstResponseBytes": 10362880
-        },
-        {
-          "firstResponseMs": 9.756591000012122,
-          "firstByteMs": 8.518153000011807,
-          "attempts": 6,
-          "warmSecondResponseMs": 1.2207340000022668,
-          "rssAfterFirstResponseBytes": 10334208
-        },
-        {
-          "firstResponseMs": 10.228946000017459,
-          "firstByteMs": 8.984530999994604,
-          "attempts": 6,
-          "warmSecondResponseMs": 1.2234499999904074,
-          "rssAfterFirstResponseBytes": 10207232
-        },
-        {
-          "firstResponseMs": 8.322163999982877,
-          "firstByteMs": 7.085595999989891,
-          "attempts": 5,
-          "warmSecondResponseMs": 1.2661380000063218,
-          "rssAfterFirstResponseBytes": 10387456
-        },
-        {
-          "firstResponseMs": 10.365597000025446,
-          "firstByteMs": 9.090423000016017,
-          "attempts": 6,
-          "warmSecondResponseMs": 1.263574000011431,
-          "rssAfterFirstResponseBytes": 10211328
-        },
-        {
-          "firstResponseMs": 10.159784999996191,
-          "firstByteMs": 8.939853999996558,
-          "attempts": 6,
-          "warmSecondResponseMs": 1.2272289999818895,
-          "rssAfterFirstResponseBytes": 10293248
-        },
-        {
-          "firstResponseMs": 10.881359999999404,
-          "firstByteMs": 9.612674999982119,
-          "attempts": 7,
-          "warmSecondResponseMs": 1.2837489999947138,
-          "rssAfterFirstResponseBytes": 10297344
-        },
-        {
-          "firstResponseMs": 7.982342000002973,
-          "firstByteMs": 6.7470480000192765,
-          "attempts": 6,
-          "warmSecondResponseMs": 1.2691560000239406,
-          "rssAfterFirstResponseBytes": 10309632
-        },
-        {
-          "firstResponseMs": 11.436139999976149,
-          "firstByteMs": 10.180968000000576,
-          "attempts": 7,
-          "warmSecondResponseMs": 1.2364549999765586,
-          "rssAfterFirstResponseBytes": 10342400
-        },
-        {
-          "firstResponseMs": 10.59028999999282,
-          "firstByteMs": 9.356116999988444,
-          "attempts": 7,
-          "warmSecondResponseMs": 1.2612570000055712,
-          "rssAfterFirstResponseBytes": 10366976
-        },
-        {
-          "firstResponseMs": 9.852389000006951,
-          "firstByteMs": 8.59008699998958,
-          "attempts": 7,
-          "warmSecondResponseMs": 1.2700499999918975,
+          "warmSecondResponseMs": 1.2397070000006352,
           "rssAfterFirstResponseBytes": 10338304
         },
         {
-          "firstResponseMs": 12.019251999998232,
-          "firstByteMs": 10.140136000001803,
+          "firstResponseMs": 9.949993999995058,
+          "firstByteMs": 8.674703999975463,
           "attempts": 7,
-          "warmSecondResponseMs": 1.282247000024654,
+          "warmSecondResponseMs": 1.2724440000019968,
+          "rssAfterFirstResponseBytes": 10366976
+        },
+        {
+          "firstResponseMs": 10.322962999984156,
+          "firstByteMs": 9.035665000003064,
+          "attempts": 6,
+          "warmSecondResponseMs": 2.5244259999890346,
+          "rssAfterFirstResponseBytes": 10387456
+        },
+        {
+          "firstResponseMs": 10.023056999983964,
+          "firstByteMs": 8.739233999978751,
+          "attempts": 6,
+          "warmSecondResponseMs": 1.2706400000024587,
+          "rssAfterFirstResponseBytes": 10338304
+        },
+        {
+          "firstResponseMs": 9.70498999999836,
+          "firstByteMs": 8.479541000007885,
+          "attempts": 5,
+          "warmSecondResponseMs": 1.237366999994265,
+          "rssAfterFirstResponseBytes": 10293248
+        },
+        {
+          "firstResponseMs": 9.838929000019561,
+          "firstByteMs": 8.61019100001431,
+          "attempts": 6,
+          "warmSecondResponseMs": 1.289684000017587,
+          "rssAfterFirstResponseBytes": 10350592
+        },
+        {
+          "firstResponseMs": 11.35304799998994,
+          "firstByteMs": 10.136326000007102,
+          "attempts": 7,
+          "warmSecondResponseMs": 1.2652320000051986,
           "rssAfterFirstResponseBytes": 10362880
         },
         {
-          "firstResponseMs": 11.408594000007724,
-          "firstByteMs": 10.183087000012165,
+          "firstResponseMs": 11.350836999976309,
+          "firstByteMs": 10.074605000001611,
           "attempts": 7,
-          "warmSecondResponseMs": 1.2833509999909438,
-          "rssAfterFirstResponseBytes": 10362880
+          "warmSecondResponseMs": 1.2682550000026822,
+          "rssAfterFirstResponseBytes": 10346496
+        },
+        {
+          "firstResponseMs": 10.299758999986807,
+          "firstByteMs": 9.206472999998368,
+          "attempts": 6,
+          "warmSecondResponseMs": 1.263807999988785,
+          "rssAfterFirstResponseBytes": 10366976
+        },
+        {
+          "firstResponseMs": 9.721499999985099,
+          "firstByteMs": 8.431375999993179,
+          "attempts": 6,
+          "warmSecondResponseMs": 1.2749790000088979,
+          "rssAfterFirstResponseBytes": 10346496
+        },
+        {
+          "firstResponseMs": 10.390069999994012,
+          "firstByteMs": 9.098769999982323,
+          "attempts": 6,
+          "warmSecondResponseMs": 1.2311190000036731,
+          "rssAfterFirstResponseBytes": 10293248
+        },
+        {
+          "firstResponseMs": 11.414584999991348,
+          "firstByteMs": 10.15926600000239,
+          "attempts": 7,
+          "warmSecondResponseMs": 1.2707310000259895,
+          "rssAfterFirstResponseBytes": 10354688
+        },
+        {
+          "firstResponseMs": 12.531954000005499,
+          "firstByteMs": 11.297287000023061,
+          "attempts": 8,
+          "warmSecondResponseMs": 1.263491999998223,
+          "rssAfterFirstResponseBytes": 10354688
+        },
+        {
+          "firstResponseMs": 11.139691999997012,
+          "firstByteMs": 9.873180999973556,
+          "attempts": 8,
+          "warmSecondResponseMs": 1.2552169999980833,
+          "rssAfterFirstResponseBytes": 10293248
+        },
+        {
+          "firstResponseMs": 11.04799200000707,
+          "firstByteMs": 9.748270999989472,
+          "attempts": 7,
+          "warmSecondResponseMs": 0.17735400001402013,
+          "rssAfterFirstResponseBytes": 10383360
         }
       ],
       "summary": {
         "firstResponseMs": {
           "count": 15,
-          "min": 7.982342000002973,
-          "mean": 10.218773333334441,
-          "p50": 10.228946000017459,
-          "p95": 11.611073599982774,
-          "p99": 11.93761631999514,
-          "max": 12.019251999998232
+          "min": 8.978987999988021,
+          "mean": 10.537890533326815,
+          "p50": 10.322962999984156,
+          "p95": 11.749795699995593,
+          "p99": 12.375522340003517,
+          "max": 12.531954000005499
         },
         "firstByteMs": {
           "count": 15,
-          "min": 6.7470480000192765,
-          "mean": 8.92172173333238,
-          "p50": 8.984530999994604,
-          "p95": 10.181603700004052,
-          "p99": 10.182790340010543,
-          "max": 10.183087000012165
+          "min": 7.710083999991184,
+          "mean": 9.28499826666278,
+          "p50": 9.098769999982323,
+          "p95": 10.50067230000859,
+          "p99": 11.137964060020167,
+          "max": 11.297287000023061
         },
         "rssAfterFirstResponseBytes": {
           "count": 15,
-          "min": 10207232,
-          "mean": 10326016,
-          "p50": 10338304,
-          "p95": 10381721.6,
-          "p99": 10386309.12,
+          "min": 10293248,
+          "mean": 10345130.666666666,
+          "p50": 10350592,
+          "p95": 10384588.8,
+          "p99": 10386882.56,
           "max": 10387456
         }
       }
@@ -642,141 +642,141 @@
       },
       "starts": [
         {
-          "firstResponseMs": 59.074611999996705,
-          "firstByteMs": 58.8733990000037,
-          "attempts": 26,
-          "warmSecondResponseMs": 0.12902000002213754,
-          "rssAfterFirstResponseBytes": 53526528
+          "firstResponseMs": 62.633327999996254,
+          "firstByteMs": 62.35699100000784,
+          "attempts": 30,
+          "warmSecondResponseMs": 0.29601700001512654,
+          "rssAfterFirstResponseBytes": 53673984
         },
         {
-          "firstResponseMs": 57.897351000021445,
-          "firstByteMs": 57.6774190000142,
-          "attempts": 27,
-          "warmSecondResponseMs": 0.09627399998134933,
-          "rssAfterFirstResponseBytes": 53268480
-        },
-        {
-          "firstResponseMs": 52.94123500000569,
-          "firstByteMs": 52.688217999995686,
-          "attempts": 24,
-          "warmSecondResponseMs": 0.0961949999909848,
-          "rssAfterFirstResponseBytes": 54087680
-        },
-        {
-          "firstResponseMs": 55.10485499998322,
-          "firstByteMs": 54.90146499997354,
+          "firstResponseMs": 54.21981300000334,
+          "firstByteMs": 54.0658579999872,
           "attempts": 25,
-          "warmSecondResponseMs": 0.16003299999283627,
-          "rssAfterFirstResponseBytes": 53776384
-        },
-        {
-          "firstResponseMs": 64.72731300001033,
-          "firstByteMs": 64.48172800001339,
-          "attempts": 32,
-          "warmSecondResponseMs": 0.1279320000030566,
-          "rssAfterFirstResponseBytes": 53596160
-        },
-        {
-          "firstResponseMs": 58.24574400001438,
-          "firstByteMs": 58.013386000005994,
-          "attempts": 27,
-          "warmSecondResponseMs": 0.1632380000082776,
-          "rssAfterFirstResponseBytes": 53551104
-        },
-        {
-          "firstResponseMs": 61.78384299998288,
-          "firstByteMs": 61.562573999981396,
-          "attempts": 28,
-          "warmSecondResponseMs": 0.24746199999935925,
-          "rssAfterFirstResponseBytes": 53485568
-        },
-        {
-          "firstResponseMs": 52.753415000013774,
-          "firstByteMs": 52.53709200001322,
-          "attempts": 26,
-          "warmSecondResponseMs": 0.18497000000206754,
-          "rssAfterFirstResponseBytes": 53542912
-        },
-        {
-          "firstResponseMs": 52.75612600002205,
-          "firstByteMs": 52.4880960000155,
-          "attempts": 24,
-          "warmSecondResponseMs": 0.11065199997392483,
+          "warmSecondResponseMs": 0.22315800000797026,
           "rssAfterFirstResponseBytes": 53305344
         },
         {
-          "firstResponseMs": 64.40855700001703,
-          "firstByteMs": 64.31132400000934,
-          "attempts": 31,
-          "warmSecondResponseMs": 0.10085600000456907,
-          "rssAfterFirstResponseBytes": 53243904
+          "firstResponseMs": 50.29454800000531,
+          "firstByteMs": 50.08667200000491,
+          "attempts": 24,
+          "warmSecondResponseMs": 0.09408199999597855,
+          "rssAfterFirstResponseBytes": 53260288
         },
         {
-          "firstResponseMs": 60.20110800000839,
-          "firstByteMs": 60.0116740000085,
-          "attempts": 30,
-          "warmSecondResponseMs": 0.10069699998712167,
-          "rssAfterFirstResponseBytes": 53620736
-        },
-        {
-          "firstResponseMs": 53.817614999978105,
-          "firstByteMs": 53.626940999994986,
+          "firstResponseMs": 56.71233900001971,
+          "firstByteMs": 56.58405300002778,
           "attempts": 26,
-          "warmSecondResponseMs": 0.09406399997533299,
-          "rssAfterFirstResponseBytes": 53628928
+          "warmSecondResponseMs": 0.10625700000673532,
+          "rssAfterFirstResponseBytes": 53567488
         },
         {
-          "firstResponseMs": 62.210751000005985,
-          "firstByteMs": 62.001344999996945,
-          "attempts": 31,
-          "warmSecondResponseMs": 0.11089099998935126,
-          "rssAfterFirstResponseBytes": 53100544
+          "firstResponseMs": 57.03049599999213,
+          "firstByteMs": 56.86670499999309,
+          "attempts": 26,
+          "warmSecondResponseMs": 0.1461389999894891,
+          "rssAfterFirstResponseBytes": 53186560
         },
         {
-          "firstResponseMs": 60.55640100000892,
-          "firstByteMs": 60.35523099999409,
-          "attempts": 27,
-          "warmSecondResponseMs": 0.09730200000922196,
-          "rssAfterFirstResponseBytes": 53612544
+          "firstResponseMs": 58.80061000000569,
+          "firstByteMs": 58.664153999998234,
+          "attempts": 29,
+          "warmSecondResponseMs": 0.10276300000259653,
+          "rssAfterFirstResponseBytes": 53485568
         },
         {
-          "firstResponseMs": 58.274420000001555,
-          "firstByteMs": 58.09586400000262,
-          "attempts": 27,
-          "warmSecondResponseMs": 0.1053249999822583,
-          "rssAfterFirstResponseBytes": 53694464
+          "firstResponseMs": 55.01272199998493,
+          "firstByteMs": 54.859771999996156,
+          "attempts": 25,
+          "warmSecondResponseMs": 0.22351499999058433,
+          "rssAfterFirstResponseBytes": 53235712
+        },
+        {
+          "firstResponseMs": 55.19812500002445,
+          "firstByteMs": 54.8362340000167,
+          "attempts": 25,
+          "warmSecondResponseMs": 0.08608000000822358,
+          "rssAfterFirstResponseBytes": 53370880
+        },
+        {
+          "firstResponseMs": 59.65956699999515,
+          "firstByteMs": 59.40264300000854,
+          "attempts": 29,
+          "warmSecondResponseMs": 0.11143700001412071,
+          "rssAfterFirstResponseBytes": 53862400
+        },
+        {
+          "firstResponseMs": 54.72012400001404,
+          "firstByteMs": 54.5225330000103,
+          "attempts": 23,
+          "warmSecondResponseMs": 0.10969599999953061,
+          "rssAfterFirstResponseBytes": 53374976
+        },
+        {
+          "firstResponseMs": 55.705143999977736,
+          "firstByteMs": 55.513486999989254,
+          "attempts": 26,
+          "warmSecondResponseMs": 0.10949500001152046,
+          "rssAfterFirstResponseBytes": 53288960
+        },
+        {
+          "firstResponseMs": 54.76575399999274,
+          "firstByteMs": 54.56724800000666,
+          "attempts": 26,
+          "warmSecondResponseMs": 0.11007900000549853,
+          "rssAfterFirstResponseBytes": 53407744
+        },
+        {
+          "firstResponseMs": 55.4045820000174,
+          "firstByteMs": 55.27969500000472,
+          "attempts": 26,
+          "warmSecondResponseMs": 0.11521100002573803,
+          "rssAfterFirstResponseBytes": 53514240
+        },
+        {
+          "firstResponseMs": 59.52586199998041,
+          "firstByteMs": 59.30959999997867,
+          "attempts": 29,
+          "warmSecondResponseMs": 0.0988599999982398,
+          "rssAfterFirstResponseBytes": 53383168
+        },
+        {
+          "firstResponseMs": 55.867843999993056,
+          "firstByteMs": 55.644441999989795,
+          "attempts": 25,
+          "warmSecondResponseMs": 0.11446099999011494,
+          "rssAfterFirstResponseBytes": 53293056
         }
       ],
       "summary": {
         "firstResponseMs": {
           "count": 15,
-          "min": 52.753415000013774,
-          "mean": 58.31688973333803,
-          "p50": 58.274420000001555,
-          "p95": 64.50418380001501,
-          "p99": 64.68268716001127,
-          "max": 64.72731300001033
+          "min": 50.29454800000531,
+          "mean": 56.370057200000154,
+          "p50": 55.705143999977736,
+          "p95": 60.55169529999548,
+          "p99": 62.2170014599961,
+          "max": 62.633327999996254
         },
         "firstByteMs": {
           "count": 15,
-          "min": 52.4880960000155,
-          "mean": 58.108383733334875,
-          "p50": 58.09586400000262,
-          "p95": 64.36244520001055,
-          "p99": 64.45787144001282,
-          "max": 64.48172800001339
+          "min": 50.08667200000491,
+          "mean": 56.17067246666799,
+          "p50": 55.513486999989254,
+          "p95": 60.288947400008325,
+          "p99": 61.94338228000793,
+          "max": 62.35699100000784
         },
         "rssAfterFirstResponseBytes": {
           "count": 15,
-          "min": 53100544,
-          "mean": 53536085.333333336,
-          "p50": 53551104,
-          "p95": 53869772.8,
-          "p99": 54044098.56,
-          "max": 54087680
+          "min": 53186560,
+          "mean": 53414024.53333333,
+          "p50": 53374976,
+          "p95": 53730508.8,
+          "p99": 53836021.76,
+          "max": 53862400
         }
       }
     }
   ],
-  "completedAt": "2026-11-15T05:02:35.452Z"
+  "completedAt": "2026-11-15T22:11:26.308Z"
 }

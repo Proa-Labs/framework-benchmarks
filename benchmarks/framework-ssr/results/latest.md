@@ -2,50 +2,50 @@
 
 Production HTTP request, routing, SSR and framework response serialization to complete uncompressed HTML over loopback. Static fixture input is available locally; no database or external I/O. Full-document caching is disabled.
 
-Captured: 2026-11-15T06:16:43.901Z. publication.
+Captured: 2026-11-15T23:05:35.061Z. publication.
 
 | Workload | Framework | Runtime | Capacity (responses/s) | Equal-load P50 (ms) | Equal-load P99 (ms) |
 | --- | --- | --- | ---: | ---: | ---: |
-| Component page | Proa ceffd9f305ac | Rust / Tokio | 64481.4 | 0.320 | 0.651 |
-| Component page | Exact 94b8671f70fe | Bun 1.4.2 | 65.1 | 9.813 | 16.564 |
-| Component page | Next.js 16.4.6 | Bun 1.4.2 | 420.5 | 3.299 | 8.322 |
-| Component page | Astro 7.4.8 | Bun 1.4.2 | 7330.5 | 0.747 | 1.392 |
-| Component page | SvelteKit 3.1.0 | Bun 1.4.2 | 6058.3 | 0.772 | 1.400 |
-| Product grid | Proa ceffd9f305ac | Rust / Tokio | 15114.4 | 0.741 | 1.145 |
-| Product grid | Exact 94b8671f70fe | Bun 1.4.2 | 25.5 | 33.613 | 51.262 |
-| Product grid | Next.js 16.4.6 | Bun 1.4.2 | 114.9 | 13.579 | 28.988 |
-| Product grid | Astro 7.4.8 | Bun 1.4.2 | 2019.8 | 1.763 | 4.377 |
-| Product grid | SvelteKit 3.1.0 | Bun 1.4.2 | 1195.8 | 2.067 | 4.400 |
-| 1,000-row table | Proa ceffd9f305ac | Rust / Tokio | 4283.5 | 1.479 | 1.523 |
-| 1,000-row table | Exact 94b8671f70fe | Bun 1.4.2 | 3.2 | 244.403 | 307.253 |
-| 1,000-row table | Next.js 16.4.6 | Bun 1.4.2 | 20.1 | 48.885 | 71.877 |
-| 1,000-row table | Astro 7.4.8 | Bun 1.4.2 | 278.8 | 6.226 | 10.462 |
-| 1,000-row table | SvelteKit 3.1.0 | Bun 1.4.2 | 251.3 | 6.651 | 9.888 |
-| Airbnb landing page | Proa ceffd9f305ac | Rust / Tokio | 22276.5 | 0.806 | 0.889 |
-| Airbnb landing page | Exact 94b8671f70fe | Bun 1.4.2 | 12.5 | 73.341 | 89.568 |
-| Airbnb landing page | Next.js 16.4.6 | Bun 1.4.2 | 161.6 | 11.241 | 17.219 |
-| Airbnb landing page | Astro 7.4.8 | Bun 1.4.2 | 2296.4 | 1.773 | 2.484 |
-| Airbnb landing page | SvelteKit 3.1.0 | Bun 1.4.2 | 559.5 | 3.222 | 4.091 |
-| Nike catalog | Proa ceffd9f305ac | Rust / Tokio | 17283.7 | 1.088 | 1.194 |
-| Nike catalog | Exact 94b8671f70fe | Bun 1.4.2 | 6.3 | 170.295 | 190.105 |
-| Nike catalog | Next.js 16.4.6 | Bun 1.4.2 | 123.2 | 20.406 | 32.414 |
-| Nike catalog | Astro 7.4.8 | Bun 1.4.2 | 1016.0 | 3.351 | 9.315 |
-| Nike catalog | SvelteKit 3.1.0 | Bun 1.4.2 | 163.3 | 9.432 | 11.895 |
-| GitHub PR review | Proa ceffd9f305ac | Rust / Tokio | 2907.8 | 1.486 | 1.829 |
-| GitHub PR review | Exact 94b8671f70fe | Bun 1.4.2 | 1.1 | 733.453 | 751.951 |
-| GitHub PR review | Next.js 16.4.6 | Bun 1.4.2 | 30.9 | 38.813 | 61.615 |
-| GitHub PR review | Astro 7.4.8 | Bun 1.4.2 | 229.9 | 8.287 | 13.781 |
-| GitHub PR review | SvelteKit 3.1.0 | Bun 1.4.2 | 48.6 | 28.432 | 31.300 |
-| Sentry logs | Proa ceffd9f305ac | Rust / Tokio | 1913.2 | 2.868 | 3.097 |
-| Sentry logs | Exact 94b8671f70fe | Bun 1.4.2 | 0.3 | 2268.570 | 2399.060 |
-| Sentry logs | Next.js 16.4.6 | Bun 1.4.2 | 9.2 | 144.217 | 203.813 |
-| Sentry logs | Astro 7.4.8 | Bun 1.4.2 | 87.3 | 31.179 | 44.611 |
-| Sentry logs | SvelteKit 3.1.0 | Bun 1.4.2 | 20.9 | 63.841 | 68.092 |
-| ESPN game page | Proa ceffd9f305ac | Rust / Tokio | 49780.2 | 1.253 | 1.404 |
-| ESPN game page | Exact 94b8671f70fe | Bun 1.4.2 | 13.9 | 73.656 | 92.082 |
-| ESPN game page | Next.js 16.4.6 | Bun 1.4.2 | 257.4 | 15.015 | 22.351 |
-| ESPN game page | Astro 7.4.8 | Bun 1.4.2 | 2662.0 | 3.002 | 3.631 |
-| ESPN game page | SvelteKit 3.1.0 | Bun 1.4.2 | 516.9 | 4.540 | 6.351 |
+| Component page | Proa 367cc10ae520 | Rust / Tokio | 78598.2 | 0.394 | 0.737 |
+| Component page | Exact 94b8671f70fe | Bun 1.4.2 | 62.7 | 10.632 | 18.200 |
+| Component page | Next.js 16.4.6 | Bun 1.4.2 | 384.0 | 3.743 | 11.019 |
+| Component page | Astro 7.4.8 | Bun 1.4.2 | 6968.0 | 0.859 | 1.655 |
+| Component page | SvelteKit 3.1.0 | Bun 1.4.2 | 5809.7 | 0.872 | 1.380 |
+| Product grid | Proa 367cc10ae520 | Rust / Tokio | 15926.1 | 0.658 | 0.964 |
+| Product grid | Exact 94b8671f70fe | Bun 1.4.2 | 25.5 | 29.697 | 42.046 |
+| Product grid | Next.js 16.4.6 | Bun 1.4.2 | 114.5 | 9.306 | 24.015 |
+| Product grid | Astro 7.4.8 | Bun 1.4.2 | 1970.2 | 1.323 | 3.697 |
+| Product grid | SvelteKit 3.1.0 | Bun 1.4.2 | 1208.5 | 1.697 | 3.527 |
+| 1,000-row table | Proa 367cc10ae520 | Rust / Tokio | 4947.8 | 1.456 | 1.783 |
+| 1,000-row table | Exact 94b8671f70fe | Bun 1.4.2 | 3.2 | 269.954 | 345.961 |
+| 1,000-row table | Next.js 16.4.6 | Bun 1.4.2 | 19.2 | 51.099 | 110.556 |
+| 1,000-row table | Astro 7.4.8 | Bun 1.4.2 | 271.2 | 6.713 | 11.204 |
+| 1,000-row table | SvelteKit 3.1.0 | Bun 1.4.2 | 255.1 | 6.903 | 8.197 |
+| Airbnb landing page | Proa 367cc10ae520 | Rust / Tokio | 30526.0 | 0.945 | 1.052 |
+| Airbnb landing page | Exact 94b8671f70fe | Bun 1.4.2 | 10.7 | 98.570 | 108.380 |
+| Airbnb landing page | Next.js 16.4.6 | Bun 1.4.2 | 126.4 | 17.258 | 22.906 |
+| Airbnb landing page | Astro 7.4.8 | Bun 1.4.2 | 1407.2 | 2.801 | 3.552 |
+| Airbnb landing page | SvelteKit 3.1.0 | Bun 1.4.2 | 300.2 | 5.489 | 8.569 |
+| Nike catalog | Proa 367cc10ae520 | Rust / Tokio | 25796.8 | 0.995 | 1.143 |
+| Nike catalog | Exact 94b8671f70fe | Bun 1.4.2 | 4.8 | 177.295 | 194.281 |
+| Nike catalog | Next.js 16.4.6 | Bun 1.4.2 | 113.6 | 19.546 | 38.243 |
+| Nike catalog | Astro 7.4.8 | Bun 1.4.2 | 976.8 | 3.561 | 6.341 |
+| Nike catalog | SvelteKit 3.1.0 | Bun 1.4.2 | 159.0 | 9.220 | 11.845 |
+| GitHub PR review | Proa 367cc10ae520 | Rust / Tokio | 4056.7 | 1.958 | 3.592 |
+| GitHub PR review | Exact 94b8671f70fe | Bun 1.4.2 | 1.1 | 819.711 | 905.701 |
+| GitHub PR review | Next.js 16.4.6 | Bun 1.4.2 | 27.2 | 60.071 | 80.636 |
+| GitHub PR review | Astro 7.4.8 | Bun 1.4.2 | 201.3 | 12.078 | 22.469 |
+| GitHub PR review | SvelteKit 3.1.0 | Bun 1.4.2 | 43.2 | 33.310 | 38.463 |
+| Sentry logs | Proa 367cc10ae520 | Rust / Tokio | 2470.1 | 2.681 | 3.148 |
+| Sentry logs | Exact 94b8671f70fe | Bun 1.4.2 | 0.3 | 2307.305 | 2394.642 |
+| Sentry logs | Next.js 16.4.6 | Bun 1.4.2 | 9.4 | 149.926 | 215.961 |
+| Sentry logs | Astro 7.4.8 | Bun 1.4.2 | 88.5 | 34.534 | 43.534 |
+| Sentry logs | SvelteKit 3.1.0 | Bun 1.4.2 | 20.7 | 64.961 | 70.797 |
+| ESPN game page | Proa 367cc10ae520 | Rust / Tokio | 53820.0 | 1.256 | 1.329 |
+| ESPN game page | Exact 94b8671f70fe | Bun 1.4.2 | 14.1 | 77.066 | 89.494 |
+| ESPN game page | Next.js 16.4.6 | Bun 1.4.2 | 228.8 | 16.154 | 21.301 |
+| ESPN game page | Astro 7.4.8 | Bun 1.4.2 | 2453.0 | 3.009 | 3.890 |
+| ESPN game page | SvelteKit 3.1.0 | Bun 1.4.2 | 488.3 | 4.764 | 6.836 |
 
 Equal load by workload: Component page: 10 requests/s; Product grid: 5 requests/s; 1,000-row table: 1 requests/s; Airbnb landing page: 1 requests/s; Nike catalog: 1 requests/s; GitHub PR review: 1 requests/s; Sentry logs: 0.25 requests/s; ESPN game page: 1 requests/s. 3 independent server starts per phase kind. No errors or generator-limited phases.
 
