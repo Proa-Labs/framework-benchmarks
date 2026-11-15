@@ -871,13 +871,6 @@ try {
     ].includes(w.id),
   )) {
     for (const view of ["rendering", "framework"] as const) {
-      // Historical captures can cover fewer workloads than the current renderer
-      // suite. The publication gate separately requires the complete new cohort.
-      if (
-        view === "framework" &&
-        !benchmarkData.framework.workloads[workload.id]
-      )
-        continue;
       await navigate(
         `${server.url}/?view=${view}&workload=${workload.id}&chart=bars`,
       );
