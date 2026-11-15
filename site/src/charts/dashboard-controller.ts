@@ -164,6 +164,20 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     pointerY = Number.NaN;
   const percentileTarget =
     ".fw-row[data-focus], .fw-comparison [data-focus], .fw-comparison [data-render-support]";
+  function schedulePercentileHide() {
+    // A row leave and a popup leave can arrive together. Keep one timer so
+    // an older callback cannot close a newly opened note.
+    clearTimeout(supportHideTimer);
+    const anchor = popupAnchor;
+    supportHideTimer = window.setTimeout(() => {
+      if (
+        popupAnchor === anchor &&
+        !percentilePopup.matches(":hover") &&
+        !anchor?.matches(":hover, :focus-visible")
+      )
+        hidePercentiles();
+    }, 150);
+  }
   function hidePercentiles(force = false) {
     clearTimeout(supportHideTimer);
     if (!force && (popupPinned || popupHasFocus())) return;
@@ -358,8 +372,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       const next =
         event.relatedTarget instanceof Node ? event.relatedTarget : null;
       if (percentilePopup.hasAttribute("data-support-popover")) {
-        if (!percentilePopup.contains(next))
-          supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
+        if (!percentilePopup.contains(next)) schedulePercentileHide();
       } else hidePercentiles();
     }
   });
@@ -380,7 +393,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       percentilePopup.hasAttribute("data-support-popover") &&
       !percentilePopup.contains(document.activeElement)
     )
-      supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
+      schedulePercentileHide();
   });
   listen(root, "focusin", (event) => {
     const cell = closest(
