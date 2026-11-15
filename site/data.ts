@@ -373,7 +373,10 @@ export function normalize(input: Inputs): BenchmarkData {
           outputBytes: m.output_bytes,
           ...("fixture" in renderer
             ? {
-                fixture: String(renderer.fixture),
+                fixture: String(
+                  rendering.parity[renderer.id][workload.id].fixture ??
+                    renderer.fixture,
+                ),
                 adaptation: renderers.find((r) => r.id === renderer.id)
                   ?.renderingAdaptation,
               }

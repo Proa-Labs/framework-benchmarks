@@ -559,7 +559,8 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
             output_bytes: Buffer.byteLength(html),
             payload_delta_bytes:
               Buffer.byteLength(html) - Buffer.byteLength(expectedHtml ?? html),
-            byte_equal_to_proa: html === expectedHtml,
+            byte_equal_to_proa:
+              rendererId === referenceId || html === expectedHtml,
             ...adaptation,
           };
           if (rendererId === referenceId) expectedHtml = html;
@@ -610,7 +611,8 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
           output_bytes: Buffer.byteLength(html),
           payload_delta_bytes:
             Buffer.byteLength(html) - Buffer.byteLength(expectedHtml),
-          byte_equal_to_proa: html === expectedHtml,
+          byte_equal_to_proa:
+            rendererId === referenceId || html === expectedHtml,
           ...adaptation,
         };
         process.stdout.write(".");
@@ -1254,6 +1256,17 @@ try {
           }
         }
         if (smoke || engineering || explicitOutput) {
+          // Validate publication metadata even when sampling is diagnostic.
+          if (rendererIds.includes("proa"))
+            validateCanonicalResult(
+              { ...result, capture_kind: "historical_partial" },
+              {
+                renderers: roster.renderers.filter((row) =>
+                  rendererIds.includes(row.id),
+                ),
+              },
+              { workloads },
+            );
           retainCapture(
             workspaceDirectory,
             storageDirectory,

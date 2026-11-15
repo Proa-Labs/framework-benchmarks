@@ -189,7 +189,7 @@ type RenderMeasurement = Omit<
 > & { capture_id?: string };
 type RenderingCapture = Omit<
   typeof rendering,
-  "measurements" | "refresh" | "proa_output"
+  "measurements" | "parity" | "refresh" | "proa_output"
 > & {
   refresh?: {
     renderer: string;
@@ -198,6 +198,10 @@ type RenderingCapture = Omit<
   } | null;
   proa_output?: string;
   measurements: Record<string, Record<string, RenderMeasurement>>;
+  parity: Record<
+    string,
+    Record<string, typeof rendering.parity.proa.cards & { fixture?: string }>
+  >;
 };
 type HttpCapture = Omit<typeof http, "engines" | "generatorLimitedPhases"> & {
   generatorLimitedPhases?: unknown[];

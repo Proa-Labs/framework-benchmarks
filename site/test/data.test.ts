@@ -368,3 +368,35 @@ test("admitted capture status overrides unmeasured presentation metadata", async
     "included",
   );
 });
+
+test("render-only coverage can grow without inventing HTTP experiments", async () => {
+  const { input } = await loadInputs();
+  const id = "additional-render-only";
+  const first = input.rendering.workloads[0];
+  input.rendering.workloads.push({
+    ...first,
+    id,
+    label: "Additional render workload",
+  });
+  input.workloadManifest.workloads.push({
+    ...input.workloadManifest.workloads[0],
+    id,
+    label: "Additional render workload",
+  });
+  for (const measurements of Object.values(input.rendering.measurements))
+    measurements[id] = structuredClone(measurements.cards);
+  for (const parity of Object.values(input.rendering.parity))
+    Object.assign(parity, { [id]: structuredClone(parity.cards) });
+  input.processSummaries.push(
+    ...input.processSummaries
+      .filter((run) => run.workload === "cards")
+      .map((run) => ({ ...run, workload: id })),
+  );
+  const data = normalize(input);
+  assert.ok(data.rendering.rows[id].length > 0);
+  assert.equal(data.http.rows[id], undefined);
+  assert.equal(data.framework.workloads[id], undefined);
+  const model = createDashboardModel(data, `?view=http&workload=${id}`);
+  assert.equal(model.state.workload, "cards");
+  assert.ok(model.visibleRows().length > 0);
+});

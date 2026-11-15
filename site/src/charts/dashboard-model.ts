@@ -419,7 +419,19 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
 
   function renderingCoverage(id: string, workload: string) {
     const project = required(renderer(id));
-    const unsupported = project.renderingUnsupported?.[workload];
+    const measured = data.rendering.rows[workload]?.find(
+      (row) => row.id === id,
+    );
+    const unsupported =
+      project.renderingUnsupported?.[workload] ??
+      (measured?.adaptation
+        ? {
+            status: "unsupported" as const,
+            reason: measured.adaptation.reason,
+            version: project.version || "",
+            source: measured.adaptation.source,
+          }
+        : undefined);
     return unsupported
       ? {
           ...unsupported,

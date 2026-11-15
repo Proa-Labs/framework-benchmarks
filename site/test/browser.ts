@@ -512,18 +512,17 @@ try {
         ? `[data-stat-suite="rendering"][data-focus="exact"][data-stat-workload="${workload.id}"]`
         : `[data-render-support="exact"][data-support-workload="${workload.id}"]`,
     );
-    if (adapted) assert.equal(adapted.fixture, "exact-native-v1");
+    if (adapted)
+      assert.match(adapted.fixture ?? "", /^exact-(?:showcase-)?native-v1$/);
     else assert.match(required(await cell.textContent()), /Unsupported/);
     await cell.hover();
     const popup = page.locator("[data-percentile-popup]");
     await popup.waitFor({ state: "visible" });
-    const support = required(
-      benchmarkData.renderers.find((row) => row.id === "exact")
-        ?.renderingUnsupported?.[workload.id],
-    );
+    const support = benchmarkData.renderers.find((row) => row.id === "exact")
+      ?.renderingUnsupported?.[workload.id];
     assert.equal(
       await popup.locator(".fw-popover-scope p").first().textContent(),
-      adapted ? required(adapted.adaptation).reason : support.reason,
+      adapted ? required(adapted.adaptation).reason : required(support).reason,
     );
     if (adapted) {
       assert.equal(
@@ -539,7 +538,9 @@ try {
         required(adapted.adaptation).details,
       );
     } else
-      assert.ok(required(await popup.textContent()).includes(support.version));
+      assert.ok(
+        required(await popup.textContent()).includes(required(support).version),
+      );
     await popup.hover();
     // Scrolling while reading a linked explanation must preserve the popup,
     // including when the pointer has already left its original table cell.
@@ -574,7 +575,7 @@ try {
   if (adaptedRows.length) {
     assert.equal(adaptedRows.length, benchmarkData.workloads.length);
     for (const row of adaptedRows) {
-      assert.equal(row.fixture, "exact-native-v1");
+      assert.match(row.fixture ?? "", /^exact-(?:showcase-)?native-v1$/);
       assert.ok(row.adaptation?.source);
     }
   } else {
@@ -816,6 +817,38 @@ try {
   );
   assert.equal(await page.locator("[data-percentile-popup]").isVisible(), true);
   checks.push("workload thumbnail identity and stable row/popover geometry");
+  for (const workload of benchmarkData.workloads.filter((w) =>
+    [
+      "airbnb-home",
+      "nike-catalog",
+      "github-pr",
+      "sentry-otel",
+      "espn",
+    ].includes(w.id),
+  )) {
+    for (const view of ["rendering", "framework"] as const) {
+      await navigate(
+        `${server.url}/?view=${view}&workload=${workload.id}&chart=bars`,
+      );
+      const expectedRows =
+        view === "rendering"
+          ? benchmarkData.rendering.rows[workload.id].length
+          : benchmarkData.framework.workloads[workload.id].length;
+      assert.equal(await page.locator(".fw-row").count(), expectedRows);
+      assert.equal(
+        new URL(page.url()).searchParams.get("workload"),
+        workload.id,
+      );
+    }
+    const response = await context.request.get(
+      `${server.url}/previews/${workload.id}.html`,
+    );
+    assert.equal(response.status(), 200);
+    assert.match(await response.text(), /data-bench-request=/);
+  }
+  // Restore the single-workload row used by the following hover checks.
+  await navigate(`${server.url}/?view=rendering&workload=cards&chart=bars`);
+
   await firstRow.press("Escape");
   const jte = page.locator('.fw-row[data-focus="jte"]');
   await jte.hover();
