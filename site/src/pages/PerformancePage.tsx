@@ -21,6 +21,7 @@ import {
 } from "../charts/InitialDashboard.tsx";
 import { Footer } from "../components/Footer.tsx";
 import { Header } from "../components/Header.tsx";
+import { InfoCallout } from "../components/InfoCallout.tsx";
 export function PerformancePage({
   data = benchmarkData as BenchmarkData,
 }: {
@@ -225,14 +226,10 @@ export function PerformancePage({
             >
               {experimentDescription}
             </p>
-            <p
-              className="mb-4 text-sm leading-relaxed text-muted"
-              data-coverage-note
-              hidden={state.view === "rendering"}
-            >
+            <InfoCallout data-coverage-note hidden={state.view === "rendering"}>
               Coverage is a work in progress. We aim to extend these tests to
               the remaining frameworks listed in SSR Rendering.
-            </p>
+            </InfoCallout>
             <p
               className="fw-validation-note"
               data-validation-note
