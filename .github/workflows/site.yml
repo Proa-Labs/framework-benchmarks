@@ -76,7 +76,20 @@ jobs:
             exit 1
           fi
           cd site
-          bun --bun node_modules/wrangler/bin/wrangler.js deploy
+          # Routes are already provisioned. Publish code/assets without needing
+          # zone permissions or partially failing while rewriting hostnames.
+          export WRANGLER_OUTPUT_FILE_PATH="$RUNNER_TEMP/frameworks-production-upload.jsonl"
+          : > "$WRANGLER_OUTPUT_FILE_PATH"
+          bun --bun node_modules/wrangler/bin/wrangler.js versions upload --message "$GITHUB_SHA"
+          version=$(bun -e '
+            const records = require("node:fs").readFileSync(process.env.WRANGLER_OUTPUT_FILE_PATH, "utf8")
+              .trim().split("\n").filter(Boolean).map(line => JSON.parse(line));
+            const id = records.findLast(record => record.type === "version-upload")?.version_id;
+            if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(id || ""))
+              throw new Error("Cloudflare did not return an uploaded version ID");
+            console.log(id);
+          ')
+          bun --bun node_modules/wrangler/bin/wrangler.js versions deploy "$version@100%" --yes --message "$GITHUB_SHA"
 
   publication:
     name: Publication readiness

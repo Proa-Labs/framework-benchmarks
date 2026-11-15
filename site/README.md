@@ -75,6 +75,10 @@ externally managed DNS records. Keep `www` proxied and retain both entries in
 `wrangler.json`; otherwise `www` can fall through to the registrar's parking
 origin. Hostname routing can be repaired independently of the application
 version; the publication gate still governs application deployments.
+The production workflow uploads and activates a version of the Worker and its
+assets, preserving existing routes. Route changes use `wrangler triggers deploy`
+separately with zone-authorized credentials; routine CI deployments need only
+the existing Worker permissions.
 
 ```sh
 bun run --cwd site deploy:check  # Build and Wrangler dry-run

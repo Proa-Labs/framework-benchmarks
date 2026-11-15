@@ -17,6 +17,7 @@ import { parseArgs } from "node:util";
 import { renderReport } from "../../benchmarks/framework-ssr/report.ts";
 import { aggregateFrameworkShards } from "../capture/framework-shards.mjs";
 import { verifyPublication } from "../checks/publication.mjs";
+import { downloadArtifact } from "./artifacts.mjs";
 import {
   jobManifest,
   prioritizeSuites,
@@ -307,14 +308,21 @@ async function runSuite(suite) {
     if (result !== "running") exitCode = Number(result);
     else await delay(10000);
   }
-  const logs = await exec(
-    [
-      "bash",
-      "-c",
-      "cd /work; tar -czf - worker.log bootstrap.log cpu-topology.txt cpu-quota.txt 2>/dev/null || true",
-    ],
-    { binary: true },
-  );
+  await exec([
+    "bash",
+    "-c",
+    "cd /work; tar -czf logs.tar.gz worker.log bootstrap.log cpu-topology.txt cpu-quota.txt 2>/dev/null || true",
+  ]);
+  const download = async (path) => {
+    try {
+      return await downloadArtifact(exec, path);
+    } catch (error) {
+      // Retain the completed worker for a verified download on resume.
+      transportFailure = true;
+      throw error;
+    }
+  };
+  const logs = await download("/work/logs.tar.gz");
   await writeFile(
     join(output, `${suite}-attempt-${attempt}-logs.tar.gz`),
     logs,
@@ -337,9 +345,7 @@ async function runSuite(suite) {
       `${suite}: failed (${exitCode}); logs retained at ${output}`,
     );
   }
-  const artifact = await exec(["cat", "/work/results.tar.gz"], {
-    binary: true,
-  });
+  const artifact = await download("/work/results.tar.gz");
   await writeFile(join(output, `${suite}.tar.gz`), artifact);
   state.suites[suite] = {
     ...state.suites[suite],

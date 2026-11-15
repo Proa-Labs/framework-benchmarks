@@ -246,6 +246,7 @@ export async function buildPreviews(
   workloads: { id: string }[],
   { raster = true } = {},
 ) {
+  const sourceHashes: Record<string, string> = {};
   let React: typeof import("react"),
     renderToString: typeof import("react-dom/server").renderToString,
     ROOTS: Record<string, ComponentType>;
@@ -264,6 +265,7 @@ export async function buildPreviews(
   await mkdir(join(directory, "previews"), { recursive: true });
   await mkdir(join(directory, "thumbnails"), { recursive: true });
   async function writePreview(filename: string, html: string) {
+    sourceHashes[filename] = thumbnailSourceHash(html);
     await writeFile(
       join(directory, "previews", filename),
       staticPreviewState(filename, html),
@@ -274,7 +276,7 @@ export async function buildPreviews(
         { sourceSha256: string; file: string }
       >;
       const snapshot = snapshots[filename];
-      if (!snapshot || snapshot.sourceSha256 !== thumbnailSourceHash(html))
+      if (!snapshot || snapshot.sourceSha256 !== sourceHashes[filename])
         throw new Error(
           `Thumbnail source changed for ${filename}; run bun site/generate-thumbnails.ts`,
         );
@@ -397,4 +399,5 @@ export async function buildPreviews(
       : `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${id} workload</title><style>${style}</style></head><body>${body}</body></html>`;
     await writePreview(`${id}.html`, html);
   }
+  return sourceHashes;
 }

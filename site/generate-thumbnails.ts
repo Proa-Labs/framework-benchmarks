@@ -14,7 +14,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 import { fixtures } from "../benchmarks/rendering/showcase/fixture.mjs";
 import { loadInputs } from "./data.ts";
-import { buildPreviews, thumbnailSourceHash } from "./previews.ts";
+import { buildPreviews } from "./previews.ts";
 
 const here = fileURLToPath(new URL(".", import.meta.url));
 const target = join(here, "data/performance/thumbnails");
@@ -26,16 +26,25 @@ const workloads = [
     (f) => !input.workloadManifest.workloads.some((w) => w.id === f.id),
   ),
 ];
-await buildPreviews(temporary, input.framework, workloads, { raster: false });
+const sourceHashes = await buildPreviews(
+  temporary,
+  input.framework,
+  workloads,
+  {
+    raster: false,
+  },
+);
 // Before a new campaign exists, the strict Proa fixture also supplies its
 // Framework SSR illustration. Fresh captures replace this identical source.
 for (const { id } of fixtures) {
   const path = join(temporary, "previews", `framework-${id}.html`);
-  if (!(await Bun.file(path).exists()))
+  if (!(await Bun.file(path).exists())) {
     await writeFile(
       path,
       await readFile(join(temporary, "previews", `${id}.html`)),
     );
+    sourceHashes[`framework-${id}.html`] = sourceHashes[`${id}.html`];
+  }
 }
 const browser = await chromium.launch({ headless: true });
 try {
@@ -48,7 +57,8 @@ try {
   const byHash = new Map<string, string>();
   for (const filename of (await readdir(join(temporary, "previews"))).sort()) {
     const html = await readFile(join(temporary, "previews", filename), "utf8");
-    const sourceSha256 = thumbnailSourceHash(html);
+    const sourceSha256 = sourceHashes[filename];
+    if (!sourceSha256) throw new Error(`Missing preview source: ${filename}`);
     let file = byHash.get(sourceSha256);
     if (!file) {
       file = filename.replace(/\.html$/, ".webp");

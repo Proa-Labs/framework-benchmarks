@@ -1,5 +1,8 @@
 import { test } from "bun:test";
 import assert from "node:assert/strict";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { type DefaultTreeAdapterMap, parse } from "parse5";
 import {
   fixtures,
@@ -7,12 +10,38 @@ import {
   renderReference,
 } from "../../benchmarks/rendering/showcase/fixture.mjs";
 import showcaseAssets from "../data/performance/showcase/assets.json";
+import { loadInputs } from "../data.ts";
 import {
+  buildPreviews,
   showcasePreview,
   staticPreviewState,
   thumbnailHtml,
   thumbnailSourceHash,
 } from "../previews.ts";
+
+test("thumbnail generation binds original sources while rendering static preview annotations", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "preview-sources-"));
+  try {
+    const { input } = await loadInputs();
+    const hashes = await buildPreviews(
+      directory,
+      input.framework,
+      [{ id: "sentry-otel" }],
+      { raster: false },
+    );
+    const { definition, data } = loadFixture("sentry-otel");
+    const source = showcasePreview(renderReference(definition, data));
+    const emitted = await readFile(
+      join(directory, "previews/sentry-otel.html"),
+      "utf8",
+    );
+    assert.equal(hashes["sentry-otel.html"], thumbnailSourceHash(source));
+    assert.notEqual(hashes["sentry-otel.html"], thumbnailSourceHash(emitted));
+    assert.match(emitted, /data-preview-sentry/);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
 
 test("Sentry previews finish visibly without changing any measured log rows", () => {
   const { definition, data } = loadFixture("sentry-otel");

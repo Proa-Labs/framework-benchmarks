@@ -71,6 +71,11 @@ Framework SSR use 24. Generator validity remains mandatory.
 
 Install all JavaScript workspaces with `bun install --frozen-lockfile` first. The controller needs
 Python 3.12+, `git`, `tar` and an authenticated `kubectl` context.
+When intentionally updating Proa, update both the root `Cargo.lock` and
+`benchmarks/framework-ssr/adapters/proa/Cargo.lock` to the same revision. Run
+`bun tooling/checks/proa-pins.mjs` before committing the campaign revision.
+Workers and the publication gate reject mismatched pins; reproducibility runs
+use the committed revisions without advancing them.
 
 ```sh
 bun tooling/cloud/campaign.mjs --revision <full-40-character-commit-sha> \
@@ -108,6 +113,9 @@ Transient control-connection reads retry with bounded backoff. If a transport
 outage persists, active jobs are kept for verified reconnection, subject to the
 same four-hour deadline; successful measurements are not discarded as failed
 merely because the controller could not observe their status.
+Artifact downloads use bounded binary chunks and must match the completed
+worker's SHA-256 before collection is acknowledged. A short or mismatched
+download leaves the worker available for a verified retry on resume.
 A forced process kill can leave a job until that deadline; the campaign manifest
 retains its name for inspection. Resume does not splice partial suite results.
 
