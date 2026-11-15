@@ -1,0 +1,9 @@
+{
+  "name": "proa-bench-react",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  }
+}

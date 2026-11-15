@@ -1,0 +1,2177 @@
+{
+  "schemaVersion": 2,
+  "status": "pass",
+  "captureKind": "engineering",
+  "captureId": "framework-ssr-2026-11-13T21-03-22-358Z-1a4e0170",
+  "capturedAt": "2026-11-13T21:09:13.904Z",
+  "host": {
+    "machineId": "9ad11e70f90b07a9bf9a840cfeca7c0464cf0393a558b0c3a34498cade67dfc8",
+    "campaignId": "publication-23ab862c-d2de-441e-9c25-e90aef62e86b",
+    "campaignProtocol": "proa-only-v1",
+    "machineClass": "c4-standard-16-lssd",
+    "sourceRevision": "42539a429e2eb61aae8916e7c069cd3edb473a4c",
+    "nodeName": "gke-proa-ci-runners-c4-19143b73-mwdq",
+    "platform": "linux",
+    "release": "6.12.105+",
+    "arch": "x64",
+    "cpuModel": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
+    "logicalCpuCount": 16,
+    "totalMemoryBytes": 63200768000,
+    "node": "v26.3.0",
+    "javascriptRuntime": "Bun 1.4.2",
+    "serverCpuAffinity": "0",
+    "cloud": "GCP C4 c4-standard-16-lssd · gke-proa-ci-runners-c4-19143b73-mwdq · isolated Proa-only diagnostic",
+    "serverCpu": "0"
+  },
+  "scenario": {
+    "schemaVersion": 2,
+    "id": "framework_workloads_v2",
+    "label": "Framework SSR · three shared workloads",
+    "runtime": "Bun 1.4.2",
+    "exactCommit": "94b8671f70fe2e25b307a40e7fce66dc27c9f802",
+    "engines": [
+      "proa",
+      "exact",
+      "nextjs",
+      "astro",
+      "sveltekit"
+    ],
+    "publication": {
+      "repeats": 3,
+      "concurrency": 64,
+      "warmupRequests": 24,
+      "preRollSeconds": 1,
+      "durationSeconds": 10,
+      "requestTimeoutMs": 60000
+    },
+    "boundary": "Production HTTP request, routing, SSR and framework response serialization to complete uncompressed HTML over loopback. Static fixture input is available locally; no database or external I/O. Full-document caching is disabled.",
+    "parity": "Same semantic business content for 4 sections, 32 cards and 160 feature items; 96 products and 480 SVG stars; and 1,000 rows with 12 cells, formatting, branches, escaping and variable-length tag lists. Every URL carries a request-specific freshness value. Generated wrappers/classes and framework scripts outside the business root may differ. Complete response bytes are retained and checked on every timed request.",
+    "limitations": [
+      "Different framework shells and hydration protocols produce different payload sizes.",
+      "This workload does not measure browser hydration, application startup, database I/O or developer experience.",
+      "A separate contract and capture from the synchronous pure-renderer suite; numbers must not be combined.",
+      "Equal-load rates are fixed per workload (10/5/1 requests per second), identical across frameworks. These rates avoid forcing the largest workload into overload; raw latency sample counts are retained.",
+      "Capacity windows are 10 seconds for cards/products and 60 seconds for the table, identical across frameworks. The longer table window captures repeated completion batches from the slowest adapter. Equal-load latency windows are 10 seconds; low-rate tail percentiles have few samples."
+    ],
+    "workloads": [
+      {
+        "id": "cards",
+        "label": "Component page",
+        "cardinality": 32,
+        "fixedRateRps": 10,
+        "capacityDurationSeconds": 10
+      },
+      {
+        "id": "products",
+        "label": "Product grid",
+        "cardinality": 96,
+        "fixedRateRps": 5,
+        "capacityDurationSeconds": 10
+      },
+      {
+        "id": "table",
+        "label": "1,000-row table",
+        "cardinality": 1000,
+        "fixedRateRps": 1,
+        "capacityDurationSeconds": 60
+      }
+    ]
+  },
+  "methodology": {
+    "repeats": 3,
+    "concurrency": 64,
+    "warmupRequests": 24,
+    "preRollSeconds": 1,
+    "durationSeconds": 10,
+    "requestTimeoutMs": 60000
+  },
+  "source": {
+    "repositoryCommit": "42539a429e2eb61aae8916e7c069cd3edb473a4c",
+    "dirty": true,
+    "proaRevision": "bbbc9684335109949257eea8b4c98bb7bc8572ae",
+    "proaBranch": "main",
+    "sourceSha256": "1dda6208440cca8e2c4f9caccfd46aa03d08402e4b873ac8bf4b9d340b4507d5"
+  },
+  "engines": [
+    {
+      "id": "proa",
+      "framework": "Proa bbbc96843351",
+      "runtime": "Rust / Tokio",
+      "parity": {
+        "pass": true,
+        "semanticSha256": "0ea3360cbb4006fa213a36a1be5b635a0adf613e7d48a67b39d4f4e44a7b38ff",
+        "negativeControls": 3,
+        "responseBytes": 16531
+      },
+      "parityByWorkload": {
+        "cards": {
+          "pass": true,
+          "semanticSha256": "0ea3360cbb4006fa213a36a1be5b635a0adf613e7d48a67b39d4f4e44a7b38ff",
+          "negativeControls": 3,
+          "responseBytes": 16531
+        },
+        "products": {
+          "pass": true,
+          "semanticSha256": "c9f4ccc7d8e70a1e81f734821b81d8f9c53f08ea43850cbe18f19b792e1e352f",
+          "negativeControls": 3,
+          "responseBytes": 234436
+        },
+        "table": {
+          "pass": true,
+          "semanticSha256": "5daa7cfb3685ba7428a1ff23c87ef790a2887802bf0773fdb779fbe07cb2ed35",
+          "negativeControls": 3,
+          "responseBytes": 361560
+        }
+      },
+      "phases": [
+        {
+          "mode": "closed",
+          "offeredRps": null,
+          "concurrency": 64,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 648590,
+          "sentRequests": 597373,
+          "successfulRequests": 597373,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 59737.3,
+          "steadyStateCompletedResponses": 597376,
+          "completionThroughputRps": 59737.6,
+          "phaseWallMs": 11006.0517578125,
+          "maxObservedInFlight": 64,
+          "latencyMs": {
+            "firstByte": {
+              "count": 597373,
+              "min": 0.0615234375,
+              "mean": 1.044379191332823,
+              "p50": 1.01123046875,
+              "p95": 1.21484375,
+              "p99": 1.99658203125,
+              "max": 21.35009765625
+            },
+            "complete": {
+              "count": 597373,
+              "min": 0.0625,
+              "mean": 1.046780351793263,
+              "p50": 1.013427734375,
+              "p95": 1.217529296875,
+              "p99": 2.0009765625,
+              "max": 21.356201171875
+            },
+            "scheduledFirstByte": {
+              "count": 597373,
+              "min": 0.0615234375,
+              "mean": 1.0445342039326508,
+              "p50": 1.011474609375,
+              "p95": 1.215087890625,
+              "p99": 1.9972070312500136,
+              "max": 21.350341796875
+            },
+            "scheduledComplete": {
+              "count": 597373,
+              "min": 0.0625,
+              "mean": 1.0469353643930908,
+              "p50": 1.013671875,
+              "p95": 1.2177734375,
+              "p99": 2.00146484375,
+              "max": 21.3564453125
+            },
+            "schedulerLag": {
+              "count": 597373,
+              "min": 0,
+              "mean": 0.00015501259982770397,
+              "p50": 0,
+              "p95": 0.000244140625,
+              "p99": 0.001220703125,
+              "max": 3.532470703125
+            }
+          },
+          "responseBytes": {
+            "count": 597373,
+            "min": 16586,
+            "mean": 16586,
+            "p50": 16586,
+            "p95": 16586,
+            "p99": 16586,
+            "max": 16586
+          },
+          "cpu": {
+            "processCpuTimeMs": 10904.436,
+            "averageCpuPercent": 99.07672833048082,
+            "averageCpuCores": 0.9907672833048082,
+            "cpuMsPerSuccessfulRequest": 0.01681252563252594,
+            "sampledCpuPercent": {
+              "count": 112,
+              "min": 0,
+              "mean": 90.82232142857148,
+              "p50": 96,
+              "p95": 97.8,
+              "p99": 97.9,
+              "max": 97.9
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6639616,
+            "averageRssBytes": 8897792,
+            "peakSampledRssBytes": 8982528,
+            "peakRssGrowthBytes": 2342912,
+            "sampleCount": 112
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 88939494,
+            "wallMs": 11032.234271000001,
+            "averageCores": 8.061784387029537,
+            "busiestWorkerUtilization": 0.36070990599471386,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 2.1951540000009118
+          },
+          "repeat": 1,
+          "workload": "cards"
+        },
+        {
+          "mode": "closed",
+          "offeredRps": null,
+          "concurrency": 64,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 658820,
+          "sentRequests": 600474,
+          "successfulRequests": 600474,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 60047.4,
+          "steadyStateCompletedResponses": 600473,
+          "completionThroughputRps": 60047.3,
+          "phaseWallMs": 11018.951416015625,
+          "maxObservedInFlight": 64,
+          "latencyMs": {
+            "firstByte": {
+              "count": 600474,
+              "min": 0.062744140625,
+              "mean": 1.0383388240640155,
+              "p50": 1.00830078125,
+              "p95": 1.1943359375,
+              "p99": 1.84033203125,
+              "max": 72.50146484375
+            },
+            "complete": {
+              "count": 600474,
+              "min": 0.06396484375,
+              "mean": 1.0410065810379592,
+              "p50": 1.0107421875,
+              "p95": 1.197265625,
+              "p99": 1.8447924804687545,
+              "max": 72.50439453125
+            },
+            "scheduledFirstByte": {
+              "count": 600474,
+              "min": 0.062744140625,
+              "mean": 1.0385319629068557,
+              "p50": 1.008544921875,
+              "p95": 1.194580078125,
+              "p99": 1.8408203125,
+              "max": 72.501708984375
+            },
+            "scheduledComplete": {
+              "count": 600474,
+              "min": 0.06396484375,
+              "mean": 1.0411997198807994,
+              "p50": 1.010986328125,
+              "p95": 1.197509765625,
+              "p99": 1.84521484375,
+              "max": 72.504638671875
+            },
+            "schedulerLag": {
+              "count": 600474,
+              "min": 0,
+              "mean": 0.00019313884284019792,
+              "p50": 0.000244140625,
+              "p95": 0.000244140625,
+              "p99": 0.001220703125,
+              "max": 1.663330078125
+            }
+          },
+          "responseBytes": {
+            "count": 600474,
+            "min": 16586,
+            "mean": 16586,
+            "p50": 16586,
+            "p95": 16586,
+            "p99": 16586,
+            "max": 16586
+          },
+          "cpu": {
+            "processCpuTimeMs": 10977.689,
+            "averageCpuPercent": 99.62553228108754,
+            "averageCpuCores": 0.9962553228108755,
+            "cpuMsPerSuccessfulRequest": 0.016662652924926386,
+            "sampledCpuPercent": {
+              "count": 112,
+              "min": 0,
+              "mean": 93.57589285714289,
+              "p50": 97.4,
+              "p95": 98.6,
+              "p99": 98.7,
+              "max": 98.7
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6615040,
+            "averageRssBytes": 8860489.142857144,
+            "peakSampledRssBytes": 8945664,
+            "peakRssGrowthBytes": 2330624,
+            "sampleCount": 112
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 78082079,
+            "wallMs": 11068.738894,
+            "averageCores": 7.054288636470207,
+            "busiestWorkerUtilization": 0.323518927810701,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.8543250000002445
+          },
+          "repeat": 2,
+          "workload": "cards"
+        },
+        {
+          "mode": "closed",
+          "offeredRps": null,
+          "concurrency": 64,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 666193,
+          "sentRequests": 606609,
+          "successfulRequests": 606609,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 60660.9,
+          "steadyStateCompletedResponses": 606612,
+          "completionThroughputRps": 60661.2,
+          "phaseWallMs": 11006.592529296875,
+          "maxObservedInFlight": 64,
+          "latencyMs": {
+            "firstByte": {
+              "count": 606609,
+              "min": 0.740478515625,
+              "mean": 1.029034497348941,
+              "p50": 1.003662109375,
+              "p95": 1.162109375,
+              "p99": 1.72802734375,
+              "max": 6.62646484375
+            },
+            "complete": {
+              "count": 606609,
+              "min": 0.7412109375,
+              "mean": 1.0313830345431272,
+              "p50": 1.005859375,
+              "p95": 1.164794921875,
+              "p99": 1.732421875,
+              "max": 6.630859375
+            },
+            "scheduledFirstByte": {
+              "count": 606609,
+              "min": 0.74072265625,
+              "mean": 1.0291917870200111,
+              "p50": 1.003662109375,
+              "p95": 1.162353515625,
+              "p99": 1.7287402343750102,
+              "max": 6.62646484375
+            },
+            "scheduledComplete": {
+              "count": 606609,
+              "min": 0.741455078125,
+              "mean": 1.0315403242141974,
+              "p50": 1.006103515625,
+              "p95": 1.164794921875,
+              "p99": 1.73291015625,
+              "max": 6.630859375
+            },
+            "schedulerLag": {
+              "count": 606609,
+              "min": 0,
+              "mean": 0.00015728967107003853,
+              "p50": 0,
+              "p95": 0.000244140625,
+              "p99": 0.001220703125,
+              "max": 2.346923828125
+            }
+          },
+          "responseBytes": {
+            "count": 606609,
+            "min": 16586,
+            "mean": 16586,
+            "p50": 16586,
+            "p95": 16586,
+            "p99": 16586,
+            "max": 16586
+          },
+          "cpu": {
+            "processCpuTimeMs": 10988.566,
+            "averageCpuPercent": 99.83622061733554,
+            "averageCpuCores": 0.9983622061733555,
+            "cpuMsPerSuccessfulRequest": 0.016494568390841693,
+            "sampledCpuPercent": {
+              "count": 112,
+              "min": 0,
+              "mean": 93.69642857142863,
+              "p50": 97.5,
+              "p95": 98.7,
+              "p99": 98.7,
+              "max": 98.7
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6578176,
+            "averageRssBytes": 8831597.714285715,
+            "peakSampledRssBytes": 8916992,
+            "peakRssGrowthBytes": 2338816,
+            "sampleCount": 112
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 68859426,
+            "wallMs": 11056.294774999998,
+            "averageCores": 6.228074359567716,
+            "busiestWorkerUtilization": 0.2792413711205819,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.5800539999981993
+          },
+          "repeat": 3,
+          "workload": "cards"
+        },
+        {
+          "mode": "open",
+          "offeredRps": 10,
+          "concurrency": null,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 110,
+          "sentRequests": 100,
+          "successfulRequests": 100,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 10,
+          "steadyStateCompletedResponses": 100,
+          "completionThroughputRps": 10,
+          "phaseWallMs": 10900.492431640625,
+          "maxObservedInFlight": 1,
+          "latencyMs": {
+            "firstByte": {
+              "count": 100,
+              "min": 0.320556640625,
+              "mean": 0.43206787109375,
+              "p50": 0.391357421875,
+              "p95": 0.71966552734375,
+              "p99": 0.7764868164062502,
+              "max": 0.8125
+            },
+            "complete": {
+              "count": 100,
+              "min": 0.326171875,
+              "mean": 0.44097412109375,
+              "p50": 0.3984375,
+              "p95": 0.753369140625,
+              "p99": 0.8164746093750002,
+              "max": 0.847412109375
+            },
+            "scheduledFirstByte": {
+              "count": 100,
+              "min": 0.325927734375,
+              "mean": 0.4679833984375,
+              "p50": 0.4058837890625,
+              "p95": 0.7721313476562499,
+              "p99": 1.6519506835937519,
+              "max": 1.999755859375
+            },
+            "scheduledComplete": {
+              "count": 100,
+              "min": 0.33154296875,
+              "mean": 0.4768896484375,
+              "p50": 0.4124755859375,
+              "p95": 0.81033935546875,
+              "p99": 1.661806640625002,
+              "max": 2.042724609375
+            },
+            "schedulerLag": {
+              "count": 100,
+              "min": 0.00537109375,
+              "mean": 0.03591552734375,
+              "p50": 0.0128173828125,
+              "p95": 0.02099609375,
+              "p99": 0.9772753906250016,
+              "max": 1.28955078125
+            }
+          },
+          "responseBytes": {
+            "count": 100,
+            "min": 16584,
+            "mean": 16584,
+            "p50": 16584,
+            "p95": 16584,
+            "p99": 16584,
+            "max": 16584
+          },
+          "cpu": {
+            "processCpuTimeMs": 12.259,
+            "averageCpuPercent": 0.11246280915177799,
+            "averageCpuCores": 0.0011246280915177798,
+            "cpuMsPerSuccessfulRequest": 0.11144545454545454,
+            "sampledCpuPercent": {
+              "count": 110,
+              "min": 0,
+              "mean": 0,
+              "p50": 0,
+              "p95": 0,
+              "p99": 0,
+              "max": 0
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6545408,
+            "averageRssBytes": 7314115.490909091,
+            "peakSampledRssBytes": 7462912,
+            "peakRssGrowthBytes": 917504,
+            "sampleCount": 110
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 1327750,
+            "wallMs": 10950.313322000002,
+            "averageCores": 0.12125223826540657,
+            "busiestWorkerUtilization": 0.006367457057929356,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.558803000007174
+          },
+          "repeat": 1,
+          "workload": "cards"
+        },
+        {
+          "mode": "open",
+          "offeredRps": 10,
+          "concurrency": null,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 110,
+          "sentRequests": 100,
+          "successfulRequests": 100,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 10,
+          "steadyStateCompletedResponses": 100,
+          "completionThroughputRps": 10,
+          "phaseWallMs": 10900.390869140625,
+          "maxObservedInFlight": 1,
+          "latencyMs": {
+            "firstByte": {
+              "count": 100,
+              "min": 0.3095703125,
+              "mean": 0.42194580078125,
+              "p50": 0.3759765625,
+              "p95": 0.67655029296875,
+              "p99": 0.7552368164062514,
+              "max": 1.031982421875
+            },
+            "complete": {
+              "count": 100,
+              "min": 0.3154296875,
+              "mean": 0.42954345703125,
+              "p50": 0.38232421875,
+              "p95": 0.688037109375,
+              "p99": 0.7725781250000014,
+              "max": 1.050048828125
+            },
+            "scheduledFirstByte": {
+              "count": 100,
+              "min": 0.320556640625,
+              "mean": 0.4362744140625,
+              "p50": 0.386474609375,
+              "p95": 0.69642333984375,
+              "p99": 0.7772631835937515,
+              "max": 1.059326171875
+            },
+            "scheduledComplete": {
+              "count": 100,
+              "min": 0.326904296875,
+              "mean": 0.4438720703125,
+              "p50": 0.3922119140625,
+              "p95": 0.70675048828125,
+              "p99": 0.7946044921875015,
+              "max": 1.077392578125
+            },
+            "schedulerLag": {
+              "count": 100,
+              "min": 0.007080078125,
+              "mean": 0.01432861328125,
+              "p50": 0.0107421875,
+              "p95": 0.0273681640625,
+              "p99": 0.030322265625000025,
+              "max": 0.03515625
+            }
+          },
+          "responseBytes": {
+            "count": 100,
+            "min": 16584,
+            "mean": 16584,
+            "p50": 16584,
+            "p95": 16584,
+            "p99": 16584,
+            "max": 16584
+          },
+          "cpu": {
+            "processCpuTimeMs": 11.952,
+            "averageCpuPercent": 0.109647444238321,
+            "averageCpuCores": 0.00109647444238321,
+            "cpuMsPerSuccessfulRequest": 0.10865454545454545,
+            "sampledCpuPercent": {
+              "count": 110,
+              "min": 0,
+              "mean": 0,
+              "p50": 0,
+              "p95": 0,
+              "p99": 0,
+              "max": 0
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6635520,
+            "averageRssBytes": 7404301.963636364,
+            "peakSampledRssBytes": 7553024,
+            "peakRssGrowthBytes": 917504,
+            "sampleCount": 110
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 1174617,
+            "wallMs": 10950.044882000002,
+            "averageCores": 0.1072705192223339,
+            "busiestWorkerUtilization": 0.0058273366598260105,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.8776829999987967
+          },
+          "repeat": 2,
+          "workload": "cards"
+        },
+        {
+          "mode": "open",
+          "offeredRps": 10,
+          "concurrency": null,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 110,
+          "sentRequests": 100,
+          "successfulRequests": 100,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 10,
+          "steadyStateCompletedResponses": 100,
+          "completionThroughputRps": 10,
+          "phaseWallMs": 10900.412353515625,
+          "maxObservedInFlight": 1,
+          "latencyMs": {
+            "firstByte": {
+              "count": 100,
+              "min": 0.296142578125,
+              "mean": 0.41253173828125,
+              "p50": 0.3687744140625,
+              "p95": 0.6965454101562499,
+              "p99": 0.7674047851562504,
+              "max": 0.846923828125
+            },
+            "complete": {
+              "count": 100,
+              "min": 0.30126953125,
+              "mean": 0.419638671875,
+              "p50": 0.3748779296875,
+              "p95": 0.71270751953125,
+              "p99": 0.7838134765625004,
+              "max": 0.868408203125
+            },
+            "scheduledFirstByte": {
+              "count": 100,
+              "min": 0.30517578125,
+              "mean": 0.42346435546875,
+              "p50": 0.3800048828125,
+              "p95": 0.71357421875,
+              "p99": 0.7890795898437504,
+              "max": 0.86328125
+            },
+            "scheduledComplete": {
+              "count": 100,
+              "min": 0.3115234375,
+              "mean": 0.4305712890625,
+              "p50": 0.386474609375,
+              "p95": 0.729736328125,
+              "p99": 0.8054882812500004,
+              "max": 0.884765625
+            },
+            "schedulerLag": {
+              "count": 100,
+              "min": 0.007080078125,
+              "mean": 0.0109326171875,
+              "p50": 0.010009765625,
+              "p95": 0.0183349609375,
+              "p99": 0.021757812500000015,
+              "max": 0.024658203125
+            }
+          },
+          "responseBytes": {
+            "count": 100,
+            "min": 16584,
+            "mean": 16584,
+            "p50": 16584,
+            "p95": 16584,
+            "p99": 16584,
+            "max": 16584
+          },
+          "cpu": {
+            "processCpuTimeMs": 12.226,
+            "averageCpuPercent": 0.1121608945009942,
+            "averageCpuCores": 0.0011216089450099421,
+            "cpuMsPerSuccessfulRequest": 0.11114545454545455,
+            "sampledCpuPercent": {
+              "count": 110,
+              "min": 0,
+              "mean": 0,
+              "p50": 0,
+              "p95": 0,
+              "p99": 0,
+              "max": 0
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6557696,
+            "averageRssBytes": 7312737.745454545,
+            "peakSampledRssBytes": 7409664,
+            "peakRssGrowthBytes": 851968,
+            "sampleCount": 110
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 1145950,
+            "wallMs": 10950.134469999997,
+            "averageCores": 0.10465168287563507,
+            "busiestWorkerUtilization": 0.005382810731323898,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.49500300000363495
+          },
+          "repeat": 3,
+          "workload": "cards"
+        },
+        {
+          "mode": "closed",
+          "offeredRps": null,
+          "concurrency": 64,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 144828,
+          "sentRequests": 133918,
+          "successfulRequests": 133918,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 13391.8,
+          "steadyStateCompletedResponses": 133915,
+          "completionThroughputRps": 13391.5,
+          "phaseWallMs": 11007.13720703125,
+          "maxObservedInFlight": 64,
+          "latencyMs": {
+            "firstByte": {
+              "count": 133918,
+              "min": 3.18310546875,
+              "mean": 4.497486887308722,
+              "p50": 4.3271484375,
+              "p95": 5.697790527343749,
+              "p99": 7.246701660156241,
+              "max": 11.01123046875
+            },
+            "complete": {
+              "count": 133918,
+              "min": 3.229736328125,
+              "mean": 4.545807107634779,
+              "p50": 4.369384765625,
+              "p95": 5.772497558593749,
+              "p99": 7.316931152343734,
+              "max": 11.016357421875
+            },
+            "scheduledFirstByte": {
+              "count": 133918,
+              "min": 3.183349609375,
+              "mean": 4.49776314661479,
+              "p50": 4.327392578125,
+              "p95": 5.698034667968749,
+              "p99": 7.246701660156241,
+              "max": 11.01123046875
+            },
+            "scheduledComplete": {
+              "count": 133918,
+              "min": 3.22998046875,
+              "mean": 4.546083366940847,
+              "p50": 4.36962890625,
+              "p95": 5.772705078125,
+              "p99": 7.3169726562499875,
+              "max": 11.016357421875
+            },
+            "schedulerLag": {
+              "count": 133918,
+              "min": 0,
+              "mean": 0.0002762593060678923,
+              "p50": 0.000244140625,
+              "p95": 0.001708984375,
+              "p99": 0.002197265625,
+              "max": 0.02880859375
+            }
+          },
+          "responseBytes": {
+            "count": 133918,
+            "min": 234494,
+            "mean": 234494,
+            "p50": 234494,
+            "p95": 234494,
+            "p99": 234494,
+            "max": 234494
+          },
+          "cpu": {
+            "processCpuTimeMs": 10986.428,
+            "averageCpuPercent": 99.81185655596242,
+            "averageCpuCores": 0.9981185655596242,
+            "cpuMsPerSuccessfulRequest": 0.075858452785373,
+            "sampledCpuPercent": {
+              "count": 111,
+              "min": 0,
+              "mean": 92.95405405405404,
+              "p50": 97.1,
+              "p95": 98.5,
+              "p99": 98.6,
+              "max": 98.6
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6766592,
+            "averageRssBytes": 9199394.594594594,
+            "peakSampledRssBytes": 9269248,
+            "peakRssGrowthBytes": 2502656,
+            "sampleCount": 111
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 101417286,
+            "wallMs": 11057.1578,
+            "averageCores": 9.172093573630647,
+            "busiestWorkerUtilization": 0.4292277047808391,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.48461299999326
+          },
+          "repeat": 1,
+          "workload": "products"
+        },
+        {
+          "mode": "closed",
+          "offeredRps": null,
+          "concurrency": 64,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 145212,
+          "sentRequests": 134092,
+          "successfulRequests": 134092,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 13409.2,
+          "steadyStateCompletedResponses": 134089,
+          "completionThroughputRps": 13408.9,
+          "phaseWallMs": 11007.4599609375,
+          "maxObservedInFlight": 64,
+          "latencyMs": {
+            "firstByte": {
+              "count": 134092,
+              "min": 3.07763671875,
+              "mean": 4.488728787738782,
+              "p50": 4.309326171875,
+              "p95": 5.785888671875,
+              "p99": 7.260031738281249,
+              "max": 14.200927734375
+            },
+            "complete": {
+              "count": 134092,
+              "min": 3.08251953125,
+              "mean": 4.53989076689768,
+              "p50": 4.3538818359375,
+              "p95": 5.86767578125,
+              "p99": 7.351850585937498,
+              "max": 14.21142578125
+            },
+            "scheduledFirstByte": {
+              "count": 134092,
+              "min": 3.077880859375,
+              "mean": 4.489071313255894,
+              "p50": 4.3095703125,
+              "p95": 5.7861328125,
+              "p99": 7.260275878906249,
+              "max": 14.201171875
+            },
+            "scheduledComplete": {
+              "count": 134092,
+              "min": 3.082763671875,
+              "mean": 4.540233292414793,
+              "p50": 4.354248046875,
+              "p95": 5.867919921875,
+              "p99": 7.352094726562498,
+              "max": 14.211669921875
+            },
+            "schedulerLag": {
+              "count": 134092,
+              "min": 0,
+              "mean": 0.0003425255171123184,
+              "p50": 0.000244140625,
+              "p95": 0.00146484375,
+              "p99": 0.001953125,
+              "max": 0.625
+            }
+          },
+          "responseBytes": {
+            "count": 134092,
+            "min": 234494,
+            "mean": 234494,
+            "p50": 234494,
+            "p95": 234494,
+            "p99": 234494,
+            "max": 234494
+          },
+          "cpu": {
+            "processCpuTimeMs": 10991.438,
+            "averageCpuPercent": 99.85444452222077,
+            "averageCpuCores": 0.9985444452222078,
+            "cpuMsPerSuccessfulRequest": 0.07569235324904278,
+            "sampledCpuPercent": {
+              "count": 111,
+              "min": 0,
+              "mean": 93.18738738738737,
+              "p50": 97.1,
+              "p95": 98.5,
+              "p99": 98.6,
+              "max": 98.7
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6692864,
+            "averageRssBytes": 9088691.891891891,
+            "peakSampledRssBytes": 9207808,
+            "peakRssGrowthBytes": 2514944,
+            "sampleCount": 111
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 101581660,
+            "wallMs": 11057.327539999998,
+            "averageCores": 9.186818391019646,
+            "busiestWorkerUtilization": 0.4279576787373519,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.4431110000004992
+          },
+          "repeat": 2,
+          "workload": "products"
+        },
+        {
+          "mode": "closed",
+          "offeredRps": null,
+          "concurrency": 64,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 144606,
+          "sentRequests": 133426,
+          "successfulRequests": 133426,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 13342.6,
+          "steadyStateCompletedResponses": 133424,
+          "completionThroughputRps": 13342.4,
+          "phaseWallMs": 11009.584716796875,
+          "maxObservedInFlight": 64,
+          "latencyMs": {
+            "firstByte": {
+              "count": 133426,
+              "min": 3.088134765625,
+              "mean": 4.5127006115515345,
+              "p50": 4.333740234375,
+              "p95": 5.7857666015625,
+              "p99": 7.30657958984375,
+              "max": 11.270263671875
+            },
+            "complete": {
+              "count": 133426,
+              "min": 3.1357421875,
+              "mean": 4.562542110625693,
+              "p50": 4.37744140625,
+              "p95": 5.8663330078125,
+              "p99": 7.377197265625,
+              "max": 11.275634765625
+            },
+            "scheduledFirstByte": {
+              "count": 133426,
+              "min": 3.08837890625,
+              "mean": 4.513070816905298,
+              "p50": 4.333984375,
+              "p95": 5.7861328125,
+              "p99": 7.30706787109375,
+              "max": 11.2705078125
+            },
+            "scheduledComplete": {
+              "count": 133426,
+              "min": 3.135986328125,
+              "mean": 4.562912315979457,
+              "p50": 4.3779296875,
+              "p95": 5.8671875,
+              "p99": 7.37762451171875,
+              "max": 11.27587890625
+            },
+            "schedulerLag": {
+              "count": 133426,
+              "min": 0,
+              "mean": 0.00037020535376350934,
+              "p50": 0.000244140625,
+              "p95": 0.001708984375,
+              "p99": 0.002197265625,
+              "max": 3.43408203125
+            }
+          },
+          "responseBytes": {
+            "count": 133426,
+            "min": 234494,
+            "mean": 234494,
+            "p50": 234494,
+            "p95": 234494,
+            "p99": 234494,
+            "max": 234494
+          },
+          "cpu": {
+            "processCpuTimeMs": 10992.268,
+            "averageCpuPercent": 99.84271235253355,
+            "averageCpuCores": 0.9984271235253356,
+            "cpuMsPerSuccessfulRequest": 0.07601529673734146,
+            "sampledCpuPercent": {
+              "count": 111,
+              "min": 0,
+              "mean": 93.26576576576575,
+              "p50": 97.3,
+              "p95": 98.5,
+              "p99": 98.6,
+              "max": 98.7
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6852608,
+            "averageRssBytes": 9070905.657657657,
+            "peakSampledRssBytes": 9273344,
+            "peakRssGrowthBytes": 2420736,
+            "sampleCount": 111
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 101951792,
+            "wallMs": 11059.521542000002,
+            "averageCores": 9.21846316884727,
+            "busiestWorkerUtilization": 0.4298681468953106,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.658597000001464
+          },
+          "repeat": 3,
+          "workload": "products"
+        },
+        {
+          "mode": "open",
+          "offeredRps": 5,
+          "concurrency": null,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 55,
+          "sentRequests": 50,
+          "successfulRequests": 50,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 5,
+          "steadyStateCompletedResponses": 50,
+          "completionThroughputRps": 5,
+          "phaseWallMs": 10800.694091796875,
+          "maxObservedInFlight": 1,
+          "latencyMs": {
+            "firstByte": {
+              "count": 50,
+              "min": 0.4794921875,
+              "mean": 0.742314453125,
+              "p50": 0.678466796875,
+              "p95": 0.9830078125,
+              "p99": 1.0597607421875,
+              "max": 1.0810546875
+            },
+            "complete": {
+              "count": 50,
+              "min": 0.546875,
+              "mean": 0.8584033203125,
+              "p50": 0.7447509765625,
+              "p95": 1.19200439453125,
+              "p99": 1.23598876953125,
+              "max": 1.26123046875
+            },
+            "scheduledFirstByte": {
+              "count": 50,
+              "min": 0.5126953125,
+              "mean": 0.7737744140625,
+              "p50": 0.7376708984375,
+              "p95": 1.0005126953125,
+              "p99": 1.075419921875,
+              "max": 1.098388671875
+            },
+            "scheduledComplete": {
+              "count": 50,
+              "min": 0.580078125,
+              "mean": 0.88986328125,
+              "p50": 0.7974853515625,
+              "p95": 1.21824951171875,
+              "p99": 1.2575097656249998,
+              "max": 1.278564453125
+            },
+            "schedulerLag": {
+              "count": 50,
+              "min": 0.008544921875,
+              "mean": 0.0314599609375,
+              "p50": 0.03271484375,
+              "p95": 0.061328125,
+              "p99": 0.06214111328125,
+              "max": 0.0625
+            }
+          },
+          "responseBytes": {
+            "count": 50,
+            "min": 234492,
+            "mean": 234492,
+            "p50": 234492,
+            "p95": 234492,
+            "p99": 234492,
+            "max": 234492
+          },
+          "cpu": {
+            "processCpuTimeMs": 20.252,
+            "averageCpuPercent": 0.18750646789803435,
+            "averageCpuCores": 0.0018750646789803436,
+            "cpuMsPerSuccessfulRequest": 0.3682181818181818,
+            "sampledCpuPercent": {
+              "count": 109,
+              "min": 0,
+              "mean": 0.14678899082568805,
+              "p50": 0.2,
+              "p95": 0.3,
+              "p99": 0.4,
+              "max": 0.4
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6725632,
+            "averageRssBytes": 7362578.788990825,
+            "peakSampledRssBytes": 7712768,
+            "peakRssGrowthBytes": 987136,
+            "sampleCount": 109
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 989634,
+            "wallMs": 10850.829782999994,
+            "averageCores": 0.09120353187647091,
+            "busiestWorkerUtilization": 0.005984085354427113,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.4970469999825582
+          },
+          "repeat": 1,
+          "workload": "products"
+        },
+        {
+          "mode": "open",
+          "offeredRps": 5,
+          "concurrency": null,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 55,
+          "sentRequests": 50,
+          "successfulRequests": 50,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 5,
+          "steadyStateCompletedResponses": 50,
+          "completionThroughputRps": 5,
+          "phaseWallMs": 10800.637939453125,
+          "maxObservedInFlight": 1,
+          "latencyMs": {
+            "firstByte": {
+              "count": 50,
+              "min": 0.544677734375,
+              "mean": 0.765849609375,
+              "p50": 0.6929931640625,
+              "p95": 1.0370117187499999,
+              "p99": 1.0761352539062499,
+              "max": 1.104248046875
+            },
+            "complete": {
+              "count": 50,
+              "min": 0.611328125,
+              "mean": 0.910771484375,
+              "p50": 0.7564697265625,
+              "p95": 1.297802734375,
+              "p99": 1.3376586914062498,
+              "max": 1.3681640625
+            },
+            "scheduledFirstByte": {
+              "count": 50,
+              "min": 0.553466796875,
+              "mean": 0.784345703125,
+              "p50": 0.7127685546875,
+              "p95": 1.05992431640625,
+              "p99": 1.1001000976562498,
+              "max": 1.130126953125
+            },
+            "scheduledComplete": {
+              "count": 50,
+              "min": 0.6201171875,
+              "mean": 0.929267578125,
+              "p50": 0.7730712890625,
+              "p95": 1.32125244140625,
+              "p99": 1.3624609374999999,
+              "max": 1.39404296875
+            },
+            "schedulerLag": {
+              "count": 50,
+              "min": 0.0087890625,
+              "mean": 0.01849609375,
+              "p50": 0.019287109375,
+              "p95": 0.026416015624999997,
+              "p99": 0.02894775390625,
+              "max": 0.02978515625
+            }
+          },
+          "responseBytes": {
+            "count": 50,
+            "min": 234492,
+            "mean": 234492,
+            "p50": 234492,
+            "p95": 234492,
+            "p99": 234492,
+            "max": 234492
+          },
+          "cpu": {
+            "processCpuTimeMs": 20.822,
+            "averageCpuPercent": 0.19278490878710347,
+            "averageCpuCores": 0.0019278490878710348,
+            "cpuMsPerSuccessfulRequest": 0.3785818181818182,
+            "sampledCpuPercent": {
+              "count": 109,
+              "min": 0,
+              "mean": 0.07339449541284408,
+              "p50": 0,
+              "p95": 0.2,
+              "p99": 0.2,
+              "max": 0.2
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6819840,
+            "averageRssBytes": 7498197.724770642,
+            "peakSampledRssBytes": 7864320,
+            "peakRssGrowthBytes": 1044480,
+            "sampleCount": 109
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 832058,
+            "wallMs": 10850.823904000004,
+            "averageCores": 0.0766815503929866,
+            "busiestWorkerUtilization": 0.004888460887579171,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.49564599999575876
+          },
+          "repeat": 2,
+          "workload": "products"
+        },
+        {
+          "mode": "open",
+          "offeredRps": 5,
+          "concurrency": null,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 55,
+          "sentRequests": 50,
+          "successfulRequests": 50,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 5,
+          "steadyStateCompletedResponses": 50,
+          "completionThroughputRps": 5,
+          "phaseWallMs": 10800.778076171875,
+          "maxObservedInFlight": 1,
+          "latencyMs": {
+            "firstByte": {
+              "count": 50,
+              "min": 0.544189453125,
+              "mean": 0.7651904296875,
+              "p50": 0.7513427734375,
+              "p95": 0.91898193359375,
+              "p99": 0.930048828125,
+              "max": 0.935791015625
+            },
+            "complete": {
+              "count": 50,
+              "min": 0.623291015625,
+              "mean": 0.9045166015625,
+              "p50": 0.8216552734375,
+              "p95": 1.1654052734375,
+              "p99": 1.173203125,
+              "max": 1.178466796875
+            },
+            "scheduledFirstByte": {
+              "count": 50,
+              "min": 0.555908203125,
+              "mean": 0.7787646484375,
+              "p50": 0.76171875,
+              "p95": 0.93271484375,
+              "p99": 0.9416577148437499,
+              "max": 0.947998046875
+            },
+            "scheduledComplete": {
+              "count": 50,
+              "min": 0.634765625,
+              "mean": 0.9180908203125,
+              "p50": 0.8369140625,
+              "p95": 1.1772705078125,
+              "p99": 1.18611328125,
+              "max": 1.18994140625
+            },
+            "schedulerLag": {
+              "count": 50,
+              "min": 0.004638671875,
+              "mean": 0.01357421875,
+              "p50": 0.01220703125,
+              "p95": 0.02674560546875,
+              "p99": 0.029570312499999994,
+              "max": 0.031005859375
+            }
+          },
+          "responseBytes": {
+            "count": 50,
+            "min": 234492,
+            "mean": 234492,
+            "p50": 234492,
+            "p95": 234492,
+            "p99": 234492,
+            "max": 234492
+          },
+          "cpu": {
+            "processCpuTimeMs": 20.647,
+            "averageCpuPercent": 0.19116215382251356,
+            "averageCpuCores": 0.0019116215382251355,
+            "cpuMsPerSuccessfulRequest": 0.37539999999999996,
+            "sampledCpuPercent": {
+              "count": 109,
+              "min": 0,
+              "mean": 0.04128440366972477,
+              "p50": 0,
+              "p95": 0.1,
+              "p99": 0.1,
+              "max": 0.1
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 6766592,
+            "averageRssBytes": 7403538.788990825,
+            "peakSampledRssBytes": 7753728,
+            "peakRssGrowthBytes": 987136,
+            "sampleCount": 109
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 825892,
+            "wallMs": 10850.959669000003,
+            "averageCores": 0.07611234629868568,
+            "busiestWorkerUtilization": 0.005301934827868164,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.49520699999993667
+          },
+          "repeat": 3,
+          "workload": "products"
+        },
+        {
+          "mode": "closed",
+          "offeredRps": null,
+          "concurrency": 64,
+          "preRollSeconds": 1,
+          "durationSeconds": 60,
+          "arrivalWindowSeconds": 61,
+          "totalSentRequests": 205689,
+          "sentRequests": 203237,
+          "successfulRequests": 203237,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 3387.2833333333333,
+          "steadyStateCompletedResponses": 203238,
+          "completionThroughputRps": 3387.3,
+          "phaseWallMs": 61018.954345703125,
+          "maxObservedInFlight": 64,
+          "latencyMs": {
+            "firstByte": {
+              "count": 203237,
+              "min": 16.563720703125,
+              "mean": 18.48365854167871,
+              "p50": 18.3876953125,
+              "p95": 19.432373046875,
+              "p99": 20.88037109375,
+              "max": 28.71337890625
+            },
+            "complete": {
+              "count": 203237,
+              "min": 16.610595703125,
+              "mean": 18.569134337120886,
+              "p50": 18.46044921875,
+              "p95": 19.587890625,
+              "p99": 21.034335937499996,
+              "max": 28.758056640625
+            },
+            "scheduledFirstByte": {
+              "count": 203237,
+              "min": 16.564208984375,
+              "mean": 18.48404873278334,
+              "p50": 18.387939453125,
+              "p95": 19.432666015624996,
+              "p99": 20.880615234375,
+              "max": 28.713623046875
+            },
+            "scheduledComplete": {
+              "count": 203237,
+              "min": 16.611083984375,
+              "mean": 18.569524528225514,
+              "p50": 18.4609375,
+              "p95": 19.588183593749996,
+              "p99": 21.034335937499996,
+              "max": 28.75830078125
+            },
+            "schedulerLag": {
+              "count": 203237,
+              "min": 0,
+              "mean": 0.0003901911046278483,
+              "p50": 0.000244140625,
+              "p95": 0.001708984375,
+              "p99": 0.002197265625,
+              "max": 0.0322265625
+            }
+          },
+          "responseBytes": {
+            "count": 203237,
+            "min": 361615,
+            "mean": 361615,
+            "p50": 361615,
+            "p95": 361615,
+            "p99": 361615,
+            "max": 361615
+          },
+          "cpu": {
+            "processCpuTimeMs": 61005.033,
+            "averageCpuPercent": 99.97718521096863,
+            "averageCpuCores": 0.9997718521096863,
+            "cpuMsPerSuccessfulRequest": 0.2965886994443067,
+            "sampledCpuPercent": {
+              "count": 610,
+              "min": 0,
+              "mean": 98.02245901639319,
+              "p50": 99.3,
+              "p95": 99.6,
+              "p99": 99.6,
+              "max": 99.7
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 7409664,
+            "averageRssBytes": 9651861.403278688,
+            "peakSampledRssBytes": 9723904,
+            "peakRssGrowthBytes": 2314240,
+            "sampleCount": 610
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 216862585,
+            "wallMs": 61069.953280999995,
+            "averageCores": 3.551052086156909,
+            "busiestWorkerUtilization": 0.16871400063442488,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.4803010000032373
+          },
+          "repeat": 1,
+          "workload": "table"
+        },
+        {
+          "mode": "closed",
+          "offeredRps": null,
+          "concurrency": 64,
+          "preRollSeconds": 1,
+          "durationSeconds": 60,
+          "arrivalWindowSeconds": 61,
+          "totalSentRequests": 206402,
+          "sentRequests": 204002,
+          "successfulRequests": 204002,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 3400.0333333333333,
+          "steadyStateCompletedResponses": 204002,
+          "completionThroughputRps": 3400.0333333333333,
+          "phaseWallMs": 61018.384765625,
+          "maxObservedInFlight": 64,
+          "latencyMs": {
+            "firstByte": {
+              "count": 204002,
+              "min": 16.43701171875,
+              "mean": 18.414181956597314,
+              "p50": 18.315185546875,
+              "p95": 19.385974121093746,
+              "p99": 20.771237792968748,
+              "max": 27.853759765625
+            },
+            "complete": {
+              "count": 204002,
+              "min": 16.488037109375,
+              "mean": 18.49702934514735,
+              "p50": 18.38671875,
+              "p95": 19.531726074218746,
+              "p99": 20.9462890625,
+              "max": 27.884765625
+            },
+            "scheduledFirstByte": {
+              "count": 204002,
+              "min": 16.4384765625,
+              "mean": 18.414483444574838,
+              "p50": 18.3154296875,
+              "p95": 19.38623046875,
+              "p99": 20.771240234375,
+              "max": 27.853759765625
+            },
+            "scheduledComplete": {
+              "count": 204002,
+              "min": 16.489501953125,
+              "mean": 18.497330833124874,
+              "p50": 18.386962890625,
+              "p95": 19.531970214843746,
+              "p99": 20.946533203125,
+              "max": 27.884765625
+            },
+            "schedulerLag": {
+              "count": 204002,
+              "min": 0,
+              "mean": 0.0003014879775228919,
+              "p50": 0.000244140625,
+              "p95": 0.001220703125,
+              "p99": 0.001708984375,
+              "max": 0.02490234375
+            }
+          },
+          "responseBytes": {
+            "count": 204002,
+            "min": 361615,
+            "mean": 361615,
+            "p50": 361615,
+            "p95": 361615,
+            "p99": 361615,
+            "max": 361615
+          },
+          "cpu": {
+            "processCpuTimeMs": 61000.417,
+            "averageCpuPercent": 99.97055352137882,
+            "averageCpuCores": 0.9997055352137881,
+            "cpuMsPerSuccessfulRequest": 0.29554179223069543,
+            "sampledCpuPercent": {
+              "count": 610,
+              "min": 0,
+              "mean": 98.00836065573745,
+              "p50": 99.3,
+              "p95": 99.6,
+              "p99": 99.6,
+              "max": 99.7
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 7364608,
+            "averageRssBytes": 9612230.924590165,
+            "peakSampledRssBytes": 9670656,
+            "peakRssGrowthBytes": 2306048,
+            "sampleCount": 610
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 216928652,
+            "wallMs": 61068.17217100001,
+            "averageCores": 3.5522375124077294,
+            "busiestWorkerUtilization": 0.16776957242270632,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 1.1267389999993611
+          },
+          "repeat": 2,
+          "workload": "table"
+        },
+        {
+          "mode": "closed",
+          "offeredRps": null,
+          "concurrency": 64,
+          "preRollSeconds": 1,
+          "durationSeconds": 60,
+          "arrivalWindowSeconds": 61,
+          "totalSentRequests": 207610,
+          "sentRequests": 205248,
+          "successfulRequests": 205248,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 3420.8,
+          "steadyStateCompletedResponses": 205246,
+          "completionThroughputRps": 3420.766666666667,
+          "phaseWallMs": 61019.20556640625,
+          "maxObservedInFlight": 64,
+          "latencyMs": {
+            "firstByte": {
+              "count": 205248,
+              "min": 16.1943359375,
+              "mean": 18.29911539656446,
+              "p50": 18.1875,
+              "p95": 19.2431640625,
+              "p99": 20.85413330078125,
+              "max": 28.7001953125
+            },
+            "complete": {
+              "count": 205248,
+              "min": 16.2353515625,
+              "mean": 18.38369615969347,
+              "p50": 18.25927734375,
+              "p95": 19.3974609375,
+              "p99": 21.00891845703125,
+              "max": 28.75390625
+            },
+            "scheduledFirstByte": {
+              "count": 205248,
+              "min": 16.194580078125,
+              "mean": 18.299419587447257,
+              "p50": 18.1876220703125,
+              "p95": 19.24332275390625,
+              "p99": 20.85437744140625,
+              "max": 28.700439453125
+            },
+            "scheduledComplete": {
+              "count": 205248,
+              "min": 16.235595703125,
+              "mean": 18.38400035057627,
+              "p50": 18.259521484375,
+              "p95": 19.39761962890625,
+              "p99": 21.00927734375,
+              "max": 28.754150390625
+            },
+            "schedulerLag": {
+              "count": 205248,
+              "min": 0,
+              "mean": 0.00030419088279788354,
+              "p50": 0.000244140625,
+              "p95": 0.001220703125,
+              "p99": 0.001953125,
+              "max": 0.032470703125
+            }
+          },
+          "responseBytes": {
+            "count": 205248,
+            "min": 361615,
+            "mean": 361615,
+            "p50": 361615,
+            "p95": 361615,
+            "p99": 361615,
+            "max": 361615
+          },
+          "cpu": {
+            "processCpuTimeMs": 60998.807,
+            "averageCpuPercent": 99.96657025240349,
+            "averageCpuCores": 0.9996657025240349,
+            "cpuMsPerSuccessfulRequest": 0.2938143971870334,
+            "sampledCpuPercent": {
+              "count": 610,
+              "min": 0,
+              "mean": 98.01327868852435,
+              "p50": 99.3,
+              "p95": 99.6,
+              "p99": 99.6,
+              "max": 99.7
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 7315456,
+            "averageRssBytes": 9522092.06557377,
+            "peakSampledRssBytes": 9531392,
+            "peakRssGrowthBytes": 2215936,
+            "sampleCount": 610
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 218889868,
+            "wallMs": 61069.41910000003,
+            "averageCores": 3.584279517078293,
+            "busiestWorkerUtilization": 0.16935703754668396,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.7254609999945387
+          },
+          "repeat": 3,
+          "workload": "table"
+        },
+        {
+          "mode": "open",
+          "offeredRps": 1,
+          "concurrency": null,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 11,
+          "sentRequests": 10,
+          "successfulRequests": 10,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 1,
+          "steadyStateCompletedResponses": 10,
+          "completionThroughputRps": 1,
+          "phaseWallMs": 10001.876953125,
+          "maxObservedInFlight": 1,
+          "latencyMs": {
+            "firstByte": {
+              "count": 10,
+              "min": 1.458984375,
+              "mean": 1.5357666015625,
+              "p50": 1.51123046875,
+              "p95": 1.6900268554687499,
+              "p99": 1.76886474609375,
+              "max": 1.78857421875
+            },
+            "complete": {
+              "count": 10,
+              "min": 1.706787109375,
+              "mean": 1.87109375,
+              "p50": 1.86328125,
+              "p95": 2.042919921875,
+              "p99": 2.1093652343750002,
+              "max": 2.1259765625
+            },
+            "scheduledFirstByte": {
+              "count": 10,
+              "min": 1.475830078125,
+              "mean": 1.5526123046875,
+              "p50": 1.5257568359375,
+              "p95": 1.7062988281249998,
+              "p99": 1.785400390625,
+              "max": 1.80517578125
+            },
+            "scheduledComplete": {
+              "count": 10,
+              "min": 1.7236328125,
+              "mean": 1.887939453125,
+              "p50": 1.878662109375,
+              "p95": 2.0591918945312497,
+              "p99": 2.12590087890625,
+              "max": 2.142578125
+            },
+            "schedulerLag": {
+              "count": 10,
+              "min": 0.01318359375,
+              "mean": 0.016845703125,
+              "p50": 0.01611328125,
+              "p95": 0.022485351562499988,
+              "p99": 0.0261767578125,
+              "max": 0.027099609375
+            }
+          },
+          "responseBytes": {
+            "count": 10,
+            "min": 361613,
+            "mean": 361613,
+            "p50": 361613,
+            "p95": 361613,
+            "p99": 361613,
+            "max": 361613
+          },
+          "cpu": {
+            "processCpuTimeMs": 7.368,
+            "averageCpuPercent": 0.07366617320459969,
+            "averageCpuCores": 0.0007366617320459968,
+            "cpuMsPerSuccessfulRequest": 0.6698181818181819,
+            "sampledCpuPercent": {
+              "count": 101,
+              "min": 0,
+              "mean": 0.33267326732673275,
+              "p50": 0.1,
+              "p95": 1.2,
+              "p99": 2.6,
+              "max": 3.5
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 7405568,
+            "averageRssBytes": 7515470.574257426,
+            "peakSampledRssBytes": 7520256,
+            "peakRssGrowthBytes": 114688,
+            "sampleCount": 101
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 217171,
+            "wallMs": 10052.051605000044,
+            "averageCores": 0.021604644358568136,
+            "busiestWorkerUtilization": 0.136059892581024,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.6675549999927171
+          },
+          "repeat": 1,
+          "workload": "table"
+        },
+        {
+          "mode": "open",
+          "offeredRps": 1,
+          "concurrency": null,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 11,
+          "sentRequests": 10,
+          "successfulRequests": 10,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 1,
+          "steadyStateCompletedResponses": 10,
+          "completionThroughputRps": 1,
+          "phaseWallMs": 10001.7216796875,
+          "maxObservedInFlight": 1,
+          "latencyMs": {
+            "firstByte": {
+              "count": 10,
+              "min": 1.166748046875,
+              "mean": 1.268212890625,
+              "p50": 1.2677001953125,
+              "p95": 1.3359375,
+              "p99": 1.3376953125,
+              "max": 1.338134765625
+            },
+            "complete": {
+              "count": 10,
+              "min": 1.54931640625,
+              "mean": 1.72421875,
+              "p50": 1.65478515625,
+              "p95": 2.062768554687499,
+              "p99": 2.2756396484375,
+              "max": 2.328857421875
+            },
+            "scheduledFirstByte": {
+              "count": 10,
+              "min": 1.208251953125,
+              "mean": 1.321484375,
+              "p50": 1.32666015625,
+              "p95": 1.39423828125,
+              "p99": 1.39740234375,
+              "max": 1.398193359375
+            },
+            "scheduledComplete": {
+              "count": 10,
+              "min": 1.5908203125,
+              "mean": 1.777490234375,
+              "p50": 1.71630859375,
+              "p95": 2.128381347656249,
+              "p99": 2.34169189453125,
+              "max": 2.39501953125
+            },
+            "schedulerLag": {
+              "count": 10,
+              "min": 0.01123046875,
+              "mean": 0.053271484375,
+              "p50": 0.0601806640625,
+              "p95": 0.06561279296875,
+              "p99": 0.06605224609375,
+              "max": 0.066162109375
+            }
+          },
+          "responseBytes": {
+            "count": 10,
+            "min": 361613,
+            "mean": 361613,
+            "p50": 361613,
+            "p95": 361613,
+            "p99": 361613,
+            "max": 361613
+          },
+          "cpu": {
+            "processCpuTimeMs": 7.638,
+            "averageCpuPercent": 0.07636685207419855,
+            "averageCpuCores": 0.0007636685207419855,
+            "cpuMsPerSuccessfulRequest": 0.6943636363636364,
+            "sampledCpuPercent": {
+              "count": 101,
+              "min": 0,
+              "mean": 0.06534653465346535,
+              "p50": 0.1,
+              "p95": 0.2,
+              "p99": 0.2,
+              "max": 0.2
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 7294976,
+            "averageRssBytes": 7406906.297029703,
+            "peakSampledRssBytes": 7413760,
+            "peakRssGrowthBytes": 118784,
+            "sampleCount": 101
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 164731,
+            "wallMs": 10051.816691000015,
+            "averageCores": 0.01638818186442789,
+            "busiestWorkerUtilization": 0.09791122083508438,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.5594159999745898
+          },
+          "repeat": 2,
+          "workload": "table"
+        },
+        {
+          "mode": "open",
+          "offeredRps": 1,
+          "concurrency": null,
+          "preRollSeconds": 1,
+          "durationSeconds": 10,
+          "arrivalWindowSeconds": 11,
+          "totalSentRequests": 11,
+          "sentRequests": 10,
+          "successfulRequests": 10,
+          "errorCount": 0,
+          "errorSamples": [],
+          "achievedGoodputRps": 1,
+          "steadyStateCompletedResponses": 10,
+          "completionThroughputRps": 1,
+          "phaseWallMs": 10001.80419921875,
+          "maxObservedInFlight": 1,
+          "latencyMs": {
+            "firstByte": {
+              "count": 10,
+              "min": 1.386474609375,
+              "mean": 1.5252685546875,
+              "p50": 1.53173828125,
+              "p95": 1.60404052734375,
+              "p99": 1.6262768554687501,
+              "max": 1.6318359375
+            },
+            "complete": {
+              "count": 10,
+              "min": 1.7822265625,
+              "mean": 1.9269287109375,
+              "p50": 1.9461669921875,
+              "p95": 2.0274169921875,
+              "p99": 2.0683740234375,
+              "max": 2.07861328125
+            },
+            "scheduledFirstByte": {
+              "count": 10,
+              "min": 1.408447265625,
+              "mean": 1.5486572265625,
+              "p50": 1.5545654296875,
+              "p95": 1.62747802734375,
+              "p99": 1.6497143554687501,
+              "max": 1.6552734375
+            },
+            "scheduledComplete": {
+              "count": 10,
+              "min": 1.80419921875,
+              "mean": 1.9503173828125,
+              "p50": 1.9681396484375,
+              "p95": 2.0508544921875,
+              "p99": 2.0918115234375,
+              "max": 2.10205078125
+            },
+            "schedulerLag": {
+              "count": 10,
+              "min": 0.021484375,
+              "mean": 0.023388671875,
+              "p50": 0.0234375,
+              "p95": 0.025622558593749997,
+              "p99": 0.02641357421875,
+              "max": 0.026611328125
+            }
+          },
+          "responseBytes": {
+            "count": 10,
+            "min": 361613,
+            "mean": 361613,
+            "p50": 361613,
+            "p95": 361613,
+            "p99": 361613,
+            "max": 361613
+          },
+          "cpu": {
+            "processCpuTimeMs": 7.431,
+            "averageCpuPercent": 0.07429659541405982,
+            "averageCpuCores": 0.0007429659541405982,
+            "cpuMsPerSuccessfulRequest": 0.6755454545454546,
+            "sampledCpuPercent": {
+              "count": 101,
+              "min": 0,
+              "mean": 0.027722772277227734,
+              "p50": 0,
+              "p95": 0.1,
+              "p99": 0.1,
+              "max": 0.1
+            }
+          },
+          "memory": {
+            "baselineRssBytes": 7368704,
+            "averageRssBytes": 7481039.841584158,
+            "peakSampledRssBytes": 7487488,
+            "peakRssGrowthBytes": 118784,
+            "sampleCount": 101
+          },
+          "generator": {
+            "workerCount": 24,
+            "cpuMicros": 143123,
+            "wallMs": 10051.947242000024,
+            "averageCores": 0.014238335772594344,
+            "busiestWorkerUtilization": 0.09847904163497509,
+            "cpuLimit": 0.8,
+            "lagP95LimitMs": 25
+          },
+          "loadGeneratorValid": true,
+          "socketDrain": {
+            "timeWaitBefore": null,
+            "timeWaitAtStart": null,
+            "waitedMs": 0.4593209999729879
+          },
+          "repeat": 3,
+          "workload": "table"
+        }
+      ]
+    }
+  ],
+  "commands": {
+    "runtime": "Bun 1.4.2",
+    "build": "bun framework-ssr/build.ts",
+    "capture": "bun framework-ssr/run.ts"
+  },
+  "limitations": [
+    "Different framework shells and hydration protocols produce different payload sizes.",
+    "This workload does not measure browser hydration, application startup, database I/O or developer experience.",
+    "A separate contract and capture from the synchronous pure-renderer suite; numbers must not be combined.",
+    "Equal-load rates are fixed per workload (10/5/1 requests per second), identical across frameworks. These rates avoid forcing the largest workload into overload; raw latency sample counts are retained.",
+    "Capacity windows are 10 seconds for cards/products and 60 seconds for the table, identical across frameworks. The longer table window captures repeated completion batches from the slowest adapter. Equal-load latency windows are 10 seconds; low-rate tail percentiles have few samples.",
+    "Proa-only diagnostic; peer results were not rerun. This capture cannot replace the published comparison."
+  ]
+}

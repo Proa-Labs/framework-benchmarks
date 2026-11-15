@@ -1,0 +1,196 @@
+[
+  {
+    "id": "proa",
+    "kind": "Application framework",
+    "color": "#ff6a13",
+    "homepage": "https://proa.so",
+    "colorSource": "https://proa.so"
+  },
+  {
+    "id": "marko",
+    "kind": "UI framework",
+    "color": "#00b068",
+    "homepage": "https://markojs.com",
+    "colorSource": "https://markojs.com/assets/logomark.svg"
+  },
+  {
+    "id": "react",
+    "kind": "UI library",
+    "color": "#61dafb",
+    "homepage": "https://react.dev",
+    "colorSource": "https://react.dev"
+  },
+  {
+    "id": "vue",
+    "kind": "UI framework",
+    "color": "#41b883",
+    "homepage": "https://vuejs.org",
+    "colorSource": "https://vuejs.org/logo.svg"
+  },
+  {
+    "id": "svelte",
+    "kind": "UI framework",
+    "color": "#ff3e00",
+    "homepage": "https://svelte.dev",
+    "colorSource": "https://svelte.dev"
+  },
+  {
+    "id": "rails",
+    "kind": "Application framework",
+    "color": "#cc0000",
+    "homepage": "https://rubyonrails.org",
+    "colorSource": "logos/rails.svg"
+  },
+  {
+    "id": "jte",
+    "kind": "Template engine",
+    "color": "var(--fw-fg)",
+    "homepage": "https://jte.gg",
+    "colorSource": "https://jte.gg/jte.svg"
+  },
+  {
+    "id": "rocker",
+    "kind": "Template engine",
+    "color": "var(--fw-fg)",
+    "homepage": "https://github.com/fizzed/rocker",
+    "colorSource": "https://github.com/fizzed/rocker"
+  },
+  {
+    "id": "handlebars",
+    "kind": "Template engine",
+    "color": "var(--fw-fg)",
+    "homepage": "https://handlebarsjs.com",
+    "colorSource": "logos/handlebars.svg"
+  },
+  {
+    "id": "go-html-template",
+    "kind": "Template engine",
+    "color": "#00add8",
+    "homepage": "https://pkg.go.dev/html/template",
+    "colorSource": "https://go.dev/blog/go-brand"
+  },
+  {
+    "id": "jinja2",
+    "kind": "Template engine",
+    "color": "#7e0c1b",
+    "homepage": "https://jinja.palletsprojects.com",
+    "colorSource": "https://jinja.palletsprojects.com"
+  },
+  {
+    "id": "php",
+    "kind": "Native templates",
+    "color": "#777bb3",
+    "homepage": "https://www.php.net",
+    "colorSource": "https://www.php.net/images/logos/new-php-logo.svg"
+  },
+  {
+    "id": "askama",
+    "kind": "Template engine",
+    "color": "var(--fw-fg)",
+    "homepage": "https://askama.readthedocs.io",
+    "colorSource": "https://askama.rs/en/stable/favicon-de23e50b.svg"
+  },
+  {
+    "id": "sailfish",
+    "kind": "Template engine",
+    "color": "var(--fw-fg)",
+    "homepage": "https://rust-sailfish.github.io/sailfish/",
+    "colorSource": "logos/sailfish.svg"
+  },
+  {
+    "id": "leptos",
+    "kind": "UI framework",
+    "color": "#ef3939",
+    "homepage": "https://leptos.dev",
+    "colorSource": "https://leptos.dev/pkg/leptos_website.css"
+  },
+  {
+    "id": "dioxus",
+    "kind": "UI framework",
+    "color": "#0080ff",
+    "homepage": "https://dioxuslabs.com",
+    "colorSource": "https://dioxuslabs.com/assets/main-dxh8f5dff756e226fc8.css"
+  },
+  {
+    "id": "topcoat",
+    "kind": "UI framework",
+    "color": "var(--fw-fg)",
+    "homepage": "https://github.com/tokio-rs/topcoat",
+    "colorSource": "logos/topcoat.svg"
+  },
+  {
+    "id": "exact",
+    "label": "Exact",
+    "language": "Rust / TypeScript",
+    "kind": "Application framework",
+    "color": "var(--fw-fg)",
+    "homepage": "https://github.com/expo/exact",
+    "status": "unmeasured",
+    "coverageReason": "Exact uses equivalent named styles because it generates its own CSS classes and HTML. The content and render-only timing are the same; the markup differs.",
+    "coverageSource": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
+    "colorSource": "https://expo.dev/brand",
+    "renderingAdaptation": {
+      "label": "Adapted fixture",
+      "reason": "Unfortunately, Exact doesn’t support the CSS classes used in this test. We adapted its styling, so it isn’t an apples-to-apples comparison. The red underline flags that difference.",
+      "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#styling-and-layout",
+      "details": "https://github.com/Proa-Labs/framework-benchmarks/blob/e70841310f4ad70045869cee96ad0a7f82055661/rendering/external/exact/README.md",
+      "backend": "Production JavaScript renderer on Bun, including a fresh runtime for each render."
+    },
+    "renderingUnsupported": {
+      "cards": {
+        "reason": "Exact requires styles to be defined in its own format. It rejects the CSS class names written directly in this test’s HTML, so it can’t render the test unchanged.",
+        "version": "Exact 94b8671f70fe",
+        "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
+        "status": "unsupported"
+      },
+      "products": {
+        "reason": "Exact requires styles to be defined in its own format. It rejects the CSS class names written directly in this test’s HTML, so it can’t render the test unchanged.",
+        "version": "Exact 94b8671f70fe",
+        "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
+        "status": "unsupported"
+      },
+      "table": {
+        "reason": "Exact requires styles to be defined in its own format. It rejects the CSS class names written directly in this test’s HTML, so it can’t render the test unchanged.",
+        "version": "Exact 94b8671f70fe",
+        "source": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-grammar.md",
+        "status": "unsupported"
+      }
+    }
+  },
+  {
+    "id": "nextjs",
+    "label": "Next.js",
+    "language": "JavaScript",
+    "kind": "Application framework",
+    "color": "var(--fw-fg)",
+    "homepage": "https://nextjs.org",
+    "status": "unmeasured",
+    "coverageReason": "A production-compiled Next.js page SSR adapter is awaiting a validated render-only capture.",
+    "coverageSource": "https://nextjs.org/docs/app/getting-started/server-and-client-components",
+    "colorSource": "https://vercel.com/design/brands#next-js"
+  },
+  {
+    "id": "astro",
+    "label": "Astro",
+    "language": "JavaScript",
+    "kind": "Application framework",
+    "color": "#f041ff",
+    "homepage": "https://astro.build",
+    "status": "unmeasured",
+    "coverageReason": "Native render-only adapter passed the unchanged fixtures; a validated same-machine publication capture is pending.",
+    "coverageSource": "https://docs.astro.build/en/reference/container-reference/",
+    "colorSource": "https://astro.build/assets/press/astro-icon-light-gradient.svg"
+  },
+  {
+    "id": "sveltekit",
+    "label": "SvelteKit",
+    "kind": "Application framework",
+    "color": "#ff3e00",
+    "homepage": "https://svelte.dev/docs/kit",
+    "colorSource": "https://svelte.dev",
+    "language": "JavaScript",
+    "status": "unmeasured",
+    "coverageReason": "Production-compiled SvelteKit page SSR adapter awaiting a validated same-machine capture.",
+    "coverageSource": "https://svelte.dev/docs/svelte/svelte-server"
+  }
+]

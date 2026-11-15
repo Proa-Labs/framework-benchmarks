@@ -1,0 +1,615 @@
+{
+  "id": "exact",
+  "scope": "Exact source revision 94b8671 (the revision used by the Framework SSR adapter); pre-1.0 APIs change frequently.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "The Rust renderer can prerender web pages per request.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md#what-works-today-and-what-doesnt-yet"
+    },
+    "streaming": {
+      "status": "undocumented",
+      "note": "Build-time/per-request HTML prerendering is documented, but an incremental HTTP HTML-stream API is not established in this revision.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "suspense": {
+      "status": "undocumented",
+      "note": "The pinned Contract resource API exposes pending/failed state and placeholders, but does not establish a declarative Suspense boundary that coordinates descendant async rendering. Those resource controls should not count as partial boundary support. This review does not assert the feature is impossible.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#resources-and-mutations",
+      "label": "Resource state only",
+      "assessment": {
+        "summary": "Pending-resource UI is documented; a coordinating asynchronous UI boundary is not established by this API.",
+        "strengths": [
+          "Resources retain previous answers or placeholders during replacement requests.",
+          "Explicit pending and failed predicates let the application author loading/error UI."
+        ],
+        "tradeoffs": [
+          "Resource state is not a boundary that waits on descendant dependencies.",
+          "It does not establish resolved-HTML replacement in the original SSR response."
+        ]
+      }
+    },
+    "client": {
+      "status": "native",
+      "note": "The web runtime adopts server-rendered HTML in place; the project distinguishes this from hydration.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md#what-works-today-and-what-doesnt-yet",
+      "label": "DOM adoption"
+    },
+    "ssg": {
+      "status": "native",
+      "note": "The documented web path supports build-time prerendered pages.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md#what-works-today-and-what-doesnt-yet"
+    },
+    "csr": {
+      "status": "native",
+      "note": "The web host runs compiled Contract UI and creates/updates browser views without requiring initial prerendered HTML.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#components-providers-and-slots"
+    },
+    "serverOnly": {
+      "status": "undocumented",
+      "note": "Prerendering is documented, but excluding arbitrary component implementation/dependencies from the browser through a server-component boundary is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "Per-route render/activation policies do not establish a static shell with request-time dynamic UI holes.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "routing": {
+      "status": "native",
+      "note": "Contract route tables match URLs and parameters, and retained navigation stacks implement push/back/history handling in the web host. This is the included client/host routing model, not an application endpoint router for arbitrary server APIs.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "label": "Contract route tables",
+      "reviewedOn": "2026-11-13"
+    },
+    "layouts": {
+      "status": "partial",
+      "note": "Components, providers, and caller-owned slots compose retained navigation UI; filesystem nested server layouts are not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#components-providers-and-slots",
+      "label": "Components / slots",
+      "reviewedOn": "2026-11-10"
+    },
+    "dynamicRoutes": {
+      "status": "native",
+      "note": "The routes table matches parameterized paths; path() checks named routes and encodes parameter values. HTTP serving policy is a separate part of the build pipeline.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "Retained stacks/tabs are documented, but independently navigable server-route slots are not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "Native modal presentation is distinct from a web intercepted-route/direct-link contract, which is not established here.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "prefetch": {
+      "status": "undocumented",
+      "note": "Route rendering/activation policies are documented; automatic hover/viewport route-data prefetch is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "softNavigation": {
+      "status": "native",
+      "note": "Contract routes and push/back/go manage retained screens; navigate= receives link clicks and browser-history locations from the web host. Covered entries stay mounted with their state. This is client navigation, separate from server HTTP-route support.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "reviewedOn": "2026-11-11",
+      "label": "Retained route stacks"
+    },
+    "viewTransitions": {
+      "status": "undocumented",
+      "note": "The reviewed Contract guide documents authored component animation and native iOS modal presentation, but does not establish an animated browser page-navigation integration. Those are separate from retained-screen navigation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "reviewedOn": "2026-11-11"
+    },
+    "redirects": {
+      "status": "undocumented",
+      "note": "Stack navigation and status metadata do not establish HTTP redirect/rewrite configuration.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "serverData": {
+      "status": "partial",
+      "note": "Build/bake and prerender paths resolve resource data when available; restricted bake-time capabilities and app data modules determine what can run.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#resources-and-mutations",
+      "label": "Resources / prerender",
+      "reviewedOn": "2026-11-10"
+    },
+    "clientData": {
+      "status": "native",
+      "note": "Resources rerun on dependency changes and expose pending/result/failure state; newest requests win.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#resources-and-mutations"
+    },
+    "requestDedupe": {
+      "status": "undocumented",
+      "note": "Reactive resource lifecycle rules do not establish request-wide keyed deduplication shared across separate components.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#resources-and-mutations"
+    },
+    "persistentCache": {
+      "status": "partial",
+      "note": "Eligible native-host resource answers can persist. The default web JS target explicitly does not persist resource answers.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#resources-and-mutations",
+      "label": "Native-host resource persistence",
+      "reviewedOn": "2026-11-10"
+    },
+    "invalidation": {
+      "status": "native",
+      "note": "refresh and mutation refreshes declarations reload resource state. This is not HTTP page-cache tag invalidation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#resources-and-mutations",
+      "label": "Resource refresh"
+    },
+    "isr": {
+      "status": "undocumented",
+      "note": "The documented prerender pipeline does not establish stale-page request-time regeneration.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "apiRoutes": {
+      "status": "undocumented",
+      "note": "The site sample authors a separate Bun HTTP server. That demonstrates an app backend, not a framework-owned endpoint router.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/patterns/site/server.ts"
+    },
+    "httpErrors": {
+      "status": "native",
+      "note": "The pinned web host returns 404 for missing routes and 500 when per-request rendering throws, and sends rendered pages with page.status. Contract head metadata can declare 404, 410 or 503. This is behavior of the included web serving path, not a promise that an arbitrary static host or custom backend applies those statuses.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/host/web/serve.mjs#L910-L942",
+      "label": "Web-host status mapping",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "partial",
+      "note": "Contract actions/mutations invoke app data modules. These are not established as generated browser-to-server RPC endpoints.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#resources-and-mutations",
+      "label": "Data-module mutations",
+      "reviewedOn": "2026-11-10"
+    },
+    "forms": {
+      "status": "partial",
+      "note": "Typed controls bind state and actions; application code implements validation and submission behavior. A general HTML form-to-server validation contract is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#input-and-interaction",
+      "label": "Typed controls / actions",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Typed controls bind state and actions; application code implements validation and submission behavior. A general HTML form-to-server validation contract is not established."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "undocumented",
+      "note": "The reviewed site backend uses app-authored Bun handling; no Exact HTTP middleware pipeline is established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/patterns/site/server.ts"
+    },
+    "cookies": {
+      "status": "undocumented",
+      "note": "Grants cover storage/network access; a web cookie/session API with HTTP lifecycle policy is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#typescript-data-modules"
+    },
+    "cssModules": {
+      "status": "undocumented",
+      "note": "Reusable named styles compile to supported Contract properties; CSS Modules class maps are not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#styling"
+    },
+    "scopedCss": {
+      "status": "partial",
+      "note": "Named reusable style declarations apply supported properties to explicit views; this is not an arbitrary CSS selector scoping compiler.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#styling",
+      "label": "Contract styles",
+      "reviewedOn": "2026-11-10"
+    },
+    "tailwind": {
+      "status": "undocumented",
+      "note": "The restricted Contract style vocabulary does not establish Tailwind utility scanning/class integration.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#styling"
+    },
+    "cssInJs": {
+      "status": "undocumented",
+      "note": "Typed style expressions are supported; a general JavaScript CSS-in-JS/SSR registry is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#styling"
+    },
+    "images": {
+      "status": "undocumented",
+      "note": "Host image/media elements render assets; automatic web image resizing/format conversion is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#graphics-and-media"
+    },
+    "fonts": {
+      "status": "partial",
+      "note": "Font declarations bundle application font files and expose variable-font axes; automatic font subsetting/fallback tuning is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#styling",
+      "label": "Bundled font declarations",
+      "reviewedOn": "2026-11-10"
+    },
+    "scripts": {
+      "status": "undocumented",
+      "note": "Page activation policies can defer the generated runtime until interaction. Arbitrary third-party script scheduling is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "label": "Runtime activation policy"
+    },
+    "assetPipeline": {
+      "status": "native",
+      "note": "The pinned deploy pipeline hashes the complete web file graph and publishes it under an immutable release URL. It anchors HTML to that release and rewrites asset entries in the envelope and web manifest. This is deployment-time versioning of the whole tree, not per-file renaming in a plain local build; URLs outside that release remain application-owned.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/scripts/deploy.mjs#L1176-L1248",
+      "label": "Versioned web releases",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "native",
+      "note": "The web deployment pipeline publishes the compiled web root and content-addressed assets.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/scripts/deploy.mjs"
+    },
+    "metadata": {
+      "status": "native",
+      "note": "Contract head declares title, description, canonical, image, robots, and selected error status values. This is a smaller surface than the full Next.js Metadata object.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "label": "Focused document-head API",
+      "assessment": {
+        "label": "Focused document-head API",
+        "summary": "A compact declarative head surface with active-tree inheritance, rather than the breadth of a general metadata object.",
+        "strengths": [
+          "Inner active declarations override scalar fields without losing unspecified site defaults.",
+          "The reviewed corpus binds metadata to loaded records and route parameters."
+        ],
+        "tradeoffs": [
+          "The documented head surface names title, description, canonical, image, robots, and selected status values.",
+          "General clearing, title templates, and generated SEO assets have not been established in this review."
+        ]
+      }
+    },
+    "dynamicMetadata": {
+      "status": "native",
+      "note": "The document corpus binds head title and description to a loaded Post resource and canonical to route parameters.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/contract/corpus/document.contract"
+    },
+    "metadataInheritance": {
+      "status": "native",
+      "note": "The innermost active head wins field by field. A route inherits the site image when it does not set an image; inactive navigation entries do not contribute.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/contract/corpus/document.contract",
+      "label": "Active head hierarchy"
+    },
+    "metadataOverrides": {
+      "status": "native",
+      "note": "An inner head replaces declared scalar fields while retaining omitted outer fields. The reviewed source does not establish nested social-object merging or a general clear API.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/contract/cli/tests/it/document.rs",
+      "label": "Scalar field overrides"
+    },
+    "titleTemplates": {
+      "status": "undocumented",
+      "note": "Innermost head fields override ancestors; an inherited title-template/absolute-title API is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "socialImages": {
+      "status": "undocumented",
+      "note": "head.image selects a social image URL; a generated social-card renderer is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "sitemaps": {
+      "status": "undocumented",
+      "note": "Route/page policies are documented; automatic crawler XML sitemap generation is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "robots": {
+      "status": "undocumented",
+      "note": "head.robots controls document robot metadata. A generated robots.txt directive API is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "label": "Document robots field"
+    },
+    "markdown": {
+      "status": "native",
+      "note": "markup=\"markdown\" renders Markdown on web and Apple hosts. Linux displays raw source.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#graphics-and-media",
+      "label": "Host-dependent Markdown"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "Resource shapes validate data, but a content collection loader/frontmatter/query registry is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#resources-and-mutations"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "The reviewed page policies do not establish authenticated editorial draft preview/cache bypass.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "translations": {
+      "status": "native",
+      "note": "strings/<locale>.json and t() provide compile-checked keys and placeholders, with locale fallback to the base table.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#platform-facts-and-localization"
+    },
+    "localeRouting": {
+      "status": "undocumented",
+      "note": "Translation catalogs and locale facts are documented; locale URL negotiation and routing are not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#platform-facts-and-localization"
+    },
+    "localeFormatting": {
+      "status": "partial",
+      "note": "The reviewed formatDate, formatTime, and formatNumber helpers use en-US regardless of the viewer's locale.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#platform-facts-and-localization",
+      "label": "Fixed en-US",
+      "reviewedOn": "2026-11-10"
+    },
+    "auth": {
+      "status": "partial",
+      "note": "Data modules can request OAuth/keychain capabilities on supporting hosts; account/session identity logic remains application-owned.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#typescript-data-modules",
+      "label": "Granted host capabilities",
+      "reviewedOn": "2026-11-10"
+    },
+    "csp": {
+      "status": "undocumented",
+      "note": "The reviewed generated web/document pipeline does not establish a coordinated CSP nonce/hash API.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents"
+    },
+    "cspNonce": {
+      "status": "undocumented",
+      "note": "The reviewed security/rendering API does not establish coordinated per-response CSP nonces for generated scripts and styles. Hash-based CSP and application-authored headers are different mechanisms.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "reviewedOn": "2026-11-11"
+    },
+    "csrf": {
+      "status": "undocumented",
+      "note": "The REST example has app-authored authentication/HTTP handling; Exact-wide CSRF token/origin enforcement is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/patterns/rest/server.ts"
+    },
+    "environment": {
+      "status": "partial",
+      "note": "Data modules declare allowed capabilities. Applications must keep server secrets outside client-executable modules and serialized data.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#typescript-data-modules",
+      "label": "Capability grants",
+      "reviewedOn": "2026-11-10"
+    },
+    "types": {
+      "status": "native",
+      "note": "Contract compiles through syntax, types, analysis, and lowering; diagnostics identify source ranges. This is its own typed language, not TSX.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md",
+      "label": "Contract compiler"
+    },
+    "hmr": {
+      "status": "native",
+      "note": "Development supports live plan/asset changes and TypeScript/Rust logic replacement; production update constraints differ.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md#what-works-today-and-what-doesnt-yet"
+    },
+    "cli": {
+      "status": "native",
+      "note": "contract build and scripts/agent.mjs provide build, diagnostics, and cross-host driver commands.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md"
+    },
+    "bundleAnalysis": {
+      "status": "partial",
+      "note": "build --json, symbols, and plan/source maps inspect compiled artifacts. They are not a production JS module-size visualization.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#testing-diagnostics-and-delivery",
+      "label": "Plan inspection",
+      "reviewedOn": "2026-11-10"
+    },
+    "unitTests": {
+      "status": "partial",
+      "note": "Authored Contract tests exercise built app interactions through a driver; isolated component-unit harnesses are not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#testing-diagnostics-and-delivery",
+      "label": "Contract interaction tests",
+      "reviewedOn": "2026-11-10"
+    },
+    "e2eTests": {
+      "status": "native",
+      "note": "The host driver exposes tree, screenshot, tap, type, and state operations. This is an application-driving protocol, not a bundled Playwright test suite.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md",
+      "label": "Agent driver"
+    },
+    "observability": {
+      "status": "partial",
+      "note": "Drivers expose state/layout/resource logs and source maps for diagnosis. Production metrics/tracing exporters are not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#testing-diagnostics-and-delivery",
+      "label": "Driver diagnostics",
+      "reviewedOn": "2026-11-10"
+    },
+    "errorHandling": {
+      "status": "partial",
+      "note": "Resource failures expose structured states that apps render as fallback UI. A general exception-catching component boundary is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#resources-and-mutations",
+      "label": "Resource failure UI",
+      "reviewedOn": "2026-11-10"
+    },
+    "serverHosting": {
+      "status": "partial",
+      "note": "The Rust web path supports per-request prerendering; production hosting/routing requires an application serving setup.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md#what-works-today-and-what-doesnt-yet",
+      "label": "Rust prerender host",
+      "reviewedOn": "2026-11-10"
+    },
+    "subpathProxy": {
+      "status": "undocumented",
+      "note": "The pinned web host and deployment pipeline use application-root routes and separate versioned asset directories. The reviewed source does not establish one supported deployment-prefix configuration coordinating navigation, assets and public origin behind a reverse proxy. An asset release prefix alone does not demonstrate that behavior.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/host/web/serve.mjs",
+      "label": "Deployment prefix not established",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "native",
+      "note": "The web-root deployment path publishes build-time web output; runtime data services still require their own backend.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/scripts/deploy.mjs"
+    },
+    "containers": {
+      "status": "undocumented",
+      "note": "The reviewed delivery script publishes web/native artifacts; a maintained server-container workflow is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/scripts/deploy.mjs"
+    },
+    "edgeHosting": {
+      "status": "undocumented",
+      "note": "Publishing a web root is documented; an edge worker SSR adapter is not established.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/scripts/deploy.mjs"
+    },
+    "orm": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned orm / query builder API. Host libraries and application integrations may provide it.",
+      "url": "https://github.com/expo/exact"
+    },
+    "migrations": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned schema migrations API. Host libraries and application integrations may provide it.",
+      "url": "https://github.com/expo/exact"
+    },
+    "transactions": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned transactions API. Host libraries and application integrations may provide it.",
+      "url": "https://github.com/expo/exact"
+    },
+    "jobs": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned background jobs API. Host libraries and application integrations may provide it.",
+      "url": "https://github.com/expo/exact"
+    },
+    "mail": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned email API. Host libraries and application integrations may provide it.",
+      "url": "https://github.com/expo/exact"
+    },
+    "uploads": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned file uploads & storage API. Host libraries and application integrations may provide it.",
+      "url": "https://github.com/expo/exact"
+    },
+    "realtime": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned real-time delivery API. Host libraries and application integrations may provide it.",
+      "url": "https://github.com/expo/exact"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "The pinned web HTML serializer escapes text and quoted attribute values; normal browser text nodes use textContent rather than interpreting text as HTML. Rich Markdown/raw content and URL/style policies require their own review; this is output encoding, not a general sanitizer.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/host/web-js/dom.js#L8-L53",
+      "reviewedOn": "2026-11-13",
+      "label": "Escaped text / attribute output"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "undocumented",
+      "note": "The linked server API review does not establish the specific progressive forms contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#input-and-interaction",
+      "reviewedOn": "2026-11-11"
+    },
+    "optimisticUi": {
+      "status": "native",
+      "note": "The data module can export an overlay for a resource to show a pending write before its mutation reply; refreshes re-reads confirmed data. The application defines the overlay and domain-error policy.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-agents.md#optimistic-writes-the-overlay",
+      "reviewedOn": "2026-11-11",
+      "label": "Resource overlay"
+    },
+    "requestCancellation": {
+      "status": "native",
+      "note": "Resources use newest-request-wins admission: stale answers do not overwrite newer state. Mutations can instead opt into queue behavior so every reply lands. This establishes stale-result suppression, not a guarantee that backend work is aborted or a completed write is undone.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#resources-and-mutations",
+      "reviewedOn": "2026-11-13",
+      "label": "Newest-request-wins resources"
+    },
+    "typedLinks": {
+      "status": "native",
+      "note": "The pinned compiler requires path() to name a declared route with the exact parameter count and checks literal destinations. It encodes parameter values; other computed strings can bypass those checks and still require application care.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/contract/types/src/routes.rs#L312-L358",
+      "reviewedOn": "2026-11-13",
+      "label": "Compiler-checked route helpers"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "native",
+      "note": "Contract navigation stacks retain covered screens mounted with their state. This establishes in-session retained screens, not durable restoration after reload, process restart or eviction.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "reviewedOn": "2026-11-11",
+      "label": "Retained route stacks"
+    },
+    "scrollRestoration": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific scroll restoration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationBlocking": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationAccessibility": {
+      "status": "undocumented",
+      "note": "Contract exposes roles, accessible names and focus commands, but the reviewed navigation guide does not establish automatic browser route announcements/focus reset. Native platform accessibility mapping is a different claim.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#navigation-and-documents",
+      "reviewedOn": "2026-11-11"
+    },
+    "a11yChecks": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md#what-works-today-and-what-doesnt-yet",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md#what-works-today-and-what-doesnt-yet",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific route / island splitting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md#what-works-today-and-what-doesnt-yet",
+      "reviewedOn": "2026-11-11"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/README.md#what-works-today-and-what-doesnt-yet",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/docs/contract-for-humans.md#testing-diagnostics-and-delivery",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

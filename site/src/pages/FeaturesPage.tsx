@@ -46,6 +46,12 @@ const defaults = {
   types: ["frameworks", "templates"],
 };
 const categories = [{ id: "all", label: "All features" }, ...featureGroups];
+const updatedDateLabel = new Intl.DateTimeFormat("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+}).format(new Date(evidence.updatedOn));
 const count = (group: string) =>
   features.filter((feature) => group === "all" || feature.group === group)
     .length;
@@ -391,26 +397,33 @@ export function CoverageBar({
   onSelect: (selection: Selection) => void;
 }) {
   const { counts, total } = summarizeCapabilities(row, group);
-  return SUPPORTED_STATES.filter((status) => counts[status] > 0).map(
-    (status) => {
-      const label = `${row.label}: ${counts[status]} of ${total} ${supportStates[status].label.toLowerCase()}`;
-      return (
-        <button
+  const states = SUPPORTED_STATES.filter((status) => counts[status] > 0);
+  const breakdown = states
+    .map(
+      (status) =>
+        `${counts[status]} ${supportStates[status].label.toLowerCase()}`,
+    )
+    .join(", ");
+  return (
+    <button
+      type="button"
+      className="fw-coverage-open"
+      aria-label={`${row.label}: ${breakdown || "no documented support"}. View all findings`}
+      onClick={() => onSelect({ row: row.id })}
+    >
+      {states.map((status) => (
+        <span
           key={status}
-          type="button"
           data-coverage={status}
-          data-coverage-detail={`${row.id}/${status}`}
           style={{ "--coverage-width": `${(counts[status] / total) * 100}%` }}
-          aria-label={`${label}. View findings`}
-          title={label}
-          onClick={() => onSelect({ row: row.id, status })}
+          aria-hidden="true"
         >
           {counts[status] / total >= 0.075 && (
             <span className="fw-coverage-count">{counts[status]}</span>
           )}
-        </button>
-      );
-    },
+        </span>
+      ))}
+    </button>
   );
 }
 
@@ -423,7 +436,8 @@ export function FeaturesPage({
   const [settings, setSettings] = useState(() =>
     readSettings(location.searchStr),
   );
-  const [ready, setReady] = useState(false);
+  const root = useRef<HTMLDivElement>(null);
+  const previousSearch = useRef(location.searchStr);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<string | null>(null);
@@ -434,8 +448,13 @@ export function FeaturesPage({
   const { group, display, sort, order, tools, types } = settings;
   useLayoutEffect(() => {
     document.title = "Features · Frameworks";
-    setSettings(readSettings(location.searchStr));
-    setReady(true);
+    // useState already read the initial server URL. Do not render the entire
+    // feature comparison a second time merely to mark hydration complete.
+    if (previousSearch.current !== location.searchStr) {
+      previousSearch.current = location.searchStr;
+      setSettings(readSettings(location.searchStr));
+    }
+    if (root.current) root.current.dataset.appReady = "true";
   }, [location.searchStr]);
   useLayoutEffect(() => {
     if (pickerOpen) search.current?.focus();
@@ -523,7 +542,8 @@ export function FeaturesPage({
     <div
       id="frameworks-explorer"
       className="fw-features-shell"
-      data-app-ready={ready}
+      ref={root}
+      data-app-ready="false"
     >
       <Header active="features" />
       <section className="fw-intro" aria-labelledby="site-title">
@@ -539,6 +559,7 @@ export function FeaturesPage({
               Category
               <select
                 data-feature-mobile-category=""
+                className="fw-native-select"
                 value={group}
                 onChange={(event) => selectGroup(event.target.value)}
               >
@@ -858,7 +879,7 @@ export function FeaturesPage({
                 hidden={display !== "overview"}
               >
                 <p className="fw-feature-summary-note">
-                  Bar length shows supported features. Select a segment for
+                  Bar length shows supported features. Select a bar for
                   evidence.
                 </p>
                 <div className="fw-coverage-key">
@@ -1078,7 +1099,8 @@ export function FeaturesPage({
             </p>
             <div className="fw-feature-review-bar">
               <span>
-                Updated <time dateTime={evidence.updatedOn}>Nov 11, 2026</time>
+                Updated{" "}
+                <time dateTime={evidence.updatedOn}>{updatedDateLabel}</time>
               </span>
               <details className="fw-feature-key">
                 <summary>Support key</summary>
@@ -1105,22 +1127,22 @@ export function FeaturesPage({
         <details className="fw-feature-method">
           <summary>How this comparison works</summary>
           <p>
-            Base documentation review: Nov 10, 2026. Expanded behavior, security
-            and backend review: Nov 11, 2026. Each cell names its API boundary
-            and source. Support can differ from the versions used in benchmark
-            captures.
+            Evidence updated {updatedDateLabel}. Each finding names its API
+            boundary and source; individual review dates and version scopes
+            appear in the details. Feature reviews can use newer versions than
+            the separately retained benchmark captures.
           </p>
           <p>
             Overview bars show supported capabilities, grouped by built-in,
             official package and third-party package. Each capability uses the
             same width; unfilled space is excluded from the count. Category and
-            tool filters apply to both views. Qualified, planned, not documented
-            and outside-scope findings remain in the matrix and each tool’s
-            profile. No weights or quality score are assigned.
+            tool filters apply to both views. Qualified, planned, not
+            established and outside-scope findings remain in the matrix and each
+            tool’s profile. No weights or quality score are assigned.
           </p>
           <p>
-            “Not documented” means the linked API or guide was reviewed without
-            establishing the defined behavior; it does not prove absence.
+            “Not established” means the reviewed sources do not establish the
+            defined behavior; it is inconclusive and does not prove absence.
             “Outside scope” means the reviewed core delegates that
             responsibility. Built-in establishes ownership, not API quality:
             read the evidence for limitations and composition or override

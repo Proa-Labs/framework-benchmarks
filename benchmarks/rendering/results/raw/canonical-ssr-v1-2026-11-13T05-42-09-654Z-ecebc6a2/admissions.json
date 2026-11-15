@@ -1,0 +1,44 @@
+[
+  {
+    "engine": "exact",
+    "version": "94b8671f70fe2e25b307a40e7fce66dc27c9f802",
+    "sourceSha256": "f5df1a402e082b331fc6e8a63d6edc366b62170f200b424ba1e42290339ccce2",
+    "host": {
+      "machineId": "bc7dbb488f29842cfdddfcc694c9a3788aceddc2899719472d1ce72dc5b08ce8",
+      "campaignId": "publication-82600b52-05bc-429f-af1d-d5c79379fa1e",
+      "campaignProtocol": "per-suite-host-v1",
+      "machineClass": "c4-standard-16-lssd",
+      "sourceRevision": "3a7c96ccadee2d3947aa04bce7a8772b73ad1d5c",
+      "nodeName": "gke-proa-ci-runners-c4-19143b73-jq8n",
+      "platform": "linux",
+      "release": "6.12.105+",
+      "arch": "x64",
+      "cpuModel": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
+      "logicalCpuCount": 16,
+      "totalMemoryBytes": 63200763904,
+      "node": "v26.3.0",
+      "javascriptRuntime": "Bun 1.4.2",
+      "serverCpuAffinity": "0"
+    },
+    "cells": [
+      {
+        "workload": "cards",
+        "status": "unsupported",
+        "literalClass": "hero-section",
+        "diagnostic": "type-class-name"
+      },
+      {
+        "workload": "products",
+        "status": "unsupported",
+        "literalClass": "mx-auto w-full max-w-6xl px-4 py-10",
+        "diagnostic": "type-class-name"
+      },
+      {
+        "workload": "table",
+        "status": "unsupported",
+        "literalClass": "px-6 py-4 border-b",
+        "diagnostic": "type-class-name"
+      }
+    ]
+  }
+]

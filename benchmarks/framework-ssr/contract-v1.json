@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "framework_catalog_v1",
+  "label": "Framework SSR \u00b7 32-card catalog",
+  "runtime": "Bun 1.4.2",
+  "exactCommit": "94b8671f70fe2e25b307a40e7fce66dc27c9f802",
+  "engines": ["proa", "exact", "nextjs", "astro"],
+  "publication": {
+    "repeats": 3,
+    "concurrency": 64,
+    "fixedRateRps": 50,
+    "warmupRequests": 24,
+    "preRollSeconds": 1,
+    "durationSeconds": 5
+  },
+  "boundary": "Production HTTP request, routing, SSR and framework response serialization to complete uncompressed HTML over loopback. Static fixture input is available locally; no database or external I/O. Full-document caching is disabled.",
+  "parity": "Same main landmark, heading, 32 ordered article identities and exact title/category/description/formatted price/conditional stock/tag values and roles. A request-specific URL value must be reflected. Generated CSS classes, presentational text wrappers and framework scripts/checkpoints outside business content may differ; full response bytes are retained and validated.",
+  "limitations": [
+    "Different framework shells and hydration protocols produce different payload sizes.",
+    "This workload does not measure browser hydration, application startup, database I/O or developer experience.",
+    "A separate contract and capture from the synchronous pure-renderer suite; numbers must not be combined."
+  ]
+}

@@ -25,6 +25,12 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       manifest.captures[id].artifactSha256,
     );
   }
+  assert.deepEqual(
+    await readFile(join(outputDirectory, "logos/sources.json")),
+    await readFile(
+      new URL("../data/branding/logo-sources.json", import.meta.url),
+    ),
+  );
   const server = await startServer({ port: 0, live: false, build: false });
   try {
     const initialResponse = await fetch(server.url);
@@ -33,7 +39,60 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       initialResponse.headers.get("x-content-type-options"),
       "nosniff",
     );
+    assert.equal(
+      initialResponse.headers.get("x-robots-tag"),
+      "noindex, nofollow",
+    );
+    assert.equal(
+      initialResponse.headers.get("content-security-policy"),
+      "object-src 'none'; base-uri 'self'; frame-ancestors 'none'",
+    );
     const index = await initialResponse.text();
+    assert.match(index, /name="description"/);
+    assert.match(index, /rel="canonical" href="https:\/\/frameworks.run\/"/);
+    const fixtureResponse = await fetch(
+      `${server.url}/previews/framework-cards.html`,
+    );
+    assert.equal(
+      fixtureResponse.headers.get("content-security-policy"),
+      null,
+      "Static fixture must remain embeddable",
+    );
+    assert.match(
+      fixtureResponse.headers.get("cache-control") || "",
+      /no-transform/,
+    );
+    assert.doesNotMatch(await fixtureResponse.text(), /<script[\s>]/i);
+    let socialImagePath = "";
+    for (const path of [
+      "/",
+      "/features",
+      "/?section=ecosystem",
+      "/about",
+      "/methodology",
+    ]) {
+      const document = await (await fetch(new URL(path, server.url))).text();
+      assert.match(
+        document,
+        /property="og:image" content="https:\/\/frameworks.run\/assets\/frameworks-og-[\w-]+\.png"/,
+      );
+      assert.match(document, /property="og:image:width" content="1200"/);
+      assert.match(document, /property="og:image:height" content="630"/);
+      assert.match(
+        document,
+        /name="twitter:card" content="summary_large_image"/,
+      );
+      assert.match(document, /name="twitter:image:alt"/);
+      socialImagePath = new URL(
+        required(document.match(/property="og:image" content="([^"]+)"/)?.[1]),
+      ).pathname;
+    }
+    const socialImage = await fetch(`${server.url}${socialImagePath}`);
+    assert.equal(socialImage.status, 200);
+    assert.match(socialImage.headers.get("content-type") || "", /image\/png/);
+    const png = Buffer.from(await socialImage.arrayBuffer());
+    assert.equal(png.readUInt32BE(16), 1200);
+    assert.equal(png.readUInt32BE(20), 630);
     const viteManifest: Manifest = JSON.parse(
       await readFile(join(outputDirectory, ".vite/manifest.json"), "utf8"),
     );
@@ -61,7 +120,7 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       index,
       /cdn\.jsdelivr|window\.openai|independent research/i,
     );
-    assert.match(index, /Maintained by Andrew Hariri, founder of Proa Labs/);
+    assert.match(index, /href="https:\/\/github\.com\/Proa-Labs"/);
     assert.match(index, /href="\/features"/);
     assert.ok(
       index.indexOf("data-initial-theme") <
@@ -106,9 +165,15 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       "/",
       ...versionedAssets,
       "/favicon.svg",
+      "/licenses/devicon.txt",
+      "/licenses/simple-icons.txt",
+      "/logos/sources.json",
       "/previews/cards.html",
       "/previews/products.html",
       "/previews/table.html",
+      "/previews/framework-cards.html",
+      "/previews/framework-products.html",
+      "/previews/framework-table.html",
       "/about.html",
       "/methodology.html",
       "/features.html",
@@ -120,6 +185,11 @@ test("build preserves source bytes, emits provenance and serves a self-contained
     ]) {
       const response = await fetch(server.url + path);
       assert.equal(response.status, 200, path);
+      if (versionedAssets.includes(path))
+        assert.match(
+          response.headers.get("cache-control") || "",
+          /max-age=31536000, immutable/,
+        );
       assert.ok((await response.arrayBuffer()).byteLength > 0, path);
     }
     assert.equal((await fetch(`${server.url}/not-a-page`)).status, 404);

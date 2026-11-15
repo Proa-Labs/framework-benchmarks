@@ -74,7 +74,7 @@ for (const target of new Set([upload.preview_url, url].filter(Boolean))) {
     await Bun.sleep(2000);
   }
 }
-await verifyPreview(url);
+await verifyPreview(url, entryScript);
 appendFileSync(required(process.env.GITHUB_OUTPUT), `url=${url}\n`);
 appendFileSync(
   required(process.env.GITHUB_STEP_SUMMARY),

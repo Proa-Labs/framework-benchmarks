@@ -1,0 +1,12 @@
+{
+  "name": "framework-ssr-astro",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun --bun astro build"
+  },
+  "dependencies": {
+    "astro": "catalog:",
+    "@astrojs/node": "catalog:"
+  }
+}

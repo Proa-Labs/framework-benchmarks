@@ -1,0 +1,606 @@
+{
+  "id": "rails",
+  "scope": "Rails documentation. Optional browser frameworks are not attributed to the server template engine.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "Action View renders server templates and layouts.",
+      "url": "https://guides.rubyonrails.org/layouts_and_rendering.html"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "render stream: true streams the layout and template progressively. Middleware buffering and template constraints apply.",
+      "url": "https://api.rubyonrails.org/classes/ActionController/Streaming.html"
+    },
+    "suspense": {
+      "status": "undocumented",
+      "note": "Progressive layout streaming and separately fetched Turbo Frames do not establish a declarative original-response async UI replacement boundary.",
+      "url": "https://guides.rubyonrails.org/layouts_and_rendering.html"
+    },
+    "client": {
+      "status": "official",
+      "note": "Turbo progressively enhances server HTML navigation and frame/stream updates; this is DOM replacement rather than hydration of a Ruby component tree.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "label": "Turbo / Hotwire"
+    },
+    "ssg": {
+      "status": "undocumented",
+      "note": "Rendering/caching templates does not establish a complete static HTML site-export workflow.",
+      "url": "https://guides.rubyonrails.org/layouts_and_rendering.html"
+    },
+    "csr": {
+      "status": "scope",
+      "note": "Rails supplies server HTML and integrates optional browser tools; a general component CSR runtime belongs to that selected library.",
+      "url": "https://guides.rubyonrails.org/working_with_javascript_in_rails.html"
+    },
+    "serverOnly": {
+      "status": "native",
+      "note": "Action View evaluates templates on the server and sends output, keeping Ruby component/template implementations off the browser.",
+      "url": "https://guides.rubyonrails.org/layouts_and_rendering.html"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "Partial templates and fragment caches are not a prebuilt static-shell/request-time dynamic-hole pipeline.",
+      "url": "https://guides.rubyonrails.org/layouts_and_rendering.html"
+    },
+    "routing": {
+      "status": "native",
+      "note": "The Rails router maps verbs and URLs to controller actions and resource routes.",
+      "url": "https://guides.rubyonrails.org/routing.html"
+    },
+    "layouts": {
+      "status": "native",
+      "note": "Layouts wrap views; nested layouts use render/yield composition rather than a filesystem segment hierarchy.",
+      "url": "https://guides.rubyonrails.org/layouts_and_rendering.html"
+    },
+    "dynamicRoutes": {
+      "status": "native",
+      "note": "Routes expose dynamic segments through params and support constraints.",
+      "url": "https://guides.rubyonrails.org/routing.html"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "The reviewed Rails router does not establish independently navigable named client-route slots.",
+      "url": "https://guides.rubyonrails.org/routing.html"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "Router resources and controller actions do not establish intercepted-modal/direct-navigation semantics.",
+      "url": "https://guides.rubyonrails.org/routing.html"
+    },
+    "prefetch": {
+      "status": "official",
+      "note": "Turbo Drive prefetches eligible hovered links; attributes/events can opt out.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "label": "Turbo Drive"
+    },
+    "softNavigation": {
+      "status": "official",
+      "note": "Turbo Drive intercepts eligible links/forms, fetches HTML and replaces page content without a full document reload. It maintains browser history and supports permanent elements; apps must follow Turbo's visit lifecycle.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo Drive"
+    },
+    "viewTransitions": {
+      "status": "official",
+      "note": "Turbo Drive can start browser View Transitions when both documents opt in with the view-transition meta tag. CSS controls the animation; unsupported browsers continue ordinary Turbo navigation. Apps must honor reduced-motion preferences.",
+      "url": "https://turbo.hotwired.dev/handbook/drive#view-transitions",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo Drive"
+    },
+    "redirects": {
+      "status": "native",
+      "note": "redirect_to/redirect_back issue HTTP redirects; routing can also declare redirects.",
+      "url": "https://guides.rubyonrails.org/layouts_and_rendering.html"
+    },
+    "serverData": {
+      "status": "native",
+      "note": "Controllers/models load database/application data before rendering Action View.",
+      "url": "https://guides.rubyonrails.org/getting_started.html"
+    },
+    "clientData": {
+      "status": "partial",
+      "note": "Turbo Frames request server-rendered fragments and replace matching regions; this is not a browser application query cache.",
+      "url": "https://turbo.hotwired.dev/handbook/frames",
+      "label": "Turbo Frames",
+      "reviewedOn": "2026-11-10"
+    },
+    "requestDedupe": {
+      "status": "partial",
+      "note": "SQL query caching reuses repeated query results within a request. It does not deduplicate arbitrary application HTTP/data loaders.",
+      "url": "https://guides.rubyonrails.org/caching_with_rails.html",
+      "label": "SQL query cache",
+      "reviewedOn": "2026-11-10"
+    },
+    "persistentCache": {
+      "status": "native",
+      "note": "Rails.cache and fragment caching support configured stores, including Solid Cache.",
+      "url": "https://guides.rubyonrails.org/caching_with_rails.html"
+    },
+    "invalidation": {
+      "status": "native",
+      "note": "Versioned cache keys and dependency-aware fragment caching handle expiration; manual deletion is also available.",
+      "url": "https://guides.rubyonrails.org/caching_with_rails.html"
+    },
+    "isr": {
+      "status": "undocumented",
+      "note": "Fragment/low-level caches and expiry are documented; a static-page export/regeneration contract is not established.",
+      "url": "https://guides.rubyonrails.org/caching_with_rails.html"
+    },
+    "apiRoutes": {
+      "status": "native",
+      "note": "Controllers handle routed HTTP requests and can render JSON responses.",
+      "url": "https://guides.rubyonrails.org/getting_started.html"
+    },
+    "httpErrors": {
+      "status": "native",
+      "note": "Rails maps routing/controller exceptions to HTTP error responses; render status and head let application handlers choose explicit codes. Custom rescue_from handlers must retain the intended status rather than returning a successful-looking error page. Streaming cannot change the status after the response has been committed.",
+      "url": "https://guides.rubyonrails.org/action_controller_advanced_topics.html#rescue-from",
+      "label": "Exception mapping / render status",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "partial",
+      "note": "Controller actions accept explicit HTTP requests/forms; this is distinct from generated function-call RPC stubs.",
+      "url": "https://guides.rubyonrails.org/action_controller_overview.html",
+      "label": "Controller endpoints",
+      "reviewedOn": "2026-11-10"
+    },
+    "forms": {
+      "status": "native",
+      "note": "Form builders connect model validation, controller submission, and CSRF tokens.",
+      "url": "https://guides.rubyonrails.org/getting_started.html",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Form builders connect model validation, controller submission, and CSRF tokens."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "native",
+      "note": "Rails composes a configurable Rack middleware stack.",
+      "url": "https://guides.rubyonrails.org/rails_on_rack.html"
+    },
+    "cookies": {
+      "status": "native",
+      "note": "Rails supplies signed/encrypted cookie and session mechanisms; security depends on correct application configuration.",
+      "url": "https://guides.rubyonrails.org/security.html"
+    },
+    "cssModules": {
+      "status": "scope",
+      "note": "Propshaft fingerprints/publishes assets; CSS Modules compilation belongs to an additional bundler.",
+      "url": "https://guides.rubyonrails.org/asset_pipeline.html"
+    },
+    "scopedCss": {
+      "status": "scope",
+      "note": "Action View/Propshaft do not compile component-local CSS selectors; select separate styling/build tooling.",
+      "url": "https://guides.rubyonrails.org/asset_pipeline.html"
+    },
+    "tailwind": {
+      "status": "official",
+      "note": "tailwindcss-rails integrates the Tailwind compiler with Rails asset/build tasks.",
+      "url": "https://github.com/rails/tailwindcss-rails",
+      "label": "tailwindcss-rails"
+    },
+    "cssInJs": {
+      "status": "scope",
+      "note": "JavaScript styling runtimes and their SSR integrations belong to the chosen UI/bundler stack.",
+      "url": "https://guides.rubyonrails.org/working_with_javascript_in_rails.html"
+    },
+    "images": {
+      "status": "native",
+      "note": "Active Storage variants resize/transform attached images through configured image processors. This is not arbitrary remote-image optimization.",
+      "url": "https://guides.rubyonrails.org/active_storage_overview.html"
+    },
+    "fonts": {
+      "status": "partial",
+      "note": "Font assets can be fingerprinted and served; automatic subsetting and fallback-metric optimization are not established.",
+      "url": "https://guides.rubyonrails.org/asset_pipeline.html",
+      "label": "Asset files",
+      "reviewedOn": "2026-11-10"
+    },
+    "scripts": {
+      "status": "partial",
+      "note": "Asset helpers emit script tags with options; import maps/bundlers integrate browser code. A unified third-party scheduling API is not established.",
+      "url": "https://guides.rubyonrails.org/action_view_helpers.html",
+      "label": "Asset helpers",
+      "reviewedOn": "2026-11-10"
+    },
+    "assetPipeline": {
+      "status": "official",
+      "note": "Propshaft, included in newly generated Rails apps, fingerprints assets with content digests and generates a manifest. Asset helpers and CSS references resolve to digested URLs. Bundling, compression, and delivery cache headers are separate configuration concerns; files outside the asset pipeline are not automatically versioned.",
+      "url": "https://guides.rubyonrails.org/asset_pipeline.html",
+      "label": "Propshaft",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "official",
+      "note": "Propshaft fingerprints assets and maps them through a manifest; it is enabled in generated applications.",
+      "url": "https://guides.rubyonrails.org/asset_pipeline.html",
+      "label": "Propshaft"
+    },
+    "metadata": {
+      "status": "partial",
+      "note": "content_for/capture and tag helpers compose authored head markup. A structured SEO metadata-object registry is not established.",
+      "url": "https://guides.rubyonrails.org/action_view_helpers.html",
+      "label": "View helpers / blocks",
+      "reviewedOn": "2026-11-10"
+    },
+    "dynamicMetadata": {
+      "status": "native",
+      "note": "Controller values and view blocks render request-dependent head tags.",
+      "url": "https://guides.rubyonrails.org/layouts_and_rendering.html",
+      "label": "Controller / view values"
+    },
+    "metadataInheritance": {
+      "status": "partial",
+      "note": "content_for/yield shares named layout blocks; SEO field merging is application-authored.",
+      "url": "https://guides.rubyonrails.org/action_view_helpers.html",
+      "label": "Layout blocks",
+      "reviewedOn": "2026-11-10"
+    },
+    "metadataOverrides": {
+      "status": "partial",
+      "note": "content_for can append or flush a named block; this is markup-block replacement, not uniform metadata-field merging.",
+      "url": "https://guides.rubyonrails.org/action_view_helpers.html",
+      "label": "content_for flush",
+      "reviewedOn": "2026-11-10"
+    },
+    "titleTemplates": {
+      "status": "undocumented",
+      "note": "Titles can be formatted in view helpers; a dedicated inherited title-template/absolute-title API is not established.",
+      "url": "https://guides.rubyonrails.org/action_view_helpers.html"
+    },
+    "socialImages": {
+      "status": "undocumented",
+      "note": "Attachment image variants do not establish a route-aware generated social-card renderer.",
+      "url": "https://guides.rubyonrails.org/active_storage_overview.html"
+    },
+    "sitemaps": {
+      "status": "undocumented",
+      "note": "Routes can expose XML responses; the reviewed router does not provide automatic crawler sitemap generation.",
+      "url": "https://guides.rubyonrails.org/routing.html"
+    },
+    "robots": {
+      "status": "native",
+      "note": "public contains files served as-is, including an application-authored robots.txt.",
+      "url": "https://guides.rubyonrails.org/getting_started.html",
+      "label": "Public file"
+    },
+    "markdown": {
+      "status": "undocumented",
+      "note": "The reviewed Action View helpers do not establish Markdown parsing/content-page routing.",
+      "url": "https://guides.rubyonrails.org/action_view_helpers.html"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "Rendering an Active Record collection is different from a file-content schema/loader/query registry, which is not established here.",
+      "url": "https://guides.rubyonrails.org/action_view_helpers.html"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "Applications can authenticate previews and bypass caches; a standardized editorial draft mode is not established.",
+      "url": "https://guides.rubyonrails.org/caching_with_rails.html"
+    },
+    "translations": {
+      "status": "native",
+      "note": "Rails ships with the Ruby i18n gem, message lookup, interpolation, and pluralization.",
+      "url": "https://guides.rubyonrails.org/i18n.html"
+    },
+    "localeRouting": {
+      "status": "native",
+      "note": "The i18n guide documents locale URL parameters, route scopes, and request-scoped locale selection.",
+      "url": "https://guides.rubyonrails.org/i18n.html"
+    },
+    "localeFormatting": {
+      "status": "native",
+      "note": "I18n.l and locale translation data provide localized date/time formats and related helpers.",
+      "url": "https://guides.rubyonrails.org/i18n.html"
+    },
+    "auth": {
+      "status": "native",
+      "note": "The authentication generator creates application models/controllers/views for session-based login; it is not a hosted identity provider.",
+      "url": "https://guides.rubyonrails.org/getting_started.html",
+      "label": "Authentication generator"
+    },
+    "csp": {
+      "status": "native",
+      "note": "A CSP DSL supports global policies, per-resource overrides, and nonces.",
+      "url": "https://guides.rubyonrails.org/security.html"
+    },
+    "cspNonce": {
+      "status": "native",
+      "note": "Rails supplies a configurable nonce generator, nonce directives and script/style tag helpers under its CSP policy. Applications choose a cryptographically random per-response generator and pass nonce values to authored tags.",
+      "url": "https://guides.rubyonrails.org/security.html#content-security-policy",
+      "reviewedOn": "2026-11-11",
+      "label": "CSP nonce generator / tag helpers"
+    },
+    "csrf": {
+      "status": "native",
+      "note": "Action Controller forgery protection and form tokens defend configured browser mutation endpoints. API-only apps differ.",
+      "url": "https://guides.rubyonrails.org/security.html"
+    },
+    "environment": {
+      "status": "native",
+      "note": "Environment-specific configuration and encrypted credentials manage server settings; applications control what reaches views.",
+      "url": "https://guides.rubyonrails.org/configuring.html"
+    },
+    "types": {
+      "status": "undocumented",
+      "note": "The reviewed Ruby/ERB workflow does not establish static component/template-prop type checking. Optional Ruby typing tools are separate.",
+      "url": "https://guides.rubyonrails.org/action_view_overview.html"
+    },
+    "hmr": {
+      "status": "native",
+      "note": "Development reloads changed Ruby constants per request. Browser component state-preserving hot replacement requires separate tooling.",
+      "url": "https://guides.rubyonrails.org/autoloading_and_reloading_constants.html",
+      "label": "Server code reload"
+    },
+    "cli": {
+      "status": "native",
+      "note": "bin/rails provides generators, server, console, tests, and application tasks.",
+      "url": "https://guides.rubyonrails.org/command_line.html"
+    },
+    "bundleAnalysis": {
+      "status": "undocumented",
+      "note": "Asset fingerprints/manifests do not establish a graphical production module-size analyzer.",
+      "url": "https://guides.rubyonrails.org/asset_pipeline.html"
+    },
+    "unitTests": {
+      "status": "native",
+      "note": "Rails test cases integrate Minitest with model, controller, and integration helpers.",
+      "url": "https://guides.rubyonrails.org/testing.html"
+    },
+    "e2eTests": {
+      "status": "official",
+      "note": "System tests integrate browser drivers through Capybara; driver/browser configuration remains separate.",
+      "url": "https://guides.rubyonrails.org/testing.html",
+      "label": "System tests / Capybara"
+    },
+    "observability": {
+      "status": "native",
+      "note": "Rails provides structured request logging, instrumentation, and debugging hooks. External exporters/services add monitoring.",
+      "url": "https://guides.rubyonrails.org/debugging_rails_applications.html"
+    },
+    "errorHandling": {
+      "status": "partial",
+      "note": "rescue_from and exception handling render application error responses; component-local recovery boundaries are not established.",
+      "url": "https://guides.rubyonrails.org/action_controller_advanced_topics.html",
+      "label": "Controller rescue / error pages",
+      "reviewedOn": "2026-11-10"
+    },
+    "serverHosting": {
+      "status": "native",
+      "note": "Production Rails applications run a Ruby application server; the guide deploys through the generated production setup.",
+      "url": "https://guides.rubyonrails.org/getting_started.html"
+    },
+    "subpathProxy": {
+      "status": "native",
+      "note": "Rails documents config.relative_url_root or RAILS_RELATIVE_URL_ROOT for deployment beneath a prefix, plus reverse-proxy setup. URL generation, the web server/Rack mount and asset delivery must agree. Configure trusted proxies and the public HTTPS scheme for the deployment rather than assuming every forwarded header is authoritative.",
+      "url": "https://guides.rubyonrails.org/configuring.html#deploy-to-a-subdirectory-relative-url-root",
+      "label": "Relative URL root / proxy setup",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "scope",
+      "note": "Public assets can be served statically, but dynamic Rails controllers/templates need a Ruby host; complete static-site export is not supplied here.",
+      "url": "https://guides.rubyonrails.org/getting_started.html"
+    },
+    "containers": {
+      "status": "native",
+      "note": "Generated applications include Docker packaging; the deployment walkthrough uses Kamal.",
+      "url": "https://guides.rubyonrails.org/getting_started.html",
+      "label": "Docker / Kamal"
+    },
+    "edgeHosting": {
+      "status": "undocumented",
+      "note": "The reviewed Docker/server deployment does not establish a worker runtime adapter for Rails SSR.",
+      "url": "https://guides.rubyonrails.org/getting_started.html"
+    },
+    "orm": {
+      "status": "native",
+      "note": "Active Record supplies relational models, associations, validations and a query API.",
+      "url": "https://guides.rubyonrails.org/active_record_basics.html",
+      "label": "Active Record",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Active Record integrates relationships and eager loading, with strict loading to catch unintended lazy association queries.",
+        "strengths": [
+          "includes/preload/eager_load support different association loading strategies.",
+          "Strict loading can expose accidental lazy loads."
+        ],
+        "tradeoffs": [
+          "Joins, batching and query behavior differ by strategy/adapter. An ORM checkmark does not promise the absence of N+1 queries."
+        ]
+      }
+    },
+    "migrations": {
+      "status": "native",
+      "note": "Versioned migrations apply/roll back schema changes and track schema history through Rails tasks.",
+      "url": "https://guides.rubyonrails.org/active_record_migrations.html",
+      "label": "Active Record migrations"
+    },
+    "transactions": {
+      "status": "native",
+      "note": "Active Record transactions group writes atomically and roll back on failure; adapter/database semantics still apply.",
+      "url": "https://guides.rubyonrails.org/active_record_querying.html",
+      "label": "Active Record"
+    },
+    "jobs": {
+      "status": "native",
+      "note": "Active Job supplies queue adapters, dispatch, retries and failure handling. Solid Queue is the default durable backend in new Rails applications.",
+      "url": "https://guides.rubyonrails.org/active_job_basics.html",
+      "label": "Active Job / Solid Queue"
+    },
+    "mail": {
+      "status": "native",
+      "note": "Action Mailer integrates mail templates, delivery configuration and queued delivery through Active Job.",
+      "url": "https://guides.rubyonrails.org/action_mailer_basics.html",
+      "label": "Action Mailer"
+    },
+    "uploads": {
+      "status": "native",
+      "note": "Active Storage attaches uploads to models, manages local/cloud services and supports direct uploads and variants.",
+      "url": "https://guides.rubyonrails.org/active_storage_overview.html",
+      "label": "Active Storage"
+    },
+    "realtime": {
+      "status": "native",
+      "note": "Action Cable integrates WebSocket connections, channels and pub/sub adapters with the Rails application.",
+      "url": "https://guides.rubyonrails.org/action_cable_overview.html",
+      "label": "Action Cable"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Action View escapes ordinary output; raw/html_safe marks trusted content and bypasses that encoding. Sanitization helpers are a separate API for user-authored rich HTML.",
+      "url": "https://guides.rubyonrails.org/security.html#cross-site-scripting-xss",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "native",
+      "note": "Action View sanitize uses the maintained Rails HTML sanitizer with configurable tag/attribute allowlists. Bypassing it with raw/html_safe transfers responsibility to the application.",
+      "url": "https://api.rubyonrails.org/classes/ActionView/Helpers/SanitizeHelper.html",
+      "reviewedOn": "2026-11-11",
+      "label": "Rails HTML sanitizer"
+    },
+    "authorization": {
+      "status": "community",
+      "note": "Pundit supplies resource policy classes and authorization helpers. Rails authentication and controller callbacks alone do not enforce resource permissions; applications must call the policies consistently.",
+      "url": "https://www.rubydoc.info/gems/pundit",
+      "reviewedOn": "2026-11-11",
+      "label": "Pundit"
+    },
+    "rateLimiting": {
+      "status": "native",
+      "note": "Controller rate_limit defines counts, windows, identity keys and rejection behavior through a cache store. Shared deployment enforcement requires a shared store; this is not enabled for every endpoint automatically.",
+      "url": "https://api.rubyonrails.org/classes/ActionController/RateLimiting/ClassMethods.html",
+      "reviewedOn": "2026-11-11",
+      "label": "Controller rate_limit"
+    },
+    "progressiveEnhancement": {
+      "status": "native",
+      "note": "form_with can emit ordinary server POST forms with authenticity tokens and validation responses. Turbo may enhance delivery; a form that only uses browser handlers must retain a real server submission path.",
+      "url": "https://guides.rubyonrails.org/form_helpers.html",
+      "reviewedOn": "2026-11-11",
+      "label": "Native HTML forms"
+    },
+    "optimisticUi": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific optimistic updates contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://turbo.hotwired.dev/handbook/frames",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific stale request handling contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://turbo.hotwired.dev/handbook/frames",
+      "reviewedOn": "2026-11-11"
+    },
+    "typedLinks": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific typed links & parameters contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "official",
+      "note": "Turbo Drive caches page snapshots for restoration visits and supports data-turbo-permanent elements. Snapshots are DOM state, not a guarantee to serialize arbitrary JavaScript state; applications must implement lifecycle cleanup.",
+      "url": "https://turbo.hotwired.dev/handbook/building",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo snapshots"
+    },
+    "scrollRestoration": {
+      "status": "official",
+      "note": "Turbo restoration visits restore the recorded page scroll position. This establishes window/document restoration, not arbitrary nested scrollport state.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo Drive"
+    },
+    "navigationBlocking": {
+      "status": "official",
+      "note": "turbo:before-visit can cancel an application visit. This does not intercept every browser history restoration or tab close; beforeunload remains a separate browser mechanism.",
+      "url": "https://turbo.hotwired.dev/reference/events#turbo-before-visit",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo visit events"
+    },
+    "navigationAccessibility": {
+      "status": "official",
+      "note": "Turbo documents aria-busy during requests, focus of autofocus elements and updating the document title. It does not promise the same route-announcement/live-region contract as SvelteKit.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "reviewedOn": "2026-11-11",
+      "label": "Turbo focus / busy state"
+    },
+    "a11yChecks": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific route / island splitting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://turbo.hotwired.dev/handbook/drive",
+      "reviewedOn": "2026-11-11"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://guides.rubyonrails.org/getting_started.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "official",
+      "note": "Solid Queue recurring tasks use recurring.yml and a scheduler process. Concurrency/deduplication depends on the queue database and retention; do not interpret a recurring schedule as exactly-once execution.",
+      "url": "https://guides.rubyonrails.org/active_job_basics.html#recurring-tasks",
+      "reviewedOn": "2026-11-11",
+      "label": "Solid Queue"
+    },
+    "notifications": {
+      "status": "community",
+      "note": "Noticed adds notifier objects with per-recipient and bulk delivery methods, including email, ActionCable, push and messaging providers. It uses ActiveJob and persistence; provider credentials, queue workers and delivery/error policy remain deployment/application responsibilities.",
+      "url": "https://github.com/excid3/noticed/blob/0d91fc5a2723d490f251a1dbf3094c16f8d71638/README.md#-delivery-methods",
+      "reviewedOn": "2026-11-11",
+      "label": "Noticed / ActiveJob"
+    },
+    "searchIndex": {
+      "status": "community",
+      "note": "Searchkick adds model search_data, reindexing and inline, queued, async or manual synchronization with Elasticsearch/OpenSearch. It requires a separate search service; association updates are not automatically synchronized and may need explicit reindex callbacks.",
+      "url": "https://github.com/ankane/searchkick/blob/3ded578f28992070317dd168f28256f876a23757/README.md#strategies",
+      "reviewedOn": "2026-11-11",
+      "label": "Searchkick / external search service"
+    },
+    "fieldEncryption": {
+      "status": "native",
+      "note": "Active Record encrypts declared attributes on persistence and decrypts on reads. Deterministic versus nondeterministic encryption changes query/uniqueness behavior; keys, rotation and storage expansion need configuration.",
+      "url": "https://guides.rubyonrails.org/active_record_encryption.html",
+      "reviewedOn": "2026-11-11",
+      "label": "Active Record encryption"
+    },
+    "httpTests": {
+      "status": "native",
+      "note": "ActionDispatch integration tests exercise routing/controllers with session/cookies and response assertions in-process; a real network server is not required. Browser/system tests are separate.",
+      "url": "https://guides.rubyonrails.org/testing.html#integration-testing",
+      "reviewedOn": "2026-11-11",
+      "label": "Integration tests"
+    }
+  }
+}

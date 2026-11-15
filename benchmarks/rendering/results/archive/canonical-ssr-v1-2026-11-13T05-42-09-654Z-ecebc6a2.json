@@ -1,0 +1,1657 @@
+{
+  "schema_version": 2,
+  "benchmark_version": "canonical-ssr-v1",
+  "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2",
+  "capture_kind": "canonical",
+  "status": "pass",
+  "captured_at": "2026-11-13T05:42:09.654Z",
+  "completed_at": "2026-11-13T05:46:06.772Z",
+  "host": {
+    "machineId": "bc7dbb488f29842cfdddfcc694c9a3788aceddc2899719472d1ce72dc5b08ce8",
+    "campaignId": "publication-82600b52-05bc-429f-af1d-d5c79379fa1e",
+    "campaignProtocol": "per-suite-host-v1",
+    "machineClass": "c4-standard-16-lssd",
+    "sourceRevision": "3a7c96ccadee2d3947aa04bce7a8772b73ad1d5c",
+    "nodeName": "gke-proa-ci-runners-c4-19143b73-jq8n",
+    "platform": "linux",
+    "release": "6.12.105+",
+    "arch": "x64",
+    "cpuModel": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
+    "logicalCpuCount": 16,
+    "totalMemoryBytes": 63200763904,
+    "node": "v26.3.0",
+    "javascriptRuntime": "Bun 1.4.2",
+    "serverCpuAffinity": "0",
+    "cpu_model": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
+    "cloud": "GCP C4 c4-standard-16-lssd · gke-proa-ci-runners-c4-19143b73-jq8n · isolated node",
+    "server_cpu_affinity": "0",
+    "logical_cpus": 16,
+    "memory_bytes": 63200763904,
+    "architecture": "x64",
+    "os_name": "linux",
+    "os_release": "6.12.105+"
+  },
+  "workloads": [
+    {
+      "id": "cards",
+      "label": "Component page",
+      "cardinality": 32,
+      "description": "4 sections, 32 cards, and 160 feature-list items",
+      "warmup": 200,
+      "iterations": 2000,
+      "negative_control": {
+        "from": "SSR Framework Benchmark",
+        "to": "SSR Framework Benchmark changed"
+      }
+    },
+    {
+      "id": "table",
+      "label": "1,000-row table",
+      "cardinality": 1000,
+      "description": "1,000 rows and 12 columns with escaping, formatting, branches, and variable-length lists",
+      "warmup": 20,
+      "iterations": 200,
+      "negative_control": {
+        "from": "Customer Accounts",
+        "to": "Customer Accounts changed"
+      }
+    },
+    {
+      "id": "products",
+      "label": "Product grid",
+      "cardinality": 96,
+      "description": "96 product cards and 480 SVG stars",
+      "warmup": 50,
+      "iterations": 500,
+      "negative_control": {
+        "from": "All products",
+        "to": "All products changed"
+      }
+    }
+  ],
+  "renderers": [
+    {
+      "id": "proa",
+      "label": "Proa",
+      "language": "Rust",
+      "status": "included"
+    },
+    {
+      "id": "marko",
+      "label": "Marko",
+      "language": "JavaScript",
+      "status": "included"
+    },
+    {
+      "id": "react",
+      "label": "React",
+      "language": "JavaScript",
+      "status": "included"
+    },
+    {
+      "id": "vue",
+      "label": "Vue",
+      "language": "JavaScript",
+      "status": "included"
+    },
+    {
+      "id": "svelte",
+      "label": "Svelte",
+      "language": "JavaScript",
+      "status": "included"
+    },
+    {
+      "id": "rails",
+      "label": "Rails",
+      "language": "Ruby",
+      "status": "included"
+    },
+    {
+      "id": "jte",
+      "label": "jte",
+      "language": "Java",
+      "status": "included"
+    },
+    {
+      "id": "rocker",
+      "label": "Rocker",
+      "language": "Java",
+      "status": "included"
+    },
+    {
+      "id": "handlebars",
+      "label": "Handlebars",
+      "language": "JavaScript",
+      "status": "included"
+    },
+    {
+      "id": "go-html-template",
+      "label": "Go html/template",
+      "language": "Go",
+      "status": "included"
+    },
+    {
+      "id": "jinja2",
+      "label": "Jinja2",
+      "language": "Python",
+      "status": "included"
+    },
+    {
+      "id": "php",
+      "label": "PHP",
+      "language": "PHP",
+      "status": "included"
+    },
+    {
+      "id": "askama",
+      "label": "Askama",
+      "language": "Rust",
+      "status": "included"
+    },
+    {
+      "id": "sailfish",
+      "label": "Sailfish",
+      "language": "Rust",
+      "status": "included"
+    },
+    {
+      "id": "leptos",
+      "label": "Leptos",
+      "language": "Rust",
+      "status": "included"
+    },
+    {
+      "id": "dioxus",
+      "label": "Dioxus",
+      "language": "Rust",
+      "status": "included"
+    },
+    {
+      "id": "topcoat",
+      "label": "Topcoat",
+      "language": "Rust",
+      "status": "included"
+    },
+    {
+      "id": "astro",
+      "label": "Astro",
+      "language": "JavaScript",
+      "status": "included"
+    },
+    {
+      "id": "sveltekit",
+      "label": "SvelteKit",
+      "language": "JavaScript",
+      "status": "included"
+    },
+    {
+      "id": "nextjs",
+      "label": "Next.js",
+      "language": "JavaScript",
+      "status": "included"
+    }
+  ],
+  "parity": {
+    "proa": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25108,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 988509,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 284908,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      }
+    },
+    "marko": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 24038,
+        "payload_delta_bytes": -1070,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 983187,
+        "payload_delta_bytes": -5322,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 282604,
+        "payload_delta_bytes": -2304,
+        "byte_equal_to_proa": false
+      }
+    },
+    "react": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25202,
+        "payload_delta_bytes": 94,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990695,
+        "payload_delta_bytes": 2186,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285868,
+        "payload_delta_bytes": 960,
+        "byte_equal_to_proa": false
+      }
+    },
+    "vue": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25700,
+        "payload_delta_bytes": 592,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 1006523,
+        "payload_delta_bytes": 18014,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 287420,
+        "payload_delta_bytes": 2512,
+        "byte_equal_to_proa": false
+      }
+    },
+    "svelte": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25748,
+        "payload_delta_bytes": 640,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 1003227,
+        "payload_delta_bytes": 14718,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 286476,
+        "payload_delta_bytes": 1568,
+        "byte_equal_to_proa": false
+      }
+    },
+    "rails": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 35839,
+        "payload_delta_bytes": 10731,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 1228793,
+        "payload_delta_bytes": 240284,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 296823,
+        "payload_delta_bytes": 11915,
+        "byte_equal_to_proa": false
+      }
+    },
+    "jte": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25109,
+        "payload_delta_bytes": 1,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 988510,
+        "payload_delta_bytes": 1,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 284909,
+        "payload_delta_bytes": 1,
+        "byte_equal_to_proa": false
+      }
+    },
+    "rocker": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25109,
+        "payload_delta_bytes": 1,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990508,
+        "payload_delta_bytes": 1999,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285869,
+        "payload_delta_bytes": 961,
+        "byte_equal_to_proa": false
+      }
+    },
+    "handlebars": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25108,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990694,
+        "payload_delta_bytes": 2185,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285868,
+        "payload_delta_bytes": 960,
+        "byte_equal_to_proa": false
+      }
+    },
+    "go-html-template": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25108,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990509,
+        "payload_delta_bytes": 2000,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285676,
+        "payload_delta_bytes": 768,
+        "byte_equal_to_proa": false
+      }
+    },
+    "jinja2": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25108,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990257,
+        "payload_delta_bytes": 1748,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285676,
+        "payload_delta_bytes": 768,
+        "byte_equal_to_proa": false
+      }
+    },
+    "php": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25108,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990694,
+        "payload_delta_bytes": 2185,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285868,
+        "payload_delta_bytes": 960,
+        "byte_equal_to_proa": false
+      }
+    },
+    "askama": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 44849,
+        "payload_delta_bytes": 19741,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 991007,
+        "payload_delta_bytes": 2498,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285676,
+        "payload_delta_bytes": 768,
+        "byte_equal_to_proa": false
+      }
+    },
+    "sailfish": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 44849,
+        "payload_delta_bytes": 19741,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990694,
+        "payload_delta_bytes": 2185,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285868,
+        "payload_delta_bytes": 960,
+        "byte_equal_to_proa": false
+      }
+    },
+    "leptos": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25219,
+        "payload_delta_bytes": 111,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 991512,
+        "payload_delta_bytes": 3003,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 286063,
+        "payload_delta_bytes": 1155,
+        "byte_equal_to_proa": false
+      }
+    },
+    "dioxus": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25141,
+        "payload_delta_bytes": 33,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990695,
+        "payload_delta_bytes": 2186,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285868,
+        "payload_delta_bytes": 960,
+        "byte_equal_to_proa": false
+      }
+    },
+    "topcoat": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25108,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 988509,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 284908,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      }
+    },
+    "astro": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25108,
+        "payload_delta_bytes": 0,
+        "byte_equal_to_proa": true
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990507,
+        "payload_delta_bytes": 1998,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285868,
+        "payload_delta_bytes": 960,
+        "byte_equal_to_proa": false
+      }
+    },
+    "sveltekit": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25770,
+        "payload_delta_bytes": 662,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 1003248,
+        "payload_delta_bytes": 14739,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 286476,
+        "payload_delta_bytes": 1568,
+        "byte_equal_to_proa": false
+      }
+    },
+    "nextjs": {
+      "cards": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "43c50a97024231d49639400a5bfb18df7dbe5e94068cd42a732cea26ed0188b4",
+        "output_bytes": 25201,
+        "payload_delta_bytes": 93,
+        "byte_equal_to_proa": false
+      },
+      "table": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "ba9bb6481cefab9898ff8c7d6c31405f3379c3ddaede2690e5c70ef46473356b",
+        "output_bytes": 990694,
+        "payload_delta_bytes": 2185,
+        "byte_equal_to_proa": false
+      },
+      "products": {
+        "status": "pass",
+        "mode": "semantic DOM",
+        "canonical_sha256": "5c89ccf8708043183838767b4bf61a68d9afc8bbf78830dc8886a851be162cfe",
+        "output_bytes": 285868,
+        "payload_delta_bytes": 960,
+        "byte_equal_to_proa": false
+      }
+    }
+  },
+  "measurements": {
+    "proa": {
+      "cards": {
+        "p50_us": 1.4,
+        "p95_us": 1.44,
+        "p99_us": 1.6311399999999998,
+        "mean_us": 1.4332654999999972,
+        "process_p50_min_us": 1.3820000000000001,
+        "process_p50_max_us": 1.435,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25108,
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 337.039,
+        "p95_us": 368.16965,
+        "p99_us": 387.45345999999995,
+        "mean_us": 342.526445,
+        "process_p50_min_us": 334.3515,
+        "process_p50_max_us": 359.39750000000004,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 988509,
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 13.9335,
+        "p95_us": 14.303199999999999,
+        "p99_us": 20.477739999999997,
+        "mean_us": 14.135206000000002,
+        "process_p50_min_us": 13.855,
+        "process_p50_max_us": 13.9975,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 284908,
+        "allocation_policy": "fresh owned RenderBuffer; standard WebContext; no flattening or String conversion",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "marko": {
+      "cards": {
+        "p50_us": 9.535499999999999,
+        "p95_us": 22.890449999999998,
+        "p99_us": 33.41741999999998,
+        "mean_us": 25.002185499999996,
+        "process_p50_min_us": 9.033000000000001,
+        "process_p50_max_us": 10.622,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 24038,
+        "allocation_policy": "compiled Marko HTML render; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 1492.0659999999998,
+        "p95_us": 4659.439399999999,
+        "p99_us": 7342.126029999974,
+        "mean_us": 2124.6728399999997,
+        "process_p50_min_us": 1450.3490000000002,
+        "process_p50_max_us": 1497.0665,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 983187,
+        "allocation_policy": "compiled Marko HTML render; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 108.636,
+        "p95_us": 181.79524999999995,
+        "p99_us": 3187.7255299999997,
+        "mean_us": 196.01752799999994,
+        "process_p50_min_us": 105.811,
+        "process_p50_max_us": 111.794,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 282604,
+        "allocation_policy": "compiled Marko HTML render; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "react": {
+      "cards": {
+        "p50_us": 86.649,
+        "p95_us": 602.2210499999999,
+        "p99_us": 3139.87614,
+        "mean_us": 217.63951900000012,
+        "process_p50_min_us": 85.24199999999999,
+        "process_p50_max_us": 88.40700000000001,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25202,
+        "allocation_policy": "React renderToString; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 10536.5005,
+        "p95_us": 19876.791399999987,
+        "p99_us": 32379.208549999847,
+        "mean_us": 10445.314725,
+        "process_p50_min_us": 8895.074499999999,
+        "process_p50_max_us": 11302.134,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990695,
+        "allocation_policy": "React renderToString; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 443.4135,
+        "p95_us": 3097.877299999998,
+        "p99_us": 9398.192559999969,
+        "mean_us": 1178.15725,
+        "process_p50_min_us": 436.25300000000004,
+        "process_p50_max_us": 476.233,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285868,
+        "allocation_policy": "React renderToString; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "vue": {
+      "cards": {
+        "p50_us": 9.5135,
+        "p95_us": 22.72565,
+        "p99_us": 45.347199999999994,
+        "mean_us": 34.030151000000004,
+        "process_p50_min_us": 9.031,
+        "process_p50_max_us": 10.534,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25700,
+        "allocation_policy": "SSR-compiled Vue template rendered with renderToString on a fresh app; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 1652.421,
+        "p95_us": 4885.425699999998,
+        "p99_us": 9394.988609999982,
+        "mean_us": 2403.4679800000004,
+        "process_p50_min_us": 1563.5895,
+        "process_p50_max_us": 1747.2565,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 1006523,
+        "allocation_policy": "SSR-compiled Vue template rendered with renderToString on a fresh app; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 93.73349999999999,
+        "p95_us": 282.5403999999984,
+        "p99_us": 4638.993039999997,
+        "mean_us": 281.933912,
+        "process_p50_min_us": 92.2765,
+        "process_p50_max_us": 96.309,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 287420,
+        "allocation_policy": "SSR-compiled Vue template rendered with renderToString on a fresh app; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "svelte": {
+      "cards": {
+        "p50_us": 9.0165,
+        "p95_us": 25.099949999999993,
+        "p99_us": 42.89084,
+        "mean_us": 24.30377449999999,
+        "process_p50_min_us": 8.7195,
+        "process_p50_max_us": 9.096,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25748,
+        "allocation_policy": "server-compiled Svelte 5 component rendered with svelte/server render() inside a static document shell; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 1570.268,
+        "p95_us": 4911.8162999999995,
+        "p99_us": 7465.8823699999875,
+        "mean_us": 2453.2981399999994,
+        "process_p50_min_us": 1458.43,
+        "process_p50_max_us": 1742.5565000000001,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 1003227,
+        "allocation_policy": "server-compiled Svelte 5 component rendered with svelte/server render() inside a static document shell; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 94.987,
+        "p95_us": 243.95444999999984,
+        "p99_us": 3132.82262,
+        "mean_us": 232.17121000000003,
+        "process_p50_min_us": 93.0995,
+        "process_p50_max_us": 98.92099999999999,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 286476,
+        "allocation_policy": "server-compiled Svelte 5 component rendered with svelte/server render() inside a static document shell; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "rails": {
+      "cards": {
+        "p50_us": 80.8585,
+        "p95_us": 110.30454999999999,
+        "p99_us": 460.2999699999999,
+        "mean_us": 92.743947,
+        "process_p50_min_us": 80.177,
+        "process_p50_max_us": 81.473,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 35839,
+        "allocation_policy": "cached Rails template; fresh ActionView context and output buffer",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 9045.778,
+        "p95_us": 9835.6134,
+        "p99_us": 10017.08543,
+        "mean_us": 9143.93084,
+        "process_p50_min_us": 8962.989,
+        "process_p50_max_us": 9127.902,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 1228793,
+        "allocation_policy": "cached Rails template; fresh ActionView context and output buffer",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 471.6365,
+        "p95_us": 806.106349999999,
+        "p99_us": 2046.4662899999998,
+        "mean_us": 544.268738,
+        "process_p50_min_us": 466.45,
+        "process_p50_max_us": 488.5785,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 296823,
+        "allocation_policy": "cached Rails template; fresh ActionView context and output buffer",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "jte": {
+      "cards": {
+        "p50_us": 22.331,
+        "p95_us": 30.6021,
+        "p99_us": 410.43369,
+        "mean_us": 52.274224,
+        "process_p50_min_us": 15.683,
+        "process_p50_max_us": 23.4695,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25109,
+        "allocation_policy": "precompiled jte template; fresh Utf8ByteOutput response",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 7190.6125,
+        "p95_us": 20977.0321,
+        "p99_us": 29507.14338,
+        "mean_us": 8948.17615,
+        "process_p50_min_us": 6859.2145,
+        "process_p50_max_us": 7355.0935,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 988510,
+        "allocation_policy": "precompiled jte template; fresh Utf8ByteOutput response",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 660.1525,
+        "p95_us": 3899.355,
+        "p99_us": 4391.35551,
+        "mean_us": 1289.543492,
+        "process_p50_min_us": 646.0675,
+        "process_p50_max_us": 666.478,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 284909,
+        "allocation_policy": "precompiled jte template; fresh Utf8ByteOutput response",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "rocker": {
+      "cards": {
+        "p50_us": 37.326,
+        "p95_us": 51.8832,
+        "p99_us": 3056.93044,
+        "mean_us": 82.024557,
+        "process_p50_min_us": 37.1175,
+        "process_p50_max_us": 37.459,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25109,
+        "allocation_policy": "optimized Rocker template flattened to a fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 10609.5075,
+        "p95_us": 22738.4784,
+        "p99_us": 37913.99087,
+        "mean_us": 10176.271215,
+        "process_p50_min_us": 9332.2335,
+        "process_p50_max_us": 10668.4865,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990508,
+        "allocation_policy": "optimized Rocker template flattened to a fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 832.261,
+        "p95_us": 4163.5683,
+        "p99_us": 5336.85887,
+        "mean_us": 1670.277174,
+        "process_p50_min_us": 763.437,
+        "process_p50_max_us": 850.753,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285869,
+        "allocation_policy": "optimized Rocker template flattened to a fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "handlebars": {
+      "cards": {
+        "p50_us": 26.625999999999998,
+        "p95_us": 43.1819,
+        "p99_us": 170.11727,
+        "mean_us": 50.51693649999996,
+        "process_p50_min_us": 25.8305,
+        "process_p50_max_us": 33.620000000000005,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25108,
+        "allocation_policy": "compiled Handlebars template; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 4292.1395,
+        "p95_us": 6803.211249999977,
+        "p99_us": 11849.317499999906,
+        "mean_us": 4936.73472,
+        "process_p50_min_us": 4145.3150000000005,
+        "process_p50_max_us": 4310.3165,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990694,
+        "allocation_policy": "compiled Handlebars template; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 218.7415,
+        "p95_us": 625.3987499999996,
+        "p99_us": 3370.3492499999998,
+        "mean_us": 427.37841799999995,
+        "process_p50_min_us": 212.15550000000002,
+        "process_p50_max_us": 269.9545,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285868,
+        "allocation_policy": "compiled Handlebars template; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "go-html-template": {
+      "cards": {
+        "p50_us": 144.2945,
+        "p95_us": 228.0489,
+        "p99_us": 240.05574,
+        "mean_us": 164.32088749999997,
+        "process_p50_min_us": 143.88400000000001,
+        "process_p50_max_us": 148.957,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25108,
+        "allocation_policy": "fresh bytes.Buffer and owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 14479.4285,
+        "p95_us": 15156.314049999997,
+        "p99_us": 15905.138549999996,
+        "mean_us": 14507.942360000001,
+        "process_p50_min_us": 14419.3025,
+        "process_p50_max_us": 14552.214,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990509,
+        "allocation_policy": "fresh bytes.Buffer and owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 1162.0774999999999,
+        "p95_us": 1225.7443,
+        "p99_us": 1277.8791999999999,
+        "mean_us": 1167.719754,
+        "process_p50_min_us": 1154.223,
+        "process_p50_max_us": 1171.8265000000001,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285676,
+        "allocation_policy": "fresh bytes.Buffer and owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "jinja2": {
+      "cards": {
+        "p50_us": 108.22999999999999,
+        "p95_us": 115.4586,
+        "p99_us": 119.88135,
+        "mean_us": 108.69159850000001,
+        "process_p50_min_us": 105.49950000000001,
+        "process_p50_max_us": 111.24000000000001,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25108,
+        "allocation_policy": "compiled Jinja2 template; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 19505.21,
+        "p95_us": 21798.30184999998,
+        "p99_us": 22698.841109999994,
+        "mean_us": 19686.22925,
+        "process_p50_min_us": 19172.500500000002,
+        "process_p50_max_us": 20000.447,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990257,
+        "allocation_policy": "compiled Jinja2 template; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 1464.324,
+        "p95_us": 1499.731,
+        "p99_us": 1523.82484,
+        "mean_us": 1461.4953799999998,
+        "process_p50_min_us": 1429.768,
+        "process_p50_max_us": 1493.7095,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285676,
+        "allocation_policy": "compiled Jinja2 template; fresh owned string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "php": {
+      "cards": {
+        "p50_us": 33.947,
+        "p95_us": 37.27825,
+        "p99_us": 40.66638,
+        "mean_us": 34.37390650000003,
+        "process_p50_min_us": 33.6025,
+        "process_p50_max_us": 34.279,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25108,
+        "allocation_policy": "fresh owned PHP string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 1826.7725,
+        "p95_us": 1868.0750500000001,
+        "p99_us": 1907.5928899999994,
+        "mean_us": 1826.7265450000007,
+        "process_p50_min_us": 1809.1435000000001,
+        "process_p50_max_us": 1867.7655,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990694,
+        "allocation_policy": "fresh owned PHP string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 96.475,
+        "p95_us": 105.06705,
+        "p99_us": 107.47991999999999,
+        "mean_us": 97.36909799999988,
+        "process_p50_min_us": 96.41900000000001,
+        "process_p50_max_us": 97.975,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285868,
+        "allocation_policy": "fresh owned PHP string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "askama": {
+      "cards": {
+        "p50_us": 1.229,
+        "p95_us": 1.254,
+        "p99_us": 1.28201,
+        "mean_us": 1.2487570000000006,
+        "process_p50_min_us": 1.222,
+        "process_p50_max_us": 1.2550000000000001,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 44849,
+        "allocation_policy": "compiled Askama template; fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 742.1595,
+        "p95_us": 766.58535,
+        "p99_us": 785.85677,
+        "mean_us": 744.835235,
+        "process_p50_min_us": 739.0385,
+        "process_p50_max_us": 747.8,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 991007,
+        "allocation_policy": "compiled Askama template; fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 24.3495,
+        "p95_us": 25.1042,
+        "p99_us": 31.93582999999995,
+        "mean_us": 24.945405999999984,
+        "process_p50_min_us": 23.7185,
+        "process_p50_max_us": 24.555,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285676,
+        "allocation_policy": "compiled Askama template; fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "sailfish": {
+      "cards": {
+        "p50_us": 1.889,
+        "p95_us": 1.9640000000000002,
+        "p99_us": 2.0420200000000004,
+        "mean_us": 1.926166000000003,
+        "process_p50_min_us": 1.869,
+        "process_p50_max_us": 1.9250000000000003,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 44849,
+        "allocation_policy": "compiled Sailfish template; fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 635.0685000000001,
+        "p95_us": 656.75135,
+        "p99_us": 673.63396,
+        "mean_us": 637.2408649999999,
+        "process_p50_min_us": 623.5035,
+        "process_p50_max_us": 650.7635,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990694,
+        "allocation_policy": "compiled Sailfish template; fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 24.015,
+        "p95_us": 25.02865,
+        "p99_us": 30.806539999999995,
+        "mean_us": 24.339587999999974,
+        "process_p50_min_us": 23.605999999999998,
+        "process_p50_max_us": 24.072499999999998,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285868,
+        "allocation_policy": "compiled Sailfish template; fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "leptos": {
+      "cards": {
+        "p50_us": 17.366500000000002,
+        "p95_us": 17.853550000000002,
+        "p99_us": 23.45427,
+        "mean_us": 17.562851999999975,
+        "process_p50_min_us": 17.314999999999998,
+        "process_p50_max_us": 17.411,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25219,
+        "allocation_policy": "fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 1723.952,
+        "p95_us": 1766.1126,
+        "p99_us": 1787.79228,
+        "mean_us": 1724.5805000000005,
+        "process_p50_min_us": 1716.6295,
+        "process_p50_max_us": 1733.172,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 991512,
+        "allocation_policy": "fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 260.0395,
+        "p95_us": 268.2914,
+        "p99_us": 273.13009,
+        "mean_us": 261.69935399999997,
+        "process_p50_min_us": 258.0815,
+        "process_p50_max_us": 264.3795,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 286063,
+        "allocation_policy": "fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "dioxus": {
+      "cards": {
+        "p50_us": 167.794,
+        "p95_us": 175.85295,
+        "p99_us": 179.56823,
+        "mean_us": 168.61906850000003,
+        "process_p50_min_us": 166.7955,
+        "process_p50_max_us": 169.6875,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25141,
+        "allocation_policy": "standard empty String with no caller capacity hint; fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 3552.0095,
+        "p95_us": 3715.88335,
+        "p99_us": 3768.84866,
+        "mean_us": 3546.5995899999994,
+        "process_p50_min_us": 3519.3065,
+        "process_p50_max_us": 3600.4595,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990695,
+        "allocation_policy": "standard empty String with no caller capacity hint; fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 427.966,
+        "p95_us": 478.3374,
+        "p99_us": 487.76768999999996,
+        "mean_us": 437.96933400000034,
+        "process_p50_min_us": 419.776,
+        "process_p50_max_us": 444.68,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285868,
+        "allocation_policy": "standard empty String with no caller capacity hint; fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "topcoat": {
+      "cards": {
+        "p50_us": 16.9625,
+        "p95_us": 17.5251,
+        "p99_us": 22.238129999999998,
+        "mean_us": 16.876199000000017,
+        "process_p50_min_us": 16.712,
+        "process_p50_max_us": 17.073,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25108,
+        "allocation_policy": "fresh View construction and serialization into a fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 1498.5925,
+        "p95_us": 1802.9882499999999,
+        "p99_us": 1820.92214,
+        "mean_us": 1573.9098950000005,
+        "process_p50_min_us": 1488.3165,
+        "process_p50_max_us": 1502.0590000000002,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 988509,
+        "allocation_policy": "fresh View construction and serialization into a fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 196.596,
+        "p95_us": 203.63665,
+        "p99_us": 208.69769,
+        "mean_us": 197.0623659999999,
+        "process_p50_min_us": 194.483,
+        "process_p50_max_us": 200.528,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 284908,
+        "allocation_policy": "fresh View construction and serialization into a fresh owned String",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "astro": {
+      "cards": {
+        "p50_us": 50.704,
+        "p95_us": 89.13379999999991,
+        "p99_us": 711.0202299999992,
+        "mean_us": 111.55261250000002,
+        "process_p50_min_us": 49.8715,
+        "process_p50_max_us": 55.840500000000006,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25108,
+        "allocation_policy": "Astro native compiled component SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 2886.814,
+        "p95_us": 6091.996949999998,
+        "p99_us": 8073.532549999963,
+        "mean_us": 3608.697825000001,
+        "process_p50_min_us": 2787.3055,
+        "process_p50_max_us": 3020.1285,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990507,
+        "allocation_policy": "Astro native compiled component SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 298.709,
+        "p95_us": 1180.43715,
+        "p99_us": 3581.1572099999926,
+        "mean_us": 551.7824860000002,
+        "process_p50_min_us": 292.943,
+        "process_p50_max_us": 301.5535,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285868,
+        "allocation_policy": "Astro native compiled component SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "sveltekit": {
+      "cards": {
+        "p50_us": 11.877500000000001,
+        "p95_us": 18.481749999999998,
+        "p99_us": 30.405779999999993,
+        "mean_us": 30.27638800000002,
+        "process_p50_min_us": 11.526,
+        "process_p50_max_us": 12.205,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25770,
+        "allocation_policy": "SvelteKit production-compiled page through native Svelte SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 1596.192,
+        "p95_us": 4952.140699999999,
+        "p99_us": 9728.057309999964,
+        "mean_us": 2567.1073149999993,
+        "process_p50_min_us": 1577.4185,
+        "process_p50_max_us": 1727.9685,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 1003248,
+        "allocation_policy": "SvelteKit production-compiled page through native Svelte SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 92.4805,
+        "p95_us": 165.68754999999848,
+        "p99_us": 3589.229259999999,
+        "mean_us": 230.6930140000001,
+        "process_p50_min_us": 91.168,
+        "process_p50_max_us": 93.6695,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 286476,
+        "allocation_policy": "SvelteKit production-compiled page through native Svelte SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    },
+    "nextjs": {
+      "cards": {
+        "p50_us": 76.844,
+        "p95_us": 123.75425,
+        "p99_us": 1445.2035299999975,
+        "mean_us": 151.8089105,
+        "process_p50_min_us": 76.0875,
+        "process_p50_max_us": 77.4505,
+        "independent_processes": 5,
+        "samples_per_process": 2000,
+        "warmups_per_process": 200,
+        "output_bytes": 25201,
+        "allocation_policy": "Next production-compiled page via its bundled React DOM SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "table": {
+        "p50_us": 5159.9855,
+        "p95_us": 20581.71319999999,
+        "p99_us": 32500.516879999985,
+        "mean_us": 8142.39555,
+        "process_p50_min_us": 5025.878,
+        "process_p50_max_us": 5288.041499999999,
+        "independent_processes": 5,
+        "samples_per_process": 200,
+        "warmups_per_process": 20,
+        "output_bytes": 990694,
+        "allocation_policy": "Next production-compiled page via its bundled React DOM SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      },
+      "products": {
+        "p50_us": 437.18949999999995,
+        "p95_us": 2811.0061999999975,
+        "p99_us": 5580.054529999999,
+        "mean_us": 816.0397720000002,
+        "process_p50_min_us": 425.095,
+        "process_p50_max_us": 453.1465,
+        "independent_processes": 5,
+        "samples_per_process": 500,
+        "warmups_per_process": 50,
+        "output_bytes": 285868,
+        "allocation_policy": "Next production-compiled page via its bundled React DOM SSR; fresh owned HTML string",
+        "capture_id": "canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2"
+      }
+    }
+  },
+  "proa_output": "Fresh owned RenderBuffer per iteration. Allocation and rendering are timed; flattening/copying, encoding, parity, hashing and output destruction are outside the render timer.",
+  "versions": {
+    "Proa": "0.4.0 @ bbbc9684335109949257eea8b4c98bb7bc8572ae / rustc 1.95.0 (59807616e 2026-04-14)",
+    "Marko": "6.0.150 / Bun 1.4.2",
+    "React": "19.2.4 / Bun 1.4.2",
+    "Vue": "3.5.42 / Bun 1.4.2",
+    "Svelte": "5.57.2 / Bun 1.4.2",
+    "Rails": "Rails 8.1.3.1 / ruby 4.0.6 (2026-07-14 revision 03b6d3f889) +PRISM [x86_64-linux]",
+    "jte": "3.2.4 / openjdk 17.0.21.0.3 2026-10-24",
+    "Rocker": "2.4.0 / openjdk 17.0.21.0.3 2026-10-24",
+    "Handlebars": "4.7.8 / Bun 1.4.2",
+    "Go html/template": "go version go1.25.5 linux/amd64",
+    "Jinja2": "3.1.6 / Python 3.13.18",
+    "PHP": "PHP 8.3.6 (cli) (built: Oct 19 2026 15:16:58) (NTS)",
+    "Askama": "0.15.6 / rustc 1.95.0 (59807616e 2026-04-14)",
+    "Sailfish": "0.10.2 / rustc 1.95.0 (59807616e 2026-04-14)",
+    "Leptos": "0.7.8 / rustc 1.95.0 (59807616e 2026-04-14)",
+    "Dioxus": "0.6.3 + dioxus-ssr 0.6.2 / rustc 1.95.0 (59807616e 2026-04-14)",
+    "Topcoat": "0.3.1 / rustc 1.95.0 (59807616e 2026-04-14)",
+    "Playwright": "1.61.1",
+    "Chromium": "149.0.7827.55",
+    "Astro": "7.4.8",
+    "SvelteKit": "3.1.0",
+    "Next.js": "Next.js 16.4.6 compiled page / bundled React DOM 19.3.0-canary-278794d7-20261002 / Bun 1.4.2"
+  },
+  "provenance": {
+    "harness_commit": "3a7c96ccadee2d3947aa04bce7a8772b73ad1d5c",
+    "dirty": false,
+    "source_sha256": "f5df1a402e082b331fc6e8a63d6edc366b62170f200b424ba1e42290339ccce2"
+  },
+  "commands": [
+    "bun install --frozen-lockfile (JavaScript adapter directories)",
+    "bundle check || bundle install (Rails adapter directory)",
+    "cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench",
+    "go build -trimpath -o rendering/external/go/build/canonical_suite rendering/external/go/suite_bench.go",
+    "python3 -m venv rendering/external/jinja/.venv && pip install -r rendering/external/jinja/requirements.txt",
+    "gradle --no-daemon --quiet installDist copyJteBinaryStaticContent (jte adapter directory)",
+    "gradle --no-daemon --quiet installDist (Rocker adapter directory)",
+    "\"bun\" \"rendering/canonical/run.mjs\" \"--no-setup\""
+  ],
+  "limitations": [
+    "Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.",
+    "Semantic DOM parity permits documented serializer metadata and whitespace differences; payload deltas remain visible.",
+    "This capture describes one machine and these three workloads; it is not a universal application ranking."
+  ],
+  "raw_artifacts": [
+    {
+      "label": "Per-process summaries",
+      "path": "raw/canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2/process-summaries.json"
+    },
+    {
+      "label": "Result-table migration map",
+      "path": "../MIGRATION.md"
+    },
+    {
+      "label": "Unranked fixture admission checks",
+      "path": "raw/canonical-ssr-v1-2026-11-13T05-42-09-654Z-ecebc6a2/admissions.json"
+    }
+  ]
+}

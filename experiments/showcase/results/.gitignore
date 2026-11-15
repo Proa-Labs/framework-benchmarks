@@ -1,0 +1,11 @@
+# Run artifacts are intentionally local. Commit the result tables to the root
+# README rather than adding hundreds of thousands of sample lines to a PR.
+*.json
+!memcpy-floor.json
+!buffer-comparison.json
+!ebay-owned-string.json
+!landing-hero.json
+!landing-hero-default.json
+!raw/landing-hero/ci-host.json
+!raw/landing-hero/ci-allocation.json
+*.log

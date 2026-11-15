@@ -1,0 +1,9 @@
+{
+  "name": "proa-bench-bun-react",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  }
+}

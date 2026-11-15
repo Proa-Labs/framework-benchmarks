@@ -1,10 +1,17 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Fragment, useLayoutEffect, useMemo, useRef } from "react";
+import {
+  Fragment,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import benchmarkData from "../../.generated/results.json";
 import type { BenchmarkData } from "../../benchmark-types.ts";
 import { required } from "../../required.ts";
 import { createChartMarkup } from "../charts/chart-markup.ts";
-import { mountDashboard } from "../charts/dashboard-controller.ts";
+import type { mountDashboard } from "../charts/dashboard-controller.ts";
 import type { DashboardModel } from "../charts/dashboard-model.ts";
 import { createDashboardModel } from "../charts/dashboard-model.ts";
 import {
@@ -12,6 +19,7 @@ import {
   ToolTypes,
   WorkloadChoices,
 } from "../charts/InitialDashboard.tsx";
+import { Footer } from "../components/Footer.tsx";
 import { Header } from "../components/Header.tsx";
 export function PerformancePage({
   data = benchmarkData as BenchmarkData,
@@ -31,17 +39,43 @@ export function PerformancePage({
     [model],
   );
   const capture = data[state.view];
+  const validationNote = model.validationNote();
+  const captureNote = model.captureNote();
+  const experimentDescription = model.experimentDescription();
   const root = useRef<HTMLElement>(null);
   const controller = useRef<ReturnType<typeof mountDashboard> | null>(null);
-  useLayoutEffect(() => {
-    const dispose = mountDashboard(required(root.current), data);
-    controller.current = dispose;
-    required(root.current).dataset.appReady = "true";
-    return dispose;
+  const [initializationError, setInitializationError] = useState<Error | null>(
+    null,
+  );
+  // SSR already contains the complete results. Load D3 and interaction handlers
+  // separately so the page can paint without downloading the controller first.
+  useEffect(() => {
+    let active = true;
+    let dispose: (() => void) | undefined;
+    import("../charts/dashboard-controller.ts")
+      .then(({ mountDashboard }) => {
+        if (!active) return;
+        const mounted = mountDashboard(required(root.current), data);
+        dispose = mounted;
+        controller.current = mounted;
+        required(root.current).dataset.appReady = "true";
+      })
+      .catch((error) => {
+        if (active)
+          setInitializationError(
+            error instanceof Error ? error : new Error(String(error)),
+          );
+      });
+    return () => {
+      active = false;
+      dispose?.();
+      controller.current = null;
+    };
   }, [data]);
   useLayoutEffect(() => {
     controller.current?.setLocation(location.searchStr);
   }, [location.searchStr]);
+  if (initializationError) throw initializationError;
   return (
     <section
       ref={root}
@@ -74,35 +108,31 @@ export function PerformancePage({
               aria-controls="experiment-panel"
               aria-selected={state.view === "rendering"}
               data-view="rendering"
+              aria-describedby="rendering-info"
               aria-current={state.view === "rendering" ? "page" : undefined}
             >
               SSR Rendering
-            </button>
-            <button
-              type="button"
-              className="fw-experiment-info"
-              aria-label="About SSR Rendering"
-              aria-describedby="rendering-info"
-            >
-              <svg
-                viewBox="0 0 20 20"
-                width="15"
-                height="15"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
-              >
-                <circle cx="10" cy="10" r="7.5"></circle>
-                <path d="M10 9v5"></path>
-                <circle
-                  cx="10"
-                  cy="6"
-                  r=".5"
-                  fill="currentColor"
-                  stroke="none"
-                ></circle>
-              </svg>
+              <span className="fw-experiment-info" aria-hidden="true">
+                <svg
+                  viewBox="0 0 20 20"
+                  width="15"
+                  height="15"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
+                  <circle cx="10" cy="10" r="7.5"></circle>
+                  <path d="M10 9v5"></path>
+                  <circle
+                    cx="10"
+                    cy="6"
+                    r=".5"
+                    fill="currentColor"
+                    stroke="none"
+                  ></circle>
+                </svg>
+              </span>
             </button>
           </div>
           <button
@@ -152,7 +182,7 @@ export function PerformancePage({
             aria-current={state.view === "startup" ? "page" : undefined}
             data-view="startup"
           >
-            Startup
+            Cold Start
           </button>
         </div>
         <div
@@ -189,11 +219,20 @@ export function PerformancePage({
               </div>
             </div>
             <p
+              className="mb-4 text-sm leading-relaxed text-muted"
+              data-experiment-description
+              hidden={!experimentDescription}
+            >
+              {experimentDescription}
+            </p>
+            <p
               className="fw-validation-note"
               data-validation-note
               role="status"
-              hidden
-            ></p>
+              hidden={!validationNote}
+            >
+              {validationNote}
+            </p>
             <div className="fw-toolbar">
               <fieldset
                 className="fw-view-switch"
@@ -234,6 +273,7 @@ export function PerformancePage({
               </fieldset>
               <select
                 data-framework-view
+                className="fw-native-select"
                 aria-label="Framework SSR analysis"
                 hidden={state.view !== "framework"}
                 defaultValue={state.framework}
@@ -246,6 +286,7 @@ export function PerformancePage({
               </select>
               <select
                 data-http-view=""
+                className="fw-native-select"
                 aria-label="HTTP analysis"
                 hidden={state.view !== "http"}
                 defaultValue={state.http}
@@ -260,6 +301,7 @@ export function PerformancePage({
               </select>
               <select
                 data-stream-view=""
+                className="fw-native-select"
                 aria-label="Streaming analysis"
                 hidden={state.view !== "streaming"}
                 defaultValue={state.stream}
@@ -286,44 +328,91 @@ export function PerformancePage({
               </button>
             </div>
             <ChartMarkup model={model} initialChart={initialChart} />
+            <p
+              data-review-note
+              hidden={!capture.reviewRefresh}
+              className="mt-4 text-sm leading-relaxed text-muted"
+            >
+              Proa uses the newer PR #86 run; peers retain the previous
+              campaign. Separate runs on matching C4 machines.{" "}
+              <a
+                href="/data/proa-refresh/manifest.json"
+                className="underline underline-offset-4"
+              >
+                Refresh evidence ↗
+              </a>
+            </p>
 
             <div className="fw-chart-note" data-chart-note="">
               {initialChart.note}
             </div>
-            <footer className="fw-footer">
-              <div className="fw-capture-metadata">
-                <span data-capture="">{`${capture.host?.cloud || capture.host?.cpu_model || capture.host?.cpuModel || "Recorded host"} · ${capture.date}`}</span>
-                <span
-                  data-cpu-context
-                  hidden={
-                    state.view !== "streaming" ||
-                    !/^\d+$/.test(capture.host?.serverCpuAffinity ?? "")
-                  }
-                >
-                  1 logical CPU per server
-                </span>
-              </div>
-              <span data-coverage="">
-                {(() => {
-                  const missing = data.renderers.filter(
-                    (r) =>
-                      model.isVisible(r) &&
-                      !model.getRows().some((v) => v.id === r.id),
-                  );
-                  return missing.length
-                    ? `${missing.length} roster entries not measured here`
-                    : "";
-                })()}
-              </span>
-              <details>
-                <summary className="cursor-interaction">
-                  Method &amp; data
+            <footer className="fw-footer block">
+              <details className="group">
+                <summary className="cursor-interaction m-0 flex w-full flex-col gap-3 text-left text-sm sm:flex-row sm:items-center sm:justify-between [&::-webkit-details-marker]:hidden">
+                  <span className="inline-flex shrink-0 items-center gap-2">
+                    <svg
+                      viewBox="0 0 20 20"
+                      width="14"
+                      height="14"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      className="transition-transform group-open:rotate-90"
+                      aria-hidden="true"
+                    >
+                      <path d="m7 4 6 6-6 6" />
+                    </svg>
+                    <span>Method &amp; data</span>
+                  </span>
+                  <span className="fw-capture-metadata flex-none justify-start text-left font-mono text-sm text-muted sm:flex-1 sm:justify-end sm:text-right">
+                    <span data-capture="">{`${capture.host?.cloud || capture.host?.cpu_model || capture.host?.cpuModel || "Recorded host"} · ${capture.date}`}</span>
+                    <span
+                      data-cpu-context
+                      hidden={
+                        !/^\d+$/.test(capture.host?.serverCpuAffinity ?? "")
+                      }
+                    >
+                      1 logical CPU per server
+                    </span>
+                  </span>
                 </summary>
                 <div className="fw-evidence">
+                  <span data-coverage="">
+                    {(() => {
+                      const missing = data.renderers.filter(
+                        (r) =>
+                          model.isVisible(r) &&
+                          !(
+                            state.chart === "compare"
+                              ? model.comparisonMeasurements()
+                              : model.getRows()
+                          ).some((v) => v.id === r.id),
+                      );
+                      return missing.length
+                        ? `${missing.length} roster entries not measured here`
+                        : "";
+                    })()}
+                  </span>
+                  <p data-capture-note hidden={!captureNote}>
+                    <span data-capture-note-copy>{captureNote}</span>
+                    {capture.reviewRefresh && (
+                      <>
+                        {" "}
+                        <a
+                          className="underline underline-offset-4"
+                          href="/data/proa-refresh/manifest.json"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Refresh evidence ↗
+                        </a>
+                      </>
+                    )}
+                  </p>
                   <p data-scope="">{model.suites[state.view].scope}</p>
                   <p data-method="">{model.suites[state.view].method}</p>
                   <details className="fw-recorded-versions">
-                    <summary>Recorded versions</summary>
+                    <summary className="m-0">Recorded versions</summary>
                     <dl data-versions="">
                       {Object.entries(capture.versions).map(([id, version]) => (
                         <Fragment key={id}>
@@ -363,18 +452,26 @@ export function PerformancePage({
                   </div>
                   <p data-source="">
                     <a href={capture.download} download>
-                      Original capture ↗
+                      {capture.reviewRefresh
+                        ? "Review comparison ↗"
+                        : "Original capture ↗"}
                     </a>
                     {" · "}
                     <a
-                      href={`https://github.com/Proa-Labs/framework-benchmarks/blob/main/${capture.source}`}
+                      href={
+                        capture.reviewRefresh
+                          ? "/data/proa-refresh/manifest.json"
+                          : `https://github.com/Proa-Labs/framework-benchmarks/blob/main/${capture.source}`
+                      }
                     >
                       View source ↗
                     </a>
                     <br />
                     <span className="fw-source-hash">
-                      Source SHA-256 {capture.hash} · Artifact SHA-256{" "}
-                      {capture.artifactSha256}
+                      {capture.reviewRefresh
+                        ? "Proa source SHA-256"
+                        : "Source SHA-256"}{" "}
+                      {capture.hash} · Artifact SHA-256 {capture.artifactSha256}
                     </span>
                     {capture.note && (
                       <>
@@ -384,11 +481,10 @@ export function PerformancePage({
                     )}
                   </p>
                   <p>
-                    Maintained by Andrew Hariri, founder of Proa Labs. Proa is
-                    included in the comparisons. Each experiment identifies its
-                    recorded host, source and capture date. Some captures
-                    include uncommitted source changes. No external database is
-                    included.
+                    Maintained by Proa Labs. Proa is included in the
+                    comparisons. Each experiment identifies its recorded host,
+                    source and capture date. Some captures include uncommitted
+                    source changes. No external database is included.
                   </p>
                 </div>
               </details>
@@ -396,7 +492,7 @@ export function PerformancePage({
           </section>
         </div>
       </main>
-      <section
+      <main
         data-ecosystem=""
         hidden={state.section !== "ecosystem"}
         aria-label="Ecosystem directory"
@@ -405,28 +501,8 @@ export function PerformancePage({
         <p className="fw-chart-note">
           <Link to="/features">Compare documented features ↗</Link>
         </p>
-        <div className="fw-footer">
-          <span>Frameworks.run</span>
-          <span>Open research · affiliation disclosed</span>
-        </div>
-      </section>
-      <div className="fw-site-footer">
-        <span>Frameworks / 2026</span>
-        <div>
-          <Link to="/about">Ownership &amp; disclosure</Link>
-          <a
-            href="https://github.com/Proa-Labs/framework-benchmarks/issues"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Challenge a result ↗
-          </a>
-          <button type="button" data-share="">
-            Copy comparison link ↗
-          </button>
-        </div>
-        <span data-share-status="" role="status" aria-live="polite"></span>
-      </div>
+      </main>
+      <Footer comparisonActions />
       <dialog className="fw-fixture-dialog" aria-labelledby="fixture-title">
         <div className="fw-fixture-toolbar">
           <h2 id="fixture-title">Workload preview</h2>
@@ -460,13 +536,9 @@ export function PerformancePage({
         <p>
           Tags shown as text, such as <code>&lt;b&gt;plain text&lt;/b&gt;</code>
           , intentionally test that dynamic data is escaped safely. Preview
-          styling and images are outside the timed benchmark.
+          labels, styling and images are illustrative.
         </p>
-        <iframe
-          data-fixture-frame=""
-          sandbox=""
-          title="Rendered workload"
-        ></iframe>
+        <div data-fixture-mount="" />
       </dialog>
       <div
         id="rendering-info"

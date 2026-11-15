@@ -1,4 +1,6 @@
-import definitions from "./feature-definitions.json" with { type: "json" };
+import definitions from "./data/features/definitions.json" with {
+  type: "json",
+};
 
 export const featureGroups = definitions.featureGroups;
 export const features = definitions.features;

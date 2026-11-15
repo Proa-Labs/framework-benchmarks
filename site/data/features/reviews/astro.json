@@ -1,0 +1,610 @@
+{
+  "id": "astro",
+  "scope": "Astro documentation; official UI integrations named where required.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "official",
+      "note": "On-demand rendering uses an official deployment adapter, such as @astrojs/node.",
+      "url": "https://docs.astro.build/en/guides/on-demand-rendering/",
+      "label": "SSR adapter"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "On-demand Astro pages stream HTML; deployed adapters and proxies must preserve streaming.",
+      "url": "https://docs.astro.build/en/guides/routing/"
+    },
+    "suspense": {
+      "status": "partial",
+      "note": "server:defer renders fallback UI, then fetches each server island from a separate endpoint. This is not a React-style boundary inside the original HTML stream.",
+      "url": "https://docs.astro.build/en/guides/server-islands/",
+      "label": "Server islands",
+      "reviewedOn": "2026-11-10"
+    },
+    "client": {
+      "status": "official",
+      "note": "client:* directives activate islands using UI integrations such as @astrojs/react and @astrojs/vue.",
+      "url": "https://docs.astro.build/en/guides/framework-components/",
+      "label": "UI islands"
+    },
+    "ssg": {
+      "status": "native",
+      "note": "Pages are prerendered at build time by default; server mode can opt individual routes into prerendering.",
+      "url": "https://docs.astro.build/en/reference/routing-reference/"
+    },
+    "csr": {
+      "status": "official",
+      "note": "client:only skips server rendering for a supported UI framework component. Astro components themselves have no client rendering runtime.",
+      "url": "https://docs.astro.build/en/guides/framework-components/",
+      "label": "client:only / UI integration"
+    },
+    "serverOnly": {
+      "status": "native",
+      "note": "Astro components execute on the server/build and send no component runtime by default. UI islands use separate integrations.",
+      "url": "https://docs.astro.build/en/basics/astro-components/",
+      "label": "Astro components"
+    },
+    "partialRendering": {
+      "status": "partial",
+      "note": "server:defer combines a prerendered page with separately fetched server islands, not one request-time HTML stream.",
+      "url": "https://docs.astro.build/en/guides/server-islands/",
+      "label": "Separate island requests",
+      "reviewedOn": "2026-11-10"
+    },
+    "routing": {
+      "status": "native",
+      "note": "Files under src/pages define page and endpoint routes.",
+      "url": "https://docs.astro.build/en/guides/routing/"
+    },
+    "layouts": {
+      "status": "native",
+      "note": "Layouts are ordinary Astro components explicitly composed through slots and props; no automatic route-layout inheritance is implied.",
+      "url": "https://docs.astro.build/en/basics/layouts/"
+    },
+    "dynamicRoutes": {
+      "status": "native",
+      "note": "Bracketed page filenames accept parameters; static routes enumerate paths and on-demand routes resolve at request time.",
+      "url": "https://docs.astro.build/en/guides/routing/"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "The reviewed page/endpoint router has no documented independently navigable named-slot API comparable to parallel routes.",
+      "url": "https://docs.astro.build/en/guides/routing/"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "ClientRouter supports transitions/navigation, but the reviewed guide does not define a routed-modal interception/direct-link contract.",
+      "url": "https://docs.astro.build/en/guides/view-transitions/"
+    },
+    "prefetch": {
+      "status": "native",
+      "note": "Optional prefetch supports hover, tap, viewport, or load strategies; the client router also coordinates navigation.",
+      "url": "https://docs.astro.build/en/guides/prefetch/"
+    },
+    "softNavigation": {
+      "status": "native",
+      "note": "Opt-in ClientRouter intercepts internal navigation, swaps HTML and updates history. Persistent elements and lifecycle events are supported; scripts and islands must follow the documented navigation lifecycle.",
+      "url": "https://docs.astro.build/en/guides/view-transitions/",
+      "reviewedOn": "2026-11-11",
+      "label": "ClientRouter"
+    },
+    "viewTransitions": {
+      "status": "native",
+      "note": "ClientRouter and transition directives coordinate page/shared-element animations and persistence. Browser support, fallback behavior and reduced-motion preferences affect the result; the feature is opt-in.",
+      "url": "https://docs.astro.build/en/guides/view-transitions/",
+      "reviewedOn": "2026-11-11",
+      "label": "astro:transitions"
+    },
+    "redirects": {
+      "status": "native",
+      "note": "Astro.redirect and configured redirects are supported, with output dependent on static hosting or adapter capabilities.",
+      "url": "https://docs.astro.build/en/guides/routing/"
+    },
+    "serverData": {
+      "status": "native",
+      "note": "Component scripts await fetch at build time or on demand; browser fetching uses client scripts or UI libraries.",
+      "url": "https://docs.astro.build/en/guides/data-fetching/"
+    },
+    "clientData": {
+      "status": "undocumented",
+      "note": "Client scripts or UI-framework islands can fetch again in the browser; Astro does not document a built-in browser query-cache API here.",
+      "url": "https://docs.astro.build/en/guides/data-fetching/",
+      "label": "UI island / app code"
+    },
+    "requestDedupe": {
+      "status": "undocumented",
+      "note": "The reviewed fetch/data-loading guide does not establish automatic equivalently keyed request deduplication. Route caching is a separate boundary.",
+      "url": "https://docs.astro.build/en/guides/data-fetching/"
+    },
+    "persistentCache": {
+      "status": "native",
+      "note": "Astro 7 route caching retains on-demand responses using an explicit provider; built-in memory storage and adapter-specific providers are documented.",
+      "url": "https://docs.astro.build/en/guides/caching/",
+      "label": "Astro 7 route cache"
+    },
+    "invalidation": {
+      "status": "native",
+      "note": "Astro.cache.invalidate targets paths or tags; provider capabilities determine the runtime purge implementation.",
+      "url": "https://docs.astro.build/en/guides/caching/",
+      "label": "Path / tag invalidation"
+    },
+    "isr": {
+      "status": "native",
+      "note": "The documented route cache stores on-demand HTML with maxAge/SWR and explicit invalidation. It requires a compatible server adapter/cache provider; a static-only export cannot regenerate pages on request.",
+      "url": "https://docs.astro.build/en/guides/caching/",
+      "label": "Route-cache SWR"
+    },
+    "apiRoutes": {
+      "status": "native",
+      "note": "Endpoints produce arbitrary responses; on-demand server endpoints support HTTP methods.",
+      "url": "https://docs.astro.build/en/guides/endpoints/"
+    },
+    "httpErrors": {
+      "status": "native",
+      "note": "On-demand pages can set Astro.response.status or return an explicit Response; custom 404/500 handling is part of the routing/adapter workflow. Prerendered HTML files need the static host to return the intended status. Decide HTTP errors before the response headers are sent; a late streamed fallback cannot replace the status already on the wire.",
+      "url": "https://docs.astro.build/en/reference/api-reference/#response",
+      "label": "SSR status; static-host caveat",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "native",
+      "note": "Astro Actions expose typed server handlers to browser code and HTML forms.",
+      "url": "https://docs.astro.build/en/guides/actions/",
+      "label": "Astro Actions"
+    },
+    "forms": {
+      "status": "native",
+      "note": "Actions parse and validate form/JSON input with schemas and expose typed browser callers.",
+      "url": "https://docs.astro.build/en/guides/actions/",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Actions parse and validate form/JSON input with schemas and expose typed browser callers."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "native",
+      "note": "Middleware wraps page/endpoint rendering and shares request data through locals.",
+      "url": "https://docs.astro.build/en/guides/middleware/"
+    },
+    "cookies": {
+      "status": "native",
+      "note": "Server-side sessions store data between on-demand requests; storage and adapter configuration affect deployment.",
+      "url": "https://docs.astro.build/en/guides/sessions/",
+      "label": "Sessions"
+    },
+    "cssModules": {
+      "status": "native",
+      "note": "Vite-backed CSS Module imports provide generated local class names.",
+      "url": "https://docs.astro.build/en/guides/styling/"
+    },
+    "scopedCss": {
+      "status": "native",
+      "note": "Component style tags are scoped by default; global selectors/styles can opt out.",
+      "url": "https://docs.astro.build/en/guides/styling/"
+    },
+    "tailwind": {
+      "status": "community",
+      "note": "The documented Tailwind setup uses its external Vite plugin.",
+      "url": "https://docs.astro.build/en/guides/styling/",
+      "label": "Tailwind / Vite"
+    },
+    "cssInJs": {
+      "status": "undocumented",
+      "note": "The reviewed styling guide establishes Astro scoped CSS and UI-framework CSS processing, but no Astro-owned CSS-in-JS runtime/SSR registry.",
+      "url": "https://docs.astro.build/en/guides/styling/"
+    },
+    "images": {
+      "status": "native",
+      "note": "Image, Picture, and image generation APIs transform sources; responsive resizing and services are configurable.",
+      "url": "https://docs.astro.build/en/guides/images/"
+    },
+    "fonts": {
+      "status": "native",
+      "note": "A typed font API supports local/provider sources, preload links, optimized fallbacks, and generated font assets.",
+      "url": "https://docs.astro.build/en/guides/fonts/"
+    },
+    "scripts": {
+      "status": "partial",
+      "note": "Component scripts are bundled/deduplicated or inlined. A next/script-style strategy scheduler is not established here.",
+      "url": "https://docs.astro.build/en/guides/client-side-scripts/",
+      "label": "Bundled scripts",
+      "reviewedOn": "2026-11-10"
+    },
+    "assetPipeline": {
+      "status": "native",
+      "note": "Assets imported from source enter Astro’s Vite build graph: production URLs are hashed or small files are inlined, and references are updated. Files in public/ are copied unchanged and need their own versioning and cache policy.",
+      "url": "https://docs.astro.build/en/guides/imports/#other-assets",
+      "label": "Vite asset imports",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "native",
+      "note": "Public files are copied without transformation; imported source images can go through the image pipeline.",
+      "url": "https://docs.astro.build/en/guides/images/"
+    },
+    "metadata": {
+      "status": "partial",
+      "note": "The guide composes an application-owned BaseHead component and passes props. This is not a structured, automatically merged metadata registry.",
+      "url": "https://docs.astro.build/en/basics/layouts/",
+      "label": "Application-owned pattern",
+      "assessment": {
+        "label": "Application-owned pattern",
+        "summary": "Flexible head composition through normal components and props; the application defines its metadata contract.",
+        "strengths": [
+          "A shared head component can be reused across layouts and receive typed application props."
+        ],
+        "tradeoffs": [
+          "The reviewed layout guide does not establish automatic metadata-object inheritance, deduplication, or child-override rules.",
+          "Additional SEO behavior must be implemented or supplied by an integration."
+        ]
+      },
+      "reviewedOn": "2026-11-10"
+    },
+    "dynamicMetadata": {
+      "status": "native",
+      "note": "Pages can pass data into a shared head/layout component. The application owns the metadata composition contract.",
+      "url": "https://docs.astro.build/en/basics/layouts/",
+      "label": "App-owned composition"
+    },
+    "metadataInheritance": {
+      "status": "undocumented",
+      "note": "Layouts compose explicit props and slots. The reviewed layout API does not define automatic metadata-field inheritance.",
+      "url": "https://docs.astro.build/en/basics/layouts/"
+    },
+    "metadataOverrides": {
+      "status": "undocumented",
+      "note": "A reusable head component can implement custom overrides; no standard metadata-object merge/clear contract is documented here.",
+      "url": "https://docs.astro.build/en/basics/layouts/"
+    },
+    "titleTemplates": {
+      "status": "undocumented",
+      "note": "Applications can format a title prop, but the reviewed layout API has no dedicated ancestor title-template/absolute-title API.",
+      "url": "https://docs.astro.build/en/basics/layouts/"
+    },
+    "socialImages": {
+      "status": "community",
+      "note": "astro-og-canvas generates Open Graph images from page data through an Astro endpoint; it is a separate integration.",
+      "url": "https://github.com/delucis/astro-og-canvas/tree/latest/packages/astro-og-canvas",
+      "label": "astro-og-canvas"
+    },
+    "sitemaps": {
+      "status": "official",
+      "note": "@astrojs/sitemap generates sitemaps from static routes, with configuration for extra pages; server-only dynamic URLs need explicit inclusion.",
+      "url": "https://docs.astro.build/en/guides/integrations-guide/sitemap/",
+      "label": "@astrojs/sitemap"
+    },
+    "robots": {
+      "status": "native",
+      "note": "Publish an application-authored robots.txt from public or an endpoint. A typed crawler-directive generator is not established.",
+      "url": "https://docs.astro.build/en/basics/project-structure/",
+      "label": "Public file / endpoint"
+    },
+    "markdown": {
+      "status": "native",
+      "note": "Markdown includes frontmatter and component rendering; MDX requires the separate official integration.",
+      "url": "https://docs.astro.build/en/guides/markdown-content/",
+      "label": "Markdown; MDX package"
+    },
+    "collections": {
+      "status": "native",
+      "note": "Typed collections validate and query local/remote content through loaders and schemas.",
+      "url": "https://docs.astro.build/en/guides/content-collections/"
+    },
+    "draftMode": {
+      "status": "partial",
+      "note": "Live collections are documented for immediate CMS draft previews. Preview authentication and cache bypass policy remain application/CMS-owned.",
+      "url": "https://docs.astro.build/en/guides/content-collections/",
+      "label": "Live-collection workflow",
+      "reviewedOn": "2026-11-10"
+    },
+    "translations": {
+      "status": "partial",
+      "note": "The documented recipe uses application-owned translation dictionaries. Astro's i18n routing is separate from message translation.",
+      "url": "https://docs.astro.build/en/recipes/i18n/",
+      "label": "Dictionary recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "localeRouting": {
+      "status": "native",
+      "note": "Locale configuration, URL helpers, preferred-language detection, and fallback routing; domain routing has prerendering restrictions.",
+      "url": "https://docs.astro.build/en/guides/internationalization/"
+    },
+    "localeFormatting": {
+      "status": "undocumented",
+      "note": "Astro’s reviewed i18n API manages locales/URLs; a locale-aware number/date formatting API is not documented.",
+      "url": "https://docs.astro.build/en/guides/internationalization/"
+    },
+    "auth": {
+      "status": "community",
+      "note": "The guide provides Astro integrations for services/libraries including Better Auth and Clerk; identity management is external.",
+      "url": "https://docs.astro.build/en/guides/authentication/",
+      "label": "Better Auth / Clerk"
+    },
+    "csp": {
+      "status": "partial",
+      "note": "Astro 6+ can emit a CSP meta policy with processed script/style hashes and runtime customization. This differs from a complete application-authored HTTP header policy.",
+      "url": "https://docs.astro.build/en/reference/configuration-reference/#securitycsp",
+      "label": "Meta CSP / hashes",
+      "reviewedOn": "2026-11-10"
+    },
+    "cspNonce": {
+      "status": "undocumented",
+      "note": "Astro's reviewed CSP integration coordinates script/style hashes in a meta policy. It does not establish a per-response nonce pipeline for generated scripts; the hash-based CSP capability is recorded in its own row.",
+      "url": "https://docs.astro.build/en/reference/configuration-reference/#securitycsp",
+      "reviewedOn": "2026-11-11",
+      "label": "Hash-based CSP instead"
+    },
+    "csrf": {
+      "status": "native",
+      "note": "Default origin/site checks protect on-demand unsafe requests with the documented form/simple content types. This is not a universal CSRF-token service.",
+      "url": "https://docs.astro.build/en/reference/configuration-reference/#securitycheckorigin",
+      "label": "Origin/site checks"
+    },
+    "environment": {
+      "status": "native",
+      "note": "astro:env validates a schema and separates public/client values from server secrets.",
+      "url": "https://docs.astro.build/en/reference/modules/astro-env/"
+    },
+    "types": {
+      "status": "official",
+      "note": "TypeScript authoring is supported; astro check plus its official checker validates Astro/TS sources. Building alone does not perform the same checks.",
+      "url": "https://docs.astro.build/en/guides/typescript/",
+      "label": "astro check"
+    },
+    "hmr": {
+      "status": "native",
+      "note": "The development server updates changed source/assets through Vite; framework-island state behavior depends on its integration.",
+      "url": "https://docs.astro.build/en/reference/cli-reference/#astro-dev",
+      "label": "Vite development"
+    },
+    "cli": {
+      "status": "native",
+      "note": "Astro’s CLI supplies dev, build, preview, check, and project tooling commands.",
+      "url": "https://docs.astro.build/en/reference/cli-reference/"
+    },
+    "bundleAnalysis": {
+      "status": "community",
+      "note": "The official recipe adds rollup-plugin-visualizer to inspect module sizes and dependency composition.",
+      "url": "https://docs.astro.build/en/recipes/analyze-bundle-size/",
+      "label": "rollup-plugin-visualizer"
+    },
+    "unitTests": {
+      "status": "community",
+      "note": "The guide integrates external runners and component-testing tools.",
+      "url": "https://docs.astro.build/en/guides/testing/",
+      "label": "Vitest / test libraries"
+    },
+    "e2eTests": {
+      "status": "community",
+      "note": "Browser testing uses external Playwright or Cypress integrations.",
+      "url": "https://docs.astro.build/en/guides/testing/",
+      "label": "Playwright / Cypress"
+    },
+    "observability": {
+      "status": "native",
+      "note": "Astro 7 exposes configurable logger destinations, request flush hooks, and console/structured logging integration. Metrics/tracing backends remain separate.",
+      "url": "https://docs.astro.build/en/reference/logger-reference/",
+      "label": "Logger API"
+    },
+    "errorHandling": {
+      "status": "partial",
+      "note": "Custom 404/500 pages handle route errors; UI-island component error boundaries depend on the UI framework.",
+      "url": "https://docs.astro.build/en/guides/routing/#custom-404-error-page",
+      "label": "Error pages / UI integration",
+      "reviewedOn": "2026-11-10"
+    },
+    "serverHosting": {
+      "status": "official",
+      "note": "On-demand hosting requires a deployment adapter such as the official Node adapter.",
+      "url": "https://docs.astro.build/en/guides/on-demand-rendering/",
+      "label": "SSR adapter"
+    },
+    "subpathProxy": {
+      "status": "native",
+      "note": "Astro’s base setting supplies a deployment prefix, and BASE_URL lets authored links and public-file references use it. Imported build assets are handled by the build. Configure the deployment adapter and proxy to agree on the public URL and forwarded host; literal root-relative URLs are not automatically rewritten.",
+      "url": "https://docs.astro.build/en/reference/configuration-reference/#base",
+      "label": "Build base; adapter setup",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "native",
+      "note": "The default build produces static files for static hosting; on-demand features require an adapter.",
+      "url": "https://docs.astro.build/en/guides/deploy/"
+    },
+    "containers": {
+      "status": "native",
+      "note": "The official Docker recipe covers static and Node-adapter images. The application owns its Dockerfile and deployment.",
+      "url": "https://docs.astro.build/en/recipes/docker/",
+      "label": "Docker recipe"
+    },
+    "edgeHosting": {
+      "status": "official",
+      "note": "Official adapter paths include Cloudflare; runtime feature support depends on the adapter.",
+      "url": "https://docs.astro.build/en/guides/deploy/",
+      "label": "Cloudflare adapter"
+    },
+    "orm": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned orm / query builder API. Host libraries and application integrations may provide it.",
+      "url": "https://astro.build"
+    },
+    "migrations": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned schema migrations API. Host libraries and application integrations may provide it.",
+      "url": "https://astro.build"
+    },
+    "transactions": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned transactions API. Host libraries and application integrations may provide it.",
+      "url": "https://astro.build"
+    },
+    "jobs": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned background jobs API. Host libraries and application integrations may provide it.",
+      "url": "https://astro.build"
+    },
+    "mail": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned email API. Host libraries and application integrations may provide it.",
+      "url": "https://astro.build"
+    },
+    "uploads": {
+      "status": "partial",
+      "note": "Actions can receive form data; durable storage and upload lifecycle are separate application/provider responsibilities.",
+      "url": "https://docs.astro.build/en/guides/actions/",
+      "label": "FormData actions",
+      "reviewedOn": "2026-11-10"
+    },
+    "realtime": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned real-time delivery API. Host libraries and application integrations may provide it.",
+      "url": "https://astro.build"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Template expressions and set:text escape text. set:html inserts unescaped content and requires trusted HTML. This is separate from sanitizing an untrusted rich-text document.",
+      "url": "https://docs.astro.build/en/reference/directives-reference/#sethtml",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.astro.build/en/reference/configuration-reference/#securitycsp",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.astro.build/en/reference/configuration-reference/#securitycsp",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.astro.build/en/reference/configuration-reference/#securitycsp",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "native",
+      "note": "Actions accept ordinary HTML form POSTs with server validation/results. Client action calls and client-only submit handlers have different JS requirements; preserve the real form action for no-JS submission.",
+      "url": "https://docs.astro.build/en/guides/actions/",
+      "reviewedOn": "2026-11-11",
+      "label": "HTML action forms"
+    },
+    "optimisticUi": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific optimistic updates contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.astro.build/en/guides/data-fetching/",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific stale request handling contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.astro.build/en/guides/data-fetching/",
+      "reviewedOn": "2026-11-11"
+    },
+    "typedLinks": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific typed links & parameters contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.astro.build/en/guides/view-transitions/",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.astro.build/en/guides/view-transitions/",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "native",
+      "note": "ClientRouter transition:persist retains selected DOM/components across navigation, optionally preserving props. Persistence must be configured; this is not automatic serialization of all page state.",
+      "url": "https://docs.astro.build/en/guides/view-transitions/#maintaining-state",
+      "reviewedOn": "2026-11-11",
+      "label": "transition:persist"
+    },
+    "scrollRestoration": {
+      "status": "native",
+      "note": "ClientRouter handles scroll for same-page anchors and back/forward navigation as part of its history lifecycle. Custom swapping/navigation can require application adjustments.",
+      "url": "https://docs.astro.build/en/guides/view-transitions/",
+      "reviewedOn": "2026-11-11",
+      "label": "ClientRouter"
+    },
+    "navigationBlocking": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.astro.build/en/guides/view-transitions/",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationAccessibility": {
+      "status": "native",
+      "note": "ClientRouter includes a route announcer and handles focus when swapping pages. Authors must provide meaningful page titles and honor reduced-motion preferences for animated transitions.",
+      "url": "https://docs.astro.build/en/guides/view-transitions/#accessibility",
+      "reviewedOn": "2026-11-11",
+      "label": "ClientRouter"
+    },
+    "a11yChecks": {
+      "status": "native",
+      "note": "Astro's development toolbar audits rendered pages for selected accessibility issues. These are development diagnostics, not a production guarantee or complete accessibility audit.",
+      "url": "https://docs.astro.build/en/guides/dev-toolbar/#audits",
+      "reviewedOn": "2026-11-11",
+      "label": "Dev toolbar audits"
+    },
+    "lazyActivation": {
+      "status": "native",
+      "note": "client:idle, client:visible and client:media schedule hydration of selected framework islands; client:only omits SSR and is a different behavior. A matching UI integration supplies the component renderer/runtime.",
+      "url": "https://docs.astro.build/en/reference/directives-reference/#client-directives",
+      "reviewedOn": "2026-11-11",
+      "label": "Client directives"
+    },
+    "codeSplitting": {
+      "status": "native",
+      "note": "Astro's island build ships JavaScript for selected interactive components and shares framework runtimes. Components without client directives emit HTML without a hydration bundle; island dependencies may still be shared.",
+      "url": "https://docs.astro.build/en/guides/framework-components/",
+      "reviewedOn": "2026-11-11",
+      "label": "Island bundles"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.astro.build/en/guides/on-demand-rendering/",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://astro.build",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://astro.build",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://astro.build",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://astro.build",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.astro.build/en/guides/testing/",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

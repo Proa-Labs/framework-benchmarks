@@ -1,0 +1,612 @@
+{
+  "id": "leptos",
+  "scope": "Leptos book and API documentation; official router/server crates named separately.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "The ssr build mode generates server HTML; hydrate builds activate it in the browser.",
+      "url": "https://docs.rs/leptos/latest/leptos/"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "In-order, out-of-order, and partially blocked SSR modes are documented.",
+      "url": "https://book.leptos.dev/ssr/23_ssr_modes.html"
+    },
+    "suspense": {
+      "status": "native",
+      "note": "Suspense boundaries coordinate resources and stream resolved content with fallback UI in out-of-order mode.",
+      "url": "https://book.leptos.dev/ssr/23_ssr_modes.html"
+    },
+    "client": {
+      "status": "native",
+      "note": "The hydrate feature adds interactivity to server-rendered HTML; islands is a separate opt-in mode.",
+      "url": "https://docs.rs/leptos/latest/leptos/",
+      "label": "Hydration / islands"
+    },
+    "ssg": {
+      "status": "official",
+      "note": "StaticRouteGenerator and static route lists generate HTML files; dynamic parameters must be enumerated.",
+      "url": "https://docs.rs/leptos_axum/latest/leptos_axum/struct.StaticRouteGenerator.html",
+      "label": "leptos_axum"
+    },
+    "csr": {
+      "status": "native",
+      "note": "The csr feature renders the application in the browser; hydrate and ssr are separate build modes.",
+      "url": "https://docs.rs/leptos/latest/leptos/"
+    },
+    "serverOnly": {
+      "status": "native",
+      "note": "Islands keep non-interactive component work on the server; server functions also exclude their bodies from browser builds. This is not RSC.",
+      "url": "https://book.leptos.dev/islands.html",
+      "label": "Islands / server functions"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "SSR modes control per-request streaming; the guide does not establish a prebuilt static shell with request-time dynamic holes.",
+      "url": "https://book.leptos.dev/ssr/23_ssr_modes.html"
+    },
+    "routing": {
+      "status": "official",
+      "note": "leptos_router provides nested Routes and route parameters.",
+      "url": "https://book.leptos.dev/router/16_routes.html",
+      "label": "leptos_router"
+    },
+    "layouts": {
+      "status": "official",
+      "note": "Nested routes and Outlet compose layouts around child pages.",
+      "url": "https://book.leptos.dev/router/17_nested_routing.html",
+      "label": "leptos_router"
+    },
+    "dynamicRoutes": {
+      "status": "official",
+      "note": "Route parameters and query values can be read and parsed into typed values.",
+      "url": "https://book.leptos.dev/router/18_params_and_queries.html",
+      "label": "leptos_router"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "Nested Outlet routes are documented; independent named route slots are not established.",
+      "url": "https://book.leptos.dev/router/17_nested_routing.html"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "The reviewed router guide does not establish intercepted-modal/direct-entry route behavior.",
+      "url": "https://book.leptos.dev/router/17_nested_routing.html"
+    },
+    "prefetch": {
+      "status": "undocumented",
+      "note": "The reviewed A component API resolves nested links and active state; automatic route/data prefetch is not established.",
+      "url": "https://docs.rs/leptos_router/latest/leptos_router/components/struct.AProps.html"
+    },
+    "softNavigation": {
+      "status": "official",
+      "note": "leptos_router enhances local links, changes routes/history and updates the route outlet in the browser without a document reload.",
+      "url": "https://book.leptos.dev/router/16_routes.html",
+      "reviewedOn": "2026-11-11",
+      "label": "leptos_router"
+    },
+    "viewTransitions": {
+      "status": "official",
+      "note": "Routes/FlatRoutes expose a transition flag to coordinate the browser View Transition API during navigation. Browser support and application CSS determine the animation; asynchronous UI Transition is a separate concept.",
+      "url": "https://docs.rs/leptos_router/latest/leptos_router/components/struct.FlatRoutesProps.html",
+      "reviewedOn": "2026-11-11",
+      "label": "leptos_router transition"
+    },
+    "redirects": {
+      "status": "official",
+      "note": "Server integrations expose redirects and response options; router redirects handle client navigation.",
+      "url": "https://book.leptos.dev/server/27_response.html",
+      "label": "Router / server integrations"
+    },
+    "serverData": {
+      "status": "native",
+      "note": "Resource resolves asynchronous work on the server and serializes its value for hydration.",
+      "url": "https://book.leptos.dev/async/10_resources.html"
+    },
+    "clientData": {
+      "status": "native",
+      "note": "Resource and LocalResource react to dependencies and expose asynchronous client data. Shared query caching needs additional policy.",
+      "url": "https://book.leptos.dev/async/10_resources.html"
+    },
+    "requestDedupe": {
+      "status": "undocumented",
+      "note": "Resource sharing is possible through context, but an automatic request-wide keyed deduplication cache is not established.",
+      "url": "https://book.leptos.dev/async/10_resources.html"
+    },
+    "persistentCache": {
+      "status": "official",
+      "note": "Static routes retain generated page files. This is a page-generation mechanism, not a general-purpose application data cache.",
+      "url": "https://docs.rs/leptos_router/latest/leptos_router/static_routes/index.html",
+      "label": "Static routes"
+    },
+    "invalidation": {
+      "status": "native",
+      "note": "Actions expose reactive versions/results that can drive Resource refetching. This is distinct from a path/tag server cache.",
+      "url": "https://book.leptos.dev/async/13_actions.html",
+      "label": "Reactive resource refetch"
+    },
+    "isr": {
+      "status": "partial",
+      "note": "Static route regeneration functions define when generated pages should be refreshed. Applications supply the trigger and host/storage configuration.",
+      "url": "https://docs.rs/leptos_router/latest/leptos_router/static_routes/index.html",
+      "label": "RegenerationFn",
+      "reviewedOn": "2026-11-10"
+    },
+    "apiRoutes": {
+      "status": "official",
+      "note": "Axum/Actix integrations expose generated server-function routes and can be composed with custom HTTP handlers.",
+      "url": "https://book.leptos.dev/server/26_extractors.html",
+      "label": "leptos_axum / leptos_actix"
+    },
+    "httpErrors": {
+      "status": "official",
+      "note": "The Axum/Actix integrations expose ResponseOptions to set status and headers during SSR or a server function. A view showing “not found” must explicitly choose 404; a visual ErrorBoundary alone does not do so. With streaming, make the decision before headers are sent; later failures cannot replace the committed HTTP status.",
+      "url": "https://book.leptos.dev/server/27_response.html",
+      "label": "ResponseOptions / integrations",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "official",
+      "note": "The #[server] macro generates server endpoints and browser call stubs.",
+      "url": "https://book.leptos.dev/server/25_server_functions.html",
+      "label": "server_fn"
+    },
+    "forms": {
+      "status": "official",
+      "note": "ActionForm progressively enhances ServerAction forms and works without client JS. Applications still validate server-side inputs.",
+      "url": "https://book.leptos.dev/progressive_enhancement/action_form.html",
+      "label": "leptos_router ActionForm",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "ActionForm progressively enhances ServerAction forms and works without client JS. Applications still validate server-side inputs."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "official",
+      "note": "Server functions integrate host extractors and Axum/Actix request middleware.",
+      "url": "https://book.leptos.dev/server/26_extractors.html",
+      "label": "Server integrations"
+    },
+    "cookies": {
+      "status": "official",
+      "note": "ResponseOptions and host extractors can read/set cookie headers; session storage/policy is application-owned.",
+      "url": "https://book.leptos.dev/server/27_response.html",
+      "label": "Server integrations"
+    },
+    "cssModules": {
+      "status": "community",
+      "note": "Stylance maps CSS/SCSS modules into Rust class references.",
+      "url": "https://book.leptos.dev/interlude_styling.html",
+      "label": "Stylance"
+    },
+    "scopedCss": {
+      "status": "community",
+      "note": "Stylers supplies scoped inline CSS; Stylance offers external stylesheet modules.",
+      "url": "https://book.leptos.dev/interlude_styling.html",
+      "label": "Stylers / Stylance"
+    },
+    "tailwind": {
+      "status": "community",
+      "note": "cargo-leptos can run Tailwind’s external compiler as part of its build workflow.",
+      "url": "https://book.leptos.dev/interlude_styling.html",
+      "label": "cargo-leptos recipe"
+    },
+    "cssInJs": {
+      "status": "undocumented",
+      "note": "Rust scoped-style packages are documented; a JavaScript CSS-in-JS SSR registry is not established.",
+      "url": "https://book.leptos.dev/interlude_styling.html"
+    },
+    "images": {
+      "status": "undocumented",
+      "note": "Styles/asset builds are documented; an automatic image resizing/format pipeline is not established.",
+      "url": "https://book.leptos.dev/interlude_styling.html"
+    },
+    "fonts": {
+      "status": "undocumented",
+      "note": "Fonts may be authored in CSS; a font download/subset/fallback-optimization API is not established.",
+      "url": "https://book.leptos.dev/interlude_styling.html"
+    },
+    "scripts": {
+      "status": "partial",
+      "note": "leptos_meta manages script elements in the head; sophisticated third-party scheduling is application-owned.",
+      "url": "https://book.leptos.dev/metadata.html",
+      "label": "leptos_meta Script",
+      "reviewedOn": "2026-11-10"
+    },
+    "assetPipeline": {
+      "status": "partial",
+      "note": "cargo-leptos can add hashes to generated CSS, JS, and WASM filenames with hash-files enabled; it is off by default and the server must use matching configuration. Files from assets-dir are copied, so arbitrary images such as image.svg still need application-owned versioning.",
+      "url": "https://github.com/leptos-rs/cargo-leptos/blob/main/README.md",
+      "label": "JS, CSS & WASM hashing",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "official",
+      "note": "cargo-leptos builds client assets and copies configured public assets into the site output.",
+      "url": "https://book.leptos.dev/ssr/21_cargo_leptos.html",
+      "label": "cargo-leptos"
+    },
+    "metadata": {
+      "status": "official",
+      "note": "leptos_meta supplies Title, Meta, Link, and other head components. It is component-based rather than a merged metadata object.",
+      "url": "https://book.leptos.dev/metadata.html",
+      "label": "Reactive head components",
+      "assessment": {
+        "label": "Reactive head components",
+        "summary": "Head elements participate in the reactive component model, with a documented title formatter.",
+        "strengths": [
+          "Title, Meta, Link, and other head components can be authored within application components.",
+          "Reactive values update metadata; a shared formatter composes route titles."
+        ],
+        "tradeoffs": [
+          "This review has not established a general nested metadata-object merge/clear contract.",
+          "Do not infer Next.js-equivalent inheritance behavior from the presence of a Meta component."
+        ]
+      }
+    },
+    "dynamicMetadata": {
+      "status": "official",
+      "note": "Metadata components accept reactive values, so document metadata can follow application state.",
+      "url": "https://book.leptos.dev/metadata.html",
+      "label": "leptos_meta"
+    },
+    "metadataInheritance": {
+      "status": "partial",
+      "note": "Reactive head components and context compose metadata; the Title formatter can be inherited independently of child title text. General nested metadata-object merging is not established.",
+      "url": "https://docs.rs/leptos_meta/latest/leptos_meta/struct.TitleProps.html",
+      "label": "Title/context composition",
+      "reviewedOn": "2026-11-10"
+    },
+    "metadataOverrides": {
+      "status": "partial",
+      "note": "Child Title text can compose with an ancestor formatter. A uniform nested SEO-field merge/clear contract is not established.",
+      "url": "https://docs.rs/leptos_meta/latest/leptos_meta/struct.TitleProps.html",
+      "label": "Title-specific composition",
+      "reviewedOn": "2026-11-10"
+    },
+    "titleTemplates": {
+      "status": "official",
+      "note": "Title accepts a formatter on the app and route-specific text. The book demonstrates a common suffix applied to route titles.",
+      "url": "https://book.leptos.dev/metadata.html",
+      "label": "Title formatter"
+    },
+    "socialImages": {
+      "status": "undocumented",
+      "note": "Head meta/link components do not establish a generated social-card image renderer.",
+      "url": "https://book.leptos.dev/metadata.html"
+    },
+    "sitemaps": {
+      "status": "undocumented",
+      "note": "Route definitions do not themselves establish automatic crawler XML sitemap generation.",
+      "url": "https://book.leptos.dev/router/16_routes.html"
+    },
+    "robots": {
+      "status": "official",
+      "note": "An application can publish an authored robots.txt from its configured assets directory.",
+      "url": "https://book.leptos.dev/ssr/21_cargo_leptos.html",
+      "label": "Public file"
+    },
+    "markdown": {
+      "status": "undocumented",
+      "note": "The reviewed view/component and build APIs do not establish a Markdown content pipeline; an additional parser/build step is needed.",
+      "url": "https://book.leptos.dev/view/01_basic_component.html"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "The build guide does not establish typed content collection schemas/loaders/query registries.",
+      "url": "https://book.leptos.dev/ssr/21_cargo_leptos.html"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "Application response/cache logic is available; a dedicated authenticated draft-preview API is not established.",
+      "url": "https://book.leptos.dev/server/27_response.html"
+    },
+    "translations": {
+      "status": "community",
+      "note": "leptos_i18n supplies locale-aware translated messages for Leptos applications.",
+      "url": "https://docs.rs/leptos_i18n/latest/leptos_i18n/",
+      "label": "leptos_i18n"
+    },
+    "localeRouting": {
+      "status": "undocumented",
+      "note": "The reviewed leptos_i18n API establishes locale context/messages, but a locale-aware URL router/negotiation contract is not established here.",
+      "url": "https://docs.rs/leptos_i18n/latest/leptos_i18n/"
+    },
+    "localeFormatting": {
+      "status": "community",
+      "note": "leptos_i18n’s formatters include ICU-backed number/date/time formatting; enable the relevant package features.",
+      "url": "https://docs.rs/leptos_i18n_build/latest/leptos_i18n_build/enum.FormatterOptions.html",
+      "label": "leptos_i18n"
+    },
+    "auth": {
+      "status": "partial",
+      "note": "Host extractors can supply an authenticated user to server functions. Login, identity storage, and authorization remain application/library work.",
+      "url": "https://book.leptos.dev/server/26_extractors.html",
+      "label": "Host auth extractors",
+      "reviewedOn": "2026-11-10"
+    },
+    "csp": {
+      "status": "official",
+      "note": "The nonce feature generates request nonces and applies them to framework inline scripts/styles. Configure the matching CSP policy in the host response.",
+      "url": "https://docs.rs/leptos/latest/leptos/nonce/struct.Nonce.html",
+      "label": "Nonce feature"
+    },
+    "cspNonce": {
+      "status": "official",
+      "note": "The nonce feature generates request nonces and applies them to framework inline scripts/styles. Configure the matching CSP policy in the host response.",
+      "url": "https://docs.rs/leptos/latest/leptos/nonce/struct.Nonce.html",
+      "reviewedOn": "2026-11-11",
+      "label": "Nonce feature"
+    },
+    "csrf": {
+      "status": "undocumented",
+      "note": "Server functions are public endpoints; the reviewed macro guide does not establish a complete CSRF token/origin protection policy. Applications must secure endpoints.",
+      "url": "https://book.leptos.dev/server/25_server_functions.html"
+    },
+    "environment": {
+      "status": "partial",
+      "note": "Server-function implementations are excluded from client builds; applications must keep secrets out of serialized return values.",
+      "url": "https://book.leptos.dev/server/25_server_functions.html",
+      "label": "Server-function boundary",
+      "reviewedOn": "2026-11-10"
+    },
+    "types": {
+      "status": "native",
+      "note": "Rust types and view macros check typed component composition during compilation.",
+      "url": "https://docs.rs/leptos/latest/leptos/"
+    },
+    "hmr": {
+      "status": "official",
+      "note": "cargo-leptos watch rebuilds and reloads the app; CSS/assets can update without a full source rebuild.",
+      "url": "https://book.leptos.dev/ssr/21_cargo_leptos.html",
+      "label": "cargo-leptos"
+    },
+    "cli": {
+      "status": "official",
+      "note": "cargo-leptos integrates build, watch, test, and asset processing.",
+      "url": "https://book.leptos.dev/ssr/21_cargo_leptos.html",
+      "label": "cargo-leptos"
+    },
+    "bundleAnalysis": {
+      "status": "undocumented",
+      "note": "The reviewed CLI build workflow does not establish a graphical production bundle/module analyzer.",
+      "url": "https://book.leptos.dev/ssr/21_cargo_leptos.html"
+    },
+    "unitTests": {
+      "status": "community",
+      "note": "The guide demonstrates native Rust tests and wasm-bindgen-test for browser-side code.",
+      "url": "https://book.leptos.dev/testing.html",
+      "label": "Rust / wasm-bindgen-test"
+    },
+    "e2eTests": {
+      "status": "community",
+      "note": "The testing guide uses Playwright against the running application.",
+      "url": "https://book.leptos.dev/testing.html",
+      "label": "Playwright"
+    },
+    "observability": {
+      "status": "native",
+      "note": "leptos::logging supplies log/warn/error macros for the browser console or native terminal. The debug_* variants are debug-build-only. Structured tracing, collection/export and production monitoring remain host/integration work.",
+      "url": "https://docs.rs/leptos/latest/leptos/logging/index.html",
+      "label": "Isomorphic logging macros",
+      "reviewedOn": "2026-11-13"
+    },
+    "errorHandling": {
+      "status": "native",
+      "note": "ErrorBoundary renders fallback UI for errors carried by child views.",
+      "url": "https://book.leptos.dev/view/07_errors.html"
+    },
+    "serverHosting": {
+      "status": "official",
+      "note": "Axum/Actix applications can run as production binaries on VMs.",
+      "url": "https://book.leptos.dev/deployment/ssr.html",
+      "label": "Server integrations"
+    },
+    "subpathProxy": {
+      "status": "official",
+      "note": "The non-root deployment guide coordinates Router base, HydrationScripts root and the server-function URL. It explicitly describes a proxy stripping the prefix and using different server/browser router bases. Asset hosting and public-origin/forwarded-header policy remain part of the Axum/Actix deployment.",
+      "url": "https://book.leptos.dev/deployment/sub_path.html",
+      "label": "Router / server integration",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "partial",
+      "note": "CSR builds can be served as static files; request-time SSR/server functions still need a server.",
+      "url": "https://book.leptos.dev/deployment/csr.html",
+      "label": "CSR static deployment",
+      "reviewedOn": "2026-11-10"
+    },
+    "containers": {
+      "status": "native",
+      "note": "The official guide includes Docker/Podman multi-stage build recipes.",
+      "url": "https://book.leptos.dev/deployment/ssr.html",
+      "label": "Container recipe"
+    },
+    "edgeHosting": {
+      "status": "partial",
+      "note": "Leptos-Axum documents JS-hosted WASM targets including Cloudflare/Deno; dependencies must be WASM-compatible and setup differs.",
+      "url": "https://book.leptos.dev/deployment/ssr.html",
+      "label": "WASM server integration",
+      "reviewedOn": "2026-11-10"
+    },
+    "orm": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned orm / query builder API. Host libraries and application integrations may provide it.",
+      "url": "https://leptos.dev"
+    },
+    "migrations": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned schema migrations API. Host libraries and application integrations may provide it.",
+      "url": "https://leptos.dev"
+    },
+    "transactions": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned transactions API. Host libraries and application integrations may provide it.",
+      "url": "https://leptos.dev"
+    },
+    "jobs": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned background jobs API. Host libraries and application integrations may provide it.",
+      "url": "https://leptos.dev"
+    },
+    "mail": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned email API. Host libraries and application integrations may provide it.",
+      "url": "https://leptos.dev"
+    },
+    "uploads": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned file uploads & storage API. Host libraries and application integrations may provide it.",
+      "url": "https://leptos.dev"
+    },
+    "realtime": {
+      "status": "undocumented",
+      "note": "The reviewed framework documentation does not establish an owned real-time delivery API. Host libraries and application integrations may provide it.",
+      "url": "https://leptos.dev"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "view! renders dynamic strings as text; inner_html inserts raw HTML and requires trusted/sanitized input. Rendering text safely does not make untrusted HTML safe.",
+      "url": "https://book.leptos.dev/view/01_basic_component.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.rs/leptos/latest/leptos/nonce/struct.Nonce.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.rs/leptos/latest/leptos/nonce/struct.Nonce.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.rs/leptos/latest/leptos/nonce/struct.Nonce.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "official",
+      "note": "ActionForm maps server functions to a native form submission and enhances it when hydrated. Input types/encoding must support form submission; browser-only events do not supply a no-JS fallback.",
+      "url": "https://book.leptos.dev/progressive_enhancement/action_form.html",
+      "reviewedOn": "2026-11-11",
+      "label": "leptos_router ActionForm"
+    },
+    "optimisticUi": {
+      "status": "native",
+      "note": "Actions expose input/pending/value and the book demonstrates deriving optimistic state from pending submissions. Application code still chooses merge/error behavior; a pending flag alone is not an optimistic update.",
+      "url": "https://book.leptos.dev/async/13_actions.html",
+      "reviewedOn": "2026-11-11",
+      "label": "Actions / pending input"
+    },
+    "requestCancellation": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific stale request handling contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://book.leptos.dev/async/10_resources.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "typedLinks": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific typed links & parameters contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://book.leptos.dev/router/16_routes.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchParams": {
+      "status": "official",
+      "note": "Params-derived query structs parse search values into typed Results; applications handle malformed values and defaults. Reading a raw ParamsMap is a separate, less constrained API.",
+      "url": "https://book.leptos.dev/router/18_params_and_queries.html",
+      "reviewedOn": "2026-11-11",
+      "label": "leptos_router Params"
+    },
+    "stateRestoration": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific navigation state retention contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://book.leptos.dev/router/16_routes.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "scrollRestoration": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific scroll restoration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://book.leptos.dev/router/16_routes.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationBlocking": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://book.leptos.dev/router/16_routes.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationAccessibility": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessible navigation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.rs/leptos/latest/leptos/",
+      "reviewedOn": "2026-11-11"
+    },
+    "a11yChecks": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.rs/leptos/latest/leptos/",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.rs/leptos/latest/leptos/",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "official",
+      "note": "The official lazy_routes example uses LazyRoute and cargo leptos watch --split to load route-specific browser WASM/code. It requires the opt-in split toolchain and is distinct from enabling islands; shared code and toolchain support constrain the resulting chunks.",
+      "url": "https://github.com/leptos-rs/leptos/tree/5a6d608297486da55901ae32f493fb28db18f3fc/examples/lazy_routes",
+      "reviewedOn": "2026-11-11",
+      "label": "Router / cargo-leptos"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://book.leptos.dev/deployment/ssr.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://leptos.dev",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://leptos.dev",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://leptos.dev",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://leptos.dev",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://book.leptos.dev/testing.html",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

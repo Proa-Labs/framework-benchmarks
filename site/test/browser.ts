@@ -4,38 +4,62 @@ import type { FeatureRow } from "../feature-schema.ts";
 import { required } from "../required.ts";
 
 interface TestExport {
+  experiment: string;
+  captures?: Record<string, unknown>;
+  unmeasured?: {
+    id: string;
+    workloads?: { workload: string; status: string; version: string }[];
+  }[];
   workload: string;
   rows: {
     id: string;
+    fixture?: string;
+    adaptation?: import("../benchmark-types.ts").Renderer["renderingAdaptation"];
     flow?: { rps: number; meanMs: number; repeat: number };
     [key: string]: unknown;
   }[];
   toolTypes: string[];
 }
 
+import type axe from "axe-core";
 import type { Page } from "playwright";
 import type { BenchmarkData } from "../benchmark-types.ts";
 
 declare global {
   interface Window {
     reactNavigationProbe?: string;
+    initialComparisonProbe?: Element;
+    axe: typeof axe;
   }
 }
 
 // Optional browser regression suite for local development and CI. Manual
 // desktop-app browser verification can also use the same visible controls.
 import assert from "node:assert/strict";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "playwright";
 import { siteRoot } from "../build.ts";
 import { startServer } from "../dev.ts";
-import featureProjects from "../feature-projects.json" with { type: "json" };
 import { features } from "../feature-schema.ts";
 import { contrastRatio, readableBrand } from "../src/brand-colors.ts";
 import { sortCoverageRows } from "../src/feature-summary.ts";
 
 const server = await startServer({ port: 0, live: false });
+const benchmarkData: BenchmarkData = await (
+  await fetch(`${server.url}/data/results.json`)
+).json();
+const renderCount = benchmarkData.rendering.rows.cards.length;
+const renderCells = Object.values(benchmarkData.rendering.rows).flat().length;
+const unrankedIds = benchmarkData.framework.rows
+  .filter(
+    (row) =>
+      !benchmarkData.rendering.rows.cards.some(
+        (render) => render.id === row.id,
+      ),
+  )
+  .map((row) => row.id);
+
 const browser = await chromium.launch({ headless: true });
 const errors: string[] = [];
 const checks: string[] = [];
@@ -58,23 +82,45 @@ try {
   page = await context.newPage();
   page.on("pageerror", (error) => errors.push(error.message));
   page.on("console", (message) => {
-    if (
-      message.type() === "error" &&
-      /hydrat|server.rendered|didn.t match/i.test(message.text())
-    )
-      errors.push(message.text());
+    if (message.type() === "error") {
+      const { url, lineNumber } = message.location();
+      errors.push(`${message.text()} (${url}:${lineNumber + 1})`);
+    }
   });
   page.on("response", (response) => {
     if (response.status() >= 400)
       errors.push(`${response.status()} ${response.url()}`);
   });
+  // Keep this instrumentation on its own page: Playwright injects init scripts
+  // into every future frame too, while fixture previews intentionally ban scripts.
+  const hydrationPage = await context.newPage();
+  await hydrationPage.addInitScript(() => {
+    const observer = new MutationObserver(() => {
+      const table = document.querySelector("[data-renderer-comparison]");
+      if (table) {
+        window.initialComparisonProbe = table;
+        observer.disconnect();
+      }
+    });
+    observer.observe(document, { childList: true, subtree: true });
+  });
+  await hydrationPage.goto(server.url);
+  await hydrationPage.locator('[data-app-ready="true"]').waitFor();
+  assert.equal(
+    await hydrationPage.evaluate(
+      () =>
+        window.initialComparisonProbe ===
+        document.querySelector("[data-renderer-comparison]"),
+    ),
+    true,
+    "Hydration must preserve the server-rendered comparison table",
+  );
+  await hydrationPage.close();
+  checks.push("server-rendered comparison nodes survive hydration");
   await navigate(`${server.url}/?chart=bars`);
   await page.locator(".fw-row").first().waitFor();
-  assert.equal(await page.locator(".fw-row").count(), 17);
-  const renderingInfo = page.getByRole("button", {
-    name: "About SSR Rendering",
-    exact: true,
-  });
+  assert.equal(await page.locator(".fw-row").count(), renderCount);
+  const renderingInfo = page.locator(".fw-experiment-info");
   await renderingInfo.hover();
   assert.equal(await page.locator("#rendering-info").isVisible(), true);
   await page.locator("#rendering-info").hover();
@@ -82,9 +128,8 @@ try {
   await page.locator("h1").hover();
   await page.locator("#rendering-info").waitFor({ state: "hidden" });
   await page.locator("#experiment-rendering").focus();
-  await page.locator("#experiment-rendering").press("Tab");
   assert.equal(await page.locator("#rendering-info").isVisible(), true);
-  await renderingInfo.press("Escape");
+  await page.locator("#experiment-rendering").press("Escape");
   assert.equal(await page.locator("#rendering-info").isVisible(), false);
   await page.screenshot({
     path: join(siteRoot, "test-results/desktop.png"),
@@ -210,7 +255,7 @@ try {
   assert.equal(await page.locator("[data-load-points]").isVisible(), false);
   await page.locator("[data-stream-view]").selectOption("throughput");
   await page.locator('[data-view="rendering"]').click();
-  assert.equal(await page.locator(".fw-comparison").count(), 1);
+  assert.equal(await page.locator("[data-renderer-comparison]").count(), 1);
   assert.equal(
     required(
       await page.locator('[data-chart="compare"]').getAttribute("aria-pressed"),
@@ -240,7 +285,7 @@ try {
     ),
     "true",
   );
-  assert.equal(await page.locator(".fw-row").count(), 17);
+  assert.equal(await page.locator(".fw-row").count(), renderCount);
   await reload();
   assert.equal(
     required(
@@ -261,10 +306,33 @@ try {
   );
   await navigate(server.url);
   await page.locator('[data-section="ecosystem"]').click();
+  assert.equal(await page.getByRole("main").count(), 1);
+  assert.equal(await page.getByRole("main").getAttribute("data-ecosystem"), "");
   assert.equal(
     await page.locator(".fw-catalog-row").count(),
-    20 + featureProjects.length,
+    benchmarkData.ecosystem.length,
   );
+  for (const width of [360, 390]) {
+    await page.setViewportSize({ width, height: 1000 });
+    assert.equal(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+      true,
+    );
+    assert.equal(
+      await page
+        .locator(".fw-catalog-row > small:nth-of-type(2)")
+        .evaluateAll((nodes) =>
+          nodes.every(
+            (node) => node.getBoundingClientRect().right <= innerWidth,
+          ),
+        ),
+      true,
+    );
+  }
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  checks.push("Ecosystem main landmark and readable mobile directory columns");
   await navigate(
     `${server.url}/?view=http&chart=table&workload=table&http=rss&selected=react,marko`,
   );
@@ -293,22 +361,66 @@ try {
       size.content <= size.viewport + 1,
       `${width}px viewport overflows: ${size.content}`,
     );
+    for (const selector of [
+      ".fw-renderer",
+      ".fw-number",
+      ".fw-workload-choice button[data-workload]",
+    ]) {
+      const sizes = await page
+        .locator(`${selector}:visible`)
+        .evaluateAll((elements) =>
+          elements.map((el) =>
+            Number.parseFloat(getComputedStyle(el).fontSize),
+          ),
+        );
+      assert.ok(
+        sizes.length > 0 && sizes.every((size) => size >= 14),
+        `${width}px: ${selector} must remain readable`,
+      );
+    }
     await page.screenshot({
       path: join(siteRoot, `test-results/mobile-${width}.png`),
       fullPage: true,
     });
+    await navigate(
+      `${server.url}/?view=streaming&chart=lines&stream=completion`,
+    );
+    const charts = await page.locator(".fw-chart").evaluateAll((elements) =>
+      elements.map((element) => {
+        const svg = element as SVGSVGElement;
+        const text = svg.querySelector("text");
+        return {
+          width: svg.getBoundingClientRect().width,
+          drawing: svg.viewBox.baseVal.width,
+          textHeight: text?.getBoundingClientRect().height || 0,
+        };
+      }),
+    );
+    assert.equal(charts.length, 2);
+    for (const chart of charts) {
+      assert.ok(
+        Math.abs(chart.width - chart.drawing) < 1,
+        `${width}px: SVG labels must not shrink with the chart`,
+      );
+      assert.ok(
+        chart.textHeight >= 12,
+        `${width}px: plotted labels must remain readable`,
+      );
+    }
     checks.push(`responsive/${width}`);
   }
   await navigate(server.url);
   assert.equal(
-    await page.locator(".fw-comparison tbody tr:not(.fw-uncaptured)").count(),
-    17,
+    await page
+      .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
+      .count(),
+    renderCount,
   );
   assert.equal(
     await page
-      .locator(".fw-comparison tbody tr:not(.fw-uncaptured) td")
+      .locator("[data-renderer-comparison] tbody [data-stat-suite=rendering]")
       .count(),
-    51,
+    renderCells,
   );
   await page.locator('[data-sort-workload="table"]').click();
   assert.equal(
@@ -329,32 +441,245 @@ try {
     ),
   );
   assert.equal(comparisonExport.workload, "all");
-  assert.equal(comparisonExport.rows.length, 51);
+  assert.equal(comparisonExport.rows.length, renderCells);
+  assert.equal(comparisonExport.experiment, "rendering");
+  assert.deepEqual(Object.keys(comparisonExport.captures || {}), ["rendering"]);
+  assert.ok(
+    comparisonExport.rows.every(
+      (row) => row.suite === "rendering" && row.unit === "µs",
+    ),
+  );
+  for (const id of unrankedIds)
+    assert.ok(comparisonExport.unmeasured?.some((row) => row.id === id));
   assert.deepEqual(
     new Set(comparisonExport.rows.map((r) => r.workload)),
     new Set(["cards", "products", "table"]),
   );
   await page.locator('[data-workload="products"]').click();
-  assert.equal(await page.locator(".fw-row").count(), 17);
+  assert.equal(await page.locator(".fw-row").count(), renderCount);
   await page.locator('[data-workload="cards"]').click();
-  assert.equal(await page.locator(".fw-row").count(), 17);
+  assert.equal(await page.locator(".fw-row").count(), renderCount);
   checks.push(
     "all-workload comparison, column sorting, complete exports and direct workload switching",
   );
   await page
     .getByRole("button", { name: "All workloads", exact: true })
     .click();
-  assert.equal(await page.locator(".fw-uncaptured").count(), 4);
-  assert.match(
-    await page
-      .locator(".fw-uncaptured")
-      .allTextContents()
-      .then((rows) => rows.join(" ")),
-    /SvelteKit/,
+  assert.equal(await page.locator(".fw-uncaptured").count(), 0);
+  assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
+  assert.equal(
+    await page.locator("[data-renderer-comparison] thead th").count(),
+    4,
   );
+  assert.equal(
+    await page.locator("[data-renderer-pending]").count(),
+    unrankedIds.length,
+  );
+  for (const workload of benchmarkData.workloads) {
+    const adapted = benchmarkData.rendering.rows[workload.id].find(
+      (row) => row.id === "exact",
+    );
+    const cell = page.locator(
+      adapted
+        ? `[data-stat-suite="rendering"][data-focus="exact"][data-stat-workload="${workload.id}"]`
+        : `[data-render-support="exact"][data-support-workload="${workload.id}"]`,
+    );
+    if (adapted) assert.equal(adapted.fixture, "exact-native-v1");
+    else assert.match(required(await cell.textContent()), /Unsupported/);
+    await cell.hover();
+    const popup = page.locator("[data-percentile-popup]");
+    await popup.waitFor({ state: "visible" });
+    const support = required(
+      benchmarkData.renderers.find((row) => row.id === "exact")
+        ?.renderingUnsupported?.[workload.id],
+    );
+    assert.equal(
+      await popup.locator(".fw-popover-scope p").first().textContent(),
+      adapted ? required(adapted.adaptation).reason : support.reason,
+    );
+    if (adapted) {
+      assert.equal(
+        await popup
+          .getByRole("link", { name: "Exact’s styling guide ↗" })
+          .getAttribute("href"),
+        required(adapted.adaptation).source,
+      );
+      assert.equal(
+        await popup
+          .getByRole("link", { name: "What we changed ↗" })
+          .getAttribute("href"),
+        required(adapted.adaptation).details,
+      );
+    } else
+      assert.ok(required(await popup.textContent()).includes(support.version));
+    await popup.hover();
+    // Scrolling while reading a linked explanation must preserve the popup,
+    // including when the pointer has already left its original table cell.
+    await page.evaluate(() => window.scrollBy(0, 32));
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        ),
+    );
+    assert.equal(await popup.isVisible(), true);
+    assert.equal(
+      await cell.getAttribute("aria-describedby"),
+      "fw-percentile-popover",
+    );
+    await cell.focus();
+    await cell.press("Escape");
+    // Let the hidden popup uncover any other cell beneath the stationary mouse.
+    await page.evaluate(
+      () =>
+        new Promise<void>((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+        ),
+    );
+    assert.equal(await popup.isVisible(), false);
+    await cell.click();
+    assert.equal(await popup.isVisible(), true);
+    await page.locator("h1").click();
+    assert.equal(await popup.isVisible(), false);
+  }
+  const adaptedRows = comparisonExport.rows.filter((row) => row.id === "exact");
+  if (adaptedRows.length) {
+    assert.equal(adaptedRows.length, benchmarkData.workloads.length);
+    for (const row of adaptedRows) {
+      assert.equal(row.fixture, "exact-native-v1");
+      assert.ok(row.adaptation?.source);
+    }
+  } else {
+    const exactExport = comparisonExport.unmeasured?.find(
+      (row) => row.id === "exact",
+    );
+    assert.equal(
+      exactExport?.workloads?.filter((cell) => cell.status === "unsupported")
+        .length,
+      benchmarkData.workloads.length,
+    );
+  }
+  const adaptedName = page.locator('[data-render-adaptation="exact"]');
+  // A real pointer move must reopen a dismissed note even on browsers that
+  // report zero movement deltas. Keep the actual viewport coordinates intact.
+  await page.evaluate(() => {
+    document.addEventListener(
+      "pointermove",
+      (event) =>
+        Object.defineProperties(event, {
+          movementX: { value: 0 },
+          movementY: { value: 0 },
+        }),
+      { capture: true },
+    );
+  });
+  await adaptedName.hover();
+  const adaptedPopup = page.locator("[data-adaptation-explanation]");
+  await adaptedPopup.waitFor({ state: "visible" });
+  assert.equal(await adaptedPopup.getByRole("link").count(), 2);
+  await adaptedName.focus();
+  await adaptedName.press("Tab");
+  assert.equal(
+    await adaptedPopup
+      .getByRole("link")
+      .first()
+      .evaluate((el) => el === document.activeElement),
+    true,
+  );
+  assert.equal(await adaptedPopup.isVisible(), true);
+  await adaptedPopup.getByRole("link").first().press("Escape");
+  assert.equal(await adaptedPopup.isVisible(), false);
+  assert.equal(
+    await adaptedName.evaluate((el) => el === document.activeElement),
+    true,
+  );
+  const decoration = await adaptedName
+    .locator(".fw-fixture-adapted")
+    .evaluate((el) => ({
+      style: getComputedStyle(el).textDecorationStyle,
+      thickness: getComputedStyle(el).textDecorationThickness,
+    }));
+  assert.deepEqual(decoration, { style: "wavy", thickness: "1px" });
+  await page.locator("h1").click();
+  checks.push(
+    "Exact adapted fixture keeps numeric timing, red annotation, accessible source links and hover/focus/tap explanations explicit",
+  );
+  const relatedData: BenchmarkData = await (
+    await context.request.get(`${server.url}/data/results.json`)
+  ).json();
+  await page.getByRole("tab", { name: "Framework SSR", exact: true }).click();
+  await page.locator("[data-framework-view]").selectOption("p50");
+  for (const workload of relatedData.framework.workloadDefinitions) {
+    await page.locator(`[data-workload="${workload.id}"]`).click();
+    assert.equal(await page.locator(".fw-row").count(), 5);
+    for (const row of relatedData.framework.workloads[workload.id]) {
+      const cell = page.locator(`.fw-row[data-focus="${row.id}"]`);
+      assert.equal(
+        await cell.locator(".fw-number").textContent(),
+        `${Number(row.p50).toLocaleString("en-US", { maximumFractionDigits: Number(row.p50) < 10 ? 2 : 1 })}ms`,
+      );
+      await cell.hover();
+      await page
+        .locator("[data-percentile-popup]")
+        .waitFor({ state: "visible" });
+      assert.equal(
+        await page.locator(".fw-popover-unit").first().textContent(),
+        "ms",
+      );
+      assert.deepEqual(
+        await page.locator(".fw-percentile-number strong").allTextContents(),
+        (["p50", "p95", "p99"] as const).map((q) =>
+          row.percentiles.equalLoad[q].toLocaleString("en-US", {
+            maximumFractionDigits:
+              row.percentiles.equalLoad[q] >= 1000
+                ? 0
+                : row.percentiles.equalLoad[q] < 10
+                  ? 3
+                  : 2,
+          }),
+        ),
+      );
+      assert.match(
+        required(await page.locator(".fw-popover-scope").textContent()),
+        new RegExp(`${row.equalLoadRps} requests/s`),
+      );
+    }
+  }
+  const raw = await context.request.get(
+    new URL(relatedData.framework.download, server.url).href,
+  );
+  assert.equal(raw.status(), 200);
+  const rawCapture = await raw.json();
+  assert.equal(
+    rawCapture.captureKind,
+    relatedData.framework.reviewRefresh ? "review" : "publication",
+  );
+  if (relatedData.framework.reviewRefresh) {
+    assert.equal(await page.locator("[data-review-note]").isVisible(), true);
+    const evidence = await context.request.get(
+      `${server.url}/data/proa-refresh/manifest.json`,
+    );
+    assert.equal(evidence.status(), 200);
+    assert.equal((await evidence.json()).reviewOnly, true);
+    const original = await (
+      await context.request.get(
+        `${server.url}/data/proa-refresh/baseline/framework.json`,
+      )
+    ).json();
+    assert.deepEqual(
+      rawCapture.engines.filter((e: { id: string }) => e.id !== "proa"),
+      original.engines.filter((e: { id: string }) => e.id !== "proa"),
+    );
+  }
+  await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
+  assert.equal(await page.locator("[data-renderer-comparison]").count(), 1);
+  assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
   await page.locator('[data-type="frameworks"]').click();
   assert.equal(await page.locator('[data-type="baselines"]').count(), 0);
-  assert.equal(await page.locator(".fw-uncaptured").count(), 0);
+  assert.equal(await page.locator('[data-stat-suite="framework"]').count(), 0);
+  checks.push(
+    "SSR Rendering keeps render-only columns and exports; all 15 HTTP values and millisecond hover percentiles stay in Framework SSR",
+  );
   const filtered: TestExport = JSON.parse(
     decodeURIComponent(
       required(await page.locator("[data-json]").getAttribute("href"))
@@ -442,7 +767,7 @@ try {
   );
   await navigate(`${server.url}/?chart=bars`);
   const miniature = await page
-    .locator(".fw-workload-thumb iframe")
+    .locator(".fw-workload-thumb img")
     .first()
     .elementHandle();
   assert.ok(miniature);
@@ -462,7 +787,7 @@ try {
     popupBefore,
   );
   assert.equal(await page.locator("[data-percentile-popup]").isVisible(), true);
-  checks.push("workload iframe identity and stable row/popover geometry");
+  checks.push("workload thumbnail identity and stable row/popover geometry");
   await firstRow.press("Escape");
   const jte = page.locator('.fw-row[data-focus="jte"]');
   await jte.hover();
@@ -556,8 +881,9 @@ try {
     "comparison cells show their own workload percentiles on hover and keyboard focus without click shifts",
   );
   await page.locator('[data-view="framework"]').click();
+  await page.locator('[data-workload="cards"]').click();
   await page.locator('[data-chart="bars"]').click();
-  assert.equal(await page.locator(".fw-row").count(), 4);
+  assert.equal(await page.locator(".fw-row").count(), 5);
   assert.equal(
     await page.locator("[data-framework-view]").inputValue(),
     "throughput",
@@ -577,7 +903,7 @@ try {
     );
   }
   await page
-    .getByRole("button", { name: "Preview 32-card catalog", exact: true })
+    .getByRole("button", { name: "Preview Component page", exact: true })
     .click();
   await page
     .frameLocator("[data-fixture-frame]")
@@ -594,8 +920,53 @@ try {
   await page
     .getByRole("button", { name: "Close workload preview", exact: true })
     .click();
+  const frameworkData: BenchmarkData = await (
+    await context.request.get(`${server.url}/data/results.json`)
+  ).json();
+  await page.locator('[data-chart="bars"]').click();
+  for (const workload of ["products", "table", "cards"]) {
+    await page.locator(`[data-workload="${workload}"]`).click();
+    assert.equal(await page.locator(".fw-row").count(), 5);
+    assert.equal(new URL(page.url()).searchParams.get("workload"), workload);
+    await page.locator("[data-framework-view]").selectOption("p50");
+    await page.locator('.fw-row[data-focus="sveltekit"]').hover();
+    await page.locator("[data-percentile-popup]").waitFor({ state: "visible" });
+    const definition = required(
+      frameworkData.framework.workloadDefinitions.find(
+        (w) => w.id === workload,
+      ),
+    );
+    assert.ok(
+      required(await page.locator(".fw-popover-scope").textContent()).includes(
+        `${definition.fixedRateRps} requests/s`,
+      ),
+    );
+    await page
+      .getByRole("button", { name: `Preview ${definition.label}`, exact: true })
+      .click();
+    const selector =
+      workload === "cards"
+        ? "[data-bench-card]"
+        : workload === "products"
+          ? "[data-bench-product]"
+          : "[data-bench-row]";
+    const count =
+      workload === "cards" ? 32 : workload === "products" ? 96 : 1000;
+    await page
+      .frameLocator("[data-fixture-frame]")
+      .locator(selector)
+      .nth(count - 1)
+      .waitFor();
+    assert.equal(
+      await page.frameLocator("[data-fixture-frame]").locator(selector).count(),
+      count,
+    );
+    await page
+      .getByRole("button", { name: "Close workload preview", exact: true })
+      .click();
+  }
   checks.push(
-    "separate full-framework suite with measured rows, metrics and admitted catalog preview",
+    "all three full-framework workloads have five measured rows, persisted selections, admitted previews and workload-specific hover",
   );
   await navigate(`${server.url}/features`);
   const featureData: { rows: FeatureRow[] } = await page.evaluate(async () =>
@@ -932,6 +1303,14 @@ try {
     assert.ok(geometry.left >= 0 && geometry.right <= width);
     assert.ok(geometry.top >= 0 && geometry.bottom <= 935);
     assert.ok(
+      Math.abs(geometry.left - (width - geometry.right)) < 2,
+      "profile is horizontally centered",
+    );
+    assert.ok(
+      Math.abs(geometry.top - (935 - geometry.bottom)) < 2,
+      "profile is vertically centered",
+    );
+    assert.ok(
       geometry.scroll <= geometry.width + 1,
       "profile has no horizontal overflow",
     );
@@ -994,7 +1373,7 @@ try {
   await page.locator('[data-feature-cell="exact/suspense"]').click();
   assert.match(
     required(await page.locator(".fw-feature-detail-status").textContent()),
-    /Not documented/,
+    /Not established/,
   );
   await page.locator(".fw-feature-dialog").press("Escape");
   assert.match(
@@ -1029,8 +1408,16 @@ try {
     await page.getByRole("link", { name: "Performance", exact: true }).click();
     await page.locator("#experiment-rendering").waitFor();
     await ready();
-    assert.equal(await page.locator(".fw-comparison tbody tr").count(), 21);
-    await page.locator(".fw-comparison tbody tr").first().hover();
+    assert.equal(
+      await page
+        .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
+        .count(),
+      renderCount,
+    );
+    await page
+      .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
+      .first()
+      .hover();
     await page.locator("[data-percentile-popup]").waitFor({ state: "visible" });
     await page.getByRole("link", { name: "Features", exact: true }).click();
     await page.locator("#feature-comparison").waitFor();
@@ -1049,19 +1436,29 @@ try {
   await page.locator('[data-section="ecosystem"]').click();
   await page.locator("[data-ecosystem]").waitFor({ state: "visible" });
   await page
-    .getByRole("link", { name: "Frameworks home", exact: true })
+    .getByRole("link", { name: "frameworks.run home", exact: true })
     .click();
   await page.locator("[data-performance]").waitFor({ state: "visible" });
   assert.equal(
     required(await page.locator("#site-title").textContent()),
     "Web framework benchmarks",
   );
-  const noJS = await browser.newContext({ javaScriptEnabled: false });
+  const noJS = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 1440, height: 1100 },
+  });
   const initial = await noJS.newPage();
   for (const [path, selector, count] of [
-    ["/", ".fw-comparison tbody tr", 21],
+    [
+      "/",
+      "[data-renderer-comparison] tbody tr[data-renderer-row]",
+      renderCount,
+    ],
+    ["/", "[data-framework-comparison] tbody tr[data-framework-row]", 0],
     ["/?chart=bars&workload=products&selected=proa,react", ".fw-row", 2],
-    ["/?view=framework", ".fw-row", 4],
+    ["/?view=framework&workload=cards", ".fw-row", 5],
+    ["/?view=framework&workload=products", ".fw-row", 5],
+    ["/?view=framework&workload=table", ".fw-row", 5],
     ["/?view=streaming", ".fw-stream-panel svg", 2],
     [
       "/features?group=server&display=matrix&tools=astro,nextjs",
@@ -1079,6 +1476,114 @@ try {
     const html = await response.text();
     assert.doesNotMatch(html, /This explorer needs JavaScript/);
   }
+  await initial.goto(`${server.url}/?chart=compare`);
+  const captures: BenchmarkData = await (
+    await context.request.get(`${server.url}/data/results.json`)
+  ).json();
+  const expectedNote = captures.rendering.refresh?.note || "";
+  const serverNote = initial.locator("[data-capture-note-copy]");
+  assert.equal(await serverNote.isVisible(), false);
+  assert.equal(await serverNote.textContent(), expectedNote);
+  await initial.evaluate(() => document.fonts.ready);
+  const serverTable = required(
+    await initial.locator("[data-renderer-comparison]").boundingBox(),
+  );
+  await navigate(`${server.url}/?chart=compare`);
+  await page.evaluate(() => document.fonts.ready);
+  assert.equal(await page.locator("[data-capture-note]").isVisible(), false);
+  assert.equal(
+    await page.locator("[data-capture-note-copy]").textContent(),
+    expectedNote,
+  );
+  const hydratedTable = required(
+    await page.locator("[data-renderer-comparison]").boundingBox(),
+  );
+  assert.ok(Math.abs(serverTable.y - hydratedTable.y) < 1);
+  await initial.getByText("Method & data", { exact: true }).click();
+  assert.equal(await serverNote.isVisible(), Boolean(expectedNote));
+  await page.getByText("Method & data", { exact: true }).click();
+  assert.equal(
+    await page.locator("[data-capture-note]").isVisible(),
+    Boolean(expectedNote),
+  );
+  checks.push(
+    "capture disclosure is server-rendered inside Method & data without shifting the hydrated table",
+  );
+  await initial.goto(`${server.url}/?view=startup`);
+  const serverDescription = initial.locator("[data-experiment-description]");
+  assert.equal(await serverDescription.isVisible(), true);
+  const coldStartDefinition = await serverDescription.textContent();
+  await page.getByRole("tab", { name: "Cold Start", exact: true }).click();
+  assert.equal(
+    await page.locator("[data-experiment-description]").isVisible(),
+    true,
+  );
+  assert.equal(
+    await page.locator("[data-experiment-description]").textContent(),
+    coldStartDefinition,
+  );
+  assert.equal(
+    await page.locator("[data-capture-note]").isVisible(),
+    Boolean(captures.startup.reviewRefresh),
+  );
+  assert.equal(
+    await page.locator("[data-capture-note-copy]").textContent(),
+    captures.startup.reviewRefresh?.note || "",
+  );
+  await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
+  assert.equal(
+    await page.locator("[data-experiment-description]").isVisible(),
+    false,
+  );
+  assert.equal(
+    await page.locator("[data-capture-note-copy]").textContent(),
+    expectedNote,
+  );
+  checks.push(
+    "Cold Start definition renders on the server and follows experiment tab selection",
+  );
+  await initial.goto(`${server.url}/methodology`);
+  const methodology = required(await initial.locator("main").textContent());
+  for (const workload of captures.framework.workloadDefinitions) {
+    assert.ok(
+      methodology.includes(
+        `${workload.label}: ${workload.fixedRateRps} requests/s`,
+      ),
+    );
+    assert.ok(
+      methodology.includes(
+        `${workload.label}: ${workload.capacityDurationSeconds} seconds`,
+      ),
+    );
+  }
+  checks.push(
+    "server-rendered methodology follows each workload's captured load rate",
+  );
+  await initial.goto(server.url);
+  await initial.getByRole("link", { name: "Ecosystem", exact: true }).click();
+  assert.equal(await initial.locator("h1").textContent(), "The ecosystem");
+  await initial.getByRole("link", { name: "Performance", exact: true }).click();
+  assert.equal(
+    await initial
+      .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
+      .count(),
+    renderCount,
+  );
+  assert.match(
+    methodology,
+    /Exact uses its production JavaScript SSR backend on Bun/,
+  );
+  await initial.goto(`${server.url}/?view=framework&framework=p50`);
+  await initial.waitForLoadState("load");
+  assert.match(
+    required(
+      await initial.locator('.fw-row[data-focus="exact"]').textContent(),
+    ),
+    /Exact \(JS SSR\)/,
+  );
+  checks.push(
+    "header navigation and backend disclosures work without JavaScript",
+  );
   await noJS.close();
   checks.push(
     "Cloudflare request-time SSR sends selected benchmark tables, bars, streaming panels and feature filters with JavaScript disabled",
@@ -1089,6 +1594,113 @@ try {
   await reducedPage.locator('[data-app-ready="true"]').waitFor();
   assert.equal(await reducedPage.locator("[data-play]").isDisabled(), true);
   await reduced.close();
+  await navigate(`${server.url}/?view=rendering&workload=cards&chart=bars`);
+  await page.locator('[data-workload="products"]').click();
+  await page.locator('a[data-section="ecosystem"]').click();
+  await page.locator("[data-ecosystem]").waitFor({ state: "visible" });
+  await page.locator('a[data-section="performance"]').click();
+  await page.locator("[data-performance]").waitFor({ state: "visible" });
+  assert.match(page.url(), /workload=products/);
+  assert.match(
+    required(
+      await page.locator('a[data-section="ecosystem"]').getAttribute("href"),
+    ),
+    /workload=products/,
+  );
+  checks.push(
+    "section links preserve live chart state and expose working fallback URLs",
+  );
+  const axeSource = await readFile(
+    join(siteRoot, "node_modules/axe-core/axe.min.js"),
+    "utf8",
+  );
+  const accessibilityViolations = () =>
+    page.evaluate(async () => {
+      const result = await window.axe.run(document, {
+        runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21aa"] },
+      });
+      return result.violations.map(({ id, nodes }) => ({
+        id,
+        targets: nodes.map(({ target }) => target),
+      }));
+    });
+  for (const theme of ["light", "dark"]) {
+    for (const path of [
+      "/",
+      "/?view=streaming",
+      "/features",
+      "/features?display=matrix&group=server&tools=nextjs,astro,exact,proa",
+      "/about",
+      "/methodology",
+    ]) {
+      await page.setViewportSize({ width: 1280, height: 1000 });
+      await navigate(server.url + path);
+      await page.evaluate((theme) => {
+        document.documentElement.dataset.theme = theme;
+      }, theme);
+      await page.addScriptTag({ content: axeSource });
+      assert.deepEqual(
+        await accessibilityViolations(),
+        [],
+        `${theme} ${path} accessibility`,
+      );
+      if (path === "/features") {
+        await page.locator('[data-feature-profile="nextjs"]').click();
+        await page.locator(".fw-feature-dialog[open]").waitFor();
+        assert.deepEqual(
+          await accessibilityViolations(),
+          [],
+          `${theme} feature profile accessibility`,
+        );
+        await page.locator(".fw-feature-dialog").press("Escape");
+        await page.locator("[data-tool-picker-trigger]").click();
+        assert.deepEqual(
+          await accessibilityViolations(),
+          [],
+          `${theme} tool picker accessibility`,
+        );
+        await page.locator("#fw-tool-picker").press("Escape");
+      }
+    }
+    for (const view of ["http", "framework", "streaming"]) {
+      await navigate(`${server.url}/?view=${view}`);
+      const select = page.locator("select:visible");
+      assert.equal(await select.count(), 1);
+      const style = await select.evaluate((element) => {
+        const css = getComputedStyle(element);
+        return {
+          appearance: css.appearance,
+          inset: css.backgroundPosition,
+          padding: parseFloat(css.paddingRight),
+          image: css.backgroundImage,
+        };
+      });
+      assert.equal(style.appearance, "none");
+      assert.ok(style.inset.includes("12px"));
+      assert.ok(style.padding >= 34);
+      assert.ok(style.image.includes("svg"));
+    }
+  }
+  await page.setViewportSize({ width: 375, height: 812 });
+  await navigate(`${server.url}/features`);
+  await page.addScriptTag({ content: axeSource });
+  assert.deepEqual(
+    await accessibilityViolations(),
+    [],
+    "mobile features accessibility",
+  );
+  const mobileSelect = page.locator("select:visible");
+  assert.equal(await mobileSelect.count(), 1);
+  assert.ok(
+    await mobileSelect.evaluate(
+      (element) => parseFloat(getComputedStyle(element).paddingRight) >= 34,
+    ),
+  );
+  await mobileSelect.selectOption("metadata");
+  assert.match(page.url(), /group=metadata/);
+  checks.push(
+    "public pages pass WCAG A/AA automated checks in both themes; all analysis and mobile selects retain inset arrows",
+  );
   assert.deepEqual(errors, []);
   await writeFile(
     join(siteRoot, "test-results/browser.json"),

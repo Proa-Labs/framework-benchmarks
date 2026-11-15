@@ -9,19 +9,38 @@
     "ignoreUnknown": true,
     "includes": [
       "site/**",
-      "framework-ssr/**",
-      "tooling/**",
-      "rendering/canonical/run.mjs",
-      "rendering/canonical/refresh-proa.mjs",
-      "rendering/canonical/adapters.json",
-      "rendering/canonical/source_fingerprint.mjs",
-      "rendering/canonical/workloads.json",
+      "benchmarks/framework-ssr/**",
+      "tooling/adapters/**",
+      "tooling/capture/**",
+      "tooling/checks/**",
+      "tooling/cli/**",
+      "tooling/cloud/**",
+      "tooling/repository*.mjs",
+      "tooling/reports.mjs",
+      "benchmarks/rendering/external/astro/*.mjs",
+      "benchmarks/rendering/external/sveltekit/suite_bench.mjs",
+      "benchmarks/rendering/external/sveltekit/render_build.mjs",
+      "benchmarks/rendering/external/next/*.mjs",
+      "benchmarks/rendering/external/next/app/**/*.jsx",
+      "benchmarks/rendering/external/exact/*.mjs",
+      "benchmarks/rendering/external/shared/render_inputs.mjs",
+      "benchmarks/rendering/canonical/run.mjs",
+      "benchmarks/rendering/canonical/render-contract.mjs",
+      "benchmarks/rendering/canonical/refresh-proa.mjs",
+      "benchmarks/rendering/canonical/adapters.json",
+      "benchmarks/rendering/canonical/source_fingerprint.mjs",
+      "benchmarks/rendering/canonical/workloads.json",
       "biome.json",
       "!site/public",
       "!**/package-lock.json",
       "!**/bun.lock",
-      "!framework-ssr/results",
-      "!site/src/routeTree.gen.ts"
+      "!benchmarks/framework-ssr/results",
+      "!site/src/routeTree.gen.ts",
+      "package.json",
+      "turbo.json",
+      "benchmarks/rendering/external/*/package.json",
+      "benchmarks/framework-ssr/prepare-fixtures.ts",
+      "tooling/checks/workspace.test.mjs"
     ]
   },
   "formatter": {
@@ -32,11 +51,16 @@
     "enabled": true,
     "rules": {
       "preset": "recommended"
+    },
+    "domains": {
+      "react": "recommended"
     }
   },
   "overrides": [
     {
-      "includes": ["framework-ssr/adapters/next/app/catalog/page.jsx"],
+      "includes": [
+        "benchmarks/framework-ssr/adapters/next/app/catalog/page.jsx"
+      ],
       "linter": {
         "rules": {
           "a11y": {
@@ -56,7 +80,9 @@
       }
     },
     {
-      "includes": ["framework-ssr/adapters/astro/src/pages/catalog.astro"],
+      "includes": [
+        "benchmarks/framework-ssr/adapters/astro/src/pages/catalog.astro"
+      ],
       "linter": {
         "rules": {
           "correctness": {
@@ -72,6 +98,30 @@
         "rules": {
           "style": {
             "noNonNullAssertion": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["benchmarks/framework-ssr/adapters/next/app/**/*.tsx"],
+      "linter": {
+        "rules": {
+          "a11y": {
+            "useSemanticElements": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "benchmarks/framework-ssr/adapters/astro/src/pages/*.astro",
+        "benchmarks/framework-ssr/adapters/sveltekit/src/routes/**/*.svelte"
+      ],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
           }
         }
       }

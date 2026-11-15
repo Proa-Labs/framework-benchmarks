@@ -1,0 +1,30 @@
+{
+  "name": "Framework SSR Benchmark",
+  "short_name": "SSR Benchmark",
+  "id": "run.frameworks.ssrbench",
+  "start_url": "/cards",
+  "display": "standalone",
+  "app": {
+    "id": "run.frameworks.ssrbench",
+    "name": "Framework SSR Benchmark"
+  },
+  "host": {
+    "web": {}
+  },
+  "deploy": {
+    "store": {
+      "web": "0"
+    }
+  },
+  "data": [
+    "bench-page",
+    "bench-section",
+    "bench-card",
+    "bench-description",
+    "bench-product",
+    "bench-row",
+    "bench-request",
+    "filled",
+    "active"
+  ]
+}

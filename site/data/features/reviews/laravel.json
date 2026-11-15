@@ -1,0 +1,605 @@
+{
+  "id": "laravel",
+  "scope": "Laravel 13.x with Blade. Livewire, Inertia, Laravel Head and other companion packages are identified separately; native PHP has a separate row.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "Blade compiles server templates, supports layouts/components/sections and keeps PHP view execution on the server.",
+      "url": "https://laravel.com/framework/docs/13.x/blade"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "Streamed responses and event streams emit incremental output. This is transport streaming, not a component Suspense replacement protocol.",
+      "url": "https://laravel.com/framework/docs/13.x/responses"
+    },
+    "suspense": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel rendering guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/blade"
+    },
+    "client": {
+      "status": "official",
+      "note": "Official React, Vue and Svelte starter kits integrate Inertia for browser navigation/rendering. Blade alone does not hydrate into a client component runtime.",
+      "url": "https://laravel.com/framework/docs/13.x/starter-kits",
+      "label": "Inertia starter kits"
+    },
+    "ssg": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel rendering guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/blade"
+    },
+    "csr": {
+      "status": "official",
+      "note": "Official React, Vue and Svelte starter kits integrate Inertia for browser navigation/rendering. Blade alone does not hydrate into a client component runtime.",
+      "url": "https://laravel.com/framework/docs/13.x/starter-kits",
+      "label": "Inertia starter kits"
+    },
+    "serverOnly": {
+      "status": "native",
+      "note": "Blade compiles server templates, supports layouts/components/sections and keeps PHP view execution on the server.",
+      "url": "https://laravel.com/framework/docs/13.x/blade"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel rendering guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/blade"
+    },
+    "routing": {
+      "status": "native",
+      "note": "Routes match methods and parameterized paths, invoke controllers and return response/redirect endpoints.",
+      "url": "https://laravel.com/framework/docs/13.x/routing"
+    },
+    "layouts": {
+      "status": "native",
+      "note": "Blade compiles server templates, supports layouts/components/sections and keeps PHP view execution on the server.",
+      "url": "https://laravel.com/framework/docs/13.x/blade"
+    },
+    "dynamicRoutes": {
+      "status": "native",
+      "note": "Routes match methods and parameterized paths, invoke controllers and return response/redirect endpoints.",
+      "url": "https://laravel.com/framework/docs/13.x/routing"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel routing guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/routing"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel routing guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/routing"
+    },
+    "prefetch": {
+      "status": "official",
+      "note": "Inertia Link in Laravel's official Inertia starter-kit workflow can prefetch page visits on hover or click. This is frontend Inertia behavior, not automatic prefetching for plain Blade anchors.",
+      "url": "https://inertiajs.com/",
+      "reviewedOn": "2026-11-11",
+      "label": "Inertia starter kits"
+    },
+    "softNavigation": {
+      "status": "official",
+      "note": "Official React/Vue/Svelte starter kits integrate Inertia for SPA-style visits to server-owned routes. This requires the Inertia frontend; native Blade links alone remain document navigation.",
+      "url": "https://laravel.com/framework/docs/13.x/starter-kits",
+      "reviewedOn": "2026-11-11",
+      "label": "Inertia starter kits"
+    },
+    "viewTransitions": {
+      "status": "undocumented",
+      "note": "The reviewed routing API does not establish this navigation capability. Application code or another package may provide it; this finding is not proof of absence.",
+      "url": "https://laravel.com/framework/docs/13.x/routing",
+      "reviewedOn": "2026-11-11"
+    },
+    "redirects": {
+      "status": "native",
+      "note": "Routes match methods and parameterized paths, invoke controllers and return response/redirect endpoints.",
+      "url": "https://laravel.com/framework/docs/13.x/routing"
+    },
+    "serverData": {
+      "status": "native",
+      "note": "Eloquent models and query builders load relational data, with relationships, eager loading and model lifecycle hooks.",
+      "url": "https://laravel.com/framework/docs/13.x/eloquent"
+    },
+    "clientData": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel data guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/cache"
+    },
+    "requestDedupe": {
+      "status": "undocumented",
+      "note": "The reviewed database guide establishes query execution/transactions but does not establish general request-wide equivalent-read deduplication.",
+      "url": "https://laravel.com/framework/docs/13.x/database"
+    },
+    "persistentCache": {
+      "status": "native",
+      "note": "Named cache stores support retention, remember operations, deletion and supported-store tags. Tag availability varies by driver.",
+      "url": "https://laravel.com/framework/docs/13.x/cache"
+    },
+    "invalidation": {
+      "status": "native",
+      "note": "Named cache stores support retention, remember operations, deletion and supported-store tags. Tag availability varies by driver.",
+      "url": "https://laravel.com/framework/docs/13.x/cache"
+    },
+    "isr": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel data guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/cache"
+    },
+    "apiRoutes": {
+      "status": "native",
+      "note": "Routes match methods and parameterized paths, invoke controllers and return response/redirect endpoints.",
+      "url": "https://laravel.com/framework/docs/13.x/routing"
+    },
+    "httpErrors": {
+      "status": "native",
+      "note": "abort and HTTP exceptions select error statuses, and custom error views retain the exception’s status. The exception handler maps unexpected failures to server-error responses. Custom response/render callbacks must preserve the intended status. Once a streamed response has sent headers, a later failure cannot change its HTTP status.",
+      "url": "https://laravel.com/framework/docs/13.x/errors#http-exceptions",
+      "label": "HTTP exceptions / responses",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel server guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/responses"
+    },
+    "forms": {
+      "status": "native",
+      "note": "Request/FormRequest validation integrates redirect errors, old input and JSON validation responses.",
+      "url": "https://laravel.com/framework/docs/13.x/validation",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Request/FormRequest validation integrates redirect errors, old input and JSON validation responses."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "native",
+      "note": "Middleware wraps request processing, with route/group configuration and shared response policy.",
+      "url": "https://laravel.com/framework/docs/13.x/middleware"
+    },
+    "cookies": {
+      "status": "native",
+      "note": "Session drivers and cookie middleware manage request state; production stores and cookie flags require configuration.",
+      "url": "https://laravel.com/framework/docs/13.x/session"
+    },
+    "cssModules": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel styling guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/vite"
+    },
+    "scopedCss": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel styling guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/vite"
+    },
+    "tailwind": {
+      "status": "community",
+      "note": "Laravel’s official starter kits configure Tailwind for the selected UI stack. Tailwind supplies the separately installed CSS compiler; the starter-kit configuration does not make that compiler Laravel-owned.",
+      "url": "https://laravel.com/framework/docs/13.x/starter-kits",
+      "label": "Tailwind in starter kits",
+      "reviewedOn": "2026-11-13"
+    },
+    "cssInJs": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel styling guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/vite"
+    },
+    "images": {
+      "status": "native",
+      "note": "The Image facade transforms and encodes images, integrating uploads/storage. Install Intervention Image v4 and a supported GD/Imagick driver as documented.",
+      "url": "https://laravel.com/framework/docs/13.x/images"
+    },
+    "fonts": {
+      "status": "partial",
+      "note": "Vite asset helpers support app-owned font/script loading and preload policy. Automatic font metrics/subsetting or a dedicated third-party script scheduler is not established.",
+      "url": "https://laravel.com/framework/docs/13.x/vite",
+      "label": "Asset pipeline",
+      "reviewedOn": "2026-11-10"
+    },
+    "scripts": {
+      "status": "partial",
+      "note": "Vite asset helpers support app-owned font/script loading and preload policy. Automatic font metrics/subsetting or a dedicated third-party script scheduler is not established.",
+      "url": "https://laravel.com/framework/docs/13.x/vite",
+      "label": "Asset pipeline",
+      "reviewedOn": "2026-11-10"
+    },
+    "assetPipeline": {
+      "status": "native",
+      "note": "Laravel’s Vite integration resolves production manifest entries to versioned JS, CSS, and imported assets. Static images must enter the Vite graph through imports or import.meta.glob and be referenced through the integration. Files served directly from public/ keep their names.",
+      "url": "https://laravel.com/framework/docs/13.x/vite#processing-static-assets-with-vite",
+      "label": "Vite integration",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "native",
+      "note": "Laravel's Vite integration handles asset URLs, hot updates and production manifests; browser tooling is installed separately.",
+      "url": "https://laravel.com/framework/docs/13.x/vite"
+    },
+    "metadata": {
+      "status": "official",
+      "note": "Laravel Head resolves defaults, route groups, route values, runtime values and error values field by field. Higher layers replace lower fields; inherited title prefix/suffix can be bypassed with exact titles. This is route-layer inheritance, not filesystem-layout traversal.",
+      "url": "https://laravel.com/framework/docs/13.x/head",
+      "label": "Laravel Head",
+      "assessment": {
+        "summary": "A structured first-party metadata package with explicit field precedence and Blade/Livewire/Inertia integration.",
+        "strengths": [
+          "Defaults survive unless a higher-priority layer replaces that field.",
+          "Route groups, runtime values and exact titles have documented precedence."
+        ],
+        "tradeoffs": [
+          "Install laravel/head separately.",
+          "Inheritance follows route/runtime layers, rather than a Next-style nested layout tree."
+        ]
+      }
+    },
+    "dynamicMetadata": {
+      "status": "official",
+      "note": "Laravel Head resolves defaults, route groups, route values, runtime values and error values field by field. Higher layers replace lower fields; inherited title prefix/suffix can be bypassed with exact titles. This is route-layer inheritance, not filesystem-layout traversal.",
+      "url": "https://laravel.com/framework/docs/13.x/head",
+      "label": "Laravel Head"
+    },
+    "metadataInheritance": {
+      "status": "official",
+      "note": "Laravel Head resolves defaults, route groups, route values, runtime values and error values field by field. Higher layers replace lower fields; inherited title prefix/suffix can be bypassed with exact titles. This is route-layer inheritance, not filesystem-layout traversal.",
+      "url": "https://laravel.com/framework/docs/13.x/head",
+      "label": "Laravel Head"
+    },
+    "metadataOverrides": {
+      "status": "official",
+      "note": "Laravel Head resolves defaults, route groups, route values, runtime values and error values field by field. Higher layers replace lower fields; inherited title prefix/suffix can be bypassed with exact titles. This is route-layer inheritance, not filesystem-layout traversal.",
+      "url": "https://laravel.com/framework/docs/13.x/head",
+      "label": "Laravel Head"
+    },
+    "titleTemplates": {
+      "status": "official",
+      "note": "Laravel Head resolves defaults, route groups, route values, runtime values and error values field by field. Higher layers replace lower fields; inherited title prefix/suffix can be bypassed with exact titles. This is route-layer inheritance, not filesystem-layout traversal.",
+      "url": "https://laravel.com/framework/docs/13.x/head",
+      "label": "Laravel Head"
+    },
+    "socialImages": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/head"
+    },
+    "sitemaps": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/head"
+    },
+    "robots": {
+      "status": "native",
+      "note": "Laravel’s application scaffold includes public/robots.txt, served unchanged from the public web root. Laravel Head’s per-page robots meta fields are a separate mechanism; the application owns the crawler-file directives.",
+      "url": "https://github.com/laravel/laravel/blob/a255d7688770af9713daff1439c47ff9bc6abd47/public/robots.txt",
+      "label": "Scaffolded public/robots.txt",
+      "reviewedOn": "2026-11-13"
+    },
+    "markdown": {
+      "status": "native",
+      "note": "Str::markdown/inlineMarkdown render Markdown through the framework string helpers. They do not compile MDX components.",
+      "url": "https://laravel.com/framework/docs/13.x/strings"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel content guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/blade"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel content guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/blade"
+    },
+    "translations": {
+      "status": "native",
+      "note": "Translation files, pluralization, fallback locales and locale selection are documented. Locale formatting beyond translation uses PHP intl or a library.",
+      "url": "https://laravel.com/framework/docs/13.x/localization"
+    },
+    "localeRouting": {
+      "status": "partial",
+      "note": "The guide sets locale from request/route input. Automatic localized URL generation/negotiation requires application policy or another package.",
+      "url": "https://laravel.com/framework/docs/13.x/localization",
+      "label": "Locale route recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "localeFormatting": {
+      "status": "native",
+      "note": "Laravel Number helpers format currency, percentages, ordinals and numbers with locale selection. PHP intl may be required by the operation.",
+      "url": "https://laravel.com/framework/docs/13.x/helpers",
+      "label": "Number helpers"
+    },
+    "auth": {
+      "status": "native",
+      "note": "Guards/providers and session authentication integrate with first-party starter/auth packages. Applications select account and authorization policy.",
+      "url": "https://laravel.com/framework/docs/13.x/authentication"
+    },
+    "csp": {
+      "status": "partial",
+      "note": "Vite::useCspNonce generates or accepts nonces for emitted asset tags. Applications must set the matching HTTP policy and cover other script/style sources.",
+      "url": "https://laravel.com/framework/docs/13.x/vite",
+      "label": "Asset nonce integration",
+      "reviewedOn": "2026-11-10"
+    },
+    "cspNonce": {
+      "status": "partial",
+      "note": "Vite::useCspNonce generates or accepts a nonce for Vite-emitted asset tags. Applications must set the matching response policy and nonce any other inline or streaming scripts; this is asset-tag coverage, not automatic coverage of every source.",
+      "url": "https://laravel.com/framework/docs/13.x/vite#content-security-policy-csp-nonce",
+      "reviewedOn": "2026-11-11",
+      "label": "Vite asset-tag nonces"
+    },
+    "csrf": {
+      "status": "native",
+      "note": "CSRF middleware validates browser writes with tokens/origin checks according to configured middleware and exclusions.",
+      "url": "https://laravel.com/framework/docs/13.x/csrf"
+    },
+    "environment": {
+      "status": "native",
+      "note": "Environment-backed configuration, encrypted environment files and production config caching are documented. Only deliberately exposed values should enter browser assets.",
+      "url": "https://laravel.com/framework/docs/13.x/configuration"
+    },
+    "types": {
+      "status": "undocumented",
+      "note": "The reviewed Laravel/PHP testing workflow does not establish compile-time template/application type checking. PHP declarations are runtime checks; tools such as static analyzers are separate integrations.",
+      "url": "https://laravel.com/framework/docs/13.x/testing"
+    },
+    "hmr": {
+      "status": "native",
+      "note": "Laravel's Vite integration handles asset URLs, hot updates and production manifests; browser tooling is installed separately.",
+      "url": "https://laravel.com/framework/docs/13.x/vite"
+    },
+    "cli": {
+      "status": "native",
+      "note": "Artisan supplies application commands, generators, development processes, migrations and production maintenance operations.",
+      "url": "https://laravel.com/framework/docs/13.x/artisan"
+    },
+    "bundleAnalysis": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel tooling guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/vite"
+    },
+    "unitTests": {
+      "status": "native",
+      "note": "Laravel's test harness supplies HTTP/application assertions and database testing support with Pest or PHPUnit.",
+      "url": "https://laravel.com/framework/docs/13.x/testing"
+    },
+    "e2eTests": {
+      "status": "official",
+      "note": "Laravel Dusk supplies browser automation and application-aware assertions.",
+      "url": "https://laravel.com/framework/docs/13.x/dusk",
+      "label": "Dusk"
+    },
+    "observability": {
+      "status": "native",
+      "note": "Logging channels integrate structured context and external transports; first-party Telescope/Pulse/Nightwatch add inspection and monitoring.",
+      "url": "https://laravel.com/framework/docs/13.x/logging"
+    },
+    "errorHandling": {
+      "status": "partial",
+      "note": "Exception handling renders application error responses and reports failures. This is not a client component recovery boundary.",
+      "url": "https://laravel.com/framework/docs/13.x/errors",
+      "label": "Exception responses",
+      "reviewedOn": "2026-11-10"
+    },
+    "serverHosting": {
+      "status": "native",
+      "note": "The production guide documents PHP server deployment, configuration/cache commands, workers and health checks.",
+      "url": "https://laravel.com/framework/docs/13.x/deployment"
+    },
+    "subpathProxy": {
+      "status": "partial",
+      "note": "Laravel documents trusted proxy addresses and forwarded headers so request URLs use the public scheme and host. A subdirectory deployment must also align the web server’s application base, URL generation, assets and any browser router. Trusted-proxy configuration or a route group prefix alone is not an automatic rebasing pipeline.",
+      "url": "https://laravel.com/framework/docs/13.x/requests#configuring-trusted-proxies",
+      "label": "Trusted proxies; host-owned mount",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel deployment guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/deployment"
+    },
+    "containers": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel deployment guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/deployment"
+    },
+    "edgeHosting": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed Laravel deployment guide. External integrations or application code may provide this behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/deployment"
+    },
+    "orm": {
+      "status": "native",
+      "note": "Eloquent models and query builders load relational data, with relationships, eager loading and model lifecycle hooks.",
+      "url": "https://laravel.com/framework/docs/13.x/eloquent",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Eloquent integrates model relationships, explicit eager loading and opt-in detection of accidental lazy loading.",
+        "strengths": [
+          "Relationship queries and with/load can avoid common N+1 patterns.",
+          "preventLazyLoading can reject or report accidental lazy relationships during development."
+        ],
+        "tradeoffs": [
+          "These are configured behaviors, not a guarantee of optimal queries. Application code must choose eager loading and examine emitted SQL."
+        ]
+      }
+    },
+    "migrations": {
+      "status": "native",
+      "note": "Artisan migrations apply versioned schema changes and maintain execution history with rollback operations.",
+      "url": "https://laravel.com/framework/docs/13.x/migrations"
+    },
+    "transactions": {
+      "status": "native",
+      "note": "Database APIs provide atomic transactions and request-scoped query-result caching; database behavior and drivers remain relevant.",
+      "url": "https://laravel.com/framework/docs/13.x/database"
+    },
+    "jobs": {
+      "status": "native",
+      "note": "Queue connections/workers support job dispatch, retries, failures and lifecycle policy; a durable production driver must be configured.",
+      "url": "https://laravel.com/framework/docs/13.x/queues"
+    },
+    "mail": {
+      "status": "native",
+      "note": "Mailables, transports, templates and queued delivery form the integrated mail workflow.",
+      "url": "https://laravel.com/framework/docs/13.x/mail"
+    },
+    "uploads": {
+      "status": "native",
+      "note": "Uploaded files integrate with named filesystem disks, local/cloud storage, URLs and visibility controls.",
+      "url": "https://laravel.com/framework/docs/13.x/filesystem"
+    },
+    "realtime": {
+      "status": "official",
+      "note": "Laravel broadcasting integrates channels/auth and Echo; the first-party Reverb package supplies a WebSocket server.",
+      "url": "https://laravel.com/framework/docs/13.x/broadcasting",
+      "label": "Broadcasting / Reverb"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Blade {{ }} output is passed through htmlspecialchars; {!! !!} outputs unescaped data. The documentation warns against using unescaped output for user-controlled content.",
+      "url": "https://laravel.com/framework/docs/13.x/blade#displaying-unescaped-data",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://laravel.com/framework/docs/13.x/vite",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "native",
+      "note": "Gates and resource policies centralize authorization checks and convert denied actions to authorization failures. Authentication does not imply permission; callers must apply the policy.",
+      "url": "https://laravel.com/framework/docs/13.x/authorization",
+      "reviewedOn": "2026-11-11",
+      "label": "Gates / policies"
+    },
+    "rateLimiting": {
+      "status": "native",
+      "note": "RateLimiter and throttle middleware provide keyed attempts/time windows through a configured cache store. Distributed enforcement requires shared storage and appropriate atomic operations.",
+      "url": "https://laravel.com/framework/docs/13.x/rate-limiting",
+      "reviewedOn": "2026-11-11",
+      "label": "RateLimiter"
+    },
+    "progressiveEnhancement": {
+      "status": "native",
+      "note": "Blade forms submit native HTTP requests with CSRF tokens, validation redirects, old input and error bags. Inertia/other client forms have their own JS requirements and are not used to establish this native Blade behavior.",
+      "url": "https://laravel.com/framework/docs/13.x/validation",
+      "reviewedOn": "2026-11-11",
+      "label": "Blade / validation redirects"
+    },
+    "optimisticUi": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific optimistic updates contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://laravel.com/framework/docs/13.x/cache",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific stale request handling contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://laravel.com/framework/docs/13.x/cache",
+      "reviewedOn": "2026-11-11"
+    },
+    "typedLinks": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific typed links & parameters contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://laravel.com/framework/docs/13.x/starter-kits",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://laravel.com/framework/docs/13.x/starter-kits",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "official",
+      "note": "Inertia remembers configured local state and preserves component state on selected visits. This requires the Inertia starter-kit/frontend path; ordinary Blade pages do not inherit it automatically.",
+      "url": "https://inertiajs.com/remembering-state",
+      "reviewedOn": "2026-11-11",
+      "label": "Inertia"
+    },
+    "scrollRestoration": {
+      "status": "official",
+      "note": "Inertia resets scroll on visits and restores document/marked scroll regions on history navigation; preserveScroll controls exceptions. This belongs to the Inertia frontend, not plain Blade.",
+      "url": "https://inertiajs.com/scroll-management",
+      "reviewedOn": "2026-11-11",
+      "label": "Inertia"
+    },
+    "navigationBlocking": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific unsaved-change guards contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://laravel.com/framework/docs/13.x/starter-kits",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationAccessibility": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessible navigation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://laravel.com/framework/docs/13.x/starter-kits",
+      "reviewedOn": "2026-11-11"
+    },
+    "a11yChecks": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://laravel.com/framework/docs/13.x/starter-kits",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://laravel.com/framework/docs/13.x/starter-kits",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "official",
+      "note": "Official Inertia starter kits use Vite page resolution; lazy import page modules can split frontend screens. This applies to the chosen starter kit and its import configuration, not server-rendered Blade alone.",
+      "url": "https://inertiajs.com/code-splitting",
+      "reviewedOn": "2026-11-11",
+      "label": "Inertia / Vite"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://laravel.com/framework/docs/13.x/deployment",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "native",
+      "note": "The scheduler defines recurring jobs/commands; a scheduler runner or cron triggers it. withoutOverlapping and onOneServer use cache locks; distributed execution requires supported shared cache configuration.",
+      "url": "https://laravel.com/framework/docs/13.x/scheduling",
+      "reviewedOn": "2026-11-11",
+      "label": "Task scheduler"
+    },
+    "notifications": {
+      "status": "native",
+      "note": "Notification classes select and format mail, database, broadcast, SMS and other channels, optionally queued. Delivery providers and many extra channels are separately configured services/packages.",
+      "url": "https://laravel.com/framework/docs/13.x/notifications",
+      "reviewedOn": "2026-11-11",
+      "label": "Notifications"
+    },
+    "searchIndex": {
+      "status": "official",
+      "note": "Scout synchronizes searchable Eloquent models through model observers and offers database and external search drivers. External engines require their own service/configuration; this is more than a raw LIKE query.",
+      "url": "https://laravel.com/framework/docs/13.x/scout",
+      "reviewedOn": "2026-11-11",
+      "label": "Laravel Scout"
+    },
+    "fieldEncryption": {
+      "status": "native",
+      "note": "Eloquent encrypted casts encrypt stored attributes and decrypt reads. Encrypted values cannot be queried normally; key rotation/re-encryption and larger storage are application/deployment concerns.",
+      "url": "https://laravel.com/framework/docs/13.x/eloquent-mutators#encrypted-casting",
+      "reviewedOn": "2026-11-11",
+      "label": "Encrypted casts"
+    },
+    "httpTests": {
+      "status": "native",
+      "note": "The application test case simulates requests internally and exposes response/JSON, auth, cookie and session assertions. It does not require a running network server; middleware behavior must be considered in tests.",
+      "url": "https://laravel.com/framework/docs/13.x/http-tests",
+      "reviewedOn": "2026-11-11",
+      "label": "HTTP test harness"
+    }
+  }
+}

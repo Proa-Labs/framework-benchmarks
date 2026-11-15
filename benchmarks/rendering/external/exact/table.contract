@@ -1,0 +1,135 @@
+shape Account
+  id: number
+  name: string
+  email: string
+  status: string
+  amountCents: number
+  taxCents: number
+  createdUnix: number
+  updatedUnix: number
+  scoreBps: number
+  country: string
+  tags: string[]
+
+style Header
+  padding="16px 24px" border-bottom-width=1 border-bottom-style="solid" border-bottom-color="#e5e7eb"
+style Title
+  font-size=20 font-weight=600
+style Subtitle
+  font-size=14 color="#4b5563"
+style Main
+  padding=24
+style Table
+  min-width="100%" font-size=14 border-spacing=0
+style Head
+  background-color="#f3f4f6"
+style Left
+  padding="8px 12px" text-align="left"
+style Right
+  padding="8px 12px" text-align="right"
+style White
+  background-color="#ffffff"
+style Gray
+  background-color="#f9fafb"
+style Cell
+  padding="8px 12px"
+style Id
+  padding="8px 12px" font-family="monospace" color="#6b7280"
+style Email
+  padding="8px 12px" color="#1d4ed8"
+style Amount
+  padding="8px 12px" text-align="right" font-family="monospace"
+style Tax
+  padding="8px 12px" text-align="right" font-family="monospace" color="#6b7280"
+style Total
+  padding="8px 12px" text-align="right" font-family="monospace" font-weight=600
+style Date
+  padding="8px 12px" color="#4b5563"
+style Tag
+  padding="2px 8px" margin-right=4 border-radius=4 font-size=12 background-color="#eff6ff" color="#1d4ed8" border-width=1 border-style="solid" border-color="#bfdbfe"
+style Active
+  align-items="center" padding="2px 8px" border-radius=4 font-size=12 font-weight=500 border-width=1 border-style="solid" background-color="#dcfce7" color="#166534" border-color="#86efac"
+style Pending
+  align-items="center" padding="2px 8px" border-radius=4 font-size=12 font-weight=500 border-width=1 border-style="solid" background-color="#fef9c3" color="#854d0e" border-color="#fde047"
+style Disabled
+  align-items="center" padding="2px 8px" border-radius=4 font-size=12 font-weight=500 border-width=1 border-style="solid" background-color="#f3f4f6" color="#374151" border-color="#d1d5db"
+style Cancelled
+  align-items="center" padding="2px 8px" border-radius=4 font-size=12 font-weight=500 border-width=1 border-style="solid" background-color="#fee2e2" color="#991b1b" border-color="#fca5a5"
+style Refunded
+  align-items="center" padding="2px 8px" border-radius=4 font-size=12 font-weight=500 border-width=1 border-style="solid" background-color="#f3e8ff" color="#6b21a8" border-color="#d8b4fe"
+
+fn two(n: number): string = n < 10 ? `0${n}` : `${n}`
+
+component App
+  resource rows = prepared() as shape Account[] else empty()
+  view
+    view
+      header class=Header
+        h1 class=Title
+          text "Customer Accounts"
+        text "Live revenue and account status across all regions." class=Subtitle
+      main class=Main
+        table class=Table
+          thead class=Head
+            tr
+              th class=Left
+                text "ID"
+              th class=Left
+                text "Name"
+              th class=Left
+                text "Email"
+              th class=Left
+                text "Status"
+              th class=Right
+                text "Amount"
+              th class=Right
+                text "Tax"
+              th class=Right
+                text "Total"
+              th class=Left
+                text "Created"
+              th class=Left
+                text "Updated"
+              th class=Right
+                text "Score"
+              th class=Left
+                text "Country"
+              th class=Left
+                text "Tags"
+          tbody
+            for account, index in rows key=account.id
+              tr class=(index % 2 == 0 ? White : Gray) data-row-id=account.id
+                td class=Id
+                  text `${account.id}`
+                td class=Cell
+                  text account.name
+                td class=Email
+                  text account.email
+                td class=Cell
+                  if account.status == "Active"
+                    text account.status class=Active
+                  else if account.status == "Pending"
+                    text account.status class=Pending
+                  else if account.status == "Disabled"
+                    text account.status class=Disabled
+                  else if account.status == "Cancelled"
+                    text account.status class=Cancelled
+                  else
+                    text account.status class=Refunded
+                td class=Amount
+                  text formatNumber(account.amountCents / 100, "currency", "USD")
+                td class=Tax
+                  text formatNumber(account.taxCents / 100, "currency", "USD")
+                td class=Total
+                  text formatNumber((account.amountCents + account.taxCents) / 100, "currency", "USD")
+                td class=Date
+                  text formatDate(account.createdUnix * 1000, 0, "iso")
+                td class=Date
+                  text `${formatDate(account.updatedUnix * 1000, 0, "iso")} ${two(floor(account.updatedUnix / 3600) % 24)}:${two(floor(account.updatedUnix / 60) % 60)}`
+                td class=Amount
+                  text `${formatDecimal(floor(account.scoreBps / 10), 1)}%`
+                td class=Cell
+                  text account.country
+                td class=Cell
+                  for tag, tagIndex in account.tags key=tagIndex
+                    text tag class=Tag

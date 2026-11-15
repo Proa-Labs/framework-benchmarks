@@ -6,6 +6,8 @@ import {
 } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import appCss from "../app.css?url";
+import { Footer } from "../components/Footer.tsx";
+import { Header } from "../components/Header.tsx";
 import themeBootstrap from "../theme-bootstrap.ts?raw";
 import themeCss from "../theme-tokens.css?raw";
 
@@ -20,6 +22,11 @@ export const Route = createRootRoute({
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      {
+        rel: "apple-touch-icon",
+        sizes: "180x180",
+        href: "/apple-touch-icon.png",
+      },
     ],
   }),
   headers: () => ({
@@ -29,15 +36,39 @@ export const Route = createRootRoute({
   }),
   component: Outlet,
   shellComponent: RootDocument,
-  notFoundComponent: () => (
-    <main className="mx-auto max-w-4xl p-8">
-      <h1 className="text-3xl font-semibold">Page not found</h1>
-      <a href="/" className="underline">
-        Return to frameworks.run
-      </a>
-    </main>
-  ),
+  notFoundComponent: () => <StatusPage title="Page not found" />,
+  errorComponent: ({ error, reset }) => {
+    if (import.meta.env.DEV) console.error("Frameworks route failed", error);
+    return <StatusPage title="This page couldn’t load" reset={reset} />;
+  },
 });
+
+function StatusPage({ title, reset }: { title: string; reset?: () => void }) {
+  return (
+    <div id="frameworks-explorer">
+      <Header active="" />
+      <main className="py-10">
+        <h1>{title}</h1>
+        <p className="mt-4 text-muted">
+          {reset
+            ? "Try again or return to the benchmarks."
+            : "Check the address or return to the benchmarks."}
+        </p>
+        <div className="mt-6 flex gap-6">
+          {reset && (
+            <button type="button" onClick={reset} className="underline">
+              Try again
+            </button>
+          )}
+          <a href="/" className="underline">
+            Return to frameworks.run
+          </a>
+        </div>
+      </main>
+      <Footer />
+    </div>
+  );
+}
 function RootDocument({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>

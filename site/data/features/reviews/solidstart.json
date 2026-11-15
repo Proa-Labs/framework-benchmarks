@@ -1,0 +1,585 @@
+{
+  "id": "solidstart",
+  "scope": "SolidStart v2 with Solid v1, Solid Router v1 and Vite v8. Subpath and HTTP error findings also inspect source revision 68ce20b; deployment plugins are named separately.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "renderToString produces synchronous HTML and hydration metadata.",
+      "url": "https://docs.solidjs.com/reference/rendering/render-to-string"
+    },
+    "streaming": {
+      "status": "native",
+      "note": "renderToStream integrates Suspense fallback boundaries and streams their resolved content; the host must preserve flushing.",
+      "url": "https://docs.solidjs.com/reference/rendering/render-to-stream"
+    },
+    "suspense": {
+      "status": "native",
+      "note": "renderToStream integrates Suspense fallback boundaries and streams their resolved content; the host must preserve flushing.",
+      "url": "https://docs.solidjs.com/reference/rendering/render-to-stream"
+    },
+    "client": {
+      "status": "native",
+      "note": "hydrate attaches reactive behavior to SSR HTML; render creates a client application root.",
+      "url": "https://docs.solidjs.com/reference/rendering/hydrate"
+    },
+    "ssg": {
+      "status": "community",
+      "note": "The documented Nitro plugin prerenders listed or crawled routes into static output. Server functions still require a server.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/route-prerendering",
+      "label": "Nitro prerendering"
+    },
+    "csr": {
+      "status": "native",
+      "note": "hydrate attaches reactive behavior to SSR HTML; render creates a client application root.",
+      "url": "https://docs.solidjs.com/reference/rendering/hydrate"
+    },
+    "serverOnly": {
+      "status": "undocumented",
+      "note": "The reviewed API excludes server modules or function bodies from browser builds, but does not establish server-only UI components whose implementation is omitted from hydration bundles. These are different capabilities.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching",
+      "label": "Server modules / functions only"
+    },
+    "partialRendering": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart rendering guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching"
+    },
+    "routing": {
+      "status": "native",
+      "note": "FileRoutes maps page files and dynamic segments; Solid Router supplies nested layout/navigation behavior. SolidStart v2 also supports a TanStack Router integration.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "layouts": {
+      "status": "native",
+      "note": "FileRoutes maps page files and dynamic segments; Solid Router supplies nested layout/navigation behavior. SolidStart v2 also supports a TanStack Router integration.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "dynamicRoutes": {
+      "status": "native",
+      "note": "FileRoutes maps page files and dynamic segments; Solid Router supplies nested layout/navigation behavior. SolidStart v2 also supports a TanStack Router integration.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "parallelRoutes": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart routing guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "interceptedRoutes": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart routing guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "prefetch": {
+      "status": "native",
+      "note": "FileRoutes maps page files and dynamic segments; Solid Router supplies nested layout/navigation behavior. SolidStart v2 also supports a TanStack Router integration.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "softNavigation": {
+      "status": "native",
+      "note": "Solid Router's delegated link handling and navigation primitives update route content and browser history without a full reload. Explicit link/reload controls determine which anchors are intercepted.",
+      "url": "https://docs.solidjs.com/solid-router/reference/components/router",
+      "reviewedOn": "2026-11-11",
+      "label": "Solid Router"
+    },
+    "viewTransitions": {
+      "status": "undocumented",
+      "note": "The reviewed routing API does not establish this navigation capability. Application code or another package may provide it; this finding is not proof of absence.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing",
+      "reviewedOn": "2026-11-11"
+    },
+    "redirects": {
+      "status": "native",
+      "note": "FileRoutes maps page files and dynamic segments; Solid Router supplies nested layout/navigation behavior. SolidStart v2 also supports a TanStack Router integration.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "serverData": {
+      "status": "official",
+      "note": "Solid Router query/createAsync loads cached data and preloads route reads; use server keeps the body on the server.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching",
+      "label": "Solid Router queries"
+    },
+    "clientData": {
+      "status": "official",
+      "note": "Solid Router query/createAsync loads cached data and preloads route reads; use server keeps the body on the server.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching",
+      "label": "Solid Router queries"
+    },
+    "requestDedupe": {
+      "status": "official",
+      "note": "Solid Router query/createAsync loads cached data and preloads route reads; use server keeps the body on the server.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching",
+      "label": "Solid Router queries"
+    },
+    "persistentCache": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart data guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching"
+    },
+    "invalidation": {
+      "status": "official",
+      "note": "Solid Router actions revalidate queries and expose submission state.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-mutation",
+      "label": "Solid Router actions"
+    },
+    "isr": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart data guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching"
+    },
+    "apiRoutes": {
+      "status": "native",
+      "note": "Route files export HTTP method handlers returning Responses, with typed request/route context.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/api-routes"
+    },
+    "httpErrors": {
+      "status": "native",
+      "note": "The v2 HttpStatusCode component sets the server response status, and Start’s default error boundary selects 500. Applications must set 404 for their catch-all/missing-record UI or return an explicit endpoint Response. Client-only fallback UI does not alter the original HTTP response; decide status before streaming headers are sent.",
+      "url": "https://github.com/solidjs/solid-start/blob/68ce20b02714ec1a5d213711ee0bc924948f21c5/packages/start/src/shared/HttpStatusCode.ts",
+      "label": "HttpStatusCode / server response",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "native",
+      "note": "The use server directive extracts server functions and provides a browser-callable transport; authorization is still checked inside protected functions.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching"
+    },
+    "forms": {
+      "status": "official",
+      "note": "Router actions accept form data and expose pending/error state. Validation is authored in the action or supplied by a validation library.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-mutation",
+      "label": "Solid Router actions",
+      "reviewedOn": "2026-11-11",
+      "assessment": {
+        "summary": "Form transport, validation, pending feedback and optimistic state are separate behaviors; the progressive-forms and optimistic-updates rows review the latter contracts explicitly.",
+        "strengths": [
+          "Router actions accept form data and expose pending/error state. Validation is authored in the action or supplied by a validation library."
+        ],
+        "tradeoffs": [
+          "Do not infer a no-JavaScript submission path, automatic validation, accessible field errors or rollback merely from the ability to receive FormData."
+        ]
+      }
+    },
+    "middleware": {
+      "status": "native",
+      "note": "Configured H3 middleware wraps request handling and exposes request-scoped locals.",
+      "url": "https://docs.solidjs.com/solid-start/v2/advanced/middleware"
+    },
+    "cookies": {
+      "status": "native",
+      "note": "SolidStart exposes H3 cookie helpers and encrypted cookie-session operations; secrets and cookie flags require configuration.",
+      "url": "https://docs.solidjs.com/solid-start/v2/advanced/session"
+    },
+    "cssModules": {
+      "status": "native",
+      "note": "Vite integration supports module.css files and scoped imported class names, including SSR CSS deduplication.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/css-and-styling"
+    },
+    "scopedCss": {
+      "status": "native",
+      "note": "Vite integration supports module.css files and scoped imported class names, including SSR CSS deduplication.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/css-and-styling"
+    },
+    "tailwind": {
+      "status": "community",
+      "note": "The Vite styling workflow can import CSS generated by Tailwind, and the guide demonstrates a route stylesheet importing tailwindcss. Tailwind is an external compiler; this is separate from a CSS-in-JS integration.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/css-and-styling",
+      "label": "Tailwind / Vite",
+      "reviewedOn": "2026-11-13"
+    },
+    "cssInJs": {
+      "status": "undocumented",
+      "note": "The reviewed v2 styling guide establishes CSS and CSS Modules, but does not establish a named CSS-in-JS integration with documented server-rendering behavior. General Vite compatibility is not sufficient evidence of that SSR contract.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/css-and-styling",
+      "reviewedOn": "2026-11-13"
+    },
+    "images": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart assets guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/static-assets"
+    },
+    "fonts": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart assets guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/static-assets"
+    },
+    "scripts": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart assets guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/static-assets"
+    },
+    "assetPipeline": {
+      "status": "native",
+      "note": "SolidStart’s Vite pipeline hashes imported assets and updates production URLs. The static-asset guide distinguishes these imports from public/ files, which keep their original names and require their own cache-busting strategy.",
+      "url": "https://docs.solidjs.com/solid-start/v1/building-your-application/static-assets",
+      "label": "Vite asset imports",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "native",
+      "note": "Public files retain stable URLs; imported assets receive Vite-generated hashed filenames.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/static-assets"
+    },
+    "metadata": {
+      "status": "official",
+      "note": "Solid Meta provides reactive Title, Meta and Link components under MetaProvider, including server collection and client navigation updates.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/head-and-metadata",
+      "label": "Solid Meta"
+    },
+    "dynamicMetadata": {
+      "status": "official",
+      "note": "Solid Meta provides reactive Title, Meta and Link components under MetaProvider, including server collection and client navigation updates.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/head-and-metadata",
+      "label": "Solid Meta"
+    },
+    "metadataInheritance": {
+      "status": "partial",
+      "note": "MetaProvider composes descendant head components. The reviewed guide does not establish a general nested object merge/reset contract for inherited SEO fields.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/head-and-metadata",
+      "label": "Component composition",
+      "reviewedOn": "2026-11-10"
+    },
+    "metadataOverrides": {
+      "status": "partial",
+      "note": "MetaProvider composes descendant head components. The reviewed guide does not establish a general nested object merge/reset contract for inherited SEO fields.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/head-and-metadata",
+      "label": "Component composition",
+      "reviewedOn": "2026-11-10"
+    },
+    "titleTemplates": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/head-and-metadata"
+    },
+    "socialImages": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/head-and-metadata"
+    },
+    "sitemaps": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/head-and-metadata"
+    },
+    "robots": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart metadata guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/head-and-metadata"
+    },
+    "markdown": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart content guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "collections": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart content guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "draftMode": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart content guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "translations": {
+      "status": "community",
+      "note": "Solid Primitives supplies reactive dictionaries and translation helpers; application code supplies locale policy.",
+      "url": "https://primitives.solidjs.community/package/i18n",
+      "label": "Solid Primitives"
+    },
+    "localeRouting": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart i18n guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "localeFormatting": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart i18n guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/routing"
+    },
+    "auth": {
+      "status": "partial",
+      "note": "The guide implements application-owned session/user checks in queries and server functions. A bundled account/provider service is not established.",
+      "url": "https://docs.solidjs.com/solid-start/v2/advanced/auth",
+      "label": "Session recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "csp": {
+      "status": "partial",
+      "note": "The guide shows app-authored nonce/CSP middleware and CSRF checks. These must be installed and configured; the recipe is not automatic global enforcement.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/security",
+      "label": "Security middleware recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "cspNonce": {
+      "status": "native",
+      "note": "The official security guide supplies a middleware recipe for generating a random nonce and matching HTTP policy. createHandler's nonce option coordinates generated renderer scripts. Apps own middleware installation and policy coverage; v2's JSON serialization avoids unsafe-eval.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/security",
+      "reviewedOn": "2026-11-11",
+      "label": "Configured createHandler nonce"
+    },
+    "csrf": {
+      "status": "partial",
+      "note": "The guide shows app-authored nonce/CSP middleware and CSRF checks. These must be installed and configured; the recipe is not automatic global enforcement.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/security",
+      "label": "Security middleware recipe",
+      "reviewedOn": "2026-11-10"
+    },
+    "environment": {
+      "status": "native",
+      "note": "Server functions can read private runtime session secrets. Keep those values in server-only code and out of returned props/results.",
+      "url": "https://docs.solidjs.com/solid-start/v2/advanced/session"
+    },
+    "types": {
+      "status": "native",
+      "note": "SolidStart's TypeScript/Vite setup supplies typed application APIs and development hot updates.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/css-and-styling"
+    },
+    "hmr": {
+      "status": "native",
+      "note": "SolidStart's TypeScript/Vite setup supplies typed application APIs and development hot updates.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/css-and-styling"
+    },
+    "cli": {
+      "status": "official",
+      "note": "The Solid scaffolding tool creates SolidStart templates; project scripts run Vite development and production builds.",
+      "url": "https://docs.solidjs.com/solid-start/v2/getting-started",
+      "label": "Create Solid"
+    },
+    "bundleAnalysis": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart tooling guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/deployment-plugins"
+    },
+    "unitTests": {
+      "status": "community",
+      "note": "The guide documents Vitest with Solid Testing Library and Playwright for browser workflows; these are external test tools.",
+      "url": "https://docs.solidjs.com/guides/testing",
+      "label": "Vitest / Playwright"
+    },
+    "e2eTests": {
+      "status": "community",
+      "note": "The guide documents Vitest with Solid Testing Library and Playwright for browser workflows; these are external test tools.",
+      "url": "https://docs.solidjs.com/guides/testing",
+      "label": "Vitest / Playwright"
+    },
+    "observability": {
+      "status": "undocumented",
+      "note": "Not established in the reviewed SolidStart testing guide. External integrations or application code may provide this behavior.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/deployment-plugins"
+    },
+    "errorHandling": {
+      "status": "native",
+      "note": "Solid ErrorBoundary catches rendering and reactive-update errors in its subtree and provides a fallback/reset function. It does not catch arbitrary event-handler or unrelated asynchronous callback failures; HTTP status handling is a separate concern.",
+      "url": "https://docs.solidjs.com/reference/components/error-boundary",
+      "reviewedOn": "2026-11-13",
+      "label": "Solid ErrorBoundary"
+    },
+    "serverHosting": {
+      "status": "community",
+      "note": "Vite deployment plugins such as Nitro, Cloudflare and Netlify determine runtime output. Target compatibility depends on the plugin and server dependencies.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/deployment-plugins",
+      "label": "Deployment plugins"
+    },
+    "subpathProxy": {
+      "status": "partial",
+      "note": "The reviewed v2 source derives the server mount from Vite’s path base or explicit server.baseURL and uses it for server-function URLs. Router links and deployment-plugin public-origin handling must also match. An external CDN asset base is deliberately separate from the application mount; a complete proxy deployment still requires coordinated setup.",
+      "url": "https://github.com/solidjs/solid-start/blob/68ce20b02714ec1a5d213711ee0bc924948f21c5/packages/start/src/config/index.ts#L275-L285",
+      "label": "Vite/server base; adapter setup",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "community",
+      "note": "The documented Nitro plugin prerenders listed or crawled routes into static output. Server functions still require a server.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/route-prerendering",
+      "label": "Nitro prerendering"
+    },
+    "containers": {
+      "status": "community",
+      "note": "Vite deployment plugins such as Nitro, Cloudflare and Netlify determine runtime output. Target compatibility depends on the plugin and server dependencies.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/deployment-plugins",
+      "label": "Deployment plugins"
+    },
+    "edgeHosting": {
+      "status": "community",
+      "note": "Vite deployment plugins such as Nitro, Cloudflare and Netlify determine runtime output. Target compatibility depends on the plugin and server dependencies.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/deployment-plugins",
+      "label": "Deployment plugins"
+    },
+    "orm": {
+      "status": "undocumented",
+      "note": "The reviewed SolidStart server/data guides do not establish an owned orm / query builder API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching"
+    },
+    "migrations": {
+      "status": "undocumented",
+      "note": "The reviewed SolidStart server/data guides do not establish an owned schema migrations API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching"
+    },
+    "transactions": {
+      "status": "undocumented",
+      "note": "The reviewed SolidStart server/data guides do not establish an owned transactions API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching"
+    },
+    "jobs": {
+      "status": "partial",
+      "note": "Nitro tasks can run or be scheduled outside request handling. The documented task runner is not a durable queue with retries/acknowledgement.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/background-tasks",
+      "label": "Nitro tasks",
+      "reviewedOn": "2026-11-10"
+    },
+    "mail": {
+      "status": "undocumented",
+      "note": "The reviewed SolidStart server/data guides do not establish an owned email API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/background-tasks"
+    },
+    "uploads": {
+      "status": "undocumented",
+      "note": "The reviewed SolidStart server/data guides do not establish an owned file uploads & storage API. An application can integrate a separate provider or library; this finding does not mean that integration is impossible.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/background-tasks"
+    },
+    "realtime": {
+      "status": "community",
+      "note": "The documented Nitro v3 plugin enables cross-platform WebSocket handlers. Applications own authorization and pub/sub topology.",
+      "url": "https://docs.solidjs.com/solid-start/v2/advanced/websocket",
+      "label": "Nitro WebSockets"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "Its integrated UI renderer supplies this policy. JSX text interpolation uses text output; innerHTML is a raw-HTML sink. Applications must sanitize untrusted content supplied to innerHTML.",
+      "url": "https://docs.solidjs.com/reference/jsx-attributes/innerhtml",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/security",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific authorization policies contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/security",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific rate limiting contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/security",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "native",
+      "note": "Server-backed Solid Router actions can be used as real HTML form actions, so the server handles submissions before JavaScript loads. Keep the use-server handler and native form action; an action implemented only as browser fetch is not a no-JavaScript endpoint.",
+      "url": "https://docs.solidjs.com/solid-router/concepts/actions",
+      "reviewedOn": "2026-11-13",
+      "label": "Server-backed Router actions"
+    },
+    "optimisticUi": {
+      "status": "partial",
+      "note": "Solid resource mutation/submission APIs let the application display optimistic data, but confirmation, rollback and overlapping mutations need application logic.",
+      "url": "https://docs.solidjs.com/solid-router/concepts/actions",
+      "reviewedOn": "2026-11-11",
+      "label": "Application reconciliation"
+    },
+    "requestCancellation": {
+      "status": "undocumented",
+      "note": "The linked data API review does not establish the specific stale request handling contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching",
+      "reviewedOn": "2026-11-11"
+    },
+    "typedLinks": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific typed links & parameters contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-router/reference/components/router",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchParams": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific validated url state contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-router/reference/components/router",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific navigation state retention contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-router/reference/components/router",
+      "reviewedOn": "2026-11-11"
+    },
+    "scrollRestoration": {
+      "status": "undocumented",
+      "note": "The linked routing API review does not establish the specific scroll restoration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-router/reference/components/router",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationBlocking": {
+      "status": "official",
+      "note": "Solid Router useBeforeLeave runs before router navigation and can prevent, retry or cancel leaving. The application owns its prompt and dirty-state policy; this is not a universal custom dialog for browser unload or cross-origin navigation.",
+      "url": "https://docs.solidjs.com/solid-router/reference/primitives/use-before-leave",
+      "reviewedOn": "2026-11-13",
+      "label": "Solid Router useBeforeLeave"
+    },
+    "navigationAccessibility": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessible navigation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/reference/rendering/hydrate",
+      "reviewedOn": "2026-11-11"
+    },
+    "a11yChecks": {
+      "status": "undocumented",
+      "note": "The linked client rendering API review does not establish the specific accessibility checks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/reference/rendering/hydrate",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "undocumented",
+      "note": "The linked rendering API review does not establish the specific deferred activation contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/reference/rendering/hydrate",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "native",
+      "note": "SolidStart's file router loads route components through lazy imports, and its build emits route/client chunks plus shared dependencies. This is an integrated route boundary, not just the availability of JavaScript import().",
+      "url": "https://github.com/solidjs/solid-start/blob/903f0769db6538be9dc7985f0a176d2d415ad16f/packages/start/src/router.tsx",
+      "reviewedOn": "2026-11-11",
+      "label": "File route chunks"
+    },
+    "offline": {
+      "status": "undocumented",
+      "note": "The linked deployment API review does not establish the specific offline integration contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/deployment-plugins",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific scheduled tasks contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/background-tasks",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific multi-channel notifications contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/background-tasks",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "undocumented",
+      "note": "The linked backend API review does not establish the specific search indexing contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-start/v2/guides/background-tasks",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "undocumented",
+      "note": "The linked database API review does not establish the specific encrypted model fields contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "undocumented",
+      "note": "The linked testing API review does not establish the specific http integration tests contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.solidjs.com/guides/testing",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

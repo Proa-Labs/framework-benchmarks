@@ -37,21 +37,22 @@ complete owned output using its declared native API. HTTP and streaming are sepa
 
 | Change | Owning file or directory |
 | --- | --- |
-| Discoverable suites, entrypoints, smoke presets, output locations | `tooling/suites.json` |
-| Rendering adapter commands and build families | `rendering/canonical/adapters.json` |
-| Public rendering roster | `rendering/canonical/roster.json` |
-| Workload sizes, iteration budgets, labels, display order and negative controls | `rendering/canonical/workloads.json` |
-| JavaScript fixture inputs / reference rendering | `rendering/external/shared/suite_data.mjs` / `rendering/external/react/suite_components.mjs` |
-| Native implementations | `rendering/src/` and `rendering/external/<tool>/` |
-| Full-framework request contract | `framework-ssr/contract.json` and `framework-ssr/adapters/` |
-| HTTP / streaming contracts | `page-load/scenario.mjs` and `suspense-load/scenario.mjs` |
-| Files included in load/startup source fingerprints | `<suite>/sources.json` |
-| Measurement storage, source snapshots, atomic writes | `tooling/captures.mjs` |
-| Display metadata, logos and classifications | `site/catalog.json`, `site/public/logos/` |
-| Feature definitions / primary-source findings | `site/feature-definitions.json`, `site/feature-reviews.json`, `site/feature-projects.json` |
+| Discoverable suites, entrypoints, smoke presets, output locations | `benchmarks/suites.json` |
+| Rendering adapter commands and build families | `benchmarks/rendering/canonical/adapters.json` |
+| Public rendering roster | `benchmarks/rendering/canonical/roster.json` |
+| Workload sizes, iteration budgets, labels, display order and negative controls | `benchmarks/rendering/canonical/workloads.json` |
+| JavaScript fixture inputs / reference rendering | `benchmarks/rendering/external/shared/suite_data.mjs` / `benchmarks/rendering/external/react/suite_components.mjs` |
+| Native implementations | `benchmarks/rendering/src/` and `benchmarks/rendering/external/<tool>/` |
+| Full-framework request contract | `benchmarks/framework-ssr/contract.json` and `benchmarks/framework-ssr/adapters/` |
+| HTTP / streaming contracts | `benchmarks/http/scenario.mjs` and `benchmarks/streaming/scenario.mjs` |
+| Files included in HTTP/streaming/startup source fingerprints | `<suite>/sources.json` |
+| Measurement storage, source snapshots, atomic writes | `tooling/capture/captures.mjs` |
+| Display metadata, logos and classifications | `site/data/performance/catalog.json`, `site/data/branding/`, `site/public/logos/` |
+| Feature definitions / primary-source findings | `site/data/features/definitions.json`, `site/data/features/reviews/<framework>.json`, `site/data/features/projects.json` |
 
 The suite registry also supplies the website's capture paths. It does not put
 render-only timings, HTTP capacity and startup into a common scoring formula.
+See [`site/data/README.md`](site/data/README.md) for adding or updating site inputs.
 
 ## Add a renderer
 
@@ -59,17 +60,17 @@ render-only timings, HTTP capacity and startup into a common scoring formula.
 bun run bench new-adapter my-renderer
 ```
 
-This creates `rendering/external/my-renderer/suite_bench.mjs` and registers a local
+This creates `benchmarks/rendering/external/my-renderer/suite_bench.mjs` and registers a local
 adapter. Its placeholder throws until you implement the real renderer. It does
 **not** add an unmeasured project to the public scoreboard.
 
-1. Install/pin the renderer in its own adapter directory and commit its Bun
-   lockfile when proposing the change. Compile templates and build fixture data
+1. Install/pin the renderer in its adapter workspace and update the root
+   `bun.lock` when proposing the change. Compile templates and build fixture data
    outside the timed callback. Use the renderer's documented production API.
 2. Implement the generated `render(workload)` callback. The shared synchronous
    string harness handles arguments, warmup, sampling and result JSON. Async or
    non-JavaScript engines can use a native harness following
-   [`adapters/README.md`](rendering/canonical/adapters/README.md).
+   [`adapters/README.md`](benchmarks/rendering/canonical/adapters/README.md).
 3. Run `bun run bench run rendering --renderers my-renderer --workloads cards`.
    Add the other workloads and rerun. A bad DOM, missing card, changed escaping,
    wrong output size, nonfinite duration or reused-output declaration stops the
@@ -116,12 +117,28 @@ make seventeen engines render an equivalent page by itself.
 
 ## Validate locally
 
-For portable checks and the website, install these additional locked packages:
+All JavaScript projects use one Bun workspace and the root `bun.lock`. Dependency
+versions shared across projects live in the root `catalog`; the site's newer
+React version has its own named catalog. Bun's isolated linker shares a single
+package store while keeping differing framework/peer versions separate. Biome,
+TypeScript and Turbo are installed once at the root. The framework benchmark
+harness also belongs to the root package, with each adapter a workspace.
+
+`bun run lint` and `bun run typecheck` use Turbo. `bun run build` builds the
+JavaScript workspaces in parallel; `bun run build:framework-adapters` builds only
+the three framework adapters after generating their common fixtures once.
+`bun run dev` starts the website. Existing `bun run bench …` commands continue
+to run the measurement protocols directly. Build, browser, capture and benchmark
+tasks are uncached, so Turbo cannot replay timings from another run or machine.
+Native builds and measurements remain controlled by their suite runners.
+
+Add JavaScript dependencies to the owning workspace's `package.json`, reuse a
+`catalog:` pin where appropriate, then run `bun install` from the root. Commit
+only the root lockfile; do not create npm, pnpm or per-workspace lockfiles.
+
+The root install covers every JavaScript workspace. Validate with:
 
 ```sh
-bun install --cwd rendering/external/react --frozen-lockfile
-bun install --cwd framework-ssr --frozen-lockfile
-bun install --cwd site --frozen-lockfile
 bun run check
 bun run --cwd site test:browser
 ```
@@ -136,6 +153,10 @@ checked during its production build, after generation; portable typechecking
 does not require building Exact.
 
 ## Rerun a publication capture
+
+Install all JavaScript dependencies once from the repository root with
+`bun install --frozen-lockfile`. Use the Node version in `.nvmrc` for framework
+build tooling; measured JavaScript servers run on the pinned Bun runtime.
 
 ```sh
 bun run bench run rendering --publish
@@ -194,10 +215,93 @@ by running a suite, not by editing those files.
 
 ## Automatic website updates
 
-The website reads each suite’s selected `results/latest.json` through `tooling/suites.json`. A merged capture change triggers the website workflow, which validates contracts, immutable raw records and source snapshots, rebuilds the site, tests browser interactions and deploys the same validated artifact to Cloudflare. No timings are copied into UI code. Set the repository secret `CLOUDFLARE_API_TOKEN` for the existing `frameworks-run` Worker.
+The website reads each suite’s selected `results/latest.json` through `benchmarks/suites.json`. A merged capture change triggers the website workflow, which validates contracts, immutable raw records and source snapshots, rebuilds the site, tests browser interactions and deploys the same validated artifact to Cloudflare. No timings are copied into UI code. Set the repository secret `CLOUDFLARE_API_TOKEN` for the existing `frameworks-run` Worker.
 
 Keep capture JSON, its archive, referenced raw runs and verified source snapshot together in the PR. A Proa-only rendering refresh preserves the original peer measurements and dates; the site discloses the mixed capture and native output boundaries. A new Proa revision does not automatically become a new benchmark result: run the publication protocol and submit its validated evidence.
 
 On the original capture machine, rerun only Proa with `bun run bench run rendering --publish --refresh-proa` (add `--product-scaling` for the engineering grid). This also works after an earlier Proa refresh: the original peer capture remains the baseline. Use `bun run refresh` to regenerate reports and figures, then `bun run check` before submitting the evidence.
 
 Same-repository PRs publish a non-production Cloudflare version after website validation. The workflow updates one preview comment and a GitHub deployment link on each successful push; forks run checks without the deploy secret. TanStack Start routes, React pages and shared components live in `site/src/`; `bun run --cwd site dev` uses Vite Fast Refresh and Tailwind. The Cloudflare adapter builds a request-time SSR Worker in `site/dist/server/` with matching assets in `site/dist/client/`. Bun runs scripts and builds; Cloudflare local emulation uses the supported Node host (26.13.0 in CI).
+
+## Merge and launch gate
+
+Changes to measured sources require a validated fresh campaign before merging.
+`bun run check:publication` and CI's **Publication readiness** check require full
+renderer, framework SSR, HTTP, streaming and cold-start publication captures.
+They must share `BENCH_CAMPAIGN_ID` and single-CPU server affinity. Each complete
+comparison stays on one machine. The parallel protocol permits separate suite
+hosts only with the same immutable revision and matching hardware/OS profiles.
+Proa-only refreshes, smoke results, mixed campaigns and snapshots of measured
+sources that differ from the checkout are rejected.
+
+Use a fresh `BENCH_CAMPAIGN_ID=publication-<unique-id>` for a complete campaign.
+The [parallel GCP runner](tooling/cloud/README.md) creates one for five isolated
+workers. The legacy `benchmarks/framework-ssr/cloud/capture.sh` runs all five suites on one
+isolated host. Both verify CPU/SMT topology before measurement. Keep
+the measured source archives and raw captures together when downloading results.
+Portable contributor checks and PR previews remain available while publication
+is blocked. Both production deployment entry points enforce this gate.
+
+**Publication readiness** is a required status check in the existing main-branch
+ruleset. Keep this requirement when editing repository rules. Do not mark the PR
+ready or deploy until the complete campaign passes.
+
+### Proa render-only timing boundary
+
+Every default Proa iteration allocates and renders into a fresh owned
+`RenderBuffer`. The timer stops before replacing/destroying the previous
+output. Flattening/copying, output encoding, parity, hashing and destruction
+remain outside this timer. The separately labeled String and reused-copy
+controls do not replace the published Proa measurement.
+
+The native executable refuses unoptimized, non-release or debug-assertion
+builds. It records the build profile, optimization level, timing boundary and
+raw observations in capture order. The capture runner and publication gate
+verify those fields and recompute the Proa summaries from the retained samples.
+
+
+## Render-only admission and unsupported tests
+
+SSR Rendering keeps the same three HTML fixtures, input sizes and strict
+full-document DOM/class parity gate for every participant. A failed admission
+never receives an HTTP latency or another renderer’s timings in that table.
+Each unranked cell opens its own versioned explanation.
+
+Astro renders its production-compiled Astro component directly to a fresh HTML
+string. SvelteKit renders its production-compiled page with the native Svelte SSR
+runtime from that same build. Both include the complete asynchronous render in
+the timer; framework initialization, compilation and fixture construction happen
+before it. Proa’s fresh owned `RenderBuffer` timing boundary remains unchanged.
+
+Next.js renders the production-compiled page through its bundled React SSR
+runtime. Its framework initialization and page lookup happen before the timer;
+rendering the page and producing its owned HTML string happen inside it.
+Astro, SvelteKit and Next.js all pass the unchanged fixtures.
+
+The pinned Exact compiler rejects literal class attributes taken from all three
+fixtures. Reproduce that result after building the normal framework adapters:
+
+```sh
+bun benchmarks/rendering/external/exact/check-admission.mjs
+```
+
+The check publishes no latency. Cloud workers run it before rendering and retain
+matching machine/campaign/source evidence alongside the capture. Publication
+rejects missing, stale or mismatched proof. CI reruns the compiler check so an
+obsolete unsupported label cannot silently remain in the comparison.
+
+Historical captures are validated using the roster and workload manifests in
+their retained source archive. Growing today’s supported roster does not rewrite
+an older capture or its report. Publication still requires a complete fresh run
+of the current roster and matching measured sources across all five suites.
+
+
+## Parallel GCP campaigns
+
+See [the cloud runner](tooling/cloud/README.md). Independent suites run on
+separate isolated C4 nodes. Every competitor, workload and repeat within one
+suite stays on the same host; render-only product scaling stays with rendering.
+The publication gate requires a common campaign and immutable source revision,
+matching hardware/OS profiles, full rosters, source archives and raw samples.
+Per-suite machine identities remain visible in each capture. No cross-machine
+latencies are combined into a single comparison.

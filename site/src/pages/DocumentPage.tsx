@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useLayoutEffect, useState } from "react";
 import metadata from "../../.generated/metadata.json";
+import { Footer } from "../components/Footer.tsx";
 import { Header } from "../components/Header.tsx";
 
 function About() {
@@ -51,6 +52,13 @@ function About() {
         <a href="https://github.com/Proa-Labs/proa">Proa</a> is included in the
         benchmarks.
       </p>
+      <p>
+        Project names and logos identify their respective owners. Inclusion does
+        not imply affiliation or endorsement.{" "}
+        <a href="/logos/sources.json">Logo sources</a> ·{" "}
+        <a href="/licenses/devicon.txt">Devicon license</a> ·{" "}
+        <a href="/licenses/simple-icons.txt">Simple Icons license</a>.
+      </p>
     </>
   );
 }
@@ -74,21 +82,38 @@ function Methodology() {
         measuring. Headline values are medians of five independently measured
         process P50s.
       </p>
+      {metadata.renderingOutput && <p>{metadata.renderingOutput}</p>}
       <h2>Framework SSR</h2>
       <p>
-        {metadata.framework.scenario.boundary} This is a separate shared catalog
-        contract for application frameworks. Generated classes and framework
-        shells may differ; the same ordered business content, escaping, list
-        roles and request-specific value must pass admission. Full-document
-        caching is disabled. Capacity uses{" "}
+        {metadata.framework.scenario.boundary} This is a separate shared
+        workload contract for application frameworks. Generated classes and
+        framework shells may differ; the same ordered business content,
+        escaping, list roles and request-specific value must pass admission.
+        Full-document caching is disabled. Capacity uses{" "}
         {metadata.framework.methodology.concurrency} connections; equal-load
-        latency uses {metadata.framework.methodology.fixedRateRps} scheduled
-        requests/s, with {metadata.framework.methodology.repeats} fresh server
-        processes per phase kind. JavaScript frameworks run on{" "}
+        latency uses{" "}
+        {metadata.framework.workloads
+          .map((w) => `${w.label}: ${w.fixedRateRps} requests/s`)
+          .join("; ")}
+        , with {metadata.framework.methodology.repeats} fresh server processes
+        per phase kind. JavaScript frameworks run on{" "}
         {metadata.framework.scenario.runtime}. Every response is validated, and
         incomplete or generator-limited runs are rejected. These numbers are not
-        combined with pure render times.
+        combined with pure render times. Capacity windows are{" "}
+        {metadata.framework.workloads
+          .map((w) => `${w.label}: ${w.capacityDurationSeconds} seconds`)
+          .join("; ")}
+        . Equal-load windows last{" "}
+        {metadata.framework.methodology.durationSeconds} seconds; low-rate tail
+        percentiles have few samples, whose counts are retained in the raw data.
       </p>
+      {/\bBun\b/.test(metadata.framework.versions.exact || "") && (
+        <p>
+          Exact uses its production JavaScript SSR backend on Bun. Its native
+          Rust render host is a separate backend and is not measured in this
+          capture. The tested backend and version are retained in the raw data.
+        </p>
+      )}
       <h2>HTTP</h2>
       <p>
         The normal production servers handle the same parity-gated pages over
@@ -105,7 +130,7 @@ function Methodology() {
         protocol. Failed requests remain recorded and do not become successful
         Flow particles.
       </p>
-      <h2>Startup</h2>
+      <h2>Cold Start</h2>
       <p>
         Process spawn to the first complete, validated product-grid response.
         Fifteen fresh starts follow two untimed disk-cache warmups. Host
@@ -141,8 +166,8 @@ function Methodology() {
       <ul>
         {metadata.captures.map((capture) => (
           <li key={capture.id}>
-            <a href={capture.download}>{capture.id}: original capture</a> ·{" "}
-            {capture.date} · <code>{capture.capture}</code>
+            <a href={`/${capture.download}`}>{capture.id}: original capture</a>{" "}
+            · {capture.date} · <code>{capture.capture}</code>
           </li>
         ))}
       </ul>
@@ -154,7 +179,7 @@ function Methodology() {
         <a href="https://github.com/Proa-Labs/framework-benchmarks/blob/main/README.md">
           Reproduction commands ↗
         </a>{" "}
-        · <a href="data/manifest.json">Artifact hashes</a>
+        · <a href="/data/manifest.json">Artifact hashes</a>
       </p>
       <h2>No single overall winner</h2>
       <p>
@@ -202,7 +227,7 @@ export function DocumentPage({ page }: { page: "about" | "methodology" }) {
           <h1 id="site-title">{title}</h1>
         </section>
       </div>
-      <main className="document">
+      <main className="document pb-0">
         {page === "about" ? (
           <About />
         ) : page === "methodology" ? (
@@ -213,14 +238,10 @@ export function DocumentPage({ page }: { page: "about" | "methodology" }) {
             <a href="/data/results.json">complete dataset</a>.
           </p>
         )}
-        <footer>
-          Maintained by Andrew Hariri, founder of{" "}
-          <a href="https://github.com/Proa-Labs">Proa Labs</a>.{" "}
-          <a href="https://github.com/Proa-Labs/framework-benchmarks">
-            Source on GitHub ↗
-          </a>
-        </footer>
       </main>
+      <div className="mx-auto max-w-[1220px] px-4 min-[561px]:px-[22px] min-[801px]:px-11">
+        <Footer />
+      </div>
     </>
   );
 }

@@ -1,0 +1,538 @@
+{
+  "id": "askama",
+  "scope": "Standalone templating API; adding a host framework can provide separate application features.",
+  "reviewedOn": "2026-11-10",
+  "updatedOn": "2026-11-13",
+  "capabilities": {
+    "ssr": {
+      "status": "native",
+      "note": "Generates HTML from a template and supplied values on the server.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "streaming": {
+      "status": "partial",
+      "note": "write_into writes to an io::Write destination without requiring a final String. HTTP flushing and asynchronous boundary replacement are separate concerns.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+      "label": "Writer output",
+      "reviewedOn": "2026-11-10"
+    },
+    "suspense": {
+      "status": "scope",
+      "note": "The reviewed rendering API has no pending-UI/replacement protocol; the host application would need to provide one.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "client": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "ssg": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "csr": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "serverOnly": {
+      "status": "native",
+      "note": "The server evaluates templates and sends rendered output rather than the renderer implementation. This is not React Server Components.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+      "label": "Server templates"
+    },
+    "partialRendering": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "routing": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "layouts": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "dynamicRoutes": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "parallelRoutes": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "interceptedRoutes": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "prefetch": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "softNavigation": {
+      "status": "scope",
+      "note": "This standalone template/runtime renders content; navigation and page-transition lifecycle belong to a browser router or host application. Compatibility with a generic JavaScript library is not a built-in integration.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "viewTransitions": {
+      "status": "scope",
+      "note": "This standalone template/runtime renders content; navigation and page-transition lifecycle belong to a browser router or host application. Compatibility with a generic JavaScript library is not a built-in integration.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "redirects": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "serverData": {
+      "status": "scope",
+      "note": "This API consumes supplied template values; application data loading happens outside it.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "clientData": {
+      "status": "scope",
+      "note": "Browser query lifecycle/cache APIs belong to a client library or application framework.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "requestDedupe": {
+      "status": "scope",
+      "note": "Template/compilation caching is distinct from request-scoped application data deduplication.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "persistentCache": {
+      "status": "scope",
+      "note": "Retaining application data or rendered pages across requests belongs to the host cache.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "invalidation": {
+      "status": "scope",
+      "note": "Application data/page invalidation belongs to the host; recompiling a template is a different cache boundary.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "isr": {
+      "status": "scope",
+      "note": "Regenerating deployed pages requires a host page cache/export pipeline.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "apiRoutes": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "httpErrors": {
+      "status": "scope",
+      "note": "The reviewed renderer does not own the HTTP response. The host server must select 404/5xx, map routing/render failures, and decide when headers are committed. Displaying an error or fallback in rendered HTML does not establish the HTTP status.",
+      "url": "https://askama.rs/en/stable/",
+      "label": "HTTP host required",
+      "reviewedOn": "2026-11-13"
+    },
+    "actions": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "forms": {
+      "status": "scope",
+      "note": "Templates can emit form markup; submission, validation, and feedback policy belong to the host application.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "middleware": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "cookies": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "cssModules": {
+      "status": "scope",
+      "note": "CSS class-name compilation is a separate asset-build concern.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "scopedCss": {
+      "status": "scope",
+      "note": "The renderer emits authored classes/styles; component-local CSS selector rewriting is a separate build concern.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "tailwind": {
+      "status": "scope",
+      "note": "Tailwind can process authored templates through application configuration; the template renderer does not own that build.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "cssInJs": {
+      "status": "scope",
+      "note": "Runtime CSS-in-JS compilation is outside this server template API.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "images": {
+      "status": "scope",
+      "note": "Templates emit image markup; image resizing/conversion requires a separate asset pipeline.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "fonts": {
+      "status": "scope",
+      "note": "Font downloading, subsetting, and fallback optimization require a separate asset pipeline.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "scripts": {
+      "status": "scope",
+      "note": "Templates emit script markup; script scheduling and lifecycle policy belong to the host application.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "assetPipeline": {
+      "status": "scope",
+      "note": "The reviewed standalone template API does not own an asset build or deployment pipeline. The host application or a separate build tool must version files, update template references, and configure browser/CDN cache headers.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+      "label": "Host / build tool required",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticAssets": {
+      "status": "scope",
+      "note": "Serving files and assigning cache headers belong to the host web server.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "metadata": {
+      "status": "scope",
+      "note": "Head tags can be templated directly; there is no structured metadata registry in the reviewed standalone API.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "dynamicMetadata": {
+      "status": "scope",
+      "note": "Supplied values can populate head tags; request data loading and metadata composition remain application-owned.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "metadataInheritance": {
+      "status": "scope",
+      "note": "Template inheritance/content composition is separate from a metadata-field inheritance contract.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "metadataOverrides": {
+      "status": "scope",
+      "note": "A host head component or template block can override markup; structured field merge/clear rules are application-owned.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "titleTemplates": {
+      "status": "scope",
+      "note": "Titles can use template expressions; ancestor metadata/title-template policy belongs to the application.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "socialImages": {
+      "status": "scope",
+      "note": "Generating social-preview image bytes needs a separate image renderer/service.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "sitemaps": {
+      "status": "scope",
+      "note": "XML can be templated, but route enumeration and a sitemap generator belong to the host.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "robots": {
+      "status": "scope",
+      "note": "Text can be templated, but crawler-document publishing/configuration belongs to the host.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "markdown": {
+      "status": "scope",
+      "note": "This is text/HTML templating; Markdown parsing and content-page integration require another tool.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "collections": {
+      "status": "scope",
+      "note": "The host loads and validates structured content; the template API renders supplied values.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "draftMode": {
+      "status": "scope",
+      "note": "Editorial preview authorization and published-cache bypass belong to the host application.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "translations": {
+      "status": "scope",
+      "note": "Applications can supply translated strings/helpers; the reviewed renderer does not supply message catalogs.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "localeRouting": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "localeFormatting": {
+      "status": "scope",
+      "note": "The host supplies locale-aware values or formatter helpers.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "auth": {
+      "status": "scope",
+      "note": "Identity, login, and authorization are responsibilities of the host application.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "csp": {
+      "status": "scope",
+      "note": "The host configures HTTP CSP headers and any nonce values passed into templates.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "cspNonce": {
+      "status": "scope",
+      "note": "The HTTP application must generate a fresh nonce, set its policy and pass the value to authored tags. A template accepting attributes does not coordinate nonces for an application.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "csrf": {
+      "status": "scope",
+      "note": "HTML escaping does not establish CSRF protection; the host must protect mutation endpoints.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "environment": {
+      "status": "scope",
+      "note": "Server/client secret configuration belongs to the host application, not template evaluation.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "types": {
+      "status": "native",
+      "note": "Template code is generated into the typed Rust context struct and checked by the Rust compiler.",
+      "url": "https://askama.rs/en/stable/creating_templates.html",
+      "label": "Rust templates"
+    },
+    "hmr": {
+      "status": "scope",
+      "note": "Application rebuild/browser refresh orchestration is outside the renderer API.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "cli": {
+      "status": "scope",
+      "note": "This renderer integrates with its language/build toolchain rather than supplying an application CLI.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "bundleAnalysis": {
+      "status": "scope",
+      "note": "Production browser/server bundle inspection belongs to the host build toolchain.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "unitTests": {
+      "status": "scope",
+      "note": "Applications test rendered output with their language test runner; no application test framework is supplied here.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "e2eTests": {
+      "status": "scope",
+      "note": "Browser tests run against a host application, not a standalone template.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "observability": {
+      "status": "scope",
+      "note": "Production request traces/metrics/logging belong to the host application.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "errorHandling": {
+      "status": "scope",
+      "note": "Template errors are returned to the caller; application fallback/recovery UI is host-owned.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html"
+    },
+    "serverHosting": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "subpathProxy": {
+      "status": "scope",
+      "note": "The reviewed standalone template/runtime API does not coordinate a public URL prefix across routing, assets, links and proxy headers. That deployment behavior belongs to the host application or web framework.",
+      "url": "https://askama.rs/en/stable/",
+      "label": "Host framework required",
+      "reviewedOn": "2026-11-13"
+    },
+    "staticHosting": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "containers": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "edgeHosting": {
+      "status": "scope",
+      "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
+      "url": "https://askama.rs/en/stable/"
+    },
+    "orm": {
+      "status": "scope",
+      "note": "ORM / query builder belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://askama.readthedocs.io"
+    },
+    "migrations": {
+      "status": "scope",
+      "note": "Schema migrations belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://askama.readthedocs.io"
+    },
+    "transactions": {
+      "status": "scope",
+      "note": "Transactions belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://askama.readthedocs.io"
+    },
+    "jobs": {
+      "status": "scope",
+      "note": "Background jobs belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://askama.readthedocs.io"
+    },
+    "mail": {
+      "status": "scope",
+      "note": "Email belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://askama.readthedocs.io"
+    },
+    "uploads": {
+      "status": "scope",
+      "note": "File uploads & storage belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://askama.readthedocs.io"
+    },
+    "realtime": {
+      "status": "scope",
+      "note": "Real-time delivery belongs to a server framework or external service, outside this standalone rendering API. This is not a missing template-rendering capability.",
+      "url": "https://askama.readthedocs.io"
+    },
+    "xssEscaping": {
+      "status": "native",
+      "note": "HTML templates select HTML escaping by extension/configuration. Safe filters bypass escaping; this does not establish JavaScript/CSS context encoding or an HTML sanitizer.",
+      "url": "https://askama.rs/en/stable/configuration.html#escapers",
+      "reviewedOn": "2026-11-11"
+    },
+    "htmlSanitization": {
+      "status": "undocumented",
+      "note": "The linked security API review does not establish the specific html sanitization contract defined here. This is a bounded documentation finding, not proof of absence; generic hooks or application-authored code are not counted as an owned implementation.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "authorization": {
+      "status": "scope",
+      "note": "Authorization policies requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "rateLimiting": {
+      "status": "scope",
+      "note": "Rate limiting requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "progressiveEnhancement": {
+      "status": "scope",
+      "note": "Progressive forms requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "optimisticUi": {
+      "status": "scope",
+      "note": "Optimistic updates requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "requestCancellation": {
+      "status": "scope",
+      "note": "Stale request handling requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+      "reviewedOn": "2026-11-11"
+    },
+    "typedLinks": {
+      "status": "scope",
+      "note": "Typed links & parameters requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchParams": {
+      "status": "scope",
+      "note": "Validated URL state requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "stateRestoration": {
+      "status": "scope",
+      "note": "Navigation state retention requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "scrollRestoration": {
+      "status": "scope",
+      "note": "Scroll restoration requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationBlocking": {
+      "status": "scope",
+      "note": "Unsaved-change guards requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "navigationAccessibility": {
+      "status": "scope",
+      "note": "Accessible navigation requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "a11yChecks": {
+      "status": "scope",
+      "note": "Accessibility checks requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "lazyActivation": {
+      "status": "scope",
+      "note": "Deferred activation requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "codeSplitting": {
+      "status": "scope",
+      "note": "Route / island splitting requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "offline": {
+      "status": "scope",
+      "note": "Offline integration requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.rs/en/stable/",
+      "reviewedOn": "2026-11-11"
+    },
+    "scheduling": {
+      "status": "scope",
+      "note": "Scheduled tasks requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.readthedocs.io",
+      "reviewedOn": "2026-11-11"
+    },
+    "notifications": {
+      "status": "scope",
+      "note": "Multi-channel notifications requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.readthedocs.io",
+      "reviewedOn": "2026-11-11"
+    },
+    "searchIndex": {
+      "status": "scope",
+      "note": "Search indexing requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.readthedocs.io",
+      "reviewedOn": "2026-11-11"
+    },
+    "fieldEncryption": {
+      "status": "scope",
+      "note": "Encrypted model fields requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://askama.readthedocs.io",
+      "reviewedOn": "2026-11-11"
+    },
+    "httpTests": {
+      "status": "scope",
+      "note": "HTTP integration tests requires a host application or specialized integration beyond the reviewed template/runtime API. Emitting markup or using arbitrary host-language libraries does not establish this application-level contract.",
+      "url": "https://docs.rs/askama/latest/askama/trait.Template.html",
+      "reviewedOn": "2026-11-11"
+    }
+  }
+}

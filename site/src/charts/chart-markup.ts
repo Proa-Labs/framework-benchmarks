@@ -3,6 +3,7 @@ import type {
   ChartRow,
   HttpRow,
   Metric,
+  Renderer,
 } from "../../benchmark-types.ts";
 import { required } from "../../required.ts";
 import type { DashboardModel } from "./dashboard-model.ts";
@@ -53,42 +54,72 @@ export function createChartMarkup(model: DashboardModel) {
     value,
     unit,
     summary,
-    uncaptured,
     latencyStats,
     heading,
   } = model;
   let output: ChartOutput = { html: "", note: "" };
-  function drawComparison(rows: ChartRow[]) {
-    const workloads = orderedWorkloads(),
-      scales = Object.fromEntries(
-        workloads.map((w) => {
-          const values = data.rendering.rows[w.id]
-              .filter((r) => isVisible(r))
-              .map((r) => r.p50),
-            max = Math.max(...values, 1) * 1.04;
-          return [w.id, (v: number) => (100 * v) / max];
-        }),
-      );
-    output.html = `<table class="fw-comparison"><caption class="sr-only">SSR render latency in microseconds across workloads. Select a column heading to sort.</caption><thead><tr><th scope="col">Renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" title="Sort by ${esc(w.label)}">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>µs</small></button></th>`).join("")}</tr></thead><tbody>${rows
+  function coverage(r: Renderer) {
+    const links = model.measurementLinks(r.id);
+    return links.length
+      ? `Renderer-only timing not recorded. View ${links.map((link) => `<a href="${esc(link.href)}">${esc(link.label)} results ↗</a>`).join(" · ")}`
+      : `${esc(r.coverageReason || "Renderer-only timing not recorded.")} <a href="${esc(r.coverageSource || r.homepage)}" target="_blank" rel="noreferrer">Details ↗</a>`;
+  }
+  function drawComparison(_rows: ChartRow[]) {
+    const workloads = orderedWorkloads();
+    const rowsFor = (workload: string) => data.rendering.rows[workload] || [];
+    const measuredIds = new Set(
+      workloads.flatMap((w) => rowsFor(w.id).map((r) => r.id)),
+    );
+    const ids = [
+      ...new Set([...measuredIds, ...data.framework.rows.map((r) => r.id)]),
+    ].filter((id) => isVisible({ id }));
+    if (!ids.length) {
+      output.html =
+        '<div class="fw-empty">No measurements for this selection.</div>';
+      return;
+    }
+    ids.sort((a, b) => {
+      const value = (id: string) =>
+        rowsFor(state.workload).find((r) => r.id === id)?.p50 ?? Infinity;
+      return value(a) - value(b) || name(a).localeCompare(name(b));
+    });
+    const maximum = (workload: string) =>
+      Math.max(
+        1,
+        ...rowsFor(workload)
+          .filter(isVisible)
+          .map((r) => required(r.p50)),
+      ) * 1.04;
+    output.html = `<div class="fw-table-scroll" tabindex="0" role="region" aria-label="SSR render latency comparison"><table class="fw-comparison" role="table" style="--fw-workload-count:${workloads.length}" data-renderer-comparison><caption class="sr-only">Prepared data to freshly owned HTML. Every measured cell reports median render latency in microseconds. HTTP request timings are in the Framework SSR experiment.</caption><thead><tr><th scope="col">Framework / renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" aria-label="${esc(w.label)}${state.workload === w.id ? " ↓" : ""} µs: sort by render latency">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>µs</small></button></th>`).join("")}</tr></thead><tbody>${ids
       .map(
-        (r) =>
-          `<tr style="--brand:${required(renderer(r.id)).color}" class="${state.focus === r.id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" data-focus="${r.id}" aria-pressed="${state.focus === r.id}">${label(r.id)}</button></th>${workloads
+        (id) =>
+          `<tr ${measuredIds.has(id) ? "data-renderer-row" : "data-renderer-pending"} style="--brand:${required(renderer(id)).color}" class="${state.focus === id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" ${renderer(id)?.renderingAdaptation ? `data-render-adaptation="${id}" data-support-workload="${state.workload}"` : ""} data-focus="${id}" aria-pressed="${state.focus === id}">${label(id, false)}</button></th>${workloads
             .map((w) => {
-              const cell = data.rendering.rows[w.id].find((v) => v.id === r.id);
-              return cell
-                ? `<td class="fw-comparison-cell"><button type="button" data-focus="${r.id}" data-stat-workload="${w.id}" aria-pressed="${state.focus === r.id}" aria-label="${esc(name(r.id))}, ${esc(w.label)}, ${fmt(cell.p50)} µs"><span class="fw-comparison-value">${fmt(cell.p50)}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${scales[w.id](cell.p50)}%"></span></span></button></td>`
-                : "<td>—</td>";
+              const cell = rowsFor(w.id).find((r) => r.id === id);
+              if (!cell) {
+                const coverage = model.renderingCoverage(id, w.id);
+                const status =
+                  coverage.status === "unsupported"
+                    ? "Unsupported"
+                    : coverage.status === "parity-failed"
+                      ? "Fails parity"
+                      : "Not measured";
+                return `<td><button type="button" class="fw-support-button text-muted" data-render-support="${id}" data-support-workload="${w.id}" aria-label="${esc(name(id))}, ${esc(w.label)}, ${status}. ${esc(coverage.reason)}" title="${esc(coverage.reason)}">${status}<span aria-hidden="true"> ⓘ</span></button></td>`;
+              }
+              return `<td class="fw-comparison-cell"><button type="button" data-focus="${id}" data-stat-suite="rendering" data-stat-workload="${w.id}" aria-pressed="${state.focus === id}" aria-label="${esc(name(id))}, ${esc(w.label)}, render, ${fmt(required(cell.p50))} µs"><span class="fw-comparison-value">${fmt(required(cell.p50))}</span><span class="fw-comparison-track" aria-hidden="true"><span style="width:${(100 * required(cell.p50)) / maximum(w.id)}%"></span></span></button></td>`;
             })
             .join("")}</tr>`,
       )
-      .join("")}${uncaptured()
-      .map(
-        (r) =>
-          `<tr class="fw-uncaptured"><th scope="row">${label(r.id)}<small>Not measured</small></th><td colspan="3"><span>—</span> ${esc(r.coverageReason)} <a href="${esc(r.coverageSource)}" target="_blank" rel="noreferrer">Details ↗</a>${data.framework?.rows.some((v) => v.id === r.id) ? ' · <a href="?view=framework">Measured in Framework SSR ↗</a>' : ""}</td></tr>`,
-      )
-      .join("")}</tbody></table>`;
+      .join("")}</tbody></table></div>`;
+    if (ids.some((id) => renderer(id)?.renderingAdaptation))
+      output.html +=
+        '<p class="mt-4 text-sm leading-relaxed text-muted" data-adaptation-note>† Exact uses adapted native styles and markup. Hover, focus or tap its name or timing for details.</p>';
+    const missing = ids.filter((id) => !measuredIds.has(id));
+    if (missing.length)
+      output.html +=
+        '<p class="mt-4 text-sm leading-relaxed text-muted" data-renderer-coverage>Strict rows pass the unchanged HTML fixture; adapted rows are explicitly marked. Hover, focus or tap a status for details. HTTP results are in <a href="?view=framework" class="underline underline-offset-2">Framework SSR ↗</a>.</p>';
     output.note =
-      "Median SSR render latency · µs · lower is better · sort by any workload heading · bars scale linearly within each column";
+      "Median SSR render latency · µs · lower is better · prepared data → freshly owned HTML · sort by any workload heading · bars scale within each column";
   }
   function renderCatalog() {
     const groups = [
@@ -107,7 +138,20 @@ export function createChartMarkup(model: DashboardModel) {
             .filter((r) => (kinds as string[]).includes(r.kind))
             .map(
               (r) =>
-                `<div class="fw-catalog-row">${label(r.id)}<small>${esc(r.kind)}${r.status === "feature-only" ? '<br><span class="fw-coverage-status">Features reviewed · not benchmarked</span>' : r.status === "unmeasured" ? `<br><span class="fw-coverage-status">${data.framework?.rows.some((v) => v.id === r.id) ? "Measured in Framework SSR" : "Not measured"}</span>` : ""}</small><small>${esc(r.language)}</small><a href="${esc(r.homepage)}" target="_blank" rel="noreferrer" aria-label="${esc(r.label)} project website">Project ↗</a></div>`,
+                `<div class="fw-catalog-row">${label(r.id)}<small>${esc(r.kind)}${
+                  r.status === "feature-only"
+                    ? '<br><span class="fw-coverage-status">Features reviewed · not benchmarked</span>'
+                    : r.status === "unmeasured"
+                      ? `<br><span class="fw-coverage-status">${
+                          model.measurementLinks(r.id).length
+                            ? `Measured in ${model
+                                .measurementLinks(r.id)
+                                .map((l) => l.label)
+                                .join(" / ")}`
+                            : "Not measured"
+                        }</span>`
+                      : ""
+                }</small><small>${esc(r.language)}</small><a href="${esc(r.homepage)}" target="_blank" rel="noreferrer" aria-label="${esc(r.label)} project website">Project ↗</a></div>`,
             )
             .join("")}`,
       )
@@ -314,7 +358,7 @@ export function createChartMarkup(model: DashboardModel) {
       if (!label) return "";
       return `<path class="fw-label-connector" d="M${x(label.point.x) + 5} ${y(label.point.y)} L${width - right + 4} ${label.labelY}" fill="none" stroke-width=".8"/><text class="fw-line-label" x="${width - right + 8}" y="${label.labelY}" dominant-baseline="middle">${esc(name(id))}</text>`;
     };
-    const html = `<svg class="fw-chart" role="img" aria-label="${state.view === "streaming" ? chartLabel || "Streaming response versus offered load" : "Independent run measurements"}" viewBox="0 0 ${width} ${height}"><title>${esc(chartLabel || suites[state.view].title)} · ${latencyCurve ? "seconds" : unit()}</title><rect data-chart-frame x="${left}" y="${top}" width="${width - left - right}" height="${height - top - bottom}" fill="none" stroke="var(--fw-border)"/>${yTicks.map((v) => `<line x1="${left}" x2="${width - right}" y1="${y(v)}" y2="${y(v)}" stroke="var(--fw-line)"/><text x="${left - 9}" y="${y(v) + 4}" text-anchor="end">${latencyCurve ? `${fmt(v / 1000)} s` : f(v)}</text>`).join("")}${xTicks.map((v) => `<text x="${x(v)}" y="${height - bottom + 20}" text-anchor="middle">${f(v)}</text>`).join("")}<text class="axis-title" data-axis="y" x="${left}" y="11">${yAxisTitle}</text><text class="axis-title" data-axis="x" x="${(left + width - right) / 2}" y="${height - 3}" text-anchor="middle">${state.view === "streaming" ? "Offered load (requests/s)" : `Independent ${state.view === "startup" ? "start" : "process run"} · index`}</text>${series
+    const html = `<svg class="fw-chart" role="img" aria-label="${state.view === "streaming" ? chartLabel || "Streaming response versus offered load" : "Independent run measurements"}" viewBox="0 0 ${width} ${height}" height="${height}"><title>${esc(chartLabel || suites[state.view].title)} · ${latencyCurve ? "seconds" : unit()}</title><rect data-chart-frame x="${left}" y="${top}" width="${width - left - right}" height="${height - top - bottom}" fill="none" stroke="var(--fw-border)"/>${yTicks.map((v) => `<line x1="${left}" x2="${width - right}" y1="${y(v)}" y2="${y(v)}" stroke="var(--fw-line)"/><text x="${left - 9}" y="${y(v) + 4}" text-anchor="end">${latencyCurve ? `${fmt(v / 1000)} s` : f(v)}</text>`).join("")}${xTicks.map((v) => `<text x="${x(v)}" y="${height - bottom + 20}" text-anchor="middle">${f(v)}</text>`).join("")}<text class="axis-title" data-axis="y" x="${left}" y="11">${yAxisTitle}</text><text class="axis-title" data-axis="x" x="${(left + width - right) / 2}" y="${height - 3}" text-anchor="middle">${state.view === "streaming" ? "Offered load (requests/s)" : `Independent ${state.view === "startup" ? "start" : "process run"} · index`}</text>${series
       .map(
         (s) =>
           `<g data-series="${s.id}" class="fw-series ${s.id === active ? "active" : ""}" style="--series:${required(renderer(s.id)).color};opacity:${active && active !== s.id ? 0.2 : 1}"><path d="${line(s.points)}" stroke-dasharray="${lineDash(s.id)}" fill="none" stroke-width="${s.id === active ? 2 : 1.3}"/>${s.points.map((p) => pointMarker(s.id, x(p.x), y(p.y))).join("")}${seriesLabel(s.id)}</g>`,
@@ -422,10 +466,10 @@ export function createChartMarkup(model: DashboardModel) {
   }
   function draw(rows: ChartRow[], mode: ChartMode = state.chart, width = 720) {
     output = { html: "", note: "", heading: heading() };
-    if (!rows.length)
+    if (mode === "compare") drawComparison(rows);
+    else if (!rows.length)
       output.html =
         '<div class="fw-empty">No measurements for this selection.</div>';
-    else if (mode === "compare") drawComparison(rows);
     else if (
       mode === "lines" &&
       state.view === "streaming" &&
@@ -443,6 +487,7 @@ export function createChartMarkup(model: DashboardModel) {
     line: lineMarkup,
     lineKey,
     pointMarker,
+    coverage,
     catalog: () => {
       output = { html: "", note: "" };
       renderCatalog();

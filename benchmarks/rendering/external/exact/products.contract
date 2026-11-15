@@ -1,0 +1,57 @@
+shape Product
+  id: number
+  name: string
+  category: string
+  priceCents: number
+  ratingTenths: number
+  reviewCount: number
+
+style Main
+  margin-left="auto" margin-right="auto" width="100%" max-width=1152 padding="40px 16px"
+style Title
+  font-size=24 font-weight=700 letter-spacing=-0.6
+style Grid
+  margin-top=24 display="grid" grid-template-columns="repeat(4, minmax(0, 1fr))" gap=16
+style Product
+  display="flex" flex-direction="column" border-radius=12 border-width=1 border-style="solid" border-color="#e2e8f0" background-color="#ffffff" padding=16 box-shadow="0 1px 2px 0 #0000000d"
+  :hover
+    box-shadow="0 4px 6px -1px #0000001a"
+style CategoryBox
+  margin-bottom=16 display="flex" height=128 align-items="center" justify-content="center" border-radius=8 background-color="#f1f5f9" font-size=30 font-weight=700 color="#cbd5e1"
+style Category
+  font-size=12 font-weight=500 text-transform="uppercase" letter-spacing=0.3 color="#94a3b8"
+style Name
+  margin-top=4 font-size=14 font-weight=600 color="#0f172a"
+style Rating
+  margin-top=8 display="flex" align-items="center" gap=4
+style Stars
+  display="flex"
+style FilledStar
+  height=16 width=16 color="#fbbf24"
+style EmptyStar
+  height=16 width=16 color="#e2e8f0"
+style Reviews
+  font-size=12 color="#64748b"
+style Price
+  margin-top=12 font-size=18 font-weight=700
+
+component App
+  resource products = prepared() as shape Product[] else empty()
+  view
+    main class=Main
+      h1 class=Title
+        text "All products"
+      view class=Grid
+        for product in products key=product.id
+          link href=`/products/${product.id}` class=Product
+            text product.category class=CategoryBox
+            text product.category class=Category
+            h3 class=Name
+              text product.name
+            view class=Rating
+              view class=Stars
+                for index in [0, 1, 2, 3, 4] key=index
+                  svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class=(index < floor((product.ratingTenths + 5) / 10) ? FilledStar : EmptyStar)
+                    path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.539 1.118l-2.8-2.034a1 1 0 00-1.176 0l-2.8 2.034c-.783.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.363-1.118l-2.8-2.034c-.784-.57-.381-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+              text `${formatDecimal(product.ratingTenths, 1)} (${product.reviewCount})` class=Reviews
+            text `$${formatDecimal(product.priceCents, 2)}` class=Price
