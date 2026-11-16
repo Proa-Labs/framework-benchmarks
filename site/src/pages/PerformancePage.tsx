@@ -185,6 +185,19 @@ export function PerformancePage({
           >
             Cold Start
           </button>
+          <button
+            type="button"
+            className="fw-coming-soon-tab"
+            role="tab"
+            aria-selected="false"
+            aria-disabled="true"
+            tabIndex={-1}
+            disabled
+            title="Coming soon: JavaScript download size and browser execution time."
+          >
+            Client-side JS
+            <span className="fw-coming-soon-badge">Coming soon</span>
+          </button>
         </div>
         <div
           className="fw-experiment-layout"

@@ -1657,6 +1657,12 @@
   #frameworks-explorer .fw-lab-nav [aria-selected="true"] {
     @apply [border-bottom-color:var(--fw-fg)] text-ink font-medium;
   }
+  #frameworks-explorer .fw-lab-nav .fw-coming-soon-tab {
+    @apply inline-flex items-center [gap:7px] cursor-default;
+  }
+  #frameworks-explorer .fw-coming-soon-badge {
+    @apply text-xs [padding:2px_5px] [border:1px_solid_var(--fw-line)] [border-radius:4px] [background:var(--fw-surface)] whitespace-nowrap;
+  }
   #frameworks-explorer .fw-experiment-tab {
     @apply inline-flex items-center [gap:5px] shrink-0 [border-bottom:2px_solid_transparent] [margin-bottom:-1px];
   }
