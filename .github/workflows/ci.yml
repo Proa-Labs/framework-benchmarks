@@ -311,18 +311,15 @@ jobs:
           chromium: true
           node: true
           rust: release-http
-      - name: Start the release build
-        run: |
-          .github/scripts/background.sh start rust \
-            cargo build --release --locked -p proa_bench --features http-load,topcoat \
-              --bin proa_page_server --bin representative_suite_bench
       - name: Set up Go
         uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
           go-version: "1.25.5"
           cache: false
-      - name: Finish the release build
-        run: .github/scripts/background.sh wait rust
+      - name: Build the release servers
+        run: |
+          cargo build --release --locked -p proa_bench --features http-load,topcoat \
+            --bin proa_page_server --bin representative_suite_bench
       - name: Finish the Chromium install
         run: .github/scripts/background.sh wait chromium
       - name: Validate canonical page servers
@@ -362,12 +359,8 @@ jobs:
           node: true
           rust: release-http
           rust-artifacts: release-http-suspense
-      - name: Start the release build
-        run: |
-          .github/scripts/background.sh start rust \
-            cargo build --release --locked -p proa_bench --features http-load,topcoat --bin proa_suspense_server
-      - name: Finish the release build
-        run: .github/scripts/background.sh wait rust
+      - name: Build the release server
+        run: cargo build --release --locked -p proa_bench --features http-load,topcoat --bin proa_suspense_server
       - name: Finish the Chromium install
         run: .github/scripts/background.sh wait chromium
       - name: Validate Suspense streaming fixtures
@@ -390,6 +383,8 @@ jobs:
       fail-fast: false
       matrix:
         workload: ${{ fromJSON(needs.changes.outputs.framework-workloads) }}
+    env:
+      WORKLOAD: ${{ matrix.workload }}
     steps:
       - name: Checkout tested benchmark revision
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -406,13 +401,19 @@ jobs:
           rust-workspaces: benchmarks/framework-ssr/adapters/proa -> ../../../../target
       - name: Restore the pinned Exact checkout and compiler
         uses: ./.github/actions/exact-cache
-      - name: Build the full-framework adapters for this workload
-        env:
-          WORKLOAD: ${{ matrix.workload }}
-        run: bun benchmarks/framework-ssr/build.ts --workload "$WORKLOAD"
+      # proa_bench is the adapter's slow path dependency and needs none of the
+      # fixtures build.ts writes first; compile it beside the JavaScript and
+      # Exact builds. build.ts's own Cargo run then reuses it.
+      - name: Start the release build
+        run: |
+          .github/scripts/background.sh start rust \
+            cargo build --release --locked -p proa_bench --target-dir target \
+              --manifest-path benchmarks/framework-ssr/adapters/proa/Cargo.toml
+      - name: Build every full-framework adapter
+        run: bun benchmarks/framework-ssr/build.ts
+      - name: Finish the release build
+        run: .github/scripts/background.sh wait rust
       - name: Gate this full-framework SSR workload
-        env:
-          WORKLOAD: ${{ matrix.workload }}
         run: bun benchmarks/framework-ssr/run.ts --no-build --smoke --workers 2 --shard-workload "$WORKLOAD"
       - name: Save the workspace crates
         uses: ./.github/actions/save-rust

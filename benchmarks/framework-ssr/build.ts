@@ -51,8 +51,9 @@ export async function buildProa() {
     targetDirectory,
   ]);
 }
-// Showcase pages compile per workload; a workload shard builds only its own.
-async function buildExact(workload?: string) {
+export async function buildAll() {
+  if (Bun.version !== "1.4.2") throw new Error("Use pinned Bun 1.4.2");
+  await command([process.execPath, "run", "build:framework-adapters"]);
   if (!(await Bun.file(join(exactSource, "Cargo.toml")).exists())) {
     await mkdir(dirname(exactSource), { recursive: true });
     await command([
@@ -117,18 +118,8 @@ async function buildExact(workload?: string) {
   await command([
     process.execPath,
     "benchmarks/rendering/showcase/generate-exact.mjs",
-    ...(workload ? ["--workload", workload] : []),
   ]);
-}
-export async function buildAll(workload?: string) {
-  if (Bun.version !== "1.4.2") throw new Error("Use pinned Bun 1.4.2");
-  // Fixture preparation runs first, inside the Turbo build; Exact and Proa
-  // then share no inputs or outputs, so they compile side by side.
-  await command([process.execPath, "run", "build:framework-adapters"]);
-  await Promise.all([buildExact(workload), buildProa()]);
+  await buildProa();
   console.log("Built all five production framework adapters");
 }
-if (import.meta.main) {
-  const i = process.argv.indexOf("--workload");
-  await buildAll(i < 0 ? undefined : process.argv[i + 1]);
-}
+if (import.meta.main) await buildAll();
