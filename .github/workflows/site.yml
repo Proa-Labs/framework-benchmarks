@@ -65,6 +65,19 @@ jobs:
           done
           bun experiments/sveltekit-streaming/report.mjs --check
           bun site/build.ts
+      # Publication deploys exactly this build; wrangler finds it through the
+      # Cloudflare plugin's redirected deploy configuration.
+      - name: Retain the validated build for publication
+        if: matrix.check == 'publication'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: validated-site
+          path: |
+            site/dist/
+            site/.wrangler/deploy/config.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 3
 
   browser:
     name: Verify browser interactions
@@ -170,8 +183,11 @@ jobs:
       - name: Start the Chromium install
         if: github.event_name == 'pull_request'
         run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
-      - name: Build the validated revision
-        run: bun site/build.ts
+      - name: Download the validated build
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: validated-site
+          path: site
       - name: Finish the Chromium install
         if: github.event_name == 'pull_request'
         run: .github/scripts/background.sh wait chromium

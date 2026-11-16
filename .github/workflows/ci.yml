@@ -43,6 +43,7 @@ jobs:
       http: ${{ steps.select.outputs.http }}
       framework: ${{ steps.select.outputs.framework }}
       framework-workloads: ${{ steps.workloads.outputs.framework }}
+      http-workloads: ${{ steps.workloads.outputs.http }}
     steps:
       - name: Checkout suite selection rules
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -53,6 +54,7 @@ jobs:
           sparse-checkout: |
             .github/scripts/
             benchmarks/framework-ssr/contract.json
+            benchmarks/http/scenario.mjs
       - name: Select suites affected by this change
         id: select
         env:
@@ -61,9 +63,15 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPOSITORY: ${{ github.repository }}
         run: .github/scripts/affected-suites.sh
-      - name: List full-framework workloads
+      - name: List the sharded suites' workloads
         id: workloads
-        run: echo "framework=$(jq -c '[.workloads[].id]' benchmarks/framework-ssr/contract.json)" >> "$GITHUB_OUTPUT"
+        run: |
+          set -euo pipefail
+          echo "framework=$(jq -c '[.workloads[].id]' benchmarks/framework-ssr/contract.json)" >> "$GITHUB_OUTPUT"
+          echo "http=$(node --input-type=module -e '
+            const { WORKLOADS } = await import("./benchmarks/http/scenario.mjs");
+            console.log(JSON.stringify(WORKLOADS.map(({ id }) => id)));
+          ')" >> "$GITHUB_OUTPUT"
 
   quality:
     name: Code and repository quality
@@ -400,12 +408,18 @@ jobs:
           paths: ${{ steps.rust.outputs.artifact-paths }}
           hit: ${{ steps.rust.outputs.artifact-hit }}
 
+  # One job per page-load workload; the first also runs the cold-start smoke,
+  # which reuses that job's adapter builds.
   http:
-    name: Canonical page servers and cold start
+    name: Canonical page servers (${{ matrix.workload }})
     needs: changes
     if: needs.changes.outputs.http == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        workload: ${{ fromJSON(needs.changes.outputs.http-workloads) }}
     steps:
       - name: Checkout tested benchmark revision
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -455,10 +469,13 @@ jobs:
         # survives both phase kinds. It is not a measurement: the runner's two
         # generator workers cannot out-generate Proa's component page, so a
         # generator-limited phase is recorded rather than fatal here.
+        env:
+          WORKLOAD: ${{ matrix.workload }}
         run: |
           bun benchmarks/http/run.mjs --duration 1 --repeats 1 --warmup-requests 4 --concurrency 8 \
-            --tolerate-generator-limits --out benchmarks/http/results/smoke.json
+            --tolerate-generator-limits --workloads "$WORKLOAD" --out benchmarks/http/results/smoke.json
       - name: Validate cold starts
+        if: matrix.workload == fromJSON(needs.changes.outputs.http-workloads)[0]
         run: bun run bench:cold-start:smoke
       - name: Save the workspace crates
         uses: ./.github/actions/save-rust
