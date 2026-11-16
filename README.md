@@ -40,6 +40,7 @@ changing a workload, or selecting new publication captures.
 - [Engineering controls and scaling](docs/reports/engineering.md)
 - [Native streaming and browser-completion experiment](docs/reports/sveltekit.md)
 - [Figure gallery](docs/figures/README.md)
+- [Paired landing-page experiment](experiments/showcase/README.md#landing-page-paired-comparisons)
 - [Measurement protocols](docs/protocol.md)
 
 Keep only the latest capture per suite or independent experiment, with its raw
