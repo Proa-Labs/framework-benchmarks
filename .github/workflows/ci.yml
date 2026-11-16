@@ -565,8 +565,18 @@ jobs:
           cache-key: framework
           workspaces: benchmarks/framework-ssr/adapters/proa -> ../../../../target
           proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
+      # proa_bench is the adapter's slow path dependency and needs none of the
+      # fixtures build.ts writes first; compile it beside the JavaScript and
+      # Exact builds. build.ts's own Cargo run then reuses it.
+      - name: Start the release build
+        run: |
+          .github/scripts/background.sh start rust \
+            cargo build --release --locked -p proa_bench --target-dir target \
+              --manifest-path benchmarks/framework-ssr/adapters/proa/Cargo.toml
       - name: Build every full-framework adapter
         run: bun benchmarks/framework-ssr/build.ts
+      - name: Finish the release build
+        run: .github/scripts/background.sh wait rust
       - name: Gate this full-framework SSR workload
         env:
           WORKLOAD: ${{ matrix.workload }}

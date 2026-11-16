@@ -55,3 +55,4 @@ where
     root.render(&mut cx).unwrap();
     *target = cx.into_output();
 }
+// TEMPORARY CI probe: forces a proa_bench rebuild; reverted in the next commit.
