@@ -104,10 +104,10 @@ jobs:
       - name: Verify contributor benchmark path
         run: bun run bench run rendering --renderers react,vue --workloads cards
 
-  # Two Lighthouse batches per device run in parallel with the same presets,
-  # runs and median-100 gate. Pages keep their order within a batch: an
-  # audit's scores depend on whether its Chrome is fresh, and the first batch
-  # keeps /features (the heaviest page) after the homepage, as it always ran.
+  # Lighthouse batches run in parallel with the same presets, runs and
+  # median-100 gate. An audit on a fresh Chrome scores lower than later ones,
+  # so /features (the heaviest page) still follows the homepage in one batch,
+  # as it always ran; the lighter pages start their own batches.
   lighthouse:
     name: Lighthouse ${{ matrix.device }} ${{ matrix.pages }}
     runs-on: ubuntu-latest
@@ -116,7 +116,7 @@ jobs:
       fail-fast: false
       matrix:
         device: [mobile, desktop]
-        pages: ["/,/features", "/?section=ecosystem,/about,/methodology"]
+        pages: ["/,/features", "/?section=ecosystem,/about", "/methodology"]
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
