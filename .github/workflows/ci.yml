@@ -20,103 +20,67 @@ env:
   CARGO_PROFILE_DEV_DEBUG: "0"
   CARGO_PROFILE_TEST_DEBUG: "0"
   CARGO_TERM_COLOR: always
-  SCCACHE_IDLE_TIMEOUT: "0"
 
+# Every event runs on disposable GitHub-hosted VMs (free for this public
+# repository). Main therefore saves the same caches that pull requests restore.
+#
+# Each suite runs as its own job so the slowest one, not their sum, sets the
+# wall-clock time. Pull requests run only the suites their files can affect
+# (.github/scripts/affected-suites.sh); main and manual runs run everything.
+# The two final jobs keep the branch ruleset's required check names.
 jobs:
-  checks:
-    name: ${{ matrix.name }}
-    # PR build scripts and browser tooling run on disposable GitHub-hosted VMs,
-    # without depending on the availability of the self-hosted PR runner pool.
-    # Trusted events continue to use the configured GCP runner.
-    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-24.04' || vars.CI_RUNNER }}
-    timeout-minutes: ${{ matrix.timeout }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - suite: quality
-            name: Code and repository quality
-            timeout: 15
-          - suite: rendering
-            name: Rendering builds and framework parity
-            timeout: 60
+  changes:
+    name: Select affected suites
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      rust: ${{ steps.select.outputs.rust }}
+      rendering: ${{ steps.select.outputs.rendering }}
+      streaming: ${{ steps.select.outputs.streaming }}
+      http: ${{ steps.select.outputs.http }}
+      framework: ${{ steps.select.outputs.framework }}
+    steps:
+      - name: Checkout suite selection rules
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - name: Select suites affected by this change
+        id: select
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        run: .github/scripts/affected-suites.sh
+
+  quality:
+    name: Code and repository quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - name: Checkout tested benchmark revision
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-
       - name: Lint workflows and embedded shell
-        if: matrix.suite == 'quality'
         uses: ./.github/actions/workflow-lint
-
-      - name: Set up Cloudflare local tooling host
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: "26.13.0"
       - name: Set up Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: "1.4.2"
-
       - name: Set up Python
-        if: matrix.suite == 'quality' || matrix.suite == 'rendering'
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.13"
-
-      - name: Install native RSS supervisor
-        run: |
-          if [[ ! -x /usr/bin/time ]]; then
-            sudo apt-get update
-            sudo apt-get install -y time
-          fi
-
-      - name: Set up Go
-        if: matrix.suite == 'rendering'
-        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
-        with:
-          go-version: "1.25.5"
-          cache: false
-
-      - name: Set up Java
-        if: matrix.suite == 'rendering'
-        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
-        with:
-          distribution: temurin
-          java-version: "17"
-
-      - name: Set up Gradle
-        if: matrix.suite == 'rendering'
-        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
-        with:
-          gradle-version: "9.2.0"
-
-      - name: Set up PHP
-        if: matrix.suite == 'rendering'
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
-        with:
-          php-version: "8.5"
-
-      - name: Prepare Ruby tool cache
-        if: matrix.suite == 'rendering'
-        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/hostedtoolcache
-
-      - name: Set up Ruby
-        if: matrix.suite == 'rendering'
-        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
-        with:
-          ruby-version: "4.0.6"
-          bundler-cache: true
-          working-directory: benchmarks/rendering/external/rails
-
       - name: Install Python test dependencies
-        if: matrix.suite == 'quality'
         run: python -m pip install --disable-pip-version-check "playwright==1.58.0"
-
       - name: Validate browser and research tooling
-        if: matrix.suite == 'quality'
         run: |
           set -euo pipefail
           bun install --frozen-lockfile
@@ -124,128 +88,354 @@ jobs:
           bun run test
           bun test benchmarks/rendering/external/sveltekit/stream-validator.test.mjs experiments/sveltekit-streaming/benchmark.test.mjs
           bun experiments/sveltekit-streaming/report.mjs --check
-          bash -n tooling/maintenance/refresh-proa.sh benchmarks/rendering/run_all.sh benchmarks/framework-ssr/cloud/*.sh tooling/cloud/*.sh
-
+          bash -n tooling/maintenance/refresh-proa.sh benchmarks/rendering/run_all.sh benchmarks/framework-ssr/cloud/*.sh tooling/cloud/*.sh .github/scripts/*.sh
       - name: Check Rust formatting
-        if: matrix.suite == 'quality'
         run: cargo fmt --all -- --check
 
-      - name: Configure read-only Proa access
-        if: matrix.suite == 'rendering'
-        env:
-          PROA_FRAMEWORK_TOKEN: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
-        run: |
-          set -euo pipefail
-          # Fork PRs do not receive repository secrets. Proa is public, so
-          # anonymous fetches must work too; retain optional authenticated access.
-          if [[ -n "${PROA_FRAMEWORK_TOKEN:-}" ]]; then
-            git config --global \
-              url."https://x-access-token:${PROA_FRAMEWORK_TOKEN}@github.com/Proa-Labs/proa".insteadOf \
-              "https://github.com/Proa-Labs/proa"
-          fi
-
-      - name: Fetch pinned benchmark dependencies
-        if: matrix.suite == 'rendering'
-        run: |
-          cargo fetch --locked
-          cargo fetch --locked --manifest-path fixtures/airbnb-parity-dump/Cargo.toml
-
-      - name: Configure compiler cache
-        if: matrix.suite == 'rendering'
-        uses: ./.github/actions/rust-cache
+  clippy:
+    name: Rust correctness lints
+    needs: changes
+    if: needs.changes.outputs.rust == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
-          cache-backend: ${{ github.event_name == 'pull_request' && 'gha' || startsWith(vars.CI_RUNNER, 'gcp') && 'gcs' || 'gha' }}
-
-      - name: Install browser parity dependencies
-        if: matrix.suite == 'rendering'
-        run: |
-          set -euo pipefail
-          bun install --frozen-lockfile
-          bun node_modules/playwright/cli.js install --with-deps chromium
-
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set up Rust
+        uses: ./.github/actions/setup-rust
+        with:
+          cache-key: clippy
+          workspaces: |
+            . -> target
+            fixtures/airbnb-parity-dump -> target
+          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
       - name: Run Clippy correctness lints
-        if: matrix.suite == 'rendering'
         run: |
-          set -euo pipefail
           cargo clippy --workspace --all-targets --all-features --locked -- \
             -A clippy::all -D clippy::correctness
+      - name: Check linked Airbnb fixture
+        run: cargo check --manifest-path fixtures/airbnb-parity-dump/Cargo.toml --locked
 
+  test:
+    name: Rust comparison fixtures
+    needs: changes
+    if: needs.changes.outputs.rust == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set up Rust
+        uses: ./.github/actions/setup-rust
+        with:
+          cache-key: test
+          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
       - name: Test Rust comparison fixtures
-        if: matrix.suite == 'rendering'
         run: cargo test --workspace --all-features --locked
 
+  bench:
+    name: Rust benchmark targets
+    needs: changes
+    if: needs.changes.outputs.rust == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set up Rust
+        uses: ./.github/actions/setup-rust
+        with:
+          cache-key: bench
+          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
       - name: Link every Rust benchmark target
-        if: matrix.suite == 'rendering'
         run: cargo bench --workspace --all-features --locked --no-run
 
-      - name: Check linked Airbnb fixture
-        if: matrix.suite == 'rendering'
+  dom-parity:
+    name: Standard page DOM parity
+    needs: changes
+    if: needs.changes.outputs.rendering == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set up Rust
+        uses: ./.github/actions/setup-rust
+        with:
+          cache-key: release-default
+          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
+      - name: Start the release build
         run: |
-          set -euo pipefail
-          cargo check \
-            --manifest-path fixtures/airbnb-parity-dump/Cargo.toml \
-            --locked
-
+          .github/scripts/background.sh start rust \
+            cargo build --release --locked -p proa_bench --bin standard_page_dump
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
+      - name: Install Chromium
+        run: bun node_modules/playwright/cli.js install --with-deps chromium
+      - name: Finish the release build
+        run: .github/scripts/background.sh wait rust
       - name: Compare normalized browser DOM
-        if: matrix.suite == 'rendering'
         run: bun benchmarks/rendering/standard_page_parity.mjs
 
-      - name: Validate canonical framework matrix
-        if: matrix.suite == 'rendering'
+  canonical:
+    name: Canonical framework matrix
+    needs: changes
+    if: needs.changes.outputs.rendering == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set up Rust
+        uses: ./.github/actions/setup-rust
+        with:
+          cache-key: release-topcoat
+          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
+      - name: Start the release build
         run: |
-          ./benchmarks/rendering/run-all --smoke
+          .github/scripts/background.sh start rust \
+            cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench
+      # PHP may install from apt; finish it before the browser's apt step.
+      - name: Set up PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: "8.5"
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
+      - name: Start the Chromium install
+        run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "26.13.0"
+      - name: Set up Python
+        id: python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.13"
+      - name: Set up Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: "1.25.5"
+          cache: false
+      - name: Set up Java
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+        with:
+          gradle-version: "9.2.0"
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
+        with:
+          ruby-version: "4.0.6"
+          bundler-cache: true
+          working-directory: benchmarks/rendering/external/rails
+      - name: Restore the Jinja environment
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: benchmarks/rendering/external/jinja/.venv
+          key: jinja-venv-${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ hashFiles('benchmarks/rendering/external/jinja/requirements.txt') }}
+      - name: Restore the pinned Exact checkout and compiler
+        uses: ./.github/actions/exact-cache
+      - name: Finish the release build
+        run: .github/scripts/background.sh wait rust
+      - name: Build every adapter
+        run: ./benchmarks/rendering/run-all --setup-only
+      - name: Finish the Chromium install
+        run: .github/scripts/background.sh wait chromium
+      - name: Validate canonical framework matrix
+        run: |
+          ./benchmarks/rendering/run-all --smoke --no-setup
           ./benchmarks/rendering/run-all --product-scaling --smoke --no-setup
+      - name: Verify unchanged-fixture exclusion evidence
+        run: bun benchmarks/rendering/external/exact/check-admission.mjs
 
+  http:
+    name: Canonical page servers and cold start
+    needs: changes
+    if: needs.changes.outputs.http == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set up Rust
+        uses: ./.github/actions/setup-rust
+        with:
+          cache-key: release-http
+          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
+      - name: Start the release build
+        run: |
+          .github/scripts/background.sh start rust \
+            cargo build --release --locked -p proa_bench --features http-load,topcoat \
+              --bin proa_page_server --bin representative_suite_bench
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
+      - name: Start the Chromium install
+        run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "26.13.0"
+      - name: Set up Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: "1.25.5"
+          cache: false
+      - name: Finish the release build
+        run: .github/scripts/background.sh wait rust
+      - name: Finish the Chromium install
+        run: .github/scripts/background.sh wait chromium
+      - name: Validate canonical page servers
+        # The smoke proves every production server starts, passes parity and
+        # survives both phase kinds. It is not a measurement: the runner's two
+        # generator workers cannot out-generate Proa's component page, so a
+        # generator-limited phase is recorded rather than fatal here.
+        run: |
+          bun benchmarks/http/run.mjs --duration 1 --repeats 1 --warmup-requests 4 --concurrency 8 \
+            --tolerate-generator-limits --out benchmarks/http/results/smoke.json
+      - name: Validate cold starts
+        run: bun run bench:cold-start:smoke
+
+  streaming:
+    name: Suspense streaming fixtures
+    needs: changes
+    if: needs.changes.outputs.streaming == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set up Rust
+        uses: ./.github/actions/setup-rust
+        with:
+          cache-key: release-http
+          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
+      - name: Start the release build
+        run: |
+          .github/scripts/background.sh start rust \
+            cargo build --release --locked -p proa_bench --features http-load,topcoat --bin proa_suspense_server
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
+      - name: Start the Chromium install
+        run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "26.13.0"
+      - name: Finish the release build
+        run: .github/scripts/background.sh wait rust
+      - name: Finish the Chromium install
+        run: .github/scripts/background.sh wait chromium
       - name: Validate Suspense streaming fixtures
-        if: matrix.suite == 'rendering'
         run: |
           bun run bench:suspense-load:smoke
           bun experiments/sveltekit-streaming/run.mjs --smoke
 
-      - name: Validate canonical page servers
-        if: matrix.suite == 'rendering'
-        # The smoke proves every production server starts, passes parity and
-        # survives both phase kinds. It is not a measurement: the PR runner's
-        # two generator workers cannot out-generate Proa's component page, so
-        # a generator-limited phase is recorded rather than fatal here.
-        run: |
-          bun benchmarks/http/run.mjs --duration 1 --repeats 1 --warmup-requests 4 --concurrency 8 \
-            --tolerate-generator-limits --out benchmarks/http/results/smoke.json
-          bun run bench:cold-start:smoke
-
+  framework:
+    name: Full-framework SSR workloads
+    needs: changes
+    if: needs.changes.outputs.framework == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set up Rust
+        uses: ./.github/actions/setup-rust
+        with:
+          cache-key: framework
+          workspaces: benchmarks/framework-ssr/adapters/proa -> ../../../../target
+          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "26.13.0"
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
+      - name: Restore the pinned Exact checkout and compiler
+        uses: ./.github/actions/exact-cache
       - name: Build and gate all full-framework SSR workloads
-        if: matrix.suite == 'rendering'
         run: |
           bun benchmarks/framework-ssr/build.ts
           bun benchmarks/framework-ssr/run.ts --no-build --smoke --workers 2
 
-      - name: Verify unchanged-fixture exclusion evidence
-        if: matrix.suite == 'rendering'
+  # Required by the branch ruleset. A suite skipped because the change cannot
+  # affect it counts as passing; every suite that ran must have succeeded.
+  rendering:
+    name: Rendering builds and framework parity
+    # Do not create a final job after the workflow itself was canceled.
+    if: ${{ always() && !cancelled() }}
+    needs: [changes, clippy, test, bench, dom-parity, canonical, http, streaming, framework]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Require every rendering prerequisite
+        env:
+          NEEDS: ${{ toJSON(needs) }}
         run: |
-          bun benchmarks/rendering/external/exact/check-admission.mjs
-
-      - name: Show compiler cache stats
-        if: always() && matrix.suite == 'rendering'
-        run: sccache --show-stats
+          jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<< "$NEEDS"
+          jq -e '.changes.result == "success"
+            and all(.[]; .result == "success" or .result == "skipped")' <<< "$NEEDS" > /dev/null
 
   ci:
     name: lint, clippy, build, test
-    # Do not create a final runner-dependent job after the workflow itself was
-    # canceled; otherwise an unavailable pool can retain the concurrency lock.
     if: ${{ always() && !cancelled() }}
-    needs: [checks]
-    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-24.04' || vars.CI_RUNNER }}
+    needs: [changes, quality, clippy, test, bench, dom-parity, canonical, http, streaming, framework]
+    runs-on: ubuntu-24.04
     timeout-minutes: 2
     steps:
       - name: Require every merge prerequisite
         env:
-          CHECKS_RESULT: ${{ needs.checks.result }}
+          NEEDS: ${{ toJSON(needs) }}
         run: |
-          set -euo pipefail
-          case "$CHECKS_RESULT" in
-            success) ;;
-            *)
-              echo "required CI dependency finished with result: $CHECKS_RESULT" >&2
-              exit 1
-              ;;
-          esac
+          jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<< "$NEEDS"
+          jq -e '.changes.result == "success" and .quality.result == "success"
+            and all(.[]; .result == "success" or .result == "skipped")' <<< "$NEEDS" > /dev/null
