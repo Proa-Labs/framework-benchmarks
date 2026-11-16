@@ -33,7 +33,7 @@ export interface StatTarget {
 }
 export type DashboardModel = ReturnType<typeof createDashboardModel>;
 
-import { ALL_GROUPS, matchesGroups } from "../filters.ts";
+import { ALL_GROUPS, matchesGroups, normalizeGroups } from "../filters.ts";
 
 const fineNumbers = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 2,
@@ -261,14 +261,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     )
       state.stream = "completion";
     if (params.has("types"))
-      state.types = [
-        ...new Set(
-          required(params.get("types"))
-            .split(",")
-            .map((id) => (id === "baselines" ? "templates" : id))
-            .filter((id) => ALL_GROUPS.includes(id)),
-        ),
-      ];
+      state.types = normalizeGroups(required(params.get("types")).split(","));
     if (params.has("selected"))
       state.selected = required(params.get("selected"))
         .split(",")

@@ -975,7 +975,7 @@ try {
   await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
   assert.equal(await page.locator("[data-renderer-comparison]").count(), 1);
   assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
-  await page.locator('[data-type="frameworks"]').click();
+  await page.locator('[data-type="frameworks"]').uncheck();
   assert.equal(await page.locator('[data-type="baselines"]').count(), 0);
   assert.equal(await page.locator('[data-stat-suite="framework"]').count(), 0);
   checks.push(

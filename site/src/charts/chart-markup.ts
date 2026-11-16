@@ -6,6 +6,7 @@ import type {
   Renderer,
 } from "../../benchmark-types.ts";
 import { required } from "../../required.ts";
+import { TOOL_GROUPS } from "../filters.ts";
 import type { DashboardModel } from "./dashboard-model.ts";
 export interface ChartOutput {
   html: string;
@@ -137,40 +138,31 @@ export function createChartMarkup(model: DashboardModel) {
         : "Median SSR render latency · µs · lower is better · prepared data → freshly owned HTML · sort by any workload heading · bars scale within each column";
   }
   function renderCatalog() {
-    const groups = [
-      [
-        "Frameworks & UI systems",
-        ["Application framework", "UI framework", "UI library", "Renderer"],
-      ],
-      ["Template engines", ["Template engine", "Native templates"]],
-    ];
-    output.html = groups
-      .map(
-        ([group, kinds]) =>
-          `<div class="fw-catalog-group">${group}</div>${(
-            data.ecosystem || data.renderers
+    output.html = TOOL_GROUPS.map(
+      ({ label: group, kinds }) =>
+        `<div class="fw-catalog-group">${group}</div>${(
+          data.ecosystem || data.renderers
+        )
+          .filter((r) => kinds.includes(r.kind))
+          .map(
+            (r) =>
+              `<div class="fw-catalog-row">${label(r.id)}<small>${esc(r.kind)}${
+                r.status === "feature-only"
+                  ? '<br><span class="fw-coverage-status">Features reviewed · not benchmarked</span>'
+                  : r.status === "unmeasured"
+                    ? `<br><span class="fw-coverage-status">${
+                        model.measurementLinks(r.id).length
+                          ? `Measured in ${model
+                              .measurementLinks(r.id)
+                              .map((l) => l.label)
+                              .join(" / ")}`
+                          : "Not measured"
+                      }</span>`
+                    : ""
+              }</small><small>${esc(r.language)}</small><a href="${esc(r.homepage)}" target="_blank" rel="noreferrer" aria-label="${esc(r.label)} project website">Project ↗</a></div>`,
           )
-            .filter((r) => (kinds as string[]).includes(r.kind))
-            .map(
-              (r) =>
-                `<div class="fw-catalog-row">${label(r.id)}<small>${esc(r.kind)}${
-                  r.status === "feature-only"
-                    ? '<br><span class="fw-coverage-status">Features reviewed · not benchmarked</span>'
-                    : r.status === "unmeasured"
-                      ? `<br><span class="fw-coverage-status">${
-                          model.measurementLinks(r.id).length
-                            ? `Measured in ${model
-                                .measurementLinks(r.id)
-                                .map((l) => l.label)
-                                .join(" / ")}`
-                            : "Not measured"
-                        }</span>`
-                      : ""
-                }</small><small>${esc(r.language)}</small><a href="${esc(r.homepage)}" target="_blank" rel="noreferrer" aria-label="${esc(r.label)} project website">Project ↗</a></div>`,
-            )
-            .join("")}`,
-      )
-      .join("");
+          .join("")}`,
+    ).join("");
   }
   function rowButton(r: ChartRow, inside: string, number: string, extra = "") {
     return `<div class="fw-result-row"><button type="button" class="fw-row cursor-interaction ${extra}" style="--brand:${required(renderer(r.id)).color}" data-focus="${r.id}" aria-pressed="${state.focus === r.id}" aria-label="${esc(name(r.id))}, ${esc(number)} ${unit()}${r.errors ? `, ${r.errors} errors` : ""}">${label(r.id)}${inside}<span class="fw-number">${number}<small class="fw-value-unit">${unit() === "responses/s" ? "req/s" : unit() === "% of one core" ? "%" : unit()}</small></span></button>${repositoryLink(r.id)}</div>`;
