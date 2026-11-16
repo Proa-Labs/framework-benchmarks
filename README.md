@@ -40,6 +40,7 @@ changing a workload, or selecting new publication captures.
 - [Engineering controls and scaling](docs/reports/engineering.md)
 - [Historical SvelteKit browser-completion comparison](docs/reports/sveltekit.md)
 - [Figure gallery](docs/figures/README.md)
+- [Paired landing-page experiment](experiments/showcase/README.md#landing-page-paired-comparisons)
 - [Measurement protocols](docs/protocol.md)
 
 Retained `results/archive/` JSON, raw samples and source snapshots stay beside

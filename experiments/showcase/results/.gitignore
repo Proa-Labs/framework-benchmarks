@@ -4,4 +4,8 @@
 !memcpy-floor.json
 !buffer-comparison.json
 !ebay-owned-string.json
+!landing-hero.json
+!landing-hero-default.json
+!raw/landing-hero/ci-host.json
+!raw/landing-hero/ci-allocation.json
 *.log
