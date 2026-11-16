@@ -1,64 +1,79 @@
-# Framework benchmarks
+# SSR benchmarks for web frameworks
 
-Reproducible web-framework benchmarks and the source for [frameworks.run](https://frameworks.run).
-Each experiment has its own workload, correctness checks and timing boundary.
-Render-only timings, complete HTTP requests, streaming and startup answer
-different questions; compare results within an experiment.
+Reproducible **server-side rendering (SSR) benchmarks** and **web framework benchmarks**
+for comparing rendering time, HTTP throughput, streaming latency, cold starts and
+memory usage. We render shared pages across frameworks and template engines, check
+their output, and publish the code, pinned versions and raw measurements.
 
-## Start here
+**[Explore the benchmark results and feature comparison → frameworks.run](https://frameworks.run)**
 
-```sh
-bun install --frozen-lockfile       # Bun 1.4.2; one workspace and lockfile
-bun node_modules/playwright/cli.js install chromium
-bun run bench list                 # Discover the active benchmark suites
-bun run bench doctor rendering     # Check a suite's requirements
-bun run bench run rendering --renderers react,vue --workloads cards
-bun run dev                       # Website at http://127.0.0.1:4317
-```
+## Frameworks and renderers
 
-The contributor command runs a short correctness/smoke check and preserves
-published results. See [CONTRIBUTING.md](CONTRIBUTING.md) before adding an adapter,
-changing a workload, or selecting new publication captures.
+The SSR Rendering suite includes 21 implementations: Askama, Astro, Dioxus, Exact,
+Go html/template, Handlebars, Jinja2, jte, Leptos, Marko, Next.js, PHP, Proa, Rails,
+React, Rocker, Sailfish, Svelte, SvelteKit, Topcoat and Vue. Coverage varies by
+experiment; adapted fixtures and unsupported workloads are explicitly marked.
+See the [renderer roster](benchmarks/rendering/canonical/roster.json) and
+[framework classifications](https://frameworks.run/about#classification).
 
-## Repository map
+## What the benchmarks measure
 
-| Directory | Responsibility |
+| Experiment | Measurement |
 | --- | --- |
-| [`benchmarks/`](benchmarks/README.md) | The five active comparison suites, their adapters, contracts and retained results |
-| [`experiments/`](experiments/README.md) | Separate browser-agent, showcase and historical SvelteKit investigations |
-| [`tooling/`](tooling/README.md) | Shared CLI, adapters, statistics, load generation, evidence validation and GCP orchestration |
-| [`site/`](site/README.md) | The TanStack Start / Cloudflare website |
-| [`site/data/`](site/data/README.md) | Website metadata, feature definitions and per-framework source reviews |
-| [`fixtures/`](fixtures/README.md) | Shared Rust dump/control programs and retained reference markup |
-| [`docs/`](docs/README.md) | Protocols, generated evidence reports, figures and engineering notes |
+| [SSR Rendering](benchmarks/rendering/README.md) | Prepared data to fresh owned HTML output; render latency and peak process RSS |
+| [Framework SSR](benchmarks/framework-ssr/README.md) | Production framework routing through the complete HTTP response |
+| [HTTP](benchmarks/http/README.md) | Sustained throughput, equal-load latency, CPU and memory |
+| [Streaming](benchmarks/streaming/README.md) | Streamed shell and resolved response completion under load |
+| [Cold Start](benchmarks/cold-start/README.md) | Fresh server process to its first complete response |
 
-## Results and methods
+Workloads include a component page, product grid, 1,000-row table, Airbnb landing
+page, Nike catalog, GitHub pull-request review, Sentry logs and ESPN game page.
+These are shared benchmark re-creations, not measurements of those companies’ sites.
 
-- [Interactive results and feature comparison](https://frameworks.run)
-- [Render-only scoreboard](docs/reports/scoreboard.md)
-- [HTTP, streaming and cold-start report](docs/reports/http-capacity.md)
-- [Engineering controls and scaling](docs/reports/engineering.md)
-- [Native streaming and browser-completion experiment](docs/reports/sveltekit.md)
-- [Figure gallery](docs/figures/README.md)
-- [Paired landing-page experiment](experiments/showcase/README.md#landing-page-paired-comparisons)
-- [Measurement protocols](docs/protocol.md)
-- [Capture comparison](compare/)
+Compare results within the same experiment: render-only time excludes HTTP, and
+server measurements exclude browser JavaScript execution. Competitors share a
+machine and workload within each suite; published results must pass output parity,
+sampling and source-integrity checks. Read the [measurement protocols](docs/protocol.md)
+and inspect the [rendering results](docs/reports/scoreboard.md) or
+[HTTP, streaming and startup results](docs/reports/http-capacity.md),
+or diff two captures with the [capture comparison](compare/) tool.
 
-Keep only the latest capture per suite or independent experiment, with its raw
-samples and measured source snapshot. The matching `results/archive/` JSON is
-its immutable current snapshot. Superseded data is available in Git history.
-After publishing a new capture, run `bun tooling/maintenance/prune-results.mjs --write`
-(or `--check` to check retention). These files are evidence, not hand-edited
-site inputs. Publication must pass campaign, parity and source-integrity checks.
+## Run an SSR benchmark
 
-## Checks
+Use **Bun 1.4.2**. This short contributor run checks selected adapters without
+installing every language toolchain or replacing published results.
 
 ```sh
-bun run check                     # Lint, types, contracts, website and captures
-bun run --cwd site test:browser    # Built-site browser checks
-bun run check:publication          # Strict merge / production evidence gate
+bun install --frozen-lockfile
+bun node_modules/playwright/cli.js install chromium
+bun run bench list
+bun run bench doctor rendering
+bun run bench run rendering --renderers react,vue --workloads cards
 ```
 
-Independent suites can run concurrently on isolated matching GCP workers. Within
-each suite, competitors share one machine and workload. See the
-[campaign guide](tooling/cloud/README.md).
+Smoke results validate implementations; use the publication protocol for rankings.
+See [CONTRIBUTING.md](CONTRIBUTING.md) to add a framework, change a workload or run
+the full suite, and the [GCP campaign guide](tooling/cloud/README.md) for isolated
+parallel benchmark runs.
+
+## Repository guide
+
+[Benchmarks](benchmarks/README.md) · [Experiments](experiments/README.md) ·
+[Tooling](tooling/README.md) · [Website](site/README.md) ·
+[Website data](site/data/README.md) · [Fixtures](fixtures/README.md) ·
+[Reports and protocols](docs/README.md)
+
+Keep the latest validated capture and its raw samples per experiment; older
+captures remain in Git history. See the [retention rules](CONTRIBUTING.md#data-is-generated-json)
+for publication and cleanup. Run `bun run check` for repository checks,
+`bun run --cwd site test:browser` for browser checks, and
+`bun run check:publication` for the strict publication gate.
+
+Related work: [eknkc’s SSR Framework Benchmark](https://github.com/eknkc/ssr-benchmark),
+an earlier comparison focused on JavaScript SSR stacks.
+
+Maintained by [Proa Labs](https://github.com/Proa-Labs), which develops Proa, one of
+the measured frameworks. Performance is one input to choosing a framework;
+[features and integration choices](https://frameworks.run/features) matter too.
+
+[Apache-2.0](LICENSE) · [Third-party attribution](benchmarks/rendering/UPSTREAM_LICENSES.md)

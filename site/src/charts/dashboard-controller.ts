@@ -75,6 +75,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     name,
     logo,
     label,
+    repositoryLink,
     isVisible,
     frameworkWorkloads,
     suites,
@@ -518,7 +519,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     });
     if (!$(".fw-type-filters").childElementCount)
       $(".fw-type-filters").innerHTML =
-        `<span>Tool type</span>${TOOL_GROUPS.map((g) => `<label><input type="checkbox" data-type="${g.id}"><span>${g.label}</span></label>`).join("")}`;
+        `<legend class="fw-sidebar-label">Tool type</legend>${TOOL_GROUPS.map((g) => `<label><input type="checkbox" data-type="${g.id}"><span>${g.label}</span></label>`).join("")}`;
     $$<HTMLInputElement>("[data-type]").forEach((input) => {
       input.checked = state.types.includes(required(input.dataset.type));
     });
@@ -704,7 +705,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
             `<section class="fw-stream-panel" aria-label="Completion ${p}"><h3>Completion latency · ${p}</h3><div data-completion-panel="${p}"></div></section>`,
         )
         .join("") +
-      `<div class="fw-legend">${rows.map((r) => `<button type="button" data-focus="${r.id}" aria-pressed="${state.focus === r.id}">${lineKey(r.id)}${logo(r.id)}${esc(name(r.id))}</button>`).join("")}</div>`;
+      `<div class="fw-legend">${rows.map((r) => `<span class="fw-legend-item"><button type="button" data-focus="${r.id}" aria-pressed="${state.focus === r.id}">${lineKey(r.id)}${logo(r.id)}${esc(name(r.id))}</button>${repositoryLink(r.id)}</span>`).join("")}</div>`;
     for (const p of ["P50", "P99"] as const)
       drawLines(rows, {
         target: $(`[data-completion-panel="${p}"]`),
@@ -847,9 +848,10 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       state.chart === "balls"
     )
       state.chart = "bars";
-    $<HTMLSelectElement>("[data-render-view]").hidden =
-      state.view !== "rendering";
+    $("[data-render-metric]").hidden = state.view !== "rendering";
     $<HTMLSelectElement>("[data-render-view]").value = state.render;
+    $(".fw-toolbar").hidden =
+      state.view === "rendering" && state.chart === "compare";
     $('[data-chart="table"]').hidden = state.view === "streaming";
     $(".fw-view-switch").hidden = state.view === "streaming";
     $<HTMLSelectElement>("[data-framework-view]").hidden =

@@ -1011,6 +1011,15 @@
   .document h2 {
     @apply [margin-top:37px] text-ink [font-size:20px] font-medium;
   }
+  .document :is(p, li) a {
+    @apply underline underline-offset-4 [text-decoration-color:var(--fw-border)];
+  }
+  .document :is(p, li) a:hover {
+    @apply text-ink [text-decoration-color:currentColor];
+  }
+  .document :is(p, li) a:focus-visible {
+    @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:3px];
+  }
   .document ul {
     @apply [padding-left:21px];
   }
@@ -1564,6 +1573,57 @@
     }
   }
 
+  /* Keep repository links as siblings of result buttons, with their own hit area. */
+  #frameworks-explorer .fw-result-row {
+    --fw-result-name-width: 148px;
+    display: grid;
+    grid-template-columns: var(--fw-result-name-width) minmax(0, 1fr);
+    align-items: center;
+  }
+  #frameworks-explorer .fw-result-row > .fw-row {
+    grid-area: 1 / 1 / 2 / -1;
+  }
+  #frameworks-explorer .fw-result-row > .fw-row > .fw-renderer {
+    padding-right: 26px;
+  }
+  #frameworks-explorer .fw-result-row > .fw-repo-link {
+    grid-area: 1 / 1;
+    justify-self: end;
+    z-index: 1;
+  }
+  #frameworks-explorer .fw-repo-link {
+    @apply inline-flex shrink-0 items-center justify-center text-muted rounded-sm;
+    width: 24px;
+    height: 28px;
+  }
+  #frameworks-explorer .fw-repo-link:hover {
+    @apply text-ink [background:var(--fw-hover)];
+  }
+  #frameworks-explorer .fw-repo-link:focus-visible {
+    outline: 2px solid var(--fw-muted);
+    outline-offset: 2px;
+  }
+  #frameworks-explorer .fw-result-identity,
+  #frameworks-explorer .fw-legend-item {
+    @apply inline-flex items-center gap-1;
+  }
+  #frameworks-explorer .fw-result-identity > button {
+    min-width: 0;
+    width: auto;
+  }
+  @media (max-width: 650px) {
+    #frameworks-explorer .fw-result-row {
+      --fw-result-name-width: 108px;
+    }
+    #frameworks-explorer .fw-result-flow {
+      grid-template-columns: minmax(0, 1fr) 106px;
+    }
+    #frameworks-explorer .fw-result-flow > .fw-repo-link {
+      align-self: start;
+      margin-top: 8px;
+    }
+  }
+
   #frameworks-explorer header {
     @apply [column-gap:4px];
   }
@@ -1583,7 +1643,16 @@
     @apply [min-width:0];
   }
   #frameworks-explorer .fw-sidebar-label {
-    @apply text-sm [letter-spacing:0.7px] uppercase text-muted [margin-bottom:12px];
+    @apply block text-sm font-normal [letter-spacing:0.7px] uppercase text-muted [margin-bottom:12px];
+  }
+  #frameworks-explorer .fw-render-metric {
+    @apply [border:0] [padding:0] [margin:0_0_24px] [max-width:280px];
+  }
+  #frameworks-explorer .fw-render-metric select {
+    @apply w-full [min-height:40px] [padding:6px_34px_6px_10px] [background-color:var(--fw-surface)] [border:1px_solid_var(--fw-line)] [border-radius:5px] text-sm text-ink;
+  }
+  #frameworks-explorer .fw-render-metric select:focus-visible {
+    @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:3px];
   }
   #frameworks-explorer .fw-workload-tabs {
     @apply flex-col;
@@ -1600,8 +1669,8 @@
   #frameworks-explorer .fw-type-filters {
     @apply [margin-top:22px] flex-col items-stretch [gap:6px];
   }
-  #frameworks-explorer .fw-type-filters > span {
-    @apply [margin-bottom:3px];
+  #frameworks-explorer .fw-type-filters > legend {
+    @apply [margin-bottom:12px];
   }
   #frameworks-explorer .fw-type-filters button {
     @apply text-left;
@@ -1631,11 +1700,11 @@
     #frameworks-explorer .fw-type-filters {
       @apply [margin-top:12px] flex-row items-center;
     }
-    #frameworks-explorer .fw-type-filters > span {
-      @apply [width:auto] [margin:0_3px_0_0];
+    #frameworks-explorer .fw-type-filters > legend {
+      @apply [margin:0_0_12px];
     }
     #frameworks-explorer .fw-sidebar-label {
-      @apply hidden;
+      @apply block;
     }
   }
 
@@ -1647,6 +1716,12 @@
   }
   #frameworks-explorer .fw-lab-nav [aria-selected="true"] {
     @apply [border-bottom-color:var(--fw-fg)] text-ink font-medium;
+  }
+  #frameworks-explorer .fw-lab-nav .fw-coming-soon-tab {
+    @apply inline-flex items-center [gap:7px] cursor-default;
+  }
+  #frameworks-explorer .fw-coming-soon-badge {
+    @apply text-xs [padding:2px_5px] [border:1px_solid_var(--fw-line)] [border-radius:4px] [background:var(--fw-surface)] whitespace-nowrap;
   }
   #frameworks-explorer .fw-experiment-tab {
     @apply inline-flex items-center [gap:5px] shrink-0 [border-bottom:2px_solid_transparent] [margin-bottom:-1px];
@@ -1673,8 +1748,15 @@
     #frameworks-explorer[data-compare="true"] {
       --fw-comparison-heading-height: 5.5rem;
     }
-    #frameworks-explorer[data-compare="true"] .fw-sidebar-label {
+    #frameworks-explorer[data-compare="true"]
+      .fw-scenarios
+      > .fw-sidebar-label {
       @apply flex items-center [min-height:var(--fw-comparison-heading-height)] [margin:0];
+    }
+    #frameworks-explorer[data-compare="true"]
+      .fw-render-metric:not([hidden])
+      ~ .fw-sidebar-label {
+      @apply [min-height:0] [margin-bottom:12px];
     }
     #frameworks-explorer[data-compare="true"] .fw-comparison thead {
       @apply [min-height:var(--fw-comparison-heading-height)];
@@ -1937,14 +2019,17 @@
   #frameworks-explorer .fw-tool-search input {
     @apply [width:100%] [min-width:0] [padding:0] text-ink [background:transparent] [border:0] [font:inherit] text-sm [outline-offset:5px];
   }
+  #frameworks-explorer .fw-tool-search input:focus {
+    @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:4px] [border-radius:2px];
+  }
   #frameworks-explorer .fw-tool-types {
-    @apply flex [gap:12px] [border:0] [margin:0] [padding:12px_8px] text-sm text-muted;
+    @apply flex flex-wrap [gap:10px_12px] [border:0] [margin:0] [padding:12px_8px] text-sm text-muted;
   }
   #frameworks-explorer .fw-tool-types label {
     @apply flex items-center [gap:5px];
   }
   #frameworks-explorer .fw-tool-types input {
-    @apply [margin:0] [width:12px] [height:12px] [accent-color:var(--fw-fg)];
+    @apply [margin:0] [width:12px] [height:12px] shrink-0 [accent-color:var(--fw-fg)];
   }
   #frameworks-explorer .fw-tool-picker-actions,
   #frameworks-explorer .fw-tool-picker-footer {

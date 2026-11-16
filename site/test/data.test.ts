@@ -230,6 +230,7 @@ test("requested roster entries never acquire invented measurements", async () =>
     kind: "UI framework",
     color: "#64748b",
     homepage: "https://example.invalid",
+    repository: "https://github.com/example/pending-renderer",
     colorSource: "https://example.invalid",
     status: "unmeasured",
     coverageReason: "No admitted render-only capture",

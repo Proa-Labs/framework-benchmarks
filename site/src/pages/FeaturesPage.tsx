@@ -35,7 +35,7 @@ import {
   sortCoverageRows,
   summarizeCapabilities,
 } from "../feature-summary.ts";
-import { TOOL_GROUPS } from "../filters.ts";
+import { ALL_GROUPS, normalizeGroups, TOOL_GROUPS } from "../filters.ts";
 
 const defaults = {
   group: "all",
@@ -43,7 +43,7 @@ const defaults = {
   sort: "support",
   order: "desc",
   tools: null,
-  types: ["frameworks", "templates"],
+  types: [...ALL_GROUPS],
 };
 const categories = [{ id: "all", label: "All features" }, ...featureGroups];
 const updatedDateLabel = new Intl.DateTimeFormat("en-US", {
@@ -92,9 +92,7 @@ function readSettings(search: string): FeatureSettings {
         : "desc",
     tools: tools === null ? null : [...tools],
     types: params.has("types")
-      ? required(params.get("types"))
-          .split(",")
-          .filter((type) => defaults.types.includes(type))
+      ? normalizeGroups(required(params.get("types")).split(","))
       : defaults.types,
   };
 }
@@ -731,9 +729,7 @@ export function FeaturesPage({
                             setActive(null);
                           }}
                         />{" "}
-                        {type.id === "frameworks"
-                          ? "Frameworks & UI"
-                          : "Templates"}
+                        {type.label}
                       </label>
                     ))}
                   </fieldset>

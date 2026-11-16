@@ -44,6 +44,7 @@ import { startServer } from "../dev.ts";
 import { features } from "../feature-schema.ts";
 import { contrastRatio, readableBrand } from "../src/brand-colors.ts";
 import { sortCoverageRows } from "../src/feature-summary.ts";
+import { verifyAnalytics } from "./analytics.ts";
 
 const server = await startServer({ port: 0, live: false });
 const benchmarkData: BenchmarkData = await (
@@ -81,6 +82,10 @@ const reload = async () => {
 
 await mkdir(join(siteRoot, "test-results"), { recursive: true });
 try {
+  await verifyAnalytics(browser, server.url);
+  checks.push(
+    "Analytics loads once on production hosts and excludes local and PR traffic",
+  );
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1100 },
   });
@@ -125,6 +130,23 @@ try {
   await navigate(`${server.url}/?chart=bars`);
   await page.locator(".fw-row").first().waitFor();
   assert.equal(await page.locator(".fw-row").count(), renderCount);
+  assert.equal(
+    await page.locator("#results-heading .fw-repo-link").count(),
+    renderCount,
+  );
+  for (const link of await page
+    .locator("#results-heading .fw-repo-link")
+    .all()) {
+    assert.match(
+      (await link.getAttribute("href")) ?? "",
+      /^https:\/\/github\.com\//,
+    );
+    assert.equal(
+      await link.evaluate((element) => !!element.closest("button")),
+      false,
+    );
+  }
+
   const renderingInfo = page.locator(".fw-experiment-info");
   await renderingInfo.hover();
   assert.equal(await page.locator("#rendering-info").isVisible(), true);
@@ -554,31 +576,24 @@ try {
     await navigate(
       `${server.url}/?view=streaming&chart=lines&stream=completion`,
     );
-    // App readiness precedes the ResizeObserver's chart redraw. Wait for the
-    // measured drawing size before checking typography, including on busy CI.
-    await page.waitForFunction(() => {
-      const charts = [...document.querySelectorAll<SVGSVGElement>(".fw-chart")];
-      return (
-        charts.length === 2 &&
-        charts.every(
-          (svg) =>
-            Math.abs(
-              svg.getBoundingClientRect().width - svg.viewBox.baseVal.width,
-            ) < 1,
-        )
-      );
+    // Read geometry in the same browser task that observes the completed redraw.
+    // A second evaluation can race another responsive layout/ResizeObserver pass.
+    const chartGeometry = await page.waitForFunction(() => {
+      const charts = [
+        ...document.querySelectorAll<SVGSVGElement>(".fw-chart"),
+      ].map((svg) => ({
+        width: svg.getBoundingClientRect().width,
+        drawing: svg.viewBox.baseVal.width,
+        textHeight:
+          svg.querySelector("text")?.getBoundingClientRect().height || 0,
+      }));
+      return charts.length === 2 &&
+        charts.every((chart) => Math.abs(chart.width - chart.drawing) < 1)
+        ? charts
+        : null;
     });
-    const charts = await page.locator(".fw-chart").evaluateAll((elements) =>
-      elements.map((element) => {
-        const svg = element as SVGSVGElement;
-        const text = svg.querySelector("text");
-        return {
-          width: svg.getBoundingClientRect().width,
-          drawing: svg.viewBox.baseVal.width,
-          textHeight: text?.getBoundingClientRect().height || 0,
-        };
-      }),
-    );
+    const charts = await chartGeometry.jsonValue();
+    assert.ok(charts);
     assert.equal(charts.length, 2);
     for (const chart of charts) {
       assert.ok(
@@ -960,7 +975,7 @@ try {
   await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
   assert.equal(await page.locator("[data-renderer-comparison]").count(), 1);
   assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
-  await page.locator('[data-type="frameworks"]').click();
+  await page.locator('[data-type="frameworks"]').uncheck();
   assert.equal(await page.locator('[data-type="baselines"]').count(), 0);
   assert.equal(await page.locator('[data-stat-suite="framework"]').count(), 0);
   checks.push(
