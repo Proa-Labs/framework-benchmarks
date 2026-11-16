@@ -1,14 +1,9 @@
 // These groups use the same declared roles shown in the classification guide.
 export const TOOL_GROUPS = [
   {
-    id: "web-frameworks",
-    label: "Web frameworks",
-    kinds: ["Application framework"],
-  },
-  {
-    id: "components",
-    label: "Component frameworks & libraries",
-    kinds: ["UI framework", "UI library", "Renderer"],
+    id: "frameworks",
+    label: "Frameworks & libraries",
+    kinds: ["Application framework", "UI framework", "UI library", "Renderer"],
   },
   {
     id: "templates",
@@ -19,8 +14,8 @@ export const TOOL_GROUPS = [
 export const ALL_GROUPS = TOOL_GROUPS.map((group) => group.id);
 export function normalizeGroups(groups: string[]) {
   const expanded = groups.flatMap((id) =>
-    id === "frameworks"
-      ? ["web-frameworks", "components"]
+    id === "web-frameworks" || id === "components"
+      ? ["frameworks"]
       : id === "baselines"
         ? ["templates"]
         : [id],

@@ -15,10 +15,10 @@ test("tool filters match declared roles, combine by union, and allow no selectio
   assert.ok(ids(["frameworks"]).includes("react"));
   assert.ok(ids(["web-frameworks"]).includes("nextjs"));
   assert.ok(ids(["web-frameworks"]).includes("proa"));
-  assert.ok(!ids(["web-frameworks"]).includes("react"));
+  assert.ok(ids(["web-frameworks"]).includes("react"));
   assert.ok(ids(["components"]).includes("react"));
   assert.ok(ids(["components"]).includes("svelte"));
-  assert.ok(!ids(["components"]).includes("proa"));
+  assert.ok(ids(["components"]).includes("proa"));
   assert.ok(ids(["templates"]).includes("php"));
   assert.ok(ids(["templates"]).includes("go-html-template"));
   assert.deepEqual(
@@ -27,6 +27,9 @@ test("tool filters match declared roles, combine by union, and allow no selectio
   );
   assert.deepEqual(normalizeGroups(["frameworks", "baselines"]), ALL_GROUPS);
   assert.deepEqual(normalizeGroups(["components", "components", "unknown"]), [
-    "components",
+    "frameworks",
+  ]);
+  assert.deepEqual(normalizeGroups(["web-frameworks", "components"]), [
+    "frameworks",
   ]);
 });
