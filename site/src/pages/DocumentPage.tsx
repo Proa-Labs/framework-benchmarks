@@ -21,6 +21,17 @@ function About() {
         inspect. Differences and exceptions are disclosed so you can judge what
         each comparison actually tells you.
       </p>
+      <p>
+        Performance is only one part of choosing a framework. Features,
+        developer tooling and ecosystem support matter too. Proa’s built-in{" "}
+        <a href="https://proa.so/docs/core/markdown">
+          typed Markdown rendering
+        </a>
+        , for example, is a capability a render-time benchmark does not capture.
+        Our <Link to="/features">feature comparison</Link> distinguishes
+        built-in features from official packages and community integrations, so
+        you can weigh speed alongside what your application needs.
+      </p>
       <h2>The costs we want to measure</h2>
       <p>
         Our focus is on two major costs frameworks can influence: generating a
