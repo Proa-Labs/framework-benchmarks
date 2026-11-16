@@ -44,13 +44,19 @@ import { startServer } from "../dev.ts";
 import { features } from "../feature-schema.ts";
 import { contrastRatio, readableBrand } from "../src/brand-colors.ts";
 import { sortCoverageRows } from "../src/feature-summary.ts";
+import { verifyAnalytics } from "./analytics.ts";
 
 const server = await startServer({ port: 0, live: false });
 const benchmarkData: BenchmarkData = await (
   await fetch(`${server.url}/data/results.json`)
 ).json();
 const renderCount = benchmarkData.rendering.rows.cards.length;
-const renderCells = Object.values(benchmarkData.rendering.rows).flat().length;
+const memoryCount = benchmarkData.rendering.rows.cards.filter(
+  (row) => row.memory,
+).length;
+const renderCells = Object.entries(benchmarkData.rendering.rows)
+  .filter(([id]) => !benchmarkData.rendering.pendingWorkloads?.[id])
+  .flatMap(([, rows]) => rows).length;
 const unrankedIds = benchmarkData.framework.rows
   .filter(
     (row) =>
@@ -76,6 +82,10 @@ const reload = async () => {
 
 await mkdir(join(siteRoot, "test-results"), { recursive: true });
 try {
+  await verifyAnalytics(browser, server.url);
+  checks.push(
+    "Analytics loads once on production hosts and excludes local and PR traffic",
+  );
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1100 },
   });
@@ -120,6 +130,23 @@ try {
   await navigate(`${server.url}/?chart=bars`);
   await page.locator(".fw-row").first().waitFor();
   assert.equal(await page.locator(".fw-row").count(), renderCount);
+  assert.equal(
+    await page.locator("#results-heading .fw-repo-link").count(),
+    renderCount,
+  );
+  for (const link of await page
+    .locator("#results-heading .fw-repo-link")
+    .all()) {
+    assert.match(
+      (await link.getAttribute("href")) ?? "",
+      /^https:\/\/github\.com\//,
+    );
+    assert.equal(
+      await link.evaluate((element) => !!element.closest("button")),
+      false,
+    );
+  }
+
   const renderingInfo = page.locator(".fw-experiment-info");
   await renderingInfo.hover();
   assert.equal(await page.locator("#rendering-info").isVisible(), true);
@@ -135,6 +162,170 @@ try {
     path: join(siteRoot, "test-results/desktop.png"),
     fullPage: true,
   });
+  await page
+    .getByLabel("SSR Rendering analysis", { exact: true })
+    .selectOption("rss");
+  assert.equal(new URL(page.url()).searchParams.get("render"), "rss");
+  assert.equal(await page.locator(".fw-row").count(), memoryCount);
+  if (!memoryCount)
+    assert.match(
+      required(await page.locator(".fw-empty").textContent()),
+      /RSS was not recorded/,
+    );
+  else
+    assert.match(
+      required(await page.locator(".fw-row").first().textContent()),
+      /MiB/,
+    );
+  assert.equal(await page.locator('[data-chart="balls"]').isVisible(), false);
+  await reload();
+  assert.equal(await page.locator("[data-render-view]").inputValue(), "rss");
+  await page.getByText("Method & data", { exact: true }).click();
+  const memoryExport = JSON.parse(
+    decodeURIComponent(
+      required(await page.locator("[data-json]").getAttribute("href"))
+        .split(",")
+        .slice(1)
+        .join(","),
+    ),
+  );
+  assert.equal(
+    memoryExport.measurementStatus,
+    memoryCount ? "measured" : "not measured",
+  );
+  assert.equal(memoryExport.rows.length, memoryCount);
+  await page.locator('[data-chart="compare"]').click();
+  assert.match(
+    required(await page.locator(".fw-comparison").textContent()),
+    /MiB/,
+  );
+  assert.doesNotMatch(
+    required(await page.locator(".fw-comparison").textContent()),
+    /µs/,
+  );
+  for (const width of [375, 751, 1440]) {
+    await page.setViewportSize({ width, height: 934 });
+    const analysis = page.getByLabel("SSR Rendering analysis", { exact: true });
+    assert.equal(
+      await analysis.isVisible(),
+      true,
+      `Measurement selector at ${width}px`,
+    );
+    await analysis.selectOption("p50");
+    assert.equal(new URL(page.url()).searchParams.get("chart"), "compare");
+    assert.ok(
+      (
+        await page.locator(".fw-comparison thead small").allTextContents()
+      ).every((unit) => unit === "µs"),
+    );
+    await analysis.selectOption("rss");
+    assert.ok(
+      (
+        await page.locator(".fw-comparison thead small").allTextContents()
+      ).every((unit) => unit === "MiB"),
+    );
+    if (width === 751)
+      await page.screenshot({
+        path: join(siteRoot, "test-results/render-memory-comparison.png"),
+      });
+  }
+  await page.setViewportSize({ width: 1440, height: 1100 });
+  checks.push(
+    "all-workload measurement selector switches render time and RSS at mobile, tablet and desktop widths",
+  );
+  await page.locator('[data-workload="cards"]').click();
+  await page.locator('[data-chart="bars"]').click();
+  await page.screenshot({
+    path: join(siteRoot, "test-results/render-memory.png"),
+    fullPage: true,
+  });
+  await page
+    .getByLabel("SSR Rendering analysis", { exact: true })
+    .selectOption("p50");
+  assert.equal(await page.locator(".fw-row").count(), renderCount);
+  checks.push(
+    "render RSS selection survives reload and exports only recorded memory",
+  );
+  const sentryPreview = await context.newPage();
+  for (const filename of ["sentry-otel", "framework-sentry-otel"]) {
+    await sentryPreview.goto(`${server.url}/previews/${filename}.html`);
+    for (const width of [375, 751, 1280]) {
+      await sentryPreview.setViewportSize({ width, height: 934 });
+      assert.equal(
+        await sentryPreview.locator(".log-row:visible").count(),
+        400,
+      );
+      assert.equal(
+        await sentryPreview
+          .locator(".trace-stats > div:last-child dd")
+          .textContent(),
+        "400",
+      );
+      assert.equal(
+        await sentryPreview.locator(".auto-refresh").isEnabled(),
+        false,
+      );
+      assert.equal(await sentryPreview.locator(".loading-more i").count(), 0);
+      const layout = await sentryPreview.evaluate(() => ({
+        width: innerWidth,
+        contentWidth: document.documentElement.scrollWidth,
+        badgeGaps: [...document.querySelectorAll(".web-vitals > span")].map(
+          (badge) => {
+            const label = badge.querySelector("b");
+            const text = [...badge.childNodes].find(
+              (node) =>
+                node.nodeType === Node.TEXT_NODE && node.textContent?.trim(),
+            );
+            if (!label || !text)
+              throw new Error("Missing metric label or value");
+            const range = document.createRange();
+            range.selectNodeContents(text);
+            return (
+              range.getBoundingClientRect().left -
+              label.getBoundingClientRect().right
+            );
+          },
+        ),
+        masks: [...document.querySelectorAll(".primary-nav .nav-icon")].map(
+          (icon) => ({
+            mask: getComputedStyle(icon).maskImage,
+            before: getComputedStyle(icon, "::before").content,
+            after: getComputedStyle(icon, "::after").content,
+          }),
+        ),
+      }));
+      assert.ok(
+        layout.contentWidth <= layout.width,
+        `${filename}/${width}: page overflows`,
+      );
+      assert.ok(
+        layout.badgeGaps.every((gap) => gap >= 7),
+        `${filename}/${width}: cramped metric badges`,
+      );
+      assert.equal(layout.masks.length, 5);
+      assert.ok(
+        layout.masks.every(
+          (icon) =>
+            icon.mask.includes("data:image/svg+xml") &&
+            icon.before === "none" &&
+            icon.after === "none",
+        ),
+      );
+      if (filename === "sentry-otel" && width === 751)
+        await sentryPreview.screenshot({
+          path: join(siteRoot, "test-results/sentry-preview.png"),
+        });
+    }
+    await sentryPreview.locator(".loading-more").scrollIntoViewIfNeeded();
+    if (filename === "sentry-otel")
+      await sentryPreview.screenshot({
+        path: join(siteRoot, "test-results/sentry-preview-complete.png"),
+      });
+  }
+  await sentryPreview.close();
+  checks.push(
+    "both Sentry previews show all 400 rows, match metric spacing and vector icons, and fit mobile through desktop",
+  );
   const initialTheme = required(
     await page.locator("html").getAttribute("data-theme"),
   );
@@ -349,7 +540,7 @@ try {
     new Set(decoded.rows.map((r) => r.id)),
     new Set(["react", "marko"]),
   );
-  for (const width of [360, 390, 768]) {
+  for (const width of [360, 390, 751, 768]) {
     await page.setViewportSize({ width, height: 1000 });
     await navigate(`${server.url}/?chart=bars`);
     await page.locator(".fw-row").first().waitFor();
@@ -385,17 +576,24 @@ try {
     await navigate(
       `${server.url}/?view=streaming&chart=lines&stream=completion`,
     );
-    const charts = await page.locator(".fw-chart").evaluateAll((elements) =>
-      elements.map((element) => {
-        const svg = element as SVGSVGElement;
-        const text = svg.querySelector("text");
-        return {
-          width: svg.getBoundingClientRect().width,
-          drawing: svg.viewBox.baseVal.width,
-          textHeight: text?.getBoundingClientRect().height || 0,
-        };
-      }),
-    );
+    // Read geometry in the same browser task that observes the completed redraw.
+    // A second evaluation can race another responsive layout/ResizeObserver pass.
+    const chartGeometry = await page.waitForFunction(() => {
+      const charts = [
+        ...document.querySelectorAll<SVGSVGElement>(".fw-chart"),
+      ].map((svg) => ({
+        width: svg.getBoundingClientRect().width,
+        drawing: svg.viewBox.baseVal.width,
+        textHeight:
+          svg.querySelector("text")?.getBoundingClientRect().height || 0,
+      }));
+      return charts.length === 2 &&
+        charts.every((chart) => Math.abs(chart.width - chart.drawing) < 1)
+        ? charts
+        : null;
+    });
+    const charts = await chartGeometry.jsonValue();
+    assert.ok(charts);
     assert.equal(charts.length, 2);
     for (const chart of charts) {
       assert.ok(
@@ -407,6 +605,68 @@ try {
         `${width}px: plotted labels must remain readable`,
       );
     }
+    await navigate(`${server.url}/?view=rendering&chart=compare`);
+    const comparisonLayout = await page
+      .locator(".fw-comparison")
+      .evaluate((table) => {
+        const headingBottom = Math.max(
+          ...Array.from(
+            table.querySelectorAll("thead th"),
+            (cell) => cell.getBoundingClientRect().bottom,
+          ),
+        );
+        const firstRow = table.querySelector("tbody tr");
+        const measurement = table.querySelector(".fw-comparison-cell > button");
+        if (!firstRow || !measurement)
+          throw new Error("Missing comparison layout");
+        return {
+          headingBottom,
+          firstRowTop: firstRow.getBoundingClientRect().top,
+          padding: Number.parseFloat(getComputedStyle(measurement).paddingTop),
+        };
+      });
+    assert.ok(
+      comparisonLayout.headingBottom <= comparisonLayout.firstRowTop + 1,
+      `${width}px: comparison headings overlap the measurements`,
+    );
+    assert.ok(
+      comparisonLayout.padding >= 12,
+      `${width}px: measurement cells need breathing room`,
+    );
+    const scrollingNames = await page
+      .locator(".fw-table-scroll")
+      .evaluate((scroll) => {
+        const name = scroll.querySelector("tbody th");
+        if (!name) throw new Error("Missing framework name");
+        const before = name.getBoundingClientRect().left;
+        scroll.scrollLeft = scroll.scrollWidth;
+        return { before, after: name.getBoundingClientRect().left };
+      });
+    assert.ok(
+      Math.abs(scrollingNames.before - scrollingNames.after) < 1,
+      `${width}px: framework names must stay visible while measurements scroll`,
+    );
+    const lastMeasurement = page
+      .locator(".fw-comparison tbody tr")
+      .first()
+      .locator("td button")
+      .last();
+    await lastMeasurement.focus();
+    await lastMeasurement.press("Shift+Tab");
+    const focusedCell = await page.evaluate(() => {
+      const cell = document.activeElement;
+      const name = document.querySelector(".fw-comparison thead th");
+      if (!cell || !name) throw new Error("Missing keyboard comparison target");
+      return {
+        left: cell.getBoundingClientRect().left,
+        nameRight: name.getBoundingClientRect().right,
+      };
+    });
+    assert.ok(
+      focusedCell.left >= focusedCell.nameRight - 1,
+      `${width}px: keyboard measurements must not hide behind pinned names`,
+    );
+    await page.keyboard.press("Escape");
     checks.push(`responsive/${width}`);
   }
   await navigate(server.url);
@@ -453,7 +713,11 @@ try {
     assert.ok(comparisonExport.unmeasured?.some((row) => row.id === id));
   assert.deepEqual(
     new Set(comparisonExport.rows.map((r) => r.workload)),
-    new Set(["cards", "products", "table"]),
+    new Set(
+      benchmarkData.workloads
+        .filter((w) => !benchmarkData.rendering.pendingWorkloads?.[w.id])
+        .map((w) => w.id),
+    ),
   );
   await page.locator('[data-workload="products"]').click();
   assert.equal(await page.locator(".fw-row").count(), renderCount);
@@ -469,33 +733,43 @@ try {
   assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
   assert.equal(
     await page.locator("[data-renderer-comparison] thead th").count(),
-    4,
+    benchmarkData.workloads.length + 1,
   );
   assert.equal(
     await page.locator("[data-renderer-pending]").count(),
     unrankedIds.length,
   );
   for (const workload of benchmarkData.workloads) {
-    const adapted = benchmarkData.rendering.rows[workload.id].find(
-      (row) => row.id === "exact",
-    );
+    const pending = benchmarkData.rendering.pendingWorkloads?.[workload.id];
+    const adapted = pending
+      ? undefined
+      : benchmarkData.rendering.rows[workload.id].find(
+          (row) => row.id === "exact",
+        );
     const cell = page.locator(
       adapted
         ? `[data-stat-suite="rendering"][data-focus="exact"][data-stat-workload="${workload.id}"]`
         : `[data-render-support="exact"][data-support-workload="${workload.id}"]`,
     );
-    if (adapted) assert.equal(adapted.fixture, "exact-native-v1");
-    else assert.match(required(await cell.textContent()), /Unsupported/);
+    if (adapted)
+      assert.match(adapted.fixture ?? "", /^exact-(?:showcase-)?native-v1$/);
+    else
+      assert.match(
+        required(await cell.textContent()),
+        pending ? /Not measured/ : /Unsupported/,
+      );
     await cell.hover();
     const popup = page.locator("[data-percentile-popup]");
     await popup.waitFor({ state: "visible" });
-    const support = required(
-      benchmarkData.renderers.find((row) => row.id === "exact")
-        ?.renderingUnsupported?.[workload.id],
+    const exactProject = benchmarkData.renderers.find(
+      (row) => row.id === "exact",
     );
+    const support = pending
+      ? { reason: pending, version: exactProject?.version ?? "" }
+      : exactProject?.renderingUnsupported?.[workload.id];
     assert.equal(
       await popup.locator(".fw-popover-scope p").first().textContent(),
-      adapted ? required(adapted.adaptation).reason : support.reason,
+      adapted ? required(adapted.adaptation).reason : required(support).reason,
     );
     if (adapted) {
       assert.equal(
@@ -511,7 +785,9 @@ try {
         required(adapted.adaptation).details,
       );
     } else
-      assert.ok(required(await popup.textContent()).includes(support.version));
+      assert.ok(
+        required(await popup.textContent()).includes(required(support).version),
+      );
     await popup.hover();
     // Scrolling while reading a linked explanation must preserve the popup,
     // including when the pointer has already left its original table cell.
@@ -544,9 +820,14 @@ try {
   }
   const adaptedRows = comparisonExport.rows.filter((row) => row.id === "exact");
   if (adaptedRows.length) {
-    assert.equal(adaptedRows.length, benchmarkData.workloads.length);
+    assert.equal(
+      adaptedRows.length,
+      benchmarkData.workloads.filter(
+        (w) => !benchmarkData.rendering.pendingWorkloads?.[w.id],
+      ).length,
+    );
     for (const row of adaptedRows) {
-      assert.equal(row.fixture, "exact-native-v1");
+      assert.match(row.fixture ?? "", /^exact-(?:showcase-)?native-v1$/);
       assert.ok(row.adaptation?.source);
     }
   } else {
@@ -577,22 +858,37 @@ try {
   const adaptedPopup = page.locator("[data-adaptation-explanation]");
   await adaptedPopup.waitFor({ state: "visible" });
   assert.equal(await adaptedPopup.getByRole("link").count(), 2);
-  await adaptedName.focus();
-  await adaptedName.press("Tab");
-  assert.equal(
-    await adaptedPopup
-      .getByRole("link")
+  for (let repeat = 0; repeat < 3; repeat++) {
+    if (repeat) await page.locator("h1").click();
+    await adaptedName.focus();
+    await adaptedName.press("Tab");
+    assert.equal(
+      await adaptedPopup
+        .getByRole("link")
+        .first()
+        .evaluate((el) => el === document.activeElement),
+      true,
+    );
+    assert.equal(await adaptedPopup.isVisible(), true);
+    // Pointer movement must not replace a note while its source link has focus.
+    await page
+      .locator('.fw-comparison-cell [data-focus="proa"]')
       .first()
-      .evaluate((el) => el === document.activeElement),
-    true,
-  );
-  assert.equal(await adaptedPopup.isVisible(), true);
-  await adaptedPopup.getByRole("link").first().press("Escape");
-  assert.equal(await adaptedPopup.isVisible(), false);
-  assert.equal(
-    await adaptedName.evaluate((el) => el === document.activeElement),
-    true,
-  );
+      .hover();
+    assert.equal(
+      await adaptedPopup
+        .getByRole("link")
+        .first()
+        .evaluate((el) => el === document.activeElement),
+      true,
+    );
+    await adaptedPopup.getByRole("link").first().press("Escape");
+    assert.equal(await adaptedPopup.isVisible(), false);
+    assert.equal(
+      await adaptedName.evaluate((el) => el === document.activeElement),
+      true,
+    );
+  }
   const decoration = await adaptedName
     .locator(".fw-fixture-adapted")
     .evaluate((el) => ({
@@ -611,7 +907,12 @@ try {
   await page.locator("[data-framework-view]").selectOption("p50");
   for (const workload of relatedData.framework.workloadDefinitions) {
     await page.locator(`[data-workload="${workload.id}"]`).click();
-    assert.equal(await page.locator(".fw-row").count(), 5);
+    const pending = relatedData.framework.pendingWorkloads?.[workload.id];
+    assert.equal(await page.locator(".fw-row").count(), pending ? 0 : 5);
+    if (pending) {
+      assert.equal(await page.locator(".fw-empty").textContent(), pending);
+      continue;
+    }
     for (const row of relatedData.framework.workloads[workload.id]) {
       const cell = page.locator(`.fw-row[data-focus="${row.id}"]`);
       assert.equal(
@@ -674,7 +975,7 @@ try {
   await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
   assert.equal(await page.locator("[data-renderer-comparison]").count(), 1);
   assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
-  await page.locator('[data-type="frameworks"]').click();
+  await page.locator('[data-type="frameworks"]').uncheck();
   assert.equal(await page.locator('[data-type="baselines"]').count(), 0);
   assert.equal(await page.locator('[data-stat-suite="framework"]').count(), 0);
   checks.push(
@@ -771,6 +1072,16 @@ try {
     .first()
     .elementHandle();
   assert.ok(miniature);
+  assert.ok(
+    await miniature.evaluate((el) => {
+      const box = el.getBoundingClientRect(),
+        parent = el.parentElement?.getBoundingClientRect();
+      return (
+        parent && box.width >= 20 && Math.abs(box.width - parent.width) < 1
+      );
+    }),
+    "Raster miniature must fill its slot without the old SVG scale transform",
+  );
   await page.locator('[data-workload="products"]').click();
   assert.equal(await miniature.evaluate((el) => el.isConnected), true);
   const firstRow = page.locator(".fw-row").first();
@@ -788,6 +1099,39 @@ try {
   );
   assert.equal(await page.locator("[data-percentile-popup]").isVisible(), true);
   checks.push("workload thumbnail identity and stable row/popover geometry");
+  for (const workload of benchmarkData.workloads.filter((w) =>
+    [
+      "airbnb-home",
+      "nike-catalog",
+      "github-pr",
+      "sentry-otel",
+      "espn",
+    ].includes(w.id),
+  )) {
+    for (const view of ["rendering", "framework"] as const) {
+      await navigate(
+        `${server.url}/?view=${view}&workload=${workload.id}&chart=bars`,
+      );
+      const expectedRows = benchmarkData[view].pendingWorkloads?.[workload.id]
+        ? 0
+        : view === "rendering"
+          ? benchmarkData.rendering.rows[workload.id].length
+          : benchmarkData.framework.workloads[workload.id].length;
+      assert.equal(await page.locator(".fw-row").count(), expectedRows);
+      assert.equal(
+        new URL(page.url()).searchParams.get("workload"),
+        workload.id,
+      );
+    }
+    const response = await context.request.get(
+      `${server.url}/previews/${workload.id}.html`,
+    );
+    assert.equal(response.status(), 200);
+    assert.match(await response.text(), /data-bench-request=/);
+  }
+  // Restore the single-workload row used by the following hover checks.
+  await navigate(`${server.url}/?view=rendering&workload=cards&chart=bars`);
+
   await firstRow.press("Escape");
   const jte = page.locator('.fw-row[data-focus="jte"]');
   await jte.hover();
@@ -1542,6 +1886,24 @@ try {
   checks.push(
     "Cold Start definition renders on the server and follows experiment tab selection",
   );
+  for (const [view, label] of [
+    ["framework", "Framework SSR"],
+    ["http", "HTTP"],
+    ["streaming", "Streaming"],
+    ["startup", "Cold Start"],
+    ["rendering", "SSR Rendering"],
+  ]) {
+    await initial.goto(`${server.url}/?view=${view}`);
+    await page.getByRole("tab", { name: label, exact: true }).click();
+    for (const current of [initial, page])
+      assert.equal(
+        await current.locator("[data-coverage-note]").isVisible(),
+        view !== "rendering",
+      );
+  }
+  checks.push(
+    "partial experiment coverage is disclosed in SSR and follows all five experiment tabs",
+  );
   await initial.goto(`${server.url}/methodology`);
   const methodology = required(await initial.locator("main").textContent());
   for (const workload of captures.framework.workloadDefinitions) {
@@ -1563,6 +1925,10 @@ try {
   await initial.getByRole("link", { name: "Ecosystem", exact: true }).click();
   assert.equal(await initial.locator("h1").textContent(), "The ecosystem");
   await initial.getByRole("link", { name: "Performance", exact: true }).click();
+  await initial
+    .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")
+    .first()
+    .waitFor();
   assert.equal(
     await initial
       .locator("[data-renderer-comparison] tbody tr[data-renderer-row]")

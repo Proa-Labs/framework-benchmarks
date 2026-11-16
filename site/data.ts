@@ -1,13 +1,17 @@
 // Presentation adapters only. Benchmark execution, fixtures, and statistics stay
 // in their existing suites. Never add measurements to the site's source files.
+
 import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { isDeepStrictEqual } from "node:util";
 import { workloadDefinitions } from "../benchmarks/framework-ssr/report.ts";
 import { validateCanonicalResult } from "../benchmarks/rendering/canonical/report.mjs";
 import suites from "../benchmarks/suites.json" with { type: "json" };
+import { summarizeMemory } from "../tooling/capture/process-memory.mjs";
+import { readRawJson } from "../tooling/capture/raw.mjs";
 import { capturedRenderingContract } from "../tooling/capture/rendering-contract.mjs";
 import { summarize } from "../tooling/stats.mjs";
 import type {
@@ -24,6 +28,7 @@ import featureProjects from "./data/features/projects.json" with {
 import { frameworkRows } from "./framework-data.ts";
 import { applyProaRefresh } from "./proa-refresh.ts";
 import { required } from "./required.ts";
+import { pendingShowcaseFixtures } from "./showcase-status.ts";
 
 export const repositoryRoot = dirname(dirname(fileURLToPath(import.meta.url)));
 export const captures = Object.fromEntries(
@@ -153,11 +158,8 @@ export async function loadInputs(
     processArtifact,
     "rendering capture has no per-process artifact",
   );
-  input.processSummaries = JSON.parse(
-    await readFile(
-      join(root, "benchmarks/rendering/results", processArtifact.path),
-      "utf8",
-    ),
+  input.processSummaries = readRawJson<Inputs["processSummaries"]>(
+    join(root, "benchmarks/rendering/results", processArtifact.path),
   );
   if (
     refresh &&
@@ -356,13 +358,40 @@ export function normalize(input: Inputs): BenchmarkData {
           );
         const values = { p50: m.p50_us, p95: m.p95_us, p99: m.p99_us };
         positive(values.p50, `${renderer.id}/${workload.id} render time`);
+        const observedMemory = summarizeMemory(runs);
+        requireValue(
+          isDeepStrictEqual(observedMemory, m.memory),
+          `${renderer.id}/${workload.id} memory differs from raw process observations`,
+        );
+        const memorySamples = observedMemory?.process_peak_rss_bytes.map(
+          (bytes) => bytes / 1048576,
+        );
+        const memoryStats = memorySamples
+          ? summarize(memorySamples)
+          : undefined;
+        const memory =
+          memoryStats && observedMemory && memorySamples
+            ? {
+                samples: memorySamples,
+                percentiles: {
+                  p50: memoryStats.p50,
+                  p95: memoryStats.p95,
+                  p99: memoryStats.p99,
+                },
+                scope: observedMemory.scope,
+              }
+            : undefined;
         return {
           id: renderer.id,
           captureId: m.capture_id ?? rendering.capture_id,
           capturedAt:
             rendering.refresh && renderer.id !== rendering.refresh.renderer
               ? rendering.refresh.baseline_captured_at
-              : rendering.captured_at,
+              : (rendering.workloadCaptures?.[workload.id]?.capturedAt ??
+                rendering.captured_at),
+          ...(rendering.workloadCaptures?.[workload.id]
+            ? { host: rendering.workloadCaptures[workload.id].host }
+            : {}),
           outputBoundary: m.allocation_policy,
           ...values,
           samples: runs.map((r) => r.p50_us),
@@ -372,9 +401,13 @@ export function normalize(input: Inputs): BenchmarkData {
             p99: r.p99_us,
           })),
           outputBytes: m.output_bytes,
+          ...(memory ? { rss: memory.percentiles.p50, memory } : {}),
           ...("fixture" in renderer
             ? {
-                fixture: String(renderer.fixture),
+                fixture: String(
+                  rendering.parity[renderer.id][workload.id].fixture ??
+                    renderer.fixture,
+                ),
                 adaptation: renderers.find((r) => r.id === renderer.id)
                   ?.renderingAdaptation,
               }
@@ -382,6 +415,10 @@ export function normalize(input: Inputs): BenchmarkData {
           detail: `${m.output_bytes.toLocaleString("en-US")} output bytes. ${m.allocation_policy}.`,
         };
       });
+  }
+  // Suite coverage grows independently: showcase routes belong to rendering
+  // and Framework SSR; the transport-only HTTP suite keeps its own fixtures.
+  for (const workload of http.scenario.workloads) {
     output.http.rows[workload.id] = http.engines.map((engine) => {
       const fixture = engine.workloads[workload.id];
       requireValue(
@@ -567,17 +604,18 @@ export function normalize(input: Inputs): BenchmarkData {
             ]
           : Object.values(output[view].rows).flat();
     for (const row of rows) {
-      row.captureId =
-        row.id === "proa"
-          ? refresh.proa_capture_id
-          : refresh.baseline_capture_id;
-      row.capturedAt =
-        row.id === "proa"
-          ? refresh.proa_captured_at
-          : refresh.baseline_captured_at;
+      row.captureId = (refresh.rendererIds ?? ["proa"]).includes(row.id)
+        ? refresh.proa_capture_id
+        : refresh.baseline_capture_id;
+      row.capturedAt = (refresh.rendererIds ?? ["proa"]).includes(row.id)
+        ? refresh.proa_captured_at
+        : refresh.baseline_captured_at;
       const directory = suites[view === "http" ? "http" : view].directory;
       row.source = `${directory}/results/archive/${row.captureId}.json`;
     }
   }
+  const pending = pendingShowcaseFixtures(input);
+  output.rendering.pendingWorkloads = pending.rendering;
+  output.framework.pendingWorkloads = pending.framework;
   return output;
 }

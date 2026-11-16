@@ -35,15 +35,15 @@ node tooling/charts/verify.mjs    # check them against the source, and against e
 | | Figure | Source |
 | ---: | --- | --- |
 | 03 | [Render time vs memcpy, including full-size Proa allocation](03-representative-matrix.svg) | [Current canonical measurements](../reports/scoreboard.md#detailed-measurements) and [matched memcpy controls](../reports/engineering.md#proa-output-buffer-allocation) |
-| 04 | [Criterion micro-benchmarks](04-criterion-microbenchmarks.svg) | [Representative core matrix](../reports/engineering.md#representative-core-matrix-seven-renderers-plus-a-memcpy-floor) |
-| 05 | [Full-response product-card scaling across seventeen renderers](05-product-card-scaling.svg) | [Product-grid scaling capture](../reports/engineering.md#product-grid-scaling-capture) |
+| 04 | [Criterion micro-benchmarks](04-criterion-microbenchmarks.svg) | [Representative core matrix](../reports/engineering.md#proa-engineering-refresh) |
+| 05 | [Full-response product-card scaling across the current roster](05-product-card-scaling.svg) | [Product-grid scaling capture](../reports/engineering.md#product-grid-scaling-capture) |
 
 ### Application and browser
 
 | | Figure | Source |
 | ---: | --- | --- |
-| 06 | [The linked showcase corpus](06-showcase-corpus.svg) | [Linked proa_showcase corpus](../reports/engineering.md#linked-proa_showcase-corpus) |
-| 07 | [Four-engine Suspense HTTP throughput, latency, RSS, and failures](07-suspense-load.svg) | [Retained Marko/React capture](../reports/http-capacity.md#suspense-streaming-over-http-one-core-each) overlaid with [fresh Proa/SvelteKit measurements](../reports/sveltekit.md#http-streaming-capacity-and-latency) |
+| 06 | [The linked showcase corpus](06-showcase-corpus.svg) | [Linked proa_showcase corpus](../reports/engineering.md#refreshed-linked-showcase-corpus) |
+| 07 | [Resolved-HTML streaming throughput, latency, RSS, and failures](07-suspense-load.svg) | [Current resolved-HTML capture](../reports/http-capacity.md#suspense-streaming-over-http-one-core-each) |
 | 08 | [Canonical pages over real HTTP on one core](08-canonical-pages-http.svg) | [Canonical pages over HTTP](../reports/http-capacity.md#canonical-pages-over-http-one-core-each) |
 | 09 | [Cold start to first response](09-cold-start.svg) | [Cold start to first response](../reports/http-capacity.md#cold-start-to-first-response) |
 
@@ -95,4 +95,4 @@ Figures are written as XML, not HTML: GitHub serves `.svg` as `image/svg+xml` an
 parses it strictly, so `build.mjs` validates each document before writing it. A
 figure that a browser would tolerate but an XML parser would reject fails the build.
 
-Chart 07 overlays all four engines on shared throughput and memory plots, with four latency panels on the same log scale. It uses the fresh Proa/SvelteKit capture and retained Marko/React capture, with dates labeled. SvelteKit response end excludes hydration and browser rendering. Failure totals appear beside each latency panel; failures by rate remain in the source tables. The additional [browser-completion figure](../../experiments/sveltekit-streaming/browser.svg), generated and checked by `node experiments/sveltekit-streaming/report.mjs [--check]`, measures first-panel and complete-DOM timing from retained browser samples.
+Chart 07 compares Proa, Marko and React from the latest resolved-HTML streaming campaign on shared throughput and memory plots, with three latency panels on the same log scale. Failure totals appear beside each latency panel; failures by rate remain in the source table. The additional [browser-completion figure](../../experiments/sveltekit-streaming/browser.svg), generated and checked by `node experiments/sveltekit-streaming/report.mjs [--check]`, measures first-panel and complete-DOM timing from retained browser samples.

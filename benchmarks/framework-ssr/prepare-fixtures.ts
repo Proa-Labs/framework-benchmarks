@@ -1,10 +1,12 @@
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { generateFrameworks } from "../rendering/showcase/generate-frameworks.mjs";
 import { cards } from "./fixture.mjs";
 import { fixture } from "./workloads.ts";
 
 // One prerequisite for all framework builds, before Turbo starts them in parallel.
 export async function prepareFixtures() {
+  generateFrameworks();
   const here = dirname(fileURLToPath(import.meta.url));
   for (const engine of ["next", "astro", "exact", "proa", "sveltekit"]) {
     await Bun.write(

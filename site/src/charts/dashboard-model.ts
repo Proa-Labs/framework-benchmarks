@@ -18,6 +18,7 @@ export interface DashboardState {
   rate: number;
   chart: ChartMode;
   flowPlaying: boolean;
+  render: "p50" | "rss";
   http: Metric;
   framework: Metric;
   stream: Metric | "completion";
@@ -32,7 +33,14 @@ export interface StatTarget {
 }
 export type DashboardModel = ReturnType<typeof createDashboardModel>;
 
-import { ALL_GROUPS, matchesGroups } from "../filters.ts";
+import { ALL_GROUPS, matchesGroups, normalizeGroups } from "../filters.ts";
+
+const fineNumbers = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 2,
+});
+const regularNumbers = new Intl.NumberFormat("en-US", {
+  maximumFractionDigits: 1,
+});
 export function createDashboardModel(data: BenchmarkData, search = "") {
   const esc = (v: unknown) =>
     String(v).replace(
@@ -49,19 +57,18 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
         )[c],
     );
   const fmt = (n: number) =>
-    Number(n).toLocaleString("en-US", {
-      maximumFractionDigits: n < 10 ? 2 : 1,
-    });
+    (n < 10 ? fineNumbers : regularNumbers).format(Number(n));
   const workloadOrder = data.workloadOrder ?? data.workloads.map((w) => w.id);
   const orderedWorkloads = () =>
     workloadOrder.map((id) =>
       required(data.workloads.find((w) => w.id === id)),
     );
+  const renderersById = new Map(data.ecosystem.map((r) => [r.id, r]));
   const renderer = (id: string | null): Renderer | undefined =>
-      data.ecosystem.find((r) => r.id === id),
+      id === null ? undefined : renderersById.get(id),
     name = (id: string) => renderer(id)?.label || id;
   const logo = (id: string) =>
-    `<span class="fw-logo-mark" style="--logo-mask:url('${id === "jte" ? "/logos/jte-mark.svg" : `/${required(renderer(id)).logo}`}')" aria-hidden="true"><img class="fw-logo" data-logo="${id}" src="/${required(renderer(id)).logo}" width="18" height="18" decoding="async" alt=""></span>`;
+    `<span class="fw-logo-mark" style="--logo-mask:url('${id === "jte" ? "/logos/jte-mark.svg" : `/${required(renderer(id)).logo}`}')" aria-hidden="true"><img class="fw-logo" data-logo="${id}" src="/${required(renderer(id)).logo}" width="18" height="18" loading="lazy" decoding="async" alt=""></span>`;
   const frameworkUsesJsSsr = () =>
     /\bBun\b/.test(data.framework.versions.exact || "");
   const label = (
@@ -69,6 +76,12 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     framework = state.view === "framework" && state.section === "performance",
   ) =>
     `<span class="fw-renderer">${logo(id)}<span>${renderer(id)?.renderingAdaptation && state.view === "rendering" && state.section === "performance" ? `<span class="fw-fixture-adapted">${esc(name(id))}</span><sup>†</sup>` : esc(name(id))}${id === "exact" && ((framework && frameworkUsesJsSsr()) || (state.view === "rendering" && state.section === "performance" && renderer(id)?.renderingAdaptation)) ? " (JS SSR)" : ""}</span></span>`;
+  const repositoryLink = (id: string) => {
+    const repository = renderer(id)?.repository;
+    return repository
+      ? `<a class="fw-repo-link" href="${esc(repository)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(name(id))} GitHub repository (opens in a new tab)" title="${esc(name(id))} on GitHub"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M21 3l-9 9"/><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"/></svg></a>`
+      : "";
+  };
   const defaults: DashboardState = {
     section: "performance",
     view: "rendering",
@@ -76,6 +89,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     rate: 1000,
     chart: "compare",
     flowPlaying: true,
+    render: "p50",
     http: "throughput",
     framework: "throughput",
     stream: "completion",
@@ -92,23 +106,37 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     framework: {
       title: "Framework SSR",
       path: "benchmarks/framework-ssr/results/latest.json",
-      method: `${data.framework.methodology.repeats} rotated independent production server processes per phase kind. Capacity: ${data.framework.methodology.concurrency} connections. ${frameworkWorkloads()
+      method: `${data.framework.methodology.repeats} rotated independent production server processes per phase kind. Capacity settings are shared within each workload. ${frameworkWorkloads()
         .map(
           (w) =>
-            `${w.label}: ${w.capacityDurationSeconds}s capacity window; latency at ${w.fixedRateRps} scheduled requests/s for ${w.latencyDurationSeconds}s`,
+            `${w.label}: ${w.capacityConcurrency} connections, ${w.capacityDurationSeconds}s capacity window; latency at ${w.fixedRateRps} scheduled requests/s for ${w.latencyDurationSeconds}s`,
         )
         .join(
           ". ",
         )}. Every response is validated; generator-limited phases are rejected.`,
-      scope: `Production HTTP routing → complete SSR HTML. Shared component page, product grid and table workloads with escaping, branches, lists and a request-specific value. Framework shells may differ. ${frameworkUsesJsSsr() ? "Exact uses its production JavaScript SSR backend on Bun; its native Rust render host is not measured in this capture. " : ""}No full-document cache, database, external I/O or browser hydration timing.`,
+      scope: `Production HTTP routing → complete SSR HTML. Shared workloads (${frameworkWorkloads()
+        .map((w) => w.label)
+        .join(
+          ", ",
+        )}) with escaping, branches, lists and a request-specific value. Framework shells may differ. ${frameworkUsesJsSsr() ? "Exact uses its production JavaScript SSR backend on Bun; its native Rust render host is not measured in this capture. " : ""}No full-document cache, database, external I/O or browser hydration timing.`,
     },
     rendering: {
-      title: "SSR render latency",
+      get title() {
+        return state.render === "rss"
+          ? "SSR process peak RSS"
+          : "SSR render latency";
+      },
       path: "benchmarks/rendering/results/latest.json",
-      method:
-        "Five independent processes. Bars show the median process P50; boxes summarize those five process medians, not individual render latency.",
-      scope:
-        "Prepared data → a complete, freshly owned HTML output. Each adapter uses its declared native output type; Proa may return a RenderBuffer without String conversion. Includes rendering, formatting, and output allocation. Excludes data setup, HTTP, routing, databases, hydration, and network transfer. Strict rows passed unchanged DOM/class parity. Exact† uses separately checked native styles and markup; its adaptation is disclosed.",
+      get method() {
+        return state.render === "rss"
+          ? "The OS records peak RSS for each native renderer process; reading it after exit adds no work to the render timer. The headline is the median of five independent process peaks. No launcher or build process is substituted for the native renderer."
+          : "Five independent processes. Bars show the median process P50; boxes summarize those five process medians, not individual render latency. Each render allocates fresh output using its native API. Sailfish learns the output size during warmup. There is no separate allocator-priming step.";
+      },
+      get scope() {
+        return state.render === "rss"
+          ? "Whole-process lifetime: runtime startup, prepared data, template initialization, warmup, rendering and output verification. This is resident process memory, not allocation per render. Compare within this workload and memory metric."
+          : "Prepared data → a complete, freshly owned HTML output. Each adapter uses its declared native output type; Proa may return a RenderBuffer without String conversion. Includes rendering, formatting, and output allocation. Excludes data setup, HTTP, routing, databases, hydration, and network transfer. Strict rows passed unchanged DOM/class parity. Exact† uses separately checked native styles and markup; its adaptation is disclosed.";
+      },
     },
     http: {
       title: "HTTP capacity",
@@ -149,6 +177,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     "chart",
     "workload",
     "rate",
+    "render",
     "http",
     "framework",
     "stream",
@@ -185,6 +214,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
         ...frameworkWorkloads().map((w) => w.id),
         "catalog",
       ],
+      render: ["p50", "rss"],
       framework: ["throughput", "p50", "p99", "cpu", "rss"],
       chart: ["compare", "bars", "lines", "balls", "table"],
       http: [
@@ -211,6 +241,12 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     for (const [key, values] of Object.entries(allowed))
       if (values.includes(params.get(key) ?? ""))
         Object.assign(state, { [key]: params.get(key) });
+    if (
+      state.render === "rss" &&
+      state.view === "rendering" &&
+      state.chart === "balls"
+    )
+      state.chart = "bars";
     if (data.rates.includes(Number(params.get("rate"))))
       state.rate = Number(params.get("rate"));
     if (
@@ -225,14 +261,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     )
       state.stream = "completion";
     if (params.has("types"))
-      state.types = [
-        ...new Set(
-          required(params.get("types"))
-            .split(",")
-            .map((id) => (id === "baselines" ? "templates" : id))
-            .filter((id) => ALL_GROUPS.includes(id)),
-        ),
-      ];
+      state.types = normalizeGroups(required(params.get("types")).split(","));
     if (params.has("selected"))
       state.selected = required(params.get("selected"))
         .split(",")
@@ -253,6 +282,19 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   ) {
     if (!r) return null;
     const runIndex = run == null ? null : Math.max(0, Math.round(run) - 1);
+    if (state.view === "rendering" && state.render === "rss") {
+      const memory = (r as RenderRow).memory;
+      if (!memory) return null;
+      const sample = runIndex == null ? undefined : memory.samples[runIndex];
+      return {
+        values:
+          sample == null
+            ? memory.percentiles
+            : { p50: sample, p95: sample, p99: sample },
+        unit: "MiB",
+        scope: `Peak process RSS · ${runIndex == null ? "distribution across independent process peaks" : `process run ${runIndex + 1}`} · includes startup, prepared data and warmup; not allocation per render`,
+      };
+    }
     if (state.view === "rendering")
       return {
         values:
@@ -327,6 +369,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     return null;
   }
   function metric(): Metric {
+    if (state.view === "rendering") return state.render;
     return state.view === "framework"
       ? state.framework
       : state.view === "http"
@@ -337,10 +380,32 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
             : state.stream
           : "p50";
   }
+  function renderingRows(workload: string): RenderRow[] {
+    if (data.rendering.pendingWorkloads?.[workload]) return [];
+    const rows = data.rendering.rows[workload] || [];
+    if (state.render !== "rss") return rows;
+    return rows
+      .filter((row) => row.memory)
+      .map((row) => {
+        const memory = required(row.memory);
+        return {
+          ...row,
+          ...memory.percentiles,
+          samples: memory.samples,
+          runPercentiles: memory.samples.map((value) => ({
+            p50: value,
+            p95: value,
+            p99: value,
+          })),
+          detail: memory.scope,
+        };
+      });
+  }
   function getRows(): ChartRow[] {
+    if (data[state.view].pendingWorkloads?.[state.workload]) return [];
     switch (state.view) {
       case "rendering":
-        return data.rendering.rows[state.workload];
+        return renderingRows(state.workload);
       case "http":
         return data.http.rows[state.workload];
       case "streaming":
@@ -356,19 +421,24 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   }
   function comparisonMeasurements() {
     return orderedWorkloads().flatMap((w) =>
-      (data.rendering.rows[w.id] || []).filter(isVisible).map((row) => ({
-        ...row,
-        workload: w.id,
-        suite: "rendering" as const,
-        unit: "µs",
-        capturedAt: row.capturedAt,
-        source: row.source ?? suites.rendering.path,
-        latency: {
-          values: row,
-          unit: "µs",
-          scope: "Render duration · median of 5 run percentiles",
-        },
-      })),
+      renderingRows(w.id)
+        .filter(isVisible)
+        .map((row) => ({
+          ...row,
+          workload: w.id,
+          suite: "rendering" as const,
+          unit: state.render === "rss" ? "MiB" : "µs",
+          capturedAt: row.capturedAt,
+          source: row.source ?? suites.rendering.path,
+          latency: {
+            values: row,
+            unit: state.render === "rss" ? "MiB" : "µs",
+            scope:
+              state.render === "rss"
+                ? "Peak process RSS · distribution across independent process peaks; not allocation per render"
+                : "Render duration · median of 5 run percentiles",
+          },
+        })),
     );
   }
   function value(r: ChartRow): number {
@@ -415,7 +485,38 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
 
   function renderingCoverage(id: string, workload: string) {
     const project = required(renderer(id));
-    const unsupported = project.renderingUnsupported?.[workload];
+    const pending = data.rendering.pendingWorkloads?.[workload];
+    if (pending)
+      return {
+        status: "unmeasured" as const,
+        reason: pending,
+        version: project.version || "",
+        source: "/methodology",
+      };
+    if (
+      state.render === "rss" &&
+      !data.rendering.rows[workload]?.some((row) => row.id === id && row.memory)
+    )
+      return {
+        status: "unmeasured" as const,
+        reason:
+          "Peak process RSS was not recorded in this capture. Future runs record native process peak RSS, including runtime and prepared data; not allocation per render.",
+        version: project.version || "",
+        source: "/methodology",
+      };
+    const measured = data.rendering.rows[workload]?.find(
+      (row) => row.id === id,
+    );
+    const unsupported =
+      project.renderingUnsupported?.[workload] ??
+      (measured?.adaptation
+        ? {
+            status: "unsupported" as const,
+            reason: measured.adaptation.reason,
+            version: project.version || "",
+            source: measured.adaptation.source,
+          }
+        : undefined);
     return unsupported
       ? {
           ...unsupported,
@@ -453,6 +554,10 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
         state.workload = frameworkWorkloads()[0].id;
       if (state.chart === "balls") state.chart = "bars";
     } else if (state.workload === "catalog") state.workload = "cards";
+    if (state.view === "http" && !data.http.rows[state.workload])
+      state.workload = Object.keys(data.http.rows)[0];
+    if (state.view === "rendering" && !data.rendering.rows[state.workload])
+      state.workload = orderedWorkloads()[0].id;
     if (state.chart === "compare" && state.view !== "rendering")
       state.chart = "bars";
     if (["waterfall", "utilization", "breakdown"].includes(metric()))
@@ -475,18 +580,33 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     return "";
   }
   function captureNote() {
+    const pending = data[state.view].pendingWorkloads?.[state.workload];
+    if (pending) return pending;
+    if (state.view === "rendering" && state.render === "rss")
+      return "Peak native process RSS includes runtime startup, prepared data, template initialization, warmup, rendering and output verification. It is not allocation per render. Older captures have no RSS measurement.";
     const review = data[state.view].reviewRefresh;
     if (review) return review.note;
     return state.view === "rendering" ? data.rendering.refresh?.note || "" : "";
   }
 
   function experimentDescription() {
+    if (state.view === "rendering" && state.render === "rss")
+      return "Peak resident memory of the native benchmark process, including its runtime and prepared data. This is measured separately from render duration.";
+    if (
+      state.view === "rendering" &&
+      state.chart !== "compare" &&
+      data.workloads.find((w) => w.id === state.workload)?.fixture ===
+        "showcase-v1"
+    )
+      return "Each tool renders a shared re-creation of this page from prepared data. These timings are separate from benchmarks of Proa’s original app code.";
     return state.view === "startup"
       ? "Time from launching a fresh server process to receiving its first complete product-grid response. Includes runtime startup and rendering; builds run beforehand and the disk cache is warm."
       : "";
   }
 
   function heading() {
+    if (state.view === "rendering" && state.render === "rss")
+      return "SSR Rendering · memory usage";
     if (state.view === "framework")
       return {
         throughput: "Framework SSR capacity",
@@ -526,6 +646,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     name,
     logo,
     label,
+    repositoryLink,
     isVisible,
     frameworkWorkloads,
     frameworkUsesJsSsr,
@@ -547,6 +668,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     renderingCoverage,
     measurementLinks,
     latencyStats,
+    renderingRows,
     normalizeState,
     visibleRows,
     validationNote,

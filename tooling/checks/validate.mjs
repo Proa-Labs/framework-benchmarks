@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import suites from "../../benchmarks/suites.json" with { type: "json" };
 import { capturedRenderingContract } from "../capture/rendering-contract.mjs";
+import { verifyRenderingShardEvidence } from "../capture/rendering-shards.mjs";
 import { verifyRetainedSource } from "../capture/retained-source.mjs";
 
 export async function validateCapture(id, path, root) {
@@ -27,5 +28,10 @@ export async function validateCapture(id, path, root) {
     validateResult(result, true);
   }
   verifyRetainedSource(join(root, suite.directory, "results"), result);
+  if (id === "rendering")
+    verifyRenderingShardEvidence(
+      result,
+      join(root, suite.directory, "results"),
+    );
   return result;
 }

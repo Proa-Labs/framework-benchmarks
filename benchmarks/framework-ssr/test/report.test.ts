@@ -54,10 +54,12 @@ function capture(smoke = false): Capture {
             repeat,
             workload: workload.id,
             offeredRps: mode === "open" ? workload.fixedRateRps : null,
-            durationSeconds:
-              mode === "closed" && !smoke
+            durationSeconds: smoke
+              ? contract.publication.durationSeconds
+              : mode === "closed"
                 ? workload.capacityDurationSeconds
-                : contract.publication.durationSeconds,
+                : (workload.latencyDurationSeconds ??
+                  contract.publication.durationSeconds),
           })),
         ),
       ),

@@ -108,6 +108,15 @@ const summary: Record<string, unknown> = {
 };
 const results: Record<string, Record<string, number[]>> = {};
 try {
+  // Select the executable Playwright actually launches for headless tests.
+  // executablePath() selects full Chrome instead; both use the pinned revision.
+  const browserProbe = await chromium.launchServer({ headless: true });
+  let chromePath: string;
+  try {
+    chromePath = browserProbe.process().spawnfile;
+  } finally {
+    await browserProbe.close();
+  }
   const response = await fetch(origin);
   assert.equal(response.status, 200);
   assert.equal(
@@ -140,7 +149,7 @@ try {
         ...(device === "desktop" ? ["--preset=desktop"] : []),
       ],
       {
-        env: { ...process.env, CHROME_PATH: chromium.executablePath() },
+        env: { ...process.env, CHROME_PATH: chromePath },
         stdout: "inherit",
         stderr: "inherit",
       },

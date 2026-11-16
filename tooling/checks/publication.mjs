@@ -9,7 +9,11 @@ import { renderingSourceFiles } from "../../benchmarks/rendering/canonical/sourc
 import suites from "../../benchmarks/suites.json" with { type: "json" };
 import { sourceDigest } from "../capture/captures.mjs";
 import { readMeasuredSources } from "../capture/measured-sources.mjs";
+import { readRawJson } from "../capture/raw.mjs";
 import { repositoryRoot } from "../repository.mjs";
+import { verifyFrameworkShardEvidence } from "./framework-shards.mjs";
+import { validateProaPins } from "./proa-pins.mjs";
+import { verifyReportTestOnlyChange } from "./report-source.mjs";
 import { validateCapture } from "./validate.mjs";
 
 // Contributor checks and previews can inspect historical results. Merging and
@@ -68,40 +72,59 @@ export function validatePublication(results) {
   } else assert.ok(!reference.campaignProtocol, "Unknown campaign protocol");
   for (const [id, result] of Object.entries(results)) {
     assert.equal(result.status, "pass", `${id}: capture failed`);
-    assert.match(
-      result.host?.machineId || "",
-      /^[a-f0-9]{64}$/,
-      `${id}: missing machine identity`,
-    );
-    if (parallel) {
-      assert.equal(
-        result.host.campaignProtocol,
-        reference.campaignProtocol,
-        `${id}: mixed campaign protocols`,
-      );
-      assert.equal(
-        result.host.sourceRevision,
-        reference.sourceRevision,
-        `${id}: different source revision`,
-      );
+    const cohort =
+      id === "framework" &&
+      result.host?.campaignProtocol === "per-workload-host-v1";
+    const hosts = cohort
+      ? Object.values(result.host.workloadHosts || {})
+      : [result.host];
+    if (cohort)
       assert.deepEqual(
-        profile(result.host),
-        profile(reference),
-        `${id}: different benchmark hardware or OS profile`,
+        Object.keys(result.host.workloadHosts).sort(),
+        result.scenario.workloads.map((w) => w.id).sort(),
+        "Missing framework workload host",
       );
-      assert.ok(
-        result.host.nodeName,
-        `${id}: missing isolated worker identity`,
+    assert.ok(hosts.length);
+    for (const host of hosts) {
+      assert.match(
+        host?.machineId || "",
+        /^[a-f0-9]{64}$/,
+        `${id}: missing machine identity`,
       );
-    } else {
-      assert.ok(
-        !result.host.campaignProtocol,
-        `${id}: mixed campaign protocols`,
+      if (parallel) {
+        assert.equal(
+          host.campaignProtocol,
+          reference.campaignProtocol,
+          `${id}: mixed worker protocols`,
+        );
+        assert.equal(
+          host.sourceRevision,
+          reference.sourceRevision,
+          `${id}: different source revision`,
+        );
+        assert.deepEqual(
+          profile(host),
+          profile(reference),
+          `${id}: different benchmark hardware or OS profile`,
+        );
+        assert.ok(host.nodeName, `${id}: missing isolated worker identity`);
+      } else {
+        assert.ok(!host.campaignProtocol, `${id}: mixed campaign protocols`);
+        assert.equal(
+          host.machineId,
+          reference.machineId,
+          `${id}: different benchmark machine`,
+        );
+      }
+      assert.equal(
+        host.campaignId,
+        reference.campaignId,
+        `${id}: different workload campaign`,
       );
       assert.equal(
-        result.host.machineId,
-        reference.machineId,
-        `${id}: different benchmark machine`,
+        host.serverCpuAffinity ?? host.server_cpu_affinity,
+        affinity,
+        `${id}: different workload CPU affinity`,
       );
     }
     assert.equal(
@@ -128,11 +151,21 @@ export function validatePublication(results) {
   return {
     machineId: reference.machineId,
     campaignId: reference.campaignId,
-    protocol: parallel ? "per-suite-host-v1" : "single-host",
+    protocol: parallel
+      ? results.framework.host?.campaignProtocol === "per-workload-host-v1"
+        ? "per-workload-host-v1"
+        : "per-suite-host-v1"
+      : "single-host",
     machines: Object.fromEntries(
       Object.entries(results).map(([id, result]) => [
         id,
-        result.host.machineId,
+        result.host.workloadHosts
+          ? Object.fromEntries(
+              Object.entries(result.host.workloadHosts).map(
+                ([workload, host]) => [workload, host.machineId],
+              ),
+            )
+          : result.host.machineId,
       ]),
     ),
   };
@@ -181,6 +214,7 @@ export async function verifyPublication(root) {
     !existsSync(join(root, "site/data/performance/proa-refresh.json")),
     "Proa-only review refresh selected: rerun the complete comparison campaign before merge or launch, then remove site/data/performance/proa-refresh.json",
   );
+  validateProaPins(root);
   const results = {};
   // Check the campaign first so historical data reports the actionable blocker.
   for (const [id, suite] of Object.entries(suites)) {
@@ -194,6 +228,11 @@ export async function verifyPublication(root) {
   const campaign = validatePublication(results);
   for (const [id, suite] of Object.entries(suites)) {
     const result = await validateCapture(id, undefined, root);
+    if (id === "framework")
+      verifyFrameworkShardEvidence(
+        result,
+        join(root, suite.directory, "results"),
+      );
     if (id === "rendering") {
       const admissions = result.raw_artifacts.find((artifact) =>
         [
@@ -215,17 +254,18 @@ export async function verifyPublication(root) {
         ),
         result,
       );
-      const runs = JSON.parse(
-        await readFile(
-          join(
-            root,
-            suite.directory,
-            "results/raw",
-            result.capture_id,
-            "process-summaries.json",
-          ),
-          "utf8",
-        ),
+      const processArtifact = result.raw_artifacts.find(
+        (a) => a.label === "Per-process summaries",
+      );
+      assert.ok(processArtifact);
+      assert.ok(
+        [
+          `raw/${result.capture_id}/process-summaries.json`,
+          `raw/${result.capture_id}/process-summaries.json.gz`,
+        ].includes(processArtifact.path),
+      );
+      const runs = readRawJson(
+        join(root, suite.directory, "results", processArtifact.path),
       );
       for (const workload of result.workloads) {
         const proa = runs.filter(
@@ -241,8 +281,24 @@ export async function verifyPublication(root) {
       : id === "framework"
         ? frameworkSourceFiles(root)
         : await readMeasuredSources(join(root, suite.entry));
+    const digest = sourceDigest(root, files, rendering ? "/" : "");
+    if (rendering && digest !== result.provenance.source_sha256) {
+      verifyReportTestOnlyChange(
+        root,
+        files,
+        join(
+          root,
+          suite.directory,
+          "results/raw",
+          result.capture_id,
+          "source.tar.gz",
+        ),
+        result.provenance.source_sha256,
+      );
+      continue;
+    }
     assert.equal(
-      sourceDigest(root, files, rendering ? "/" : ""),
+      digest,
       rendering ? result.provenance.source_sha256 : result.source.sourceSha256,
       `${id}: measured sources changed; rerun the complete campaign before publication`,
     );

@@ -2,6 +2,8 @@ export const refreshFolders: Record<string, string>;
 export interface RefreshManifest {
   schemaVersion: number;
   reviewOnly: boolean;
+  rendererIds?: string[];
+  label?: string;
   beforeRevision: string;
   afterRevision: string;
   artifactSha256: Record<string, string>;

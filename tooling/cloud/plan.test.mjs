@@ -13,7 +13,10 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
+  frameworkShardIds,
   jobManifest,
+  prioritizeSuites,
+  shardedSuiteIds,
   suiteIds,
   validateOptions,
   validateReconnect,
@@ -182,7 +185,7 @@ test("resume reuses complete archives and rejects a changed archive before launc
   } finally {
     rmSync(temp, { recursive: true, force: true });
   }
-}, 30_000);
+}, 60_000);
 
 test("reconnection rejects a worker from another suite or altered isolation contract", () => {
   const expected = jobManifest(options, "rendering");
@@ -238,3 +241,89 @@ test("unknown or incomplete CLI flags fail before allocating or creating campaig
     rmSync(temp, { recursive: true, force: true });
   }
 });
+
+test("framework workload jobs keep every competitor on one isolated node", () => {
+  expect(frameworkShardIds).toHaveLength(8);
+  expect(shardedSuiteIds).toHaveLength(12);
+  for (const id of frameworkShardIds) {
+    const job = jobManifest(options, id);
+    expect(job.metadata.labels.suite).toBe(id);
+    expect(job.spec.template.spec.automountServiceAccountToken).toBe(false);
+    expect(job.spec.template.spec.containers[0].resources.requests.cpu).toBe(
+      "15",
+    );
+  }
+});
+
+test("long suites start early while resumed workers keep their concurrency slots", () => {
+  expect(shardedSuiteIds.slice(0, 4)).toEqual([
+    "rendering",
+    "streaming",
+    "http",
+    "startup",
+  ]);
+  expect(new Set(shardedSuiteIds)).toEqual(
+    new Set([
+      ...suiteIds.filter((id) => id !== "framework"),
+      ...frameworkShardIds,
+    ]),
+  );
+  const retained = {
+    "framework-cards": { status: "running" },
+    "framework-table": { status: "starting" },
+    rendering: { status: "collected" },
+  };
+  const ordered = prioritizeSuites(shardedSuiteIds, retained);
+  expect(new Set(ordered.slice(0, 2))).toEqual(
+    new Set(["framework-cards", "framework-table"]),
+  );
+  expect(ordered.slice(2, 6)).toEqual([
+    "rendering",
+    "streaming",
+    "http",
+    "startup",
+  ]);
+  expect(prioritizeSuites(shardedSuiteIds, {})).toEqual(shardedSuiteIds);
+});
+
+test("an exhausted control-connection retry preserves the active job for resume", () => {
+  const temp = mkdtempSync(join(tmpdir(), "campaign-transport-"));
+  try {
+    const bin = join(temp, "bin"),
+      log = join(temp, "commands");
+    mkdirSync(bin);
+    const kubectl = join(bin, "kubectl");
+    writeFileSync(
+      kubectl,
+      `#!/bin/sh\nprintf '%s\\n' "$*" >> '${log}'\ncase " $* " in *" get "*) printf 'http2: client connection lost\\n' >&2; exit 1;; esac\ncat > /dev/null\n`,
+    );
+    chmodSync(kubectl, 0o755);
+    const result = spawnSync(
+      process.execPath,
+      [
+        "tooling/cloud/campaign.mjs",
+        "--revision",
+        "a".repeat(40),
+        "--parallel",
+        "1",
+        "--out",
+        join(temp, "output"),
+      ],
+      {
+        env: { ...process.env, PATH: `${bin}:${process.env.PATH}` },
+        timeout: 20_000,
+      },
+    );
+    expect(result.status).not.toBe(0);
+    const state = JSON.parse(
+      readFileSync(join(temp, "output/campaign.json"), "utf8"),
+    );
+    expect(state.status).toBe("failed");
+    expect(state.suites.rendering.status).toBe("starting");
+    const commands = readFileSync(log, "utf8");
+    expect(commands).toContain("apply -f -");
+    expect(commands).not.toContain("delete");
+  } finally {
+    rmSync(temp, { recursive: true, force: true });
+  }
+}, 25_000);

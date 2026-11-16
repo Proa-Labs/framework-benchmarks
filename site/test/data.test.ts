@@ -66,11 +66,18 @@ test("renderer refreshes preserve native output and peer dates, and reject stale
       data.rendering.rows[workload.id].find((r) => r.id === "askama"),
     );
     assert.equal(proa.captureId, input.rendering.capture_id);
-    assert.equal(proa.capturedAt, input.rendering.captured_at);
+    assert.equal(
+      proa.capturedAt,
+      input.rendering.workloadCaptures?.[workload.id]?.capturedAt ??
+        input.rendering.captured_at,
+    );
     assert.equal(
       peer.capturedAt,
-      input.rendering.refresh?.baseline_captured_at ||
-        input.rendering.captured_at,
+      input.rendering.workloadCaptures?.[workload.id]?.capturedAt ??
+        (input.reviewRefresh?.rendering?.rendererIds?.includes("askama")
+          ? input.rendering.captured_at
+          : input.rendering.refresh?.baseline_captured_at ||
+            input.rendering.captured_at),
     );
     assert.match(proa.outputBoundary, /RenderBuffer/);
     assert.equal(
@@ -113,7 +120,7 @@ test("Flow throughput and latency always come from the same recorded run", async
   const { input } = await loadInputs();
   const data = normalize(input);
   for (const engine of input.http.engines)
-    for (const workload of input.rendering.workloads) {
+    for (const workload of input.http.scenario.workloads) {
       const flow = required(
         required(data.http.rows[workload.id].find((r) => r.id === engine.id))
           .flow,
@@ -223,6 +230,7 @@ test("requested roster entries never acquire invented measurements", async () =>
     kind: "UI framework",
     color: "#64748b",
     homepage: "https://example.invalid",
+    repository: "https://github.com/example/pending-renderer",
     colorSource: "https://example.invalid",
     status: "unmeasured",
     coverageReason: "No admitted render-only capture",
@@ -279,7 +287,10 @@ test("full-framework measurements stay separate and reject invalid publication c
       `?view=framework&workload=${workload.id}`,
     );
     assert.equal(model.state.workload, workload.id);
-    assert.equal(model.getRows().length, 5);
+    assert.equal(
+      model.getRows().length,
+      data.framework.pendingWorkloads?.[workload.id] ? 0 : 5,
+    );
     for (const engine of input.framework.engines) {
       const row = required(
         data.framework.workloads[workload.id].find((r) => r.id === engine.id),
@@ -367,4 +378,36 @@ test("admitted capture status overrides unmeasured presentation metadata", async
     data.renderers.find((row) => row.id === "proa")?.status,
     "included",
   );
+});
+
+test("render-only coverage can grow without inventing HTTP experiments", async () => {
+  const { input } = await loadInputs();
+  const id = "additional-render-only";
+  const first = input.rendering.workloads[0];
+  input.rendering.workloads.push({
+    ...first,
+    id,
+    label: "Additional render workload",
+  });
+  input.workloadManifest.workloads.push({
+    ...input.workloadManifest.workloads[0],
+    id,
+    label: "Additional render workload",
+  });
+  for (const measurements of Object.values(input.rendering.measurements))
+    measurements[id] = structuredClone(measurements.cards);
+  for (const parity of Object.values(input.rendering.parity))
+    Object.assign(parity, { [id]: structuredClone(parity.cards) });
+  input.processSummaries.push(
+    ...input.processSummaries
+      .filter((run) => run.workload === "cards")
+      .map((run) => ({ ...run, workload: id })),
+  );
+  const data = normalize(input);
+  assert.ok(data.rendering.rows[id].length > 0);
+  assert.equal(data.http.rows[id], undefined);
+  assert.equal(data.framework.workloads[id], undefined);
+  const model = createDashboardModel(data, `?view=http&workload=${id}`);
+  assert.equal(model.state.workload, "cards");
+  assert.ok(model.visibleRows().length > 0);
 });

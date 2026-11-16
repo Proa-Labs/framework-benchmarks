@@ -8,9 +8,120 @@ function About() {
   return (
     <>
       <p>
-        Choose a web stack using measurements you can check. We compare the time
-        and resources needed to render the same pages, serve requests, stream
-        responses and start a server.
+        We built frameworks.run to make apples-to-apples comparisons of web
+        frameworks easier. Bold performance claims are hard to evaluate when
+        every project benchmarks a different page, setup or definition of
+        “fast.” We wanted a shared set of benchmarks that lets people check
+        those claims for themselves.
+      </p>
+      <p>
+        That means equivalent workloads, output checks, documented test
+        conditions,{" "}
+        <Link to="/methodology">pinned versions and raw results</Link> you can
+        inspect. Differences and exceptions are disclosed so you can judge what
+        each comparison actually tells you.
+      </p>
+      <p>
+        Performance is only one part of choosing a framework. Features,
+        developer tooling and ecosystem support matter too. Capabilities such as
+        content rendering, routing and data handling are not captured by a
+        render-time ranking alone. Our{" "}
+        <Link to="/features">feature comparison</Link> distinguishes built-in
+        features from official packages and community integrations, so you can
+        weigh speed alongside what your application needs.
+      </p>
+      <h2>The costs we want to measure</h2>
+      <p>
+        Our focus is on two major costs frameworks can influence: generating a
+        response on the server, and the JavaScript sent to the browser.{" "}
+        <a href="https://web.dev/articles/rendering-on-the-web#server-side-rendering">
+          Server-side rendering (SSR)
+        </a>{" "}
+        makes page content available in the initial HTML response, which matters
+        for loading and{" "}
+        <a href="https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics">
+          search indexing
+        </a>
+        . Our current experiments measure rendering, complete{" "}
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Overview">
+          HTTP requests
+        </a>
+        ,{" "}
+        <a href="https://web.dev/articles/rendering-on-the-web#stream-server-side-rendering-and-rehydrate-progressively">
+          streaming
+        </a>
+        , and{" "}
+        <Link to="/methodology">server startup, CPU and memory usage</Link>.
+      </p>
+      <p>
+        The planned Client-side JS experiment will measure download size and the
+        browser work needed to{" "}
+        <a href="https://web.dev/articles/optimizing-content-efficiency-javascript-startup-optimization">
+          parse, compile and execute
+        </a>{" "}
+        that code, including{" "}
+        <a href="https://web.dev/articles/rendering-on-the-web#terminology">
+          hydration
+        </a>{" "}
+        where applicable. A small download can still take significant time on
+        the{" "}
+        <a href="https://developer.mozilla.org/en-US/docs/Glossary/Main_thread">
+          main thread
+        </a>
+        , delaying rendering and interactions. This focus is inspired by{" "}
+        <a href="https://addyosmani.com/">Addy Osmani</a>’s talk{" "}
+        <a href="https://www.youtube.com/watch?v=63I-mEuSvGA">
+          The Cost of JavaScript
+        </a>
+        .
+      </p>
+      <h2>How this relates to user experience</h2>
+      <p>
+        These rankings use technical measurements rather than{" "}
+        <a href="https://developer.chrome.com/docs/lighthouse/overview">
+          Lighthouse
+        </a>{" "}
+        scores or user-experience metrics such as{" "}
+        <a href="https://web.dev/articles/lcp">
+          Largest Contentful Paint (LCP)
+        </a>{" "}
+        and{" "}
+        <a href="https://web.dev/articles/inp">
+          Interaction to Next Paint (INP)
+        </a>
+        . Faster server responses can help content arrive sooner; less
+        main-thread JavaScript work can help the browser paint and respond
+        sooner. These are inputs to a good experience, not a guarantee of a
+        particular score. See{" "}
+        <a href="https://web.dev/articles/vitals">web.dev’s Web Vitals guide</a>{" "}
+        for how those user-experience metrics are measured.
+      </p>
+      <p>
+        In our controlled rendering tests, implementations produce equivalent
+        HTML and styling. Holding the page constant helps isolate the
+        framework’s work. A browser-level score also depends on images, fonts,
+        network conditions, caching, devices and application behavior, so it
+        cannot be inferred from a render-time ranking alone.
+      </p>
+      <p>
+        As the suite grows to cover complete applications and user journeys, we
+        want to add end-to-end browser measurements alongside these focused
+        tests.
+      </p>
+      <h2>Prior work</h2>
+      <p>
+        Earlier projects such as{" "}
+        <a href="https://github.com/eknkc/ssr-benchmark">
+          eknkc’s SSR Framework Benchmark
+        </a>{" "}
+        helped make SSR comparisons more accessible. Its published suite focuses
+        on JavaScript-based stacks. It appears to be no longer maintained and
+        hasn’t been updated since{" "}
+        <a href="https://github.com/eknkc/ssr-benchmark/commit/c6af3e610029aa36d2c3d6957658d1de1f0905db">
+          April 2024
+        </a>
+        . We wanted broader coverage across languages and ecosystems, with an
+        ongoing, reproducible set of shared experiments.
       </p>
       <h2 id="classification">What counts as a web framework?</h2>
       <ul>
@@ -21,12 +132,18 @@ function About() {
         <li>
           <strong>UI framework or library:</strong> builds components and
           interfaces; routing and server hosting can come from separate tools.
-          Examples: React, Vue and Svelte.
+          Examples: <a href="https://react.dev/">React</a>,{" "}
+          <a href="https://vuejs.org/">Vue</a> and{" "}
+          <a href="https://svelte.dev/">Svelte</a>.
         </li>
         <li>
           <strong>Templating tool:</strong> turns templates and data into HTML.
-          Includes template engines such as Askama and Go’s{" "}
-          <code>html/template</code>, plus native PHP templates.
+          Includes template engines such as{" "}
+          <a href="https://docs.rs/askama/latest/askama/">Askama</a> and Go’s{" "}
+          <a href="https://pkg.go.dev/html/template">
+            <code>html/template</code>
+          </a>
+          , plus native <a href="https://www.php.net/">PHP</a> templates.
         </li>
       </ul>
       <p>
@@ -47,10 +164,10 @@ function About() {
         </a>
       </p>
       <p className="disclosure">
-        <strong>Who runs this:</strong> Andrew Hariri maintains this site and
-        founded <a href="https://github.com/Proa-Labs">Proa Labs</a>.{" "}
-        <a href="https://github.com/Proa-Labs/proa">Proa</a> is included in the
-        benchmarks.
+        <strong>Who runs this:</strong>{" "}
+        <a href="https://github.com/Proa-Labs">Proa Labs</a> maintains this site
+        and develops <a href="https://github.com/Proa-Labs/proa">Proa</a>, which
+        is included in the benchmarks.
       </p>
       <p>
         Project names and logos identify their respective owners. Inclusion does
@@ -83,6 +200,16 @@ function Methodology() {
         process P50s.
       </p>
       {metadata.renderingOutput && <p>{metadata.renderingOutput}</p>}
+      <p>
+        Peak RSS is the most physical memory used by a native renderer process
+        over its lifetime, including startup, prepared data, template
+        initialization, warmup, rendering and output verification. The chart
+        shows the median of the independent process peaks in MiB, with each peak
+        retained in the raw data. The operating system records this separately
+        from the render timer. It is whole-process memory, not bytes allocated
+        per render. Older captures without RSS remain unmeasured. Build tools
+        and benchmark launchers are excluded.
+      </p>
       <h2>Framework SSR</h2>
       <p>
         {metadata.framework.scenario.boundary} This is a separate shared

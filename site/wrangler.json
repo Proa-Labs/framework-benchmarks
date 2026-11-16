@@ -12,6 +12,10 @@
     {
       "pattern": "frameworks.run",
       "custom_domain": true
+    },
+    {
+      "pattern": "www.frameworks.run/*",
+      "zone_name": "frameworks.run"
     }
   ],
   "main": "@tanstack/react-start/server-entry",

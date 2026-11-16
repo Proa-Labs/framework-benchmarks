@@ -36,11 +36,14 @@
       "!**/bun.lock",
       "!benchmarks/framework-ssr/results",
       "!site/src/routeTree.gen.ts",
+      "!site/data/performance/showcase/proa.css",
       "package.json",
       "turbo.json",
       "benchmarks/rendering/external/*/package.json",
       "benchmarks/framework-ssr/prepare-fixtures.ts",
-      "tooling/checks/workspace.test.mjs"
+      "tooling/checks/workspace.test.mjs",
+      "benchmarks/rendering/showcase/*.mjs",
+      "!benchmarks/rendering/showcase/fixtures"
     ]
   },
   "formatter": {
@@ -59,7 +62,14 @@
   "overrides": [
     {
       "includes": [
-        "benchmarks/framework-ssr/adapters/next/app/catalog/page.jsx"
+        "benchmarks/framework-ssr/contract.json",
+        "benchmarks/framework-ssr/contract-v3.json"
+      ],
+      "json": { "formatter": { "expand": "always" } }
+    },
+    {
+      "includes": [
+        "benchmarks/framework-ssr/adapters/next/app/(core)/catalog/page.jsx"
       ],
       "linter": {
         "rules": {

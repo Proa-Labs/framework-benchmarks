@@ -1,4 +1,7 @@
 import assert from "node:assert/strict";
+import frameworkContract from "../../benchmarks/framework-ssr/contract.json" with {
+  type: "json",
+};
 
 export const suiteIds = [
   "rendering",
@@ -7,6 +10,30 @@ export const suiteIds = [
   "streaming",
   "startup",
 ];
+export const frameworkShardIds = frameworkContract.workloads.map(
+  (w) => `framework-${w.id}`,
+);
+export const shardedSuiteIds = [
+  "rendering",
+  "streaming",
+  "http",
+  "startup",
+  // Start long comparisons early so they do not occupy the final worker alone.
+  ...frameworkContract.workloads
+    .toSorted((a, b) => {
+      const window = (w) =>
+        w.capacityDurationSeconds +
+        (w.latencyDurationSeconds ??
+          frameworkContract.publication.durationSeconds);
+      return window(b) - window(a);
+    })
+    .map(({ id }) => `framework-${id}`),
+];
+export function prioritizeSuites(ids, retained) {
+  const active = (id) => ["running", "starting"].includes(retained[id]?.status);
+  // Resume active workers first: they already consume the concurrency budget.
+  return [...ids].sort((a, b) => Number(active(b)) - Number(active(a)));
+}
 export const image =
   "us-west1-docker.pkg.dev/airy-cycle-504821-k9/ci-images/proa-runner@sha256:c1a3c3f6d822b777e29caa694b4a2c36571bfe1c0661f3a978970e828b5849ab";
 export function validateOptions({ revision, parallel, namespace, campaignId }) {
@@ -24,7 +51,7 @@ export function validateOptions({ revision, parallel, namespace, campaignId }) {
 }
 export function jobManifest(options, suite, attempt = 1) {
   validateOptions(options);
-  assert.ok(suiteIds.includes(suite));
+  assert.ok([...suiteIds, ...frameworkShardIds].includes(suite));
   const name = `bench-${options.campaignId.slice(-12)}-${suite}-${attempt}`;
   const labels = {
     app: "framework-benchmarks",

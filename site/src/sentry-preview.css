@@ -1,0 +1,228 @@
+/* Shared presentation for the static Sentry workload previews. The measured
+   fixture and its original styles remain the source of benchmark evidence. */
+html,
+body {
+  min-width: 0;
+}
+.sentry-app {
+  width: 100%;
+}
+.sentry-main,
+.trace-content {
+  min-width: 0;
+}
+.primary-nav a.active {
+  color: var(--purple);
+}
+.nav-icon {
+  border: 0;
+  background: currentColor;
+  -webkit-mask: var(--preview-nav-icon) center / contain no-repeat;
+  mask: var(--preview-nav-icon) center / contain no-repeat;
+}
+.nav-icon::before,
+.nav-icon::after {
+  content: none;
+}
+.nav-icon-inbox {
+  --preview-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.75%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%204h16l2%209v7H2v-7l2-9Z%22%2F%3E%3Cpath%20d%3D%22M2%2013h6l2%203h4l2-3h6%22%2F%3E%3C%2Fsvg%3E");
+}
+.nav-icon-compass {
+  --preview-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.75%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%229%22%2F%3E%3Cpath%20d%3D%22m16%208-2.5%205.5L8%2016l2.5-5.5L16%208Z%22%2F%3E%3C%2Fsvg%3E");
+}
+.nav-icon-grid {
+  --preview-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.75%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%227%22%20height%3D%227%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2214%22%20y%3D%223%22%20width%3D%227%22%20height%3D%227%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%2214%22%20width%3D%227%22%20height%3D%227%22%20rx%3D%221%22%2F%3E%3Crect%20x%3D%2214%22%20y%3D%2214%22%20width%3D%227%22%20height%3D%227%22%20rx%3D%221%22%2F%3E%3C%2Fsvg%3E");
+}
+.nav-icon-bell {
+  --preview-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.75%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M18%208a6%206%200%200%200-12%200c0%207-3%207-3%209h18c0-2-3-2-3-9Z%22%2F%3E%3Cpath%20d%3D%22M10%2021h4%22%2F%3E%3C%2Fsvg%3E");
+}
+.nav-icon-gear {
+  --preview-nav-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.75%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22m9%203-1%203-3%201%201%203-2%202%202%202-1%203%203%201%201%203h6l1-3%203-1-1-3%202-2-2-2%201-3-3-1-1-3Z%22%2F%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%223%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.web-vitals {
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: 100%;
+}
+.web-vitals > span {
+  flex: 0 0 auto;
+  height: 32px;
+  gap: 8px;
+  padding-right: 10px;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+.web-vitals b {
+  display: inline-flex;
+  align-items: center;
+  align-self: stretch;
+  height: auto;
+  padding: 0 9px;
+  line-height: 1.3;
+}
+.project-badges {
+  gap: 4px;
+}
+.project-badges i + i {
+  margin-left: 0;
+}
+.auto-refresh:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+.logs-viewport {
+  overscroll-behavior: contain;
+}
+.trace-content [data-log-row] {
+  display: block;
+}
+.loading-more[role="note"] {
+  height: auto;
+  min-height: 48px;
+  flex-shrink: 0;
+  padding: 12px 16px;
+  text-align: center;
+  line-height: 1.5;
+}
+@media (max-width: 1100px) {
+  .trace-tabs-row {
+    height: auto;
+    min-height: 63px;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    padding-top: 12px;
+  }
+  .trace-tabs {
+    flex-shrink: 0;
+  }
+  .web-vitals {
+    padding-bottom: 8px;
+  }
+  .trace-header {
+    flex: 0 0 auto;
+  }
+  .trace-title-row {
+    flex-wrap: wrap;
+    gap: 12px 16px;
+    padding-bottom: 12px;
+  }
+  .trace-stats {
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 0 0 0 auto;
+  }
+  .trace-context {
+    height: auto;
+    min-height: 64px;
+    flex-wrap: wrap;
+    padding: 12px 18px;
+  }
+}
+@media (max-width: 800px) {
+  .trace-tabs-row {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .web-vitals {
+    justify-content: flex-start;
+  }
+  .logs-toolbar {
+    height: auto;
+    flex-basis: auto;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px;
+  }
+  .logs-search {
+    flex: 1 0 100%;
+  }
+  .log-row summary {
+    min-width: 570px;
+  }
+  .attribute-columns {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .attribute-columns dl + dl {
+    border-left: 0;
+    border-top: 1px solid var(--border);
+    padding: 12px 0 0;
+  }
+  .attribute-columns dl > div {
+    grid-template-columns: minmax(100px, 0.45fr) minmax(0, 1fr);
+  }
+}
+@media (max-width: 560px) {
+  .side-rail {
+    width: 60px;
+    flex-basis: 60px;
+  }
+  .primary-nav a {
+    height: 60px;
+  }
+  .org-mark {
+    margin-bottom: 12px;
+  }
+  .top-bar {
+    padding: 0 12px;
+    gap: 8px;
+  }
+  .breadcrumbs {
+    min-width: 0;
+    gap: 6px;
+  }
+  .breadcrumbs b {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ask-seer {
+    padding: 0 8px;
+    white-space: nowrap;
+  }
+  .ask-seer kbd {
+    display: none;
+  }
+  .feedback-button {
+    display: none;
+  }
+  .trace-title-row {
+    padding: 14px 12px;
+  }
+  .trace-stats {
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px 8px;
+  }
+  .trace-stats dt {
+    font-size: 10px;
+  }
+  .trace-stats dd {
+    font-size: 17px;
+  }
+  .trace-context {
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+  .trace-content {
+    padding: 0 10px 10px;
+  }
+  .trace-tabs button {
+    min-width: 84px;
+  }
+  .web-vitals {
+    gap: 8px;
+  }
+  .web-vitals > span {
+    height: 30px;
+  }
+  .web-vitals b {
+    padding: 0 8px;
+  }
+  .open-logs {
+    padding: 0 12px;
+  }
+}

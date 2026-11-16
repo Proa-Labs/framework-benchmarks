@@ -12,6 +12,10 @@ on:
         default: "5"
         type: choice
         options: ["5", "4", "3", "2", "1"]
+      framework_shards:
+        description: Run each complete framework workload on its own isolated host
+        default: true
+        type: boolean
       smoke:
         description: Exercise orchestration without publishable measurements
         default: false
@@ -49,12 +53,14 @@ jobs:
           BENCH_REVISION: ${{ inputs.revision }}
           BENCH_PARALLEL: ${{ inputs.parallel }}
           BENCH_SMOKE: ${{ inputs.smoke }}
+          BENCH_FRAMEWORK_SHARDS: ${{ inputs.framework_shards }}
         run: |
           set -euo pipefail
           bun install --frozen-lockfile
           source tooling/cloud/in-cluster-config.sh
           args=()
           if [[ "$BENCH_SMOKE" == true ]]; then args+=(--smoke); fi
+          if [[ "$BENCH_FRAMEWORK_SHARDS" == true ]]; then args+=(--framework-shards); fi
           bun tooling/cloud/campaign.mjs --revision "$BENCH_REVISION" \
             --parallel "$BENCH_PARALLEL" --out cloud-results "${args[@]}"
       - name: Retain campaign status, raw results and failure logs

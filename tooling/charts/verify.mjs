@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { readRawJson } from "../capture/raw.mjs";
 import { repositoryRoot } from "../repository.mjs";
 // Checks the generated figures against the evidence pages they were drawn from.
 //   node tooling/charts/verify.mjs
@@ -260,14 +261,11 @@ console.log('\nSource fidelity');
   const expectedRawArtifact =
     `raw/${scalingCapture.capture_id}/process-summaries.json`;
   let raw = [];
-  if (scalingCapture.raw_artifact !== expectedRawArtifact) {
+  if (![expectedRawArtifact, expectedRawArtifact+".gz"].includes(scalingCapture.raw_artifact)) {
     artifactFailures.push(`raw artifact path should be ${expectedRawArtifact}`);
   } else {
     try {
-      raw = JSON.parse(readFileSync(
-        join(ROOT, 'benchmarks/rendering', 'results', scalingCapture.raw_artifact),
-        'utf8',
-      ));
+      raw = readRawJson(join(ROOT, 'benchmarks/rendering', 'results', scalingCapture.raw_artifact));
     } catch (error) {
       artifactFailures.push(`raw artifact cannot be read: ${error.message}`);
     }
@@ -332,7 +330,7 @@ console.log('\nSource fidelity');
     : bad('React hydration payload fidelity', mismatches.join('; '));
 }
 
-// 7 · figure 07 is exactly reproducible from both generated streaming tables.
+// 7 · figure 07 is exactly reproducible from the current resolved-HTML streaming table.
 //     This makes a stale or missing committed capacity chart a verification
 //     failure rather than relying on developers to remember to rebuild it.
 {
@@ -343,7 +341,7 @@ console.log('\nSource fidelity');
     actual = readFileSync(path, 'utf8');
   } catch {}
   actual === expected
-    ? ok('Suspense load chart reproduces exactly from both streaming evidence tables')
+    ? ok('Suspense load chart reproduces exactly from the current resolved-HTML streaming table')
     : bad('Suspense load chart fidelity', actual === null ? 'chart 07 is missing' : 'committed SVG is stale');
 }
 
@@ -458,12 +456,7 @@ console.log('\nSource fidelity');
       // validateBuffers reaches this exact final check only after validating
       // every declared input hash. Preserve its original measured code.
       if (error.message !== 'Core rendering sources changed') throw error;
-      const results = join(ROOT, 'benchmarks/rendering/results');
-      const archived = readdirSync(join(results, 'archive')).filter(name => name.endsWith('.json'))
-        .map(name => JSON.parse(readFileSync(join(results, 'archive', name), 'utf8')))
-        .find(result => result.provenance?.source_sha256 === capture.provenance.core_sources_sha256);
-      if (!archived) throw new Error('No retained core source for allocation capture');
-      verifySourceSnapshot(join(results, 'raw', archived.capture_id, 'source.tar.gz'), capture.provenance.core_sources_sha256, { prefix: '/' });
+      verifySourceSnapshot(join(ROOT, 'experiments/showcase/results/raw/proa-pr83-core.sources.tar.gz'), capture.provenance.core_sources_sha256, { prefix: '/' });
     }
     updateBufferReadme(md, capture) === md
       ? ok('Proa allocation timings, output parity, capacities and source hashes agree')

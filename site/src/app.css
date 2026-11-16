@@ -215,6 +215,11 @@
   #frameworks-explorer [hidden] {
     @apply hidden!;
   }
+  /* Follow the active tab even when React refreshes the initial snapshot. */
+  #frameworks-explorer:has([data-view="rendering"][aria-selected="true"])
+    [data-coverage-note] {
+    @apply hidden!;
+  }
   #frameworks-explorer button,
   #frameworks-explorer select,
   #frameworks-explorer input {
@@ -1006,6 +1011,15 @@
   .document h2 {
     @apply [margin-top:37px] text-ink [font-size:20px] font-medium;
   }
+  .document :is(p, li) a {
+    @apply underline underline-offset-4 [text-decoration-color:var(--fw-border)];
+  }
+  .document :is(p, li) a:hover {
+    @apply text-ink [text-decoration-color:currentColor];
+  }
+  .document :is(p, li) a:focus-visible {
+    @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:3px];
+  }
   .document ul {
     @apply [padding-left:21px];
   }
@@ -1180,8 +1194,9 @@
     @apply [min-height:36px];
   }
   #frameworks-explorer .fw-comparison {
-    @apply [width:100%] [min-width:36rem] border-collapse table-fixed text-sm tabular-nums;
-    --fw-name-column: 25%;
+    @apply [width:100%] border-collapse table-fixed text-sm tabular-nums;
+    --fw-name-column: 11rem;
+    min-width: calc(var(--fw-name-column) + var(--fw-workload-count) * 10rem);
     display: block;
   }
   #frameworks-explorer .fw-comparison thead,
@@ -1199,14 +1214,19 @@
   }
   #frameworks-explorer .fw-comparison tbody tr {
     content-visibility: auto;
-    contain-intrinsic-block-size: auto 45px;
+    contain-intrinsic-block-size: auto 56px;
   }
   #frameworks-explorer .fw-comparison th:first-child {
     @apply text-left;
+    /* Keep names beside their measurements when the wider workload set scrolls. */
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--fw-bg);
   }
   #frameworks-explorer .fw-comparison th,
   #frameworks-explorer .fw-comparison td {
-    @apply [padding:8px_12px] font-normal text-right [vertical-align:middle];
+    @apply [padding:12px_16px] font-normal text-right [vertical-align:middle];
   }
   #frameworks-explorer .fw-comparison th:first-child {
     @apply [padding-left:0];
@@ -1226,6 +1246,13 @@
   #frameworks-explorer .fw-comparison tbody tr:hover {
     @apply [background:var(--fw-hover)];
   }
+  #frameworks-explorer
+    .fw-comparison
+    tbody
+    tr:is(:hover, .fw-comparison-focused)
+    > th:first-child {
+    background: inherit;
+  }
   #frameworks-explorer .fw-comparison-focused {
     @apply [background:var(--fw-selected)];
   }
@@ -1238,19 +1265,22 @@
   #frameworks-explorer .fw-comparison th > button {
     @apply [width:100%];
   }
+  #frameworks-explorer .fw-comparison td > button,
+  #frameworks-explorer .fw-comparison thead button {
+    scroll-margin-inline-start: var(--fw-name-column);
+  }
   #frameworks-explorer .fw-comparison .fw-comparison-cell {
     @apply [padding:0];
   }
   #frameworks-explorer .fw-comparison-cell > button {
-    @apply block [width:100%] [padding:8px_12px] text-right;
+    @apply block [width:100%] [padding:12px_16px] text-right;
   }
   #frameworks-explorer
     .fw-comparison
     tbody
     tr:is(:hover, :focus-within, .fw-comparison-focused)
-    .fw-comparison-track
-    > span {
-    @apply [background:var(--brand)];
+    .fw-comparison-value {
+    --fw-bar-color: var(--brand);
   }
   #frameworks-explorer
     .fw-comparison
@@ -1272,11 +1302,14 @@
   #frameworks-explorer .fw-comparison-value {
     @apply [font:0.875rem_/_1.5_ui-monospace,_monospace];
   }
-  #frameworks-explorer .fw-comparison-track {
-    @apply block [height:3px] [margin-top:5px] [background:var(--fw-track)];
-  }
-  #frameworks-explorer .fw-comparison-track > span {
-    @apply block [height:100%] [background:var(--fw-plot)];
+  #frameworks-explorer .fw-comparison-value::after {
+    content: "";
+    @apply block [height:3px] [margin-top:5px];
+    background: linear-gradient(
+      to right,
+      var(--fw-bar-color, var(--fw-plot)) var(--fw-bar-width),
+      var(--fw-track) var(--fw-bar-width)
+    );
   }
   @media (max-width: 560px) {
     #frameworks-explorer .fw-intro {
@@ -1289,14 +1322,14 @@
       @apply [padding:7px_8px] text-sm text-center;
     }
     #frameworks-explorer .fw-comparison {
-      --fw-name-column: 32%;
+      --fw-name-column: 10rem;
     }
     #frameworks-explorer .fw-comparison th,
     #frameworks-explorer .fw-comparison td {
-      @apply [padding:8px_5px];
+      @apply [padding:12px_12px];
     }
     #frameworks-explorer .fw-comparison-cell > button {
-      @apply [padding:8px_5px];
+      @apply [padding:12px_12px];
     }
     #frameworks-explorer .fw-comparison .fw-renderer {
       @apply text-sm [gap:5px] [overflow-wrap:anywhere];
@@ -1315,9 +1348,6 @@
     }
   }
 
-  #frameworks-explorer[data-compare="true"] .fw-toolbar {
-    @apply hidden;
-  }
   #frameworks-explorer .fw-main-heading {
     @apply [padding:16px_0_10px];
   }
@@ -1342,10 +1372,10 @@
   }
   #frameworks-explorer .fw-comparison th,
   #frameworks-explorer .fw-comparison td {
-    @apply [padding-top:5px] [padding-bottom:5px];
+    @apply [padding-top:12px] [padding-bottom:12px];
   }
   #frameworks-explorer .fw-comparison thead th {
-    @apply [padding-top:7px] [padding-bottom:7px];
+    @apply [padding-top:12px] [padding-bottom:12px];
   }
   #frameworks-explorer .fw-top-actions {
     @apply [gap:4px] text-base [line-height:1.5];
@@ -1400,7 +1430,7 @@
     @apply relative block [width:40px] [height:32px] overflow-hidden shrink-0 [background:#fafbfc] [margin:4px_0_4px_4px] [border-radius:2px] pointer-events-none;
   }
   #frameworks-explorer .fw-workload-thumb img {
-    @apply [width:800px] [height:640px] [max-width:none] [border:0] [transform:scale(0.05)] [transform-origin:top_left] pointer-events-none;
+    @apply block [width:100%] [height:100%] [border:0] object-cover [object-position:top_left] pointer-events-none;
   }
   #frameworks-explorer .fw-fixture-dialog {
     @apply fixed [inset:0] [margin:auto] [width:min(1100px,_calc(100%_-_32px))] [height:min(850px,_calc(100dvh_-_40px))] [padding:16px] [border:1px_solid_var(--fw-border)] [border-radius:9px] text-ink [background:var(--fw-bg)];
@@ -1482,9 +1512,6 @@
     #frameworks-explorer .fw-workload-thumb {
       @apply block [width:24px] [height:22px] [margin:3px_0_3px_3px];
     }
-    #frameworks-explorer .fw-workload-thumb img {
-      @apply [transform:scale(0.03)];
-    }
     #frameworks-explorer .fw-workload-choice button {
       @apply [padding:6px_4px] text-sm;
     }
@@ -1546,6 +1573,57 @@
     }
   }
 
+  /* Keep repository links as siblings of result buttons, with their own hit area. */
+  #frameworks-explorer .fw-result-row {
+    --fw-result-name-width: 148px;
+    display: grid;
+    grid-template-columns: var(--fw-result-name-width) minmax(0, 1fr);
+    align-items: center;
+  }
+  #frameworks-explorer .fw-result-row > .fw-row {
+    grid-area: 1 / 1 / 2 / -1;
+  }
+  #frameworks-explorer .fw-result-row > .fw-row > .fw-renderer {
+    padding-right: 26px;
+  }
+  #frameworks-explorer .fw-result-row > .fw-repo-link {
+    grid-area: 1 / 1;
+    justify-self: end;
+    z-index: 1;
+  }
+  #frameworks-explorer .fw-repo-link {
+    @apply inline-flex shrink-0 items-center justify-center text-muted rounded-sm;
+    width: 24px;
+    height: 28px;
+  }
+  #frameworks-explorer .fw-repo-link:hover {
+    @apply text-ink [background:var(--fw-hover)];
+  }
+  #frameworks-explorer .fw-repo-link:focus-visible {
+    outline: 2px solid var(--fw-muted);
+    outline-offset: 2px;
+  }
+  #frameworks-explorer .fw-result-identity,
+  #frameworks-explorer .fw-legend-item {
+    @apply inline-flex items-center gap-1;
+  }
+  #frameworks-explorer .fw-result-identity > button {
+    min-width: 0;
+    width: auto;
+  }
+  @media (max-width: 650px) {
+    #frameworks-explorer .fw-result-row {
+      --fw-result-name-width: 108px;
+    }
+    #frameworks-explorer .fw-result-flow {
+      grid-template-columns: minmax(0, 1fr) 106px;
+    }
+    #frameworks-explorer .fw-result-flow > .fw-repo-link {
+      align-self: start;
+      margin-top: 8px;
+    }
+  }
+
   #frameworks-explorer header {
     @apply [column-gap:4px];
   }
@@ -1565,7 +1643,16 @@
     @apply [min-width:0];
   }
   #frameworks-explorer .fw-sidebar-label {
-    @apply text-sm [letter-spacing:0.7px] uppercase text-muted [margin-bottom:12px];
+    @apply block text-sm font-normal [letter-spacing:0.7px] uppercase text-muted [margin-bottom:12px];
+  }
+  #frameworks-explorer .fw-render-metric {
+    @apply [border:0] [padding:0] [margin:0_0_24px] [max-width:280px];
+  }
+  #frameworks-explorer .fw-render-metric select {
+    @apply w-full [min-height:40px] [padding:6px_34px_6px_10px] [background-color:var(--fw-surface)] [border:1px_solid_var(--fw-line)] [border-radius:5px] text-sm text-ink;
+  }
+  #frameworks-explorer .fw-render-metric select:focus-visible {
+    @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:3px];
   }
   #frameworks-explorer .fw-workload-tabs {
     @apply flex-col;
@@ -1579,14 +1666,11 @@
   #frameworks-explorer .fw-workload-thumb {
     @apply [width:32px] [height:28px];
   }
-  #frameworks-explorer .fw-workload-thumb img {
-    @apply [transform:scale(0.04)];
-  }
   #frameworks-explorer .fw-type-filters {
     @apply [margin-top:22px] flex-col items-stretch [gap:6px];
   }
-  #frameworks-explorer .fw-type-filters > span {
-    @apply [margin-bottom:3px];
+  #frameworks-explorer .fw-type-filters > legend {
+    @apply [margin-bottom:12px];
   }
   #frameworks-explorer .fw-type-filters button {
     @apply text-left;
@@ -1616,11 +1700,11 @@
     #frameworks-explorer .fw-type-filters {
       @apply [margin-top:12px] flex-row items-center;
     }
-    #frameworks-explorer .fw-type-filters > span {
-      @apply [width:auto] [margin:0_3px_0_0];
+    #frameworks-explorer .fw-type-filters > legend {
+      @apply [margin:0_0_12px];
     }
     #frameworks-explorer .fw-sidebar-label {
-      @apply hidden;
+      @apply block;
     }
   }
 
@@ -1632,6 +1716,12 @@
   }
   #frameworks-explorer .fw-lab-nav [aria-selected="true"] {
     @apply [border-bottom-color:var(--fw-fg)] text-ink font-medium;
+  }
+  #frameworks-explorer .fw-lab-nav .fw-coming-soon-tab {
+    @apply inline-flex items-center [gap:7px] cursor-default;
+  }
+  #frameworks-explorer .fw-coming-soon-badge {
+    @apply text-xs [padding:2px_5px] [border:1px_solid_var(--fw-line)] [border-radius:4px] [background:var(--fw-surface)] whitespace-nowrap;
   }
   #frameworks-explorer .fw-experiment-tab {
     @apply inline-flex items-center [gap:5px] shrink-0 [border-bottom:2px_solid_transparent] [margin-bottom:-1px];
@@ -1656,16 +1746,23 @@
   }
   @media (min-width: 700px) {
     #frameworks-explorer[data-compare="true"] {
-      --fw-comparison-heading-height: 48px;
+      --fw-comparison-heading-height: 5.5rem;
     }
-    #frameworks-explorer[data-compare="true"] .fw-sidebar-label {
+    #frameworks-explorer[data-compare="true"]
+      .fw-scenarios
+      > .fw-sidebar-label {
       @apply flex items-center [min-height:var(--fw-comparison-heading-height)] [margin:0];
     }
-    #frameworks-explorer[data-compare="true"] .fw-comparison thead {
-      @apply [height:var(--fw-comparison-heading-height)];
+    #frameworks-explorer[data-compare="true"]
+      .fw-render-metric:not([hidden])
+      ~ .fw-sidebar-label {
+      @apply [min-height:0] [margin-bottom:12px];
     }
-    #frameworks-explorer[data-compare="true"] .fw-toolbar {
-      @apply hidden;
+    #frameworks-explorer[data-compare="true"] .fw-comparison thead {
+      @apply [min-height:var(--fw-comparison-heading-height)];
+    }
+    #frameworks-explorer[data-compare="true"] .fw-comparison thead tr {
+      @apply [min-height:var(--fw-comparison-heading-height)];
     }
   }
   @media (max-width: 560px) {
@@ -1922,14 +2019,17 @@
   #frameworks-explorer .fw-tool-search input {
     @apply [width:100%] [min-width:0] [padding:0] text-ink [background:transparent] [border:0] [font:inherit] text-sm [outline-offset:5px];
   }
+  #frameworks-explorer .fw-tool-search input:focus {
+    @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:4px] [border-radius:2px];
+  }
   #frameworks-explorer .fw-tool-types {
-    @apply flex [gap:12px] [border:0] [margin:0] [padding:12px_8px] text-sm text-muted;
+    @apply flex flex-wrap [gap:10px_12px] [border:0] [margin:0] [padding:12px_8px] text-sm text-muted;
   }
   #frameworks-explorer .fw-tool-types label {
     @apply flex items-center [gap:5px];
   }
   #frameworks-explorer .fw-tool-types input {
-    @apply [margin:0] [width:12px] [height:12px] [accent-color:var(--fw-fg)];
+    @apply [margin:0] [width:12px] [height:12px] shrink-0 [accent-color:var(--fw-fg)];
   }
   #frameworks-explorer .fw-tool-picker-actions,
   #frameworks-explorer .fw-tool-picker-footer {

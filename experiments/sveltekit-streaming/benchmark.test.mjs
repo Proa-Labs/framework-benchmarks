@@ -5,7 +5,6 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { validateComparisonHosts, validateStreaming } from './report.mjs';
-import comparisonCaptures from './comparison-captures.json' with { type: 'json' };
 
 const capture = JSON.parse(readFileSync(new URL('./results/latest.json', import.meta.url)));
 
@@ -52,12 +51,9 @@ test('custom worker counts cannot overwrite the publication capture', async () =
   }), /Custom runs require --out/);
 });
 
-test('historical comparison keeps its pinned host when publication pointers advance', () => {
-  const read = path => JSON.parse(readFileSync(new URL(`../../${path}`, import.meta.url)));
-  const pinned = ['canonical', 'scaling', 'pages', 'cold'].map(id => read(comparisonCaptures[id]));
-  const stream = read(comparisonCaptures.stream);
-  validateComparisonHosts(stream, pinned);
-  const changed = structuredClone(pinned);
-  changed[0].host.cpu_model = 'different benchmark machine';
-  assert.throws(() => validateComparisonHosts(stream, changed), /different hosts/);
+test('cross-experiment host validation rejects a different machine', () => {
+  const peer = { host: structuredClone(capture.host) };
+  validateComparisonHosts(capture, [peer]);
+  peer.host.cpuModel = 'different benchmark machine';
+  assert.throws(() => validateComparisonHosts(capture, [peer]), /different hosts/);
 });

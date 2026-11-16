@@ -17,7 +17,11 @@ export function ChartMarkup({
   const chart =
     initialChart ||
     (slot === "catalog"
-      ? { html: markup.catalog() }
+      ? {
+          // Keep the directory server-rendered on its own URL. The performance
+          // page mounts it on demand instead of hydrating a hidden duplicate.
+          html: model.state.section === "ecosystem" ? markup.catalog() : "",
+        }
       : markup.draw(model.visibleRows()));
   return (
     <div
@@ -59,15 +63,17 @@ export function WorkloadChoices({ model }: { model: DashboardModel }) {
           hidden={
             state.view === "framework"
               ? !frameworkWorkloads().some((v) => v.id === w.id)
-              : w.id === "catalog"
+              : state.view === "http"
+                ? !model.data.http.rows[w.id]
+                : w.id === "catalog"
           }
         >
           <span className="fw-workload-thumb" aria-hidden="true">
             <img
-              src={`/thumbnails/${state.view === "framework" && frameworkWorkloads().some((v) => v.id === w.id) ? "framework-" : ""}${w.id}.svg`}
+              src={`/thumbnails/${state.view === "framework" && frameworkWorkloads().some((v) => v.id === w.id) ? "framework-" : ""}${w.id}.webp`}
               alt=""
-              width="800"
-              height="640"
+              width="320"
+              height="256"
               loading="lazy"
               tabIndex={-1}
               title={`${w.label} miniature`}
@@ -108,7 +114,7 @@ export function WorkloadChoices({ model }: { model: DashboardModel }) {
 export function ToolTypes({ model }: { model: DashboardModel }) {
   return (
     <>
-      <span>Tool type</span>
+      <legend className="fw-sidebar-label">Tool type</legend>
       {TOOL_GROUPS.map((g) => (
         <label key={g.id}>
           <input

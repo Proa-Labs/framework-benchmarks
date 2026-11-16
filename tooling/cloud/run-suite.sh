@@ -12,6 +12,7 @@ suite="$3"
 mode="$4"
 export BENCH_HOST_LABEL="GCP C4 c4-standard-16-lssd · ${BENCH_NODE_NAME} · isolated node"
 test "$(git rev-parse HEAD)" = "$BENCH_SOURCE_REVISION"
+bun tooling/checks/proa-pins.mjs
 test "$(cat /sys/devices/system/cpu/cpu0/topology/thread_siblings_list)" = "0,8"
 test "$(nproc --all)" = 16
 lscpu -e=CPU,CORE,SOCKET,ONLINE > /work/cpu-topology.txt
@@ -30,9 +31,11 @@ case "$suite" in
     taskset -c 0 bun benchmarks/rendering/canonical/run.mjs --no-setup "${smoke[@]}"
     taskset -c 0 bun benchmarks/rendering/canonical/run.mjs --product-scaling --no-setup "${smoke[@]}"
     ;;
-  framework)
+  framework|framework-*)
     bun benchmarks/framework-ssr/build.ts
-    taskset -c 1-7,9-15 bun benchmarks/framework-ssr/run.ts --no-build --workers 24 "${smoke[@]}"
+    workload=()
+    if [[ "$suite" == framework-* ]]; then workload=(--shard-workload "${suite#framework-}"); fi
+    taskset -c 1-7,9-15 bun benchmarks/framework-ssr/run.ts --no-build --workers 24 "${smoke[@]}" "${workload[@]}"
     ;;
   http|streaming|startup)
     args=()

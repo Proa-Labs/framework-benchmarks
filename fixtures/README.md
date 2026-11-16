@@ -4,6 +4,7 @@
 | --- | --- |
 | [`airbnb-parity-dump/`](airbnb-parity-dump/) | Linked Proa showcase dump used by application-shaped parity and payload experiments |
 | [`proa-buffer-comparison/`](proa-buffer-comparison/) | Separate owned-buffer and preallocation controls |
+| [`landing-hero/`](landing-hero/) | Frozen native fixture for the paired landing-page experiment |
 | [`legacy-ebay-chrome/`](legacy-ebay-chrome/README.md) | Retained reference markup and style assets |
 
 Suite-specific inputs live beside their owner: rendering workload definitions

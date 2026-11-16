@@ -64,7 +64,8 @@
     "CARGO_TARGET_DIR",
     "EXACT_SOURCE",
     "CANONICAL_SUITE_RUBY",
-    "JAVA_HOME"
+    "JAVA_HOME",
+    "EXACT_SHOWCASE_WORKLOAD"
   ],
   "globalPassThroughEnv": [
     "BENCH_*",
