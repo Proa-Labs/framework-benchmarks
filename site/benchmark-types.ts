@@ -30,6 +30,7 @@ export type ChartMode = "compare" | "bars" | "lines" | "balls" | "table";
 export interface Renderer extends Project {
   language: string;
   homepage: string;
+  repository?: string;
   version?: string;
   status: string;
   renderingAdaptation?: {

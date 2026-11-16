@@ -47,6 +47,7 @@ export function createChartMarkup(model: DashboardModel) {
     name,
     logo,
     label,
+    repositoryLink,
     isVisible,
     suites,
     metric,
@@ -105,7 +106,7 @@ export function createChartMarkup(model: DashboardModel) {
     output.html = `<div class="fw-table-scroll" tabindex="0" role="region" aria-label="SSR rendering ${metric() === "rss" ? "peak process RSS" : "latency"} comparison"><table class="fw-comparison" role="table" style="--fw-workload-count:${workloads.length}" data-renderer-comparison><caption class="sr-only">Prepared data to freshly owned HTML. ${metric() === "rss" ? "Every measured cell reports median native-process peak RSS in MiB, not per-render allocations." : "Every measured cell reports median render latency in microseconds."} HTTP request timings are in the Framework SSR experiment.</caption><thead><tr><th scope="col">Framework / renderer</th>${workloads.map((w) => `<th scope="col" aria-sort="${state.workload === w.id ? "ascending" : "none"}"><button type="button" data-sort-workload="${w.id}" aria-label="${esc(w.label)}${state.workload === w.id ? " ↓" : ""} ${unit()}: sort by ${metric() === "rss" ? "peak process RSS" : "render latency"}">${esc(w.label)}${state.workload === w.id ? " ↓" : ""}<small>${unit()}</small></button></th>`).join("")}</tr></thead><tbody>${ids
       .map(
         (id) =>
-          `<tr ${measuredIds.has(id) ? "data-renderer-row" : "data-renderer-pending"} style="--brand:${required(renderer(id)).color}" class="${state.focus === id ? "fw-comparison-focused" : ""}"><th scope="row"><button type="button" ${renderer(id)?.renderingAdaptation ? `data-render-adaptation="${id}" data-support-workload="${state.workload}"` : ""} data-focus="${id}" aria-pressed="${state.focus === id}">${label(id, false)}</button></th>${workloads
+          `<tr ${measuredIds.has(id) ? "data-renderer-row" : "data-renderer-pending"} style="--brand:${required(renderer(id)).color}" class="${state.focus === id ? "fw-comparison-focused" : ""}"><th scope="row"><span class="fw-result-identity"><button type="button" ${renderer(id)?.renderingAdaptation ? `data-render-adaptation="${id}" data-support-workload="${state.workload}"` : ""} data-focus="${id}" aria-pressed="${state.focus === id}">${label(id, false)}</button>${repositoryLink(id)}</span></th>${workloads
             .map((w) => {
               const cell = rowsFor(w.id).find((r) => r.id === id);
               if (!cell) {
@@ -172,7 +173,7 @@ export function createChartMarkup(model: DashboardModel) {
       .join("");
   }
   function rowButton(r: ChartRow, inside: string, number: string, extra = "") {
-    return `<button type="button" class="fw-row cursor-interaction ${extra}" style="--brand:${required(renderer(r.id)).color}" data-focus="${r.id}" aria-pressed="${state.focus === r.id}" aria-label="${esc(name(r.id))}, ${esc(number)} ${unit()}${r.errors ? `, ${r.errors} errors` : ""}">${label(r.id)}${inside}<span class="fw-number">${number}<small class="fw-value-unit">${unit() === "responses/s" ? "req/s" : unit() === "% of one core" ? "%" : unit()}</small></span></button>`;
+    return `<div class="fw-result-row"><button type="button" class="fw-row cursor-interaction ${extra}" style="--brand:${required(renderer(r.id)).color}" data-focus="${r.id}" aria-pressed="${state.focus === r.id}" aria-label="${esc(name(r.id))}, ${esc(number)} ${unit()}${r.errors ? `, ${r.errors} errors` : ""}">${label(r.id)}${inside}<span class="fw-number">${number}<small class="fw-value-unit">${unit() === "responses/s" ? "req/s" : unit() === "% of one core" ? "%" : unit()}</small></span></button>${repositoryLink(r.id)}</div>`;
   }
   function drawBars(rows: ChartRow[]) {
     const u = unit(),
@@ -381,7 +382,7 @@ export function createChartMarkup(model: DashboardModel) {
       )
       .join(
         "",
-      )}<line data-guide x1="${left}" x2="${left}" y1="${top}" y2="${height - bottom}" stroke="#afb9c7" opacity="0"/><g data-hover-marks></g><rect data-chart-hit data-chart-hover-overlay="cross-series" x="${left}" y="${top}" width="${width - left - right}" height="${height - top - bottom}" fill="transparent"/></svg>${legend ? `<div class="fw-legend">${series.map((s) => `<button type="button" class="cursor-interaction" data-focus="${s.id}" aria-pressed="${active === s.id}">${lineKey(s.id)}${logo(s.id)}${esc(name(s.id))}</button>`).join("")}</div>` : ""}<div class="fw-line-tip" aria-live="off">Hover to compare the same x-position.</div>`;
+      )}<line data-guide x1="${left}" x2="${left}" y1="${top}" y2="${height - bottom}" stroke="#afb9c7" opacity="0"/><g data-hover-marks></g><rect data-chart-hit data-chart-hover-overlay="cross-series" x="${left}" y="${top}" width="${width - left - right}" height="${height - top - bottom}" fill="transparent"/></svg>${legend ? `<div class="fw-legend">${series.map((s) => `<span class="fw-legend-item"><button type="button" class="cursor-interaction" data-focus="${s.id}" aria-pressed="${active === s.id}">${lineKey(s.id)}${logo(s.id)}${esc(name(s.id))}</button>${repositoryLink(s.id)}</span>`).join("")}</div>` : ""}<div class="fw-line-tip" aria-live="off">Hover to compare the same x-position.</div>`;
     const note =
       state.view === "streaming"
         ? selectedMetric === "throughput"
@@ -413,14 +414,14 @@ export function createChartMarkup(model: DashboardModel) {
   }
   function drawTable(rows: ChartRow[]) {
     if (state.view === "rendering" && metric() === "rss") {
-      output.html = `<div class="fw-table-scroll"><table class="fw-data-table"><caption class="sr-only">Native process peak RSS</caption><thead><tr><th scope="col">Renderer</th><th scope="col">Median peak RSS (MiB)</th><th scope="col">Process range (MiB)</th><th scope="col">Processes</th></tr></thead><tbody>${rows.map((r) => `<tr><th scope="row">${label(r.id)}</th><td>${pctFmt(value(r))}</td><td>${pctFmt(Math.min(...samples(r)))}–${pctFmt(Math.max(...samples(r)))}</td><td>${samples(r).length}</td></tr>`).join("")}</tbody></table></div>`;
+      output.html = `<div class="fw-table-scroll"><table class="fw-data-table"><caption class="sr-only">Native process peak RSS</caption><thead><tr><th scope="col">Renderer</th><th scope="col">Median peak RSS (MiB)</th><th scope="col">Process range (MiB)</th><th scope="col">Processes</th></tr></thead><tbody>${rows.map((r) => `<tr><th scope="row"><span class="fw-result-identity">${label(r.id)}${repositoryLink(r.id)}</span></th><td>${pctFmt(value(r))}</td><td>${pctFmt(Math.min(...samples(r)))}–${pctFmt(Math.max(...samples(r)))}</td><td>${samples(r).length}</td></tr>`).join("")}</tbody></table></div>`;
       output.note =
         "Whole-process memory includes runtime and prepared data; not per-render allocation.";
       return;
     }
     const stats = rows.map((r) => ({ r, stats: latencyStats(r) }));
     const latencyUnit = stats.find((v) => v.stats)?.stats?.unit || "ms";
-    output.html = `<div class="fw-table-scroll"><table class="fw-data-table"><caption class="sr-only">${esc(suites[state.view].title)} · ${esc(unit())}</caption><thead><tr><th scope="col">Renderer</th><th scope="col">${esc(metric() === "p50" ? "Median" : metric())} (${esc(unit())})</th><th scope="col">Latency P50 (${latencyUnit})</th><th scope="col">P95 (${latencyUnit})</th><th scope="col">P99 (${latencyUnit})</th><th scope="col">Errors</th></tr></thead><tbody>${stats.map(({ r, stats }) => `<tr><th scope="row">${label(r.id)}</th><td>${pctFmt(value(r))}</td><td>${pctFmt(stats?.values?.p50)}</td><td>${pctFmt(stats?.values?.p95)}</td><td>${pctFmt(stats?.values?.p99)}</td><td>${r.errors === undefined ? "—" : fmt(r.errors)}</td></tr>`).join("")}</tbody></table></div>`;
+    output.html = `<div class="fw-table-scroll"><table class="fw-data-table"><caption class="sr-only">${esc(suites[state.view].title)} · ${esc(unit())}</caption><thead><tr><th scope="col">Renderer</th><th scope="col">${esc(metric() === "p50" ? "Median" : metric())} (${esc(unit())})</th><th scope="col">Latency P50 (${latencyUnit})</th><th scope="col">P95 (${latencyUnit})</th><th scope="col">P99 (${latencyUnit})</th><th scope="col">Errors</th></tr></thead><tbody>${stats.map(({ r, stats }) => `<tr><th scope="row"><span class="fw-result-identity">${label(r.id)}${repositoryLink(r.id)}</span></th><td>${pctFmt(value(r))}</td><td>${pctFmt(stats?.values?.p50)}</td><td>${pctFmt(stats?.values?.p95)}</td><td>${pctFmt(stats?.values?.p99)}</td><td>${r.errors === undefined ? "—" : fmt(r.errors)}</td></tr>`).join("")}</tbody></table></div>`;
     output.note =
       "Absolute measurements from the selected capture. Latency percentiles describe the scope shown in Method & data; errors remain visible.";
   }
@@ -467,7 +468,7 @@ export function createChartMarkup(model: DashboardModel) {
           const tip = paired
             ? `${name(r.id)}: ${fmt(e.rps)} successful responses/s; ${fmt(e.latency)} ms mean latency; representative repeat ${getFlow(r).repeat ?? "not recorded"}. ${state.view === "http" ? "64 closed-loop connections." : "Scheduled-arrival latency includes queueing; only successful responses are shown."}`
             : `${name(r.id)}: ${durationText}. Sequential timing illustration; no measured request rate.`;
-          return `<button type="button" class="fw-row fw-flow-row cursor-interaction" style="--brand:${required(renderer(r.id)).color}" data-focus="${r.id}" aria-pressed="${state.focus === r.id}" aria-label="${esc(tip)}">${label(r.id)}<svg class="fw-pipe" height="48" width="100%" role="img" aria-label="${esc(tip)}" data-flow-lane="${r.id}" data-duration="${duration}" data-interval="${interval}" ><title>${esc(tip)}</title><rect class="fw-pipe-bed" x="1%" y="17" width="98%" height="14" rx="7"/><line class="fw-pipe-port" x1="3%" x2="3%" y1="12" y2="36"/><line class="fw-pipe-port" x1="97%" x2="97%" y1="12" y2="36"/>${Array.from({ length: count }, (_, i) => `<circle class="fw-packet" data-packet="${i}" cx="4%" cy="24" r="3.5"/>`).join("")}</svg><span class="fw-flow-value">${paired ? `<span>${fmt(e.rps)}<small> /s</small></span><small>${durationText}</small>` : `<span>${durationText}</span>`}</span></button>`;
+          return `<div class="fw-result-row fw-result-flow"><button type="button" class="fw-row fw-flow-row cursor-interaction" style="--brand:${required(renderer(r.id)).color}" data-focus="${r.id}" aria-pressed="${state.focus === r.id}" aria-label="${esc(tip)}">${label(r.id)}<svg class="fw-pipe" height="48" width="100%" role="img" aria-label="${esc(tip)}" data-flow-lane="${r.id}" data-duration="${duration}" data-interval="${interval}" ><title>${esc(tip)}</title><rect class="fw-pipe-bed" x="1%" y="17" width="98%" height="14" rx="7"/><line class="fw-pipe-port" x1="3%" x2="3%" y1="12" y2="36"/><line class="fw-pipe-port" x1="97%" x2="97%" y1="12" y2="36"/>${Array.from({ length: count }, (_, i) => `<circle class="fw-packet" data-packet="${i}" cx="4%" cy="24" r="3.5"/>`).join("")}</svg><span class="fw-flow-value">${paired ? `<span>${fmt(e.rps)}<small> /s</small></span><small>${durationText}</small>` : `<span>${durationText}</span>`}</span></button>${repositoryLink(r.id)}</div>`;
         })
         .join("");
     output.flow = { paired, clock, group };

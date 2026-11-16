@@ -114,7 +114,7 @@ export function WorkloadChoices({ model }: { model: DashboardModel }) {
 export function ToolTypes({ model }: { model: DashboardModel }) {
   return (
     <>
-      <span>Tool type</span>
+      <legend className="fw-sidebar-label">Tool type</legend>
       {TOOL_GROUPS.map((g) => (
         <label key={g.id}>
           <input
