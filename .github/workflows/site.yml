@@ -22,15 +22,22 @@ permissions:
 # Validation runs as parallel jobs; publication waits for all of them, so a
 # preview or production deploy still only follows a fully validated revision.
 jobs:
+  # The parts of `bun run check` (tooling/cli/bench.mjs), run side by side.
+  # Keep this list in step with that command's task list.
   site:
-    name: Build and validate TanStack Start website
+    name: Website check (${{ matrix.check }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [static, contracts, site-tests, publication]
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
       - name: Set up Cloudflare local tooling host
+        if: matrix.check == 'site-tests'
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "26.13.0"
@@ -38,8 +45,26 @@ jobs:
         with:
           bun-version: "1.4.2"
       - run: bun install --frozen-lockfile
-      - name: Validate contracts, source snapshots, types and site build
-        run: bun run check
+      - name: Lint and type-check
+        if: matrix.check == 'static'
+        run: |
+          bun run lint
+          bun run typecheck
+      - name: Test benchmark contracts
+        if: matrix.check == 'contracts'
+        run: bun run test:contracts
+      - name: Test the website
+        if: matrix.check == 'site-tests'
+        run: bun run test:site
+      - name: Validate retained captures and build the site
+        if: matrix.check == 'publication'
+        run: |
+          set -euo pipefail
+          for suite in $(jq -r 'keys[]' benchmarks/suites.json); do
+            bun tooling/cli/bench.mjs validate "$suite"
+          done
+          bun experiments/sveltekit-streaming/report.mjs --check
+          bun site/build.ts
 
   browser:
     name: Verify browser interactions
@@ -91,6 +116,12 @@ jobs:
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "26.13.0"
+      # lighthouse.ts runs its pinned CLI through `npm exec`.
+      - name: Restore the pinned Lighthouse CLI
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ~/.npm
+          key: npm-lighthouse-${{ runner.os }}-${{ hashFiles('site/test/lighthouse.ts') }}
       - name: Finish the Chromium install
         run: .github/scripts/background.sh wait chromium
       - name: Audit Lighthouse scores
