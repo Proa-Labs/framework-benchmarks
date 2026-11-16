@@ -2,7 +2,7 @@
 export const TOOL_GROUPS = [
   {
     id: "frameworks",
-    label: "Frameworks & libraries",
+    label: "Component Frameworks & Libraries",
     kinds: ["Application framework", "UI framework", "UI library", "Renderer"],
   },
   {
