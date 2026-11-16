@@ -49,10 +49,17 @@ runs:
         fi
 
     # Before the cache steps: their keys include the active rustc version.
+    # Jobs may start the install right after checkout to overlap it with
+    # their other setup (background.sh start rustup ...); join it here.
     - name: Install the pinned toolchain
       shell: bash
       run: |
-        rustup toolchain install --no-self-update
+        set -euo pipefail
+        if [[ -f "${RUNNER_TEMP}/background/rustup.log" ]]; then
+          .github/scripts/background.sh wait rustup
+        else
+          rustup toolchain install --no-self-update
+        fi
         rustc --version
 
     # Dependencies only. Pull requests restore main's entry; a pull request

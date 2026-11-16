@@ -111,6 +111,8 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Start the Rust toolchain install
+        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
       - name: Set up Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
@@ -153,6 +155,8 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Start the Rust toolchain install
+        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
       - name: Set up Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
@@ -188,6 +192,8 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Start the Rust toolchain install
+        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
       - name: Set up Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
@@ -223,6 +229,8 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Start the Rust toolchain install
+        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
       - name: Set up Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
@@ -231,20 +239,16 @@ jobs:
       # workspace's pinned Bun and its packages.
       - name: Install JavaScript dependencies
         run: bun install --frozen-lockfile
+      - name: Start the Chromium install
+        run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
       - name: Set up Rust
         id: rust
         uses: ./.github/actions/setup-rust
         with:
           cache-key: release-default
           proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
-      - name: Start the release build
-        run: |
-          .github/scripts/background.sh start rust \
-            cargo build --release --locked -p proa_bench --bin standard_page_dump
-      - name: Install Chromium
-        run: bun node_modules/playwright/cli.js install --with-deps chromium
-      - name: Finish the release build
-        run: .github/scripts/background.sh wait rust
+      - name: Finish the Chromium install
+        run: .github/scripts/background.sh wait chromium
       - name: Compare normalized browser DOM
         run: bun benchmarks/rendering/standard_page_parity.mjs
       - name: Save the workspace crates
@@ -273,6 +277,8 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Start the Rust toolchain install
+        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
       - name: Select this shard's renderers
         id: shard
         env:
@@ -406,6 +412,8 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Start the Rust toolchain install
+        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
       - name: Bound loopback TIME_WAIT sockets
         uses: ./.github/actions/bound-time-wait
       - name: Set up Bun
@@ -471,6 +479,8 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Start the Rust toolchain install
+        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
       - name: Bound loopback TIME_WAIT sockets
         uses: ./.github/actions/bound-time-wait
       - name: Set up Bun
@@ -532,15 +542,10 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Start the Rust toolchain install
+        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
       - name: Bound loopback TIME_WAIT sockets
         uses: ./.github/actions/bound-time-wait
-      - name: Set up Rust
-        id: rust
-        uses: ./.github/actions/setup-rust
-        with:
-          cache-key: framework
-          workspaces: benchmarks/framework-ssr/adapters/proa -> ../../../../target
-          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
       - name: Set up Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
@@ -553,6 +558,13 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Restore the pinned Exact checkout and compiler
         uses: ./.github/actions/exact-cache
+      - name: Set up Rust
+        id: rust
+        uses: ./.github/actions/setup-rust
+        with:
+          cache-key: framework
+          workspaces: benchmarks/framework-ssr/adapters/proa -> ../../../../target
+          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
       - name: Build every full-framework adapter
         run: bun benchmarks/framework-ssr/build.ts
       - name: Gate this full-framework SSR workload
