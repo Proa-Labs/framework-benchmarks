@@ -24,17 +24,12 @@ function About() {
       <h2>The costs we want to measure</h2>
       <p>
         Our focus is on two major costs frameworks can influence: generating a
-        response on the server, and the{" "}
-        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript">
-          JavaScript
-        </a>{" "}
-        sent to the browser.{" "}
+        response on the server, and the JavaScript sent to the browser.{" "}
         <a href="https://web.dev/articles/rendering-on-the-web#server-side-rendering">
           Server-side rendering (SSR)
         </a>{" "}
-        makes page content available in the initial{" "}
-        <a href="https://developer.mozilla.org/en-US/docs/Web/HTML">HTML</a>{" "}
-        response, which matters for loading and{" "}
+        makes page content available in the initial HTML response, which matters
+        for loading and{" "}
         <a href="https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics">
           search indexing
         </a>
@@ -111,8 +106,8 @@ function About() {
           eknkc’s SSR Framework Benchmark
         </a>{" "}
         helped make SSR comparisons more accessible. Its published suite focuses
-        on JavaScript-based stacks. At our November 2026 review, its latest
-        main-branch commit was from{" "}
+        on JavaScript-based stacks. It appears to be no longer maintained and
+        hasn’t been updated since{" "}
         <a href="https://github.com/eknkc/ssr-benchmark/commit/c6af3e610029aa36d2c3d6957658d1de1f0905db">
           April 2024
         </a>
