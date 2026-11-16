@@ -6,7 +6,7 @@ import {
 } from '../lib/svg.mjs';
 
 const COL = WIDTH - PAD * 2;
-const COLORS = { Proa: C.proa, Marko: C.peer, React: C.alt, SvelteKit: C.kit };
+const COLORS = { Proa: C.proa, Marko: C.peer, React: C.alt };
 
 function panel({ x, y, w, h, title, sub, rows, value, format, ideal = false }) {
   const rates = [...new Set(rows.map((row) => row.rate))].sort((a, b) => a - b);
@@ -48,7 +48,7 @@ export function suspenseLoad(tables, meta) {
   const table = pick(tables, ['Engine', 'Request rate (rps)', 'Window completions/s', 'Shell P50', 'Complete P50'], {
     heading: 'Suspense streaming over HTTP',
   });
-  const rows = table.objs.filter(row => row.Engine !== 'Proa').map((row) => ({
+  const rows = table.objs.map((row) => ({
     engine: row.Engine,
     rate: num(row['Request rate (rps)']),
     throughput: num(row['Window completions/s']),
@@ -59,19 +59,6 @@ export function suspenseLoad(tables, meta) {
     rssMiB: num(row['Peak RSS']),
     errors: num(row.Errors),
   }));
-  const comparison = pick(tables, ['Framework', 'Offered rps', 'Response ends/s', 'First byte P50'], {
-    heading: 'HTTP streaming capacity and latency',
-  });
-  rows.push(...comparison.objs.map(row => ({
-    engine: row.Framework,
-    rate: num(row['Offered rps']),
-    throughput: num(row['Response ends/s']),
-    p50Ms: toUs(row['Response end P50']) / 1000,
-    p95Ms: toUs(row['Response end P95']) / 1000,
-    p99Ms: toUs(row['Response end P99']) / 1000,
-    rssMiB: num(row['Peak RSS']),
-    errors: num(row.Errors),
-  })));
   // Latency labels switch to seconds once queueing takes over.
   const latency = (ms) => ms >= 1000 ? `${sig(ms / 1000)} s` : `${sig(ms)} ms`;
 
@@ -99,7 +86,7 @@ export function suspenseLoad(tables, meta) {
   // the vertical spread between P50 and P99 reads as the shape of the tail.
   const latTop = top + panelH + gapY;
   const latGap = 24;
-  const latW = (COL - latGap * 3) / 4;
+  const latW = (COL - latGap * (Object.keys(COLORS).length - 1)) / Object.keys(COLORS).length;
   const latH = 280;
   const allLatency = rows.flatMap((row) => [row.p50Ms, row.p95Ms, row.p99Ms]).filter((v) => v > 0);
   // headroom above the highest point so its leader label clears the panel title
@@ -156,16 +143,16 @@ export function suspenseLoad(tables, meta) {
 
   const notesY = latTop + latH + 26;
   const notes = footnotes(PAD, notesY, [
-    `Proa: ${meta.sveltekitDate} UTC. SvelteKit: ${meta.sveltekitPeerDate}. Marko/React: ${meta.streamPeerDate ?? meta.suspenseDate}. Same host and offered rates.`,
-    'SvelteKit response end delivers data; the others deliver resolved HTML. Browser completion: experiments/sveltekit-streaming/browser.svg.',
+    `${meta.suspenseDate} UTC · same campaign, host and offered rates for every engine.`,
+    'All engines deliver resolved HTML. The promised-data/browser experiment is reported separately.',
     'Successful-response latency includes scheduled queueing. Failures by rate remain in the source tables.',
   ], COL);
 
   return doc({
     w: WIDTH,
     h: notesY + notes.h + 12,
-    title: 'Proa, Marko, React and SvelteKit streaming the product grid under HTTP load',
-    desc: `Proa refreshed ${meta.sveltekitDate} UTC; SvelteKit retained ${meta.sveltekitPeerDate}; Marko and React retained ${meta.streamPeerDate ?? meta.suspenseDate}. One worker thread or process per engine. SvelteKit response end delivers promised data and excludes browser rendering; the other streams deliver resolved HTML. ` + rows.map((row) => `${row.engine} at ${row.rate} req/s target: ${row.throughput} response ends per second, response-end P50 ${row.p50Ms}, P95 ${row.p95Ms} and P99 ${row.p99Ms} milliseconds, ${row.rssMiB} MiB peak RSS, ${row.errors} failures across three repeats`).join('. ') + '.',
+    title: 'Proa, Marko and React streaming resolved HTML under HTTP load',
+    desc: `Resolved-HTML streaming capture: ${meta.suspenseDate} UTC. All engines share one campaign and host, with one worker thread or process per engine. ` + rows.map((row) => `${row.engine} at ${row.rate} req/s target: ${row.throughput} response ends per second, response-end P50 ${row.p50Ms}, P95 ${row.p95Ms} and P99 ${row.p99Ms} milliseconds, ${row.rssMiB} MiB peak RSS, ${row.errors} failures across three repeats`).join('. ') + '.',
     body: body + notes.svg,
   });
 }

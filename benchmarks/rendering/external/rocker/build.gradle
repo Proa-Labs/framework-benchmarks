@@ -21,11 +21,22 @@ rocker {
     version = '2.4.0'
     configurations {
         main {
-            templateDir = file('src/main/rocker')
+            templateDir = file('build/showcase/templates')
             outputDir = file("${buildDir}/generated/sources/rocker/main")
             optimize = true
             combineAdjacentPlain = true
             discardLogicWhitespace = true
         }
     }
+}
+
+// Generate native showcase code before the ordinary template compilation.
+sourceSets.main.java.srcDir 'build/showcase/java'
+tasks.register('generateShowcase', Exec) {
+    workingDir projectDir
+    commandLine new File(projectDir, '../../../../node_modules/.bin/bun').absolutePath,
+        '../../showcase/generate-java.mjs', '--engine', projectDir.name
+}
+tasks.matching { it.name in ['generateJte', 'precompileJte', 'generateMainRockerTemplateSource', 'compileRocker', 'compileJava'] }.configureEach {
+    dependsOn tasks.named('generateShowcase')
 }

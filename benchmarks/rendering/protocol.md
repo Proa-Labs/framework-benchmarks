@@ -75,6 +75,28 @@ The headline value is the median of the five within-process P50 values. The deta
 
 ## Result artifact
 
+### Process memory
+
+New captures retain the operating system's peak resident set size (RSS) for
+each native renderer process in bytes. Linux uses GNU time's native-child
+`wait4` high-water mark (KiB converted to bytes); macOS uses Bun's process
+resource usage after exit. The Linux supervisor avoids inheriting the Bun
+launcher's pre-exec RSS peak. The harness measures the actual renderer, not a compiler
+or the outer showcase dispatcher. No memory polling or copying is added to
+the native render timer.
+
+This is a process-lifetime high-water mark: it includes runtime startup,
+prepared data, template initialization, warmup, measured renders and output
+verification/destruction. It is neither live heap size nor allocation per
+render. Each process runs one renderer/workload cell. Aggregates retain all
+process peaks and their median; the site displays MiB. Historical captures
+without these observations stay unmeasured. A partial set of observations or
+an aggregate inconsistent with its raw process peaks is rejected. These
+process-lifetime peaks have a different observation window from the sampled
+server RSS collected during HTTP/Framework SSR load tests.
+The collector identifies valid observations as `native-process-peak-rss-v2`;
+the experimental v1 Linux observations included launcher RSS and are discarded.
+
 `results/latest.json` is the sole source for the public Markdown. Its schema contains, at minimum:
 
 ```json

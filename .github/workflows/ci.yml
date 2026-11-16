@@ -20,224 +20,421 @@ env:
   CARGO_PROFILE_DEV_DEBUG: "0"
   CARGO_PROFILE_TEST_DEBUG: "0"
   CARGO_TERM_COLOR: always
-  SCCACHE_IDLE_TIMEOUT: "0"
 
+# Every event runs on disposable GitHub-hosted VMs (free for this public
+# repository). Main therefore saves the same caches that pull requests restore.
+#
+# Each suite runs as its own job so the slowest one, not their sum, sets the
+# wall-clock time. Pull requests run only the suites their files can affect
+# (.github/scripts/affected-suites.sh); main and manual runs run everything.
+# The final `required` job reports the branch ruleset's required check names.
 jobs:
-  checks:
-    name: ${{ matrix.name }}
-    # PR build scripts and browser tooling run on disposable GitHub-hosted VMs,
-    # without depending on the availability of the self-hosted PR runner pool.
-    # Trusted events continue to use the configured GCP runner.
-    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-24.04' || vars.CI_RUNNER }}
-    timeout-minutes: ${{ matrix.timeout }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - suite: quality
-            name: Code and repository quality
-            timeout: 15
-          - suite: rendering
-            name: Rendering builds and framework parity
-            timeout: 60
+  changes:
+    name: Select affected suites
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      rust: ${{ steps.select.outputs.rust }}
+      rendering: ${{ steps.select.outputs.rendering }}
+      streaming: ${{ steps.select.outputs.streaming }}
+      http: ${{ steps.select.outputs.http }}
+      framework: ${{ steps.select.outputs.framework }}
+      framework-workloads: ${{ steps.workloads.outputs.framework }}
+      http-workloads: ${{ steps.workloads.outputs.http }}
+    steps:
+      - name: Checkout suite selection rules
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/scripts/
+            benchmarks/framework-ssr/contract.json
+            benchmarks/http/scenario.mjs
+      - name: Select suites affected by this change
+        id: select
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        run: .github/scripts/affected-suites.sh
+      - name: List the sharded suites' workloads
+        id: workloads
+        run: |
+          set -euo pipefail
+          echo "framework=$(jq -c '[.workloads[].id]' benchmarks/framework-ssr/contract.json)" >> "$GITHUB_OUTPUT"
+          echo "http=$(node --input-type=module -e '
+            const { WORKLOADS } = await import("./benchmarks/http/scenario.mjs");
+            console.log(JSON.stringify(WORKLOADS.map(({ id }) => id)));
+          ')" >> "$GITHUB_OUTPUT"
+
+  quality:
+    name: Code and repository quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - name: Checkout tested benchmark revision
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-
       - name: Lint workflows and embedded shell
-        if: matrix.suite == 'quality'
         uses: ./.github/actions/workflow-lint
-
-      - name: Set up Cloudflare local tooling host
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: "26.13.0"
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: "1.4.2"
-
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
       - name: Set up Python
-        if: matrix.suite == 'quality' || matrix.suite == 'rendering'
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.13"
+      - name: Install Python test dependencies
+        run: python -m pip install --disable-pip-version-check "playwright==1.58.0"
+      - name: Validate browser and research tooling
+        run: |
+          set -euo pipefail
+          bun tooling/maintenance/prune-results.mjs --check
+          bun run test
+          bun test benchmarks/rendering/external/sveltekit/stream-validator.test.mjs experiments/sveltekit-streaming/benchmark.test.mjs compare/compare.test.mjs
+          bun experiments/sveltekit-streaming/report.mjs --check
+          bash -n tooling/maintenance/refresh-proa.sh benchmarks/rendering/run_all.sh benchmarks/framework-ssr/cloud/*.sh tooling/cloud/*.sh .github/scripts/*.sh
+      - name: Check Rust formatting
+        run: cargo fmt --all -- --check
 
+  rust:
+    name: ${{ matrix.name }}
+    needs: changes
+    if: needs.changes.outputs.rust == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Rust correctness lints
+            family: clippy
+            # The Airbnb fixture is its own workspace beside the root one.
+            workspaces: |
+              . -> target
+              fixtures/airbnb-parity-dump -> target
+            run: |
+              cargo clippy --workspace --all-targets --all-features --locked -- -A clippy::all -D clippy::correctness
+              cargo check --manifest-path fixtures/airbnb-parity-dump/Cargo.toml --locked
+          - name: Rust comparison fixtures
+            family: test
+            run: cargo test --workspace --all-features --locked
+          - name: Rust benchmark targets
+            family: bench
+            run: cargo bench --workspace --all-features --locked --no-run
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          rust: ${{ matrix.family }}
+          rust-workspaces: ${{ matrix.workspaces || '. -> target' }}
+      - name: ${{ matrix.name }}
+        run: ${{ matrix.run }}
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+
+  dom-parity:
+    name: Standard page DOM parity
+    needs: changes
+    if: needs.changes.outputs.rendering == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          rust: release-default
+          chromium: true
+      - name: Finish the Chromium install
+        run: .github/scripts/background.sh wait chromium
+      - name: Compare normalized browser DOM
+        run: bun benchmarks/rendering/standard_page_parity.mjs
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+
+  # The matrix shards by toolchain. Every shard includes Proa, the parity
+  # reference, so each renderer is still compared against the same canonical
+  # DOM; the shard filter assigns every roster entry to exactly one shard.
+  canonical:
+    name: Canonical framework matrix (${{ matrix.shard }})
+    needs: changes
+    if: needs.changes.outputs.rendering == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [native, jvm, ruby, javascript, frameworks]
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      # It may install from apt; finish it before the browser's apt step.
+      - name: Set up PHP
+        if: matrix.shard == 'native'
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: "8.5"
+      - name: Select this shard's renderers
+        id: shard
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: |
+          set -euo pipefail
+          # native: compiled templates and scripting runtimes; jvm: jte and
+          # Rocker; ruby: Rails; javascript: unbuilt Bun adapters; frameworks:
+          # every other adapter, including any newly added setup.
+          renderers="$(jq -r --arg shard "$SHARD" \
+            --slurpfile adapters benchmarks/rendering/canonical/adapters.json '
+              def group:
+                if (.setup | IN("rust", "go", "php", "jinja2")) then "native"
+                elif (.setup | IN("jte", "rocker")) then "jvm"
+                elif .setup == "rails" then "ruby"
+                elif .setup == "bun" and (has("build") | not) then "javascript"
+                else "frameworks" end;
+              ["proa"] + [.renderers[].id | select(. != "proa")
+                | select($adapters[0][.] | group == $shard)]
+              | join(",")' benchmarks/rendering/canonical/roster.json)"
+          echo "renderers=$renderers" >> "$GITHUB_OUTPUT"
+          echo "Renderers: $renderers"
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          chromium: true
+          node: ${{ matrix.shard == 'frameworks' }}
+          rust: release-topcoat
+      - name: Start the release build
+        run: |
+          .github/scripts/background.sh start rust \
+            cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench
+      - name: Set up Python
+        if: matrix.shard == 'native'
+        id: python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.13"
+      - name: Restore the Jinja environment
+        if: matrix.shard == 'native'
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: benchmarks/rendering/external/jinja/.venv
+          key: jinja-venv-${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ hashFiles('benchmarks/rendering/external/jinja/requirements.txt') }}
       - name: Set up Go
-        if: matrix.suite == 'rendering'
+        if: matrix.shard == 'native'
         uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
           go-version: "1.25.5"
           cache: false
-
       - name: Set up Java
-        if: matrix.suite == 'rendering'
+        if: matrix.shard == 'jvm'
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
           distribution: temurin
           java-version: "17"
-
       - name: Set up Gradle
-        if: matrix.suite == 'rendering'
+        if: matrix.shard == 'jvm'
         uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
         with:
           gradle-version: "9.2.0"
-
-      - name: Set up PHP
-        if: matrix.suite == 'rendering'
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
-        with:
-          php-version: "8.5"
-
-      - name: Prepare Ruby tool cache
-        if: matrix.suite == 'rendering'
-        run: sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/hostedtoolcache
-
       - name: Set up Ruby
-        if: matrix.suite == 'rendering'
+        if: matrix.shard == 'ruby'
         uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
         with:
           ruby-version: "4.0.6"
           bundler-cache: true
           working-directory: benchmarks/rendering/external/rails
-
-      - name: Install Python test dependencies
-        if: matrix.suite == 'quality'
-        run: python -m pip install --disable-pip-version-check "playwright==1.58.0"
-
-      - name: Validate browser and research tooling
-        if: matrix.suite == 'quality'
-        run: |
-          set -euo pipefail
-          bun install --frozen-lockfile
-          bun run test
-          bun test benchmarks/rendering/external/sveltekit/stream-validator.test.mjs experiments/sveltekit-streaming/benchmark.test.mjs compare/compare.test.mjs
-          bun experiments/sveltekit-streaming/report.mjs --check
-          bash -n tooling/maintenance/refresh-proa.sh benchmarks/rendering/run_all.sh benchmarks/framework-ssr/cloud/*.sh tooling/cloud/*.sh
-
-      - name: Check Rust formatting
-        if: matrix.suite == 'quality'
-        run: cargo fmt --all -- --check
-
-      - name: Configure read-only Proa access
-        if: matrix.suite == 'rendering'
+      - name: Restore the pinned Exact checkout and compiler
+        if: matrix.shard == 'frameworks'
+        uses: ./.github/actions/exact-cache
+      - name: Finish the release build
+        run: .github/scripts/background.sh wait rust
+      - name: Build this shard's adapters
         env:
-          PROA_FRAMEWORK_TOKEN: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
-        run: |
-          set -euo pipefail
-          # Fork PRs do not receive repository secrets. Proa is public, so
-          # anonymous fetches must work too; retain optional authenticated access.
-          if [[ -n "${PROA_FRAMEWORK_TOKEN:-}" ]]; then
-            git config --global \
-              url."https://x-access-token:${PROA_FRAMEWORK_TOKEN}@github.com/Proa-Labs/proa".insteadOf \
-              "https://github.com/Proa-Labs/proa"
-          fi
-
-      - name: Fetch pinned benchmark dependencies
-        if: matrix.suite == 'rendering'
-        run: |
-          cargo fetch --locked
-          cargo fetch --locked --manifest-path fixtures/airbnb-parity-dump/Cargo.toml
-
-      - name: Configure compiler cache
-        if: matrix.suite == 'rendering'
-        uses: ./.github/actions/rust-cache
-        with:
-          cache-backend: ${{ github.event_name == 'pull_request' && 'gha' || startsWith(vars.CI_RUNNER, 'gcp') && 'gcs' || 'gha' }}
-
-      - name: Install browser parity dependencies
-        if: matrix.suite == 'rendering'
-        run: |
-          set -euo pipefail
-          bun install --frozen-lockfile
-          bun node_modules/playwright/cli.js install --with-deps chromium
-
-      - name: Run Clippy correctness lints
-        if: matrix.suite == 'rendering'
-        run: |
-          set -euo pipefail
-          cargo clippy --workspace --all-targets --all-features --locked -- \
-            -A clippy::all -D clippy::correctness
-
-      - name: Test Rust comparison fixtures
-        if: matrix.suite == 'rendering'
-        run: cargo test --workspace --all-features --locked
-
-      - name: Link every Rust benchmark target
-        if: matrix.suite == 'rendering'
-        run: cargo bench --workspace --all-features --locked --no-run
-
-      - name: Check linked Airbnb fixture
-        if: matrix.suite == 'rendering'
-        run: |
-          set -euo pipefail
-          cargo check \
-            --manifest-path fixtures/airbnb-parity-dump/Cargo.toml \
-            --locked
-
-      - name: Compare normalized browser DOM
-        if: matrix.suite == 'rendering'
-        run: bun benchmarks/rendering/standard_page_parity.mjs
-
+          RENDERERS: ${{ steps.shard.outputs.renderers }}
+        run: ./benchmarks/rendering/run-all --setup-only --renderers "$RENDERERS"
+      - name: Finish the Chromium install
+        run: .github/scripts/background.sh wait chromium
       - name: Validate canonical framework matrix
-        if: matrix.suite == 'rendering'
+        env:
+          RENDERERS: ${{ steps.shard.outputs.renderers }}
         run: |
-          ./benchmarks/rendering/run-all --smoke
-          ./benchmarks/rendering/run-all --product-scaling --smoke --no-setup
+          ./benchmarks/rendering/run-all --smoke --no-setup --renderers "$RENDERERS"
+          ./benchmarks/rendering/run-all --product-scaling --smoke --no-setup --renderers "$RENDERERS"
+      - name: Verify unchanged-fixture exclusion evidence
+        if: matrix.shard == 'frameworks'
+        run: bun benchmarks/rendering/external/exact/check-admission.mjs
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
 
+  # One job per page-load workload; the first also runs the cold-start smoke,
+  # which reuses that job's adapter builds.
+  http:
+    name: Canonical page servers (${{ matrix.workload }})
+    needs: changes
+    if: needs.changes.outputs.http == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        workload: ${{ fromJSON(needs.changes.outputs.http-workloads) }}
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Bound loopback TIME_WAIT sockets
+        uses: ./.github/actions/bound-time-wait
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          chromium: true
+          node: true
+          rust: release-http
+      - name: Set up Go
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: "1.25.5"
+          cache: false
+      - name: Build the release servers
+        run: |
+          cargo build --release --locked -p proa_bench --features http-load,topcoat \
+            --bin proa_page_server --bin representative_suite_bench
+      - name: Finish the Chromium install
+        run: .github/scripts/background.sh wait chromium
+      - name: Validate canonical page servers
+        # The smoke proves every production server starts, passes parity and
+        # survives both phase kinds. It is not a measurement: the runner's two
+        # generator workers cannot out-generate Proa's component page, so a
+        # generator-limited phase is recorded rather than fatal here.
+        env:
+          WORKLOAD: ${{ matrix.workload }}
+        run: |
+          bun benchmarks/http/run.mjs --duration 1 --repeats 1 --warmup-requests 4 --concurrency 8 \
+            --tolerate-generator-limits --workloads "$WORKLOAD" --out benchmarks/http/results/smoke.json
+      - name: Validate cold starts
+        if: matrix.workload == fromJSON(needs.changes.outputs.http-workloads)[0]
+        run: bun run bench:cold-start:smoke
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+
+  streaming:
+    name: Suspense streaming fixtures
+    needs: changes
+    if: needs.changes.outputs.streaming == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Bound loopback TIME_WAIT sockets
+        uses: ./.github/actions/bound-time-wait
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          chromium: true
+          node: true
+          rust: release-http
+          rust-artifacts: release-http-suspense
+      - name: Build the release server
+        run: cargo build --release --locked -p proa_bench --features http-load,topcoat --bin proa_suspense_server
+      - name: Finish the Chromium install
+        run: .github/scripts/background.sh wait chromium
       - name: Validate Suspense streaming fixtures
-        if: matrix.suite == 'rendering'
         run: |
           bun run bench:suspense-load:smoke
           bun experiments/sveltekit-streaming/run.mjs --smoke
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
 
-      - name: Validate canonical page servers
-        if: matrix.suite == 'rendering'
-        # The smoke proves every production server starts, passes parity and
-        # survives both phase kinds. It is not a measurement: the PR runner's
-        # two generator workers cannot out-generate Proa's component page, so
-        # a generator-limited phase is recorded rather than fatal here.
-        run: |
-          bun benchmarks/http/run.mjs --duration 1 --repeats 1 --warmup-requests 4 --concurrency 8 \
-            --tolerate-generator-limits --out benchmarks/http/results/smoke.json
-          bun run bench:cold-start:smoke
-
-      - name: Build and gate all full-framework SSR workloads
-        if: matrix.suite == 'rendering'
-        run: |
-          bun benchmarks/framework-ssr/build.ts
-          bun benchmarks/framework-ssr/run.ts --no-build --smoke --workers 2
-
-      - name: Verify unchanged-fixture exclusion evidence
-        if: matrix.suite == 'rendering'
-        run: |
-          bun benchmarks/rendering/external/exact/check-admission.mjs
-
-      - name: Show compiler cache stats
-        if: always() && matrix.suite == 'rendering'
-        run: sccache --show-stats
-
-  ci:
-    name: lint, clippy, build, test
-    # Do not create a final runner-dependent job after the workflow itself was
-    # canceled; otherwise an unavailable pool can retain the concurrency lock.
-    if: ${{ always() && !cancelled() }}
-    needs: [checks]
-    runs-on: ${{ github.event_name == 'pull_request' && 'ubuntu-24.04' || vars.CI_RUNNER }}
-    timeout-minutes: 2
+  # One job per workload: every phase of the smoke is ~10 s (the largest
+  # native pages need a full batch), so the complete contract ran ~14 min in
+  # sequence. Shards use the runner's own --shard-workload selection.
+  framework:
+    name: Full-framework SSR (${{ matrix.workload }})
+    needs: changes
+    if: needs.changes.outputs.framework == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        workload: ${{ fromJSON(needs.changes.outputs.framework-workloads) }}
+    env:
+      WORKLOAD: ${{ matrix.workload }}
     steps:
-      - name: Require every merge prerequisite
-        env:
-          CHECKS_RESULT: ${{ needs.checks.result }}
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Bound loopback TIME_WAIT sockets
+        uses: ./.github/actions/bound-time-wait
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          node: true
+          rust: framework
+          rust-workspaces: benchmarks/framework-ssr/adapters/proa -> ../../../../target
+      - name: Restore the pinned Exact checkout and compiler
+        uses: ./.github/actions/exact-cache
+      # proa_bench is the adapter's slow path dependency and needs none of the
+      # fixtures build.ts writes first; compile it beside the JavaScript and
+      # Exact builds. build.ts's own Cargo run then reuses it.
+      - name: Start the release build
         run: |
-          set -euo pipefail
-          case "$CHECKS_RESULT" in
-            success) ;;
-            *)
-              echo "required CI dependency finished with result: $CHECKS_RESULT" >&2
-              exit 1
-              ;;
-          esac
+          .github/scripts/background.sh start rust \
+            cargo build --release --locked -p proa_bench --target-dir target \
+              --manifest-path benchmarks/framework-ssr/adapters/proa/Cargo.toml
+      - name: Build every full-framework adapter
+        run: bun benchmarks/framework-ssr/build.ts
+      - name: Finish the release build
+        run: .github/scripts/background.sh wait rust
+      - name: Gate this full-framework SSR workload
+        run: bun benchmarks/framework-ssr/run.ts --no-build --smoke --workers 2 --shard-workload "$WORKLOAD"
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+
+  # The branch ruleset requires both check names; each covers every suite. A
+  # suite skipped because the change cannot affect it counts as passing; every
+  # suite that ran must have succeeded.
+  required:
+    name: ${{ matrix.check }}
+    # Do not create a final job after the workflow itself was canceled.
+    if: ${{ always() && !cancelled() }}
+    needs: [changes, quality, rust, dom-parity, canonical, http, streaming, framework]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    strategy:
+      matrix:
+        check: [Rendering builds and framework parity, "lint, clippy, build, test"]
+    steps:
+      - name: Require every suite that ran to pass
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: |
+          jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<< "$NEEDS"
+          jq -e 'all(.[]; .result == "success" or .result == "skipped")' <<< "$NEEDS" > /dev/null

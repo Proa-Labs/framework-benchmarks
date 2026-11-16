@@ -9,7 +9,6 @@
 | [`reports/sveltekit.md`](reports/sveltekit.md) | Separately dated SvelteKit browser-completion comparison |
 | [`figures/`](figures/README.md) | Generated chart gallery and its data sources |
 | [`engineering/`](engineering/README.md) | Mechanism-specific notes and laboratory comparisons |
-| [`archive/`](archive/) | Superseded reports and the earlier result-classification audit |
 
 Reports and figures are generated from retained captures. Use `bun run refresh`
 after selecting validated results, and `bun run check:charts` to verify the

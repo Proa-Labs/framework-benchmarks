@@ -21,7 +21,7 @@ P50s.
 
 ```sh
 node compare/run.mjs \
-  benchmarks/rendering/results/archive/canonical-ssr-v1-2026-09-05-9363fc29b790.json \
+  benchmarks/rendering/results/archive/canonical-ssr-v1-2026-11-15T22-15-04-069Z-ea202576.json \
   benchmarks/rendering/results/latest.json
 
 node compare/run.mjs --json --out /tmp/page-load-delta.json \
@@ -39,5 +39,5 @@ from another capture.
 ## Tests
 
 ```sh
-node --test compare/compare.test.mjs
+bun test compare/compare.test.mjs
 ```

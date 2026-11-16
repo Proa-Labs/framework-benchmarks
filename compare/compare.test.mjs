@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { mkdtemp, readdir, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -258,14 +258,22 @@ test("CLI help and argument parsing reject unknown flags", () => {
   assert.throws(() => parseArgs(["--suite", "http"]), /must be one of/);
 });
 
-test("compares the retained September and October canonical archives", async () => {
+test("compares the retained canonical archive with latest.json", async () => {
+  // Pruning keeps only the archive behind latest.json, so find it by name.
+  const archiveDir = "benchmarks/rendering/results/archive";
+  const [archive] = (await readdir(join(workspace, archiveDir)))
+    .filter((name) => name.startsWith("canonical-ssr-v1-") && name.endsWith(".json"))
+    .sort()
+    .reverse();
+  assert.ok(archive, "no retained canonical archive");
+  const id = archive.replace(/\.json$/, "");
   const { stdout } = await exec(process.execPath, [
     cli,
-    "benchmarks/rendering/results/archive/canonical-ssr-v1-2026-09-05-9363fc29b790.json",
-    "benchmarks/rendering/results/archive/canonical-ssr-v1-2026-10-21-77c5c5fce085.json",
+    `${archiveDir}/${archive}`,
+    "benchmarks/rendering/results/latest.json",
   ], { cwd: workspace, maxBuffer: 2 * 1024 * 1024 });
-  assert.match(stdout, /canonical-ssr-v1-2026-09-05-9363fc29b790/);
-  assert.match(stdout, /canonical-ssr-v1-2026-10-21-77c5c5fce085/);
+  assert.match(stdout, new RegExp(id));
+  assert.match(stdout, /Same measured-source digest: yes/);
   assert.match(stdout, /P50 render time/);
   assert.match(stdout, /Proa/);
 });

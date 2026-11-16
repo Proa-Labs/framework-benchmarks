@@ -187,7 +187,9 @@ For each suite:
 
 - `results/latest.json` selects the published capture. The site reads it; nobody
   retypes measurements into UI code.
-- `results/archive/<capture-id>.json` retains each completed capture once.
+- `results/archive/<capture-id>.json` retains the immutable selected capture.
+  After publishing, run `bun tooling/maintenance/prune-results.mjs --write` to
+  remove superseded sets. Use `--check` to check retention without deleting files.
 - `results/raw/<capture-id>/source.tar.gz` preserves measured source and locks.
   Rendering also retains per-process summaries; Framework SSR keeps admission
   HTML. Load captures contain their phase records directly in the JSON.
@@ -305,3 +307,8 @@ The publication gate requires a common campaign and immutable source revision,
 matching hardware/OS profiles, full rosters, source archives and raw samples.
 Per-suite machine identities remain visible in each capture. No cross-machine
 latencies are combined into a single comparison.
+
+Report-test-only edits can reuse a rendering capture: the publication gate verifies
+the original source archive and compares every other source byte to its recorded
+fingerprint. Renderer, fixture, roster, lockfile or timing changes still require
+a fresh campaign. Removing old result files does not change measured code.

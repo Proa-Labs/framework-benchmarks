@@ -8,13 +8,10 @@ import { repositoryRoot } from "../repository.mjs";
 import { validateAdmissionChecks } from "./publication.mjs";
 
 const root = repositoryRoot(import.meta.url);
-test("historical renderer captures retain their original strict roster as supported coverage grows", () => {
+test("captured renderer rosters remain fixed when supported coverage grows", () => {
   const original = JSON.parse(
     readFileSync(
-      join(
-        root,
-        "benchmarks/rendering/results/archive/canonical-ssr-v1-2026-11-12T18-15-51-626Z-a60d525e.json",
-      ),
+      join(root, "benchmarks/rendering/results/latest.json"),
       "utf8",
     ),
   );
@@ -25,7 +22,7 @@ test("historical renderer captures retain their original strict roster as suppor
       "utf8",
     ),
   );
-  assert.equal(contract.roster.renderers.length, 17);
+  current.renderers.push({ ...current.renderers[0], id: "future-renderer" });
   validateCanonicalResult(original, contract.roster, contract.workloads);
   assert.throws(
     () => validateCanonicalResult(original, current, contract.workloads),

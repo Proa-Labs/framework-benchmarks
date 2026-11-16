@@ -11,6 +11,6 @@ These reports answer implementation and mechanism questions. They are intentiona
 | [Runtime comparisons](runtime-comparisons.md) | How did runtime and framework-local experiments behave on their original fixtures? |
 | [Application coverage](application-coverage.md) | Which application-shaped pages have Proa-only or partial peer coverage? |
 
-All values are dated local evidence. The [August 2026 archive](../archive/public-report-2026-08-31.md) retains the full original tables, prose, environment hashes, and contrary results; only its local links were rebased. The [migration map](../../benchmarks/rendering/MIGRATION.md) explains every move.
+The latest standalone experiment results live in [the engineering report](../reports/engineering.md). Superseded captures and numeric tables are available in Git history.
 
 None of these values may be copied into the canonical scoreboard. A renderer becomes public only through one successful `./benchmarks/rendering/run-all` capture.

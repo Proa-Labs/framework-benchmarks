@@ -16,4 +16,4 @@ The repository's other suites answer different questions and retain their method
 
 [`compare/`](../compare/) diffs two retained JSON captures of one suite. It does not join values across suites, and it does not replace a capture.
 
-Never join values from those suites into the renderer scoreboard. The pre-refactor classification is recorded in [`docs/archive/result-table-audit.md`](archive/result-table-audit.md).
+Never join values from those suites into the renderer scoreboard. Superseded reports are available in Git history.

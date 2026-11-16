@@ -154,11 +154,10 @@ export function criterion(tables, meta) {
     };
   });
   // A group earns a place only if a non-Proa engine ran the same fixture.
-  const groups = [...new Set(all.map((r) => r.group))]
-    .filter((g) => all.some((r) => r.group === g && !r.proa));
+  const groups = [...new Set(all.filter(r => r.fam !== 'showcase').map((r) => r.group))];
   const head = all.filter((r) => groups.includes(r.group));
   const hdr = header(PAD, 44, 'Criterion microbenchmarks',
-    `${refreshed ? "Proa refreshed " + meta.engineeringRefreshDate + " · peers Aug 30–31" : HIST} · 95% intervals · log scales`, COL);
+    `${refreshed ? "Proa refreshed " + meta.engineeringRefreshDate + " · standalone Proa controls" : HIST} · 95% intervals · log scales`, COL);
   let b = hdr.svg;
 
   const LX = PAD + 214, PX0 = PAD + 224, PX1 = PAD + COL - 196;
@@ -166,7 +165,6 @@ export function criterion(tables, meta) {
 
   b += legend(PAD, 44 + hdr.h + 26, [
     { shape: 'dot', color: C.proa, label: 'Proa' },
-    { shape: 'dot', color: C.peer, label: 'Peer engine' },
   ]);
 
   // --- panel A: the standard page, 10-render batches
@@ -197,7 +195,7 @@ export function criterion(tables, meta) {
   // --- panel B: head-to-head fixtures
   let by = aBottom + 46;
   b += rule(PAD, by - 22, PAD + COL, by - 22, C.rule);
-  b += eyebrow(PAD, by, 'Paired fixtures · 1 render; bursts: 100 requests');
+  b += eyebrow(PAD, by, 'Standalone fixtures · 1 render; bursts: 100 requests');
   b += txt(VX, by, 'time', 'note end');
   b += txt(BX, by, 'bytes/render', 'note end');
   const bTop = by + 30, bRowH = 19;
@@ -227,13 +225,13 @@ export function criterion(tables, meta) {
   b += rule(PX0, bBottom, PX1, bBottom, C.axis);
 
   const notes = footnotes(PAD, bBottom + 20,
-    'Fresh Proa pages are owned RenderBuffer output; String controls include conversion. One Criterion process; output sizes differ between engines.', COL);
+    'Fresh Proa pages are owned RenderBuffer output; String controls include conversion. One Criterion process; specialized controls are separate from the framework comparison.', COL);
 
   return doc({
     w: WIDTH, h: bBottom + 20 + notes.h + 12,
     title: 'Criterion micro-benchmarks',
     desc: 'Standard page, 10-render batches: ' + stdRows.map((r) => `${r.label} ${dur(r.v)}, ${commas(r.bytes)} bytes`).join('; ') +
-      '. Head-to-head fixtures: ' + head.map((r) => `${r.id} ${dur(r.v)}, ${commas(r.bytes)} bytes`).join('; ') + '.',
+      '. Standalone fixtures: ' + head.map((r) => `${r.id} ${dur(r.v)}, ${commas(r.bytes)} bytes`).join('; ') + '.',
     body: b + notes.svg,
   });
 }

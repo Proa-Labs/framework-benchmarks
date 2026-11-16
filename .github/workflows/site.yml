@@ -19,11 +19,131 @@ concurrency:
 permissions:
   contents: read
 
+# Validation runs as parallel jobs; publication waits for all of them, so a
+# preview or production deploy still only follows a fully validated revision.
 jobs:
+  # The parts of `bun run check` (tooling/cli/bench.mjs), run side by side.
+  # Keep this list in step with that command's task list.
   site:
-    name: Build and validate TanStack Start website
+    name: Website check (${{ matrix.check }})
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        check: [static, contracts, site-tests, publication]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      # Node.js hosts the Cloudflare local tooling the site tests start.
+      - uses: ./.github/actions/setup
+        with:
+          node: ${{ matrix.check == 'site-tests' }}
+      - name: Lint and type-check
+        if: matrix.check == 'static'
+        run: |
+          bun run lint
+          bun run typecheck
+      - name: Test benchmark contracts
+        if: matrix.check == 'contracts'
+        run: bun run test:contracts
+      - name: Test the website
+        if: matrix.check == 'site-tests'
+        run: bun run test:site
+      - name: Validate retained captures and build the site
+        if: matrix.check == 'publication'
+        run: |
+          set -euo pipefail
+          for suite in $(jq -r 'keys[]' benchmarks/suites.json); do
+            bun tooling/cli/bench.mjs validate "$suite"
+          done
+          bun experiments/sveltekit-streaming/report.mjs --check
+          bun site/build.ts
+      # Publication deploys exactly this build; wrangler finds it through the
+      # Cloudflare plugin's redirected deploy configuration.
+      - name: Retain the validated build for publication
+        if: matrix.check == 'publication'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: validated-site
+          path: |
+            site/dist/
+            site/.wrangler/deploy/config.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 3
+
+  browser:
+    name: Verify browser interactions
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          chromium: true
+          node: true
+      - name: Finish the Chromium install
+        run: .github/scripts/background.sh wait chromium
+      - name: Verify browser interactions
+        run: bun site/test/browser.ts
+      - name: Verify contributor benchmark path
+        run: bun run bench run rendering --renderers react,vue --workloads cards
+
+  # Lighthouse batches run in parallel with the same presets, runs and
+  # median-100 gate. An audit on a fresh Chrome scores lower than later ones,
+  # so /features (the heaviest page) still follows the homepage in one batch,
+  # as it always ran; the lighter pages start their own batches.
+  lighthouse:
+    name: Lighthouse ${{ matrix.device }} ${{ matrix.pages }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        device: [mobile, desktop]
+        pages: ["/,/features", "/?section=ecosystem,/about", "/methodology"]
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+        with:
+          chromium: true
+          node: true
+      # lighthouse.ts runs its pinned CLI through `npm exec`.
+      - name: Restore the pinned Lighthouse CLI
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: ~/.npm
+          key: npm-lighthouse-${{ runner.os }}-${{ hashFiles('site/test/lighthouse.ts') }}
+      - name: Finish the Chromium install
+        run: .github/scripts/background.sh wait chromium
+      - name: Audit Lighthouse scores
+        env:
+          DEVICE: ${{ matrix.device }}
+          PAGES: ${{ matrix.pages }}
+        run: bun site/test/lighthouse.ts --runs 3 --save-assets --device "$DEVICE" --pages "$PAGES"
+      - name: Retain Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: lighthouse-reports-${{ matrix.device }}-${{ strategy.job-index }}
+          path: site/test-results/lighthouse/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  publish:
+    name: Publish validated website
+    needs: [site, browser, lighthouse]
+    if: >-
+      (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy)))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: read
       deployments: write
@@ -32,41 +152,27 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
-      - name: Set up Cloudflare local tooling host
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+      # The PR preview's own browser check uses Chromium.
+      - uses: ./.github/actions/setup
         with:
-          node-version: "26.13.0"
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+          chromium: ${{ github.event_name == 'pull_request' }}
+      - name: Download the validated build
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          bun-version: "1.4.2"
-      - run: bun install --frozen-lockfile
-      - name: Validate contracts, source snapshots, types and site build
-        run: bun run check
-      - name: Install browser
-        run: bun node_modules/playwright/cli.js install --with-deps chromium
-      - name: Verify browser interactions
-        run: bun site/test/browser.ts
-      - name: Audit mobile and desktop Lighthouse scores
-        run: bun site/test/lighthouse.ts --runs 3 --save-assets
-      - name: Retain Lighthouse reports
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: lighthouse-reports
-          path: site/test-results/lighthouse/
-          if-no-files-found: ignore
-          retention-days: 14
-      - name: Verify contributor benchmark path
-        run: bun run bench run rendering --renderers react,vue --workloads cards
+          name: validated-site
+          path: site
+      - name: Finish the Chromium install
+        if: github.event_name == 'pull_request'
+        run: .github/scripts/background.sh wait chromium
       - name: Publish Cloudflare PR preview
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        if: github.event_name == 'pull_request'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: bun site/preview.ts
       - name: Deploy validated production assets
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy))
+        if: github.event_name != 'pull_request'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
@@ -76,7 +182,20 @@ jobs:
             exit 1
           fi
           cd site
-          bun --bun node_modules/wrangler/bin/wrangler.js deploy
+          # Routes are already provisioned. Publish code/assets without needing
+          # zone permissions or partially failing while rewriting hostnames.
+          export WRANGLER_OUTPUT_FILE_PATH="$RUNNER_TEMP/frameworks-production-upload.jsonl"
+          : > "$WRANGLER_OUTPUT_FILE_PATH"
+          bun --bun node_modules/wrangler/bin/wrangler.js versions upload --message "$GITHUB_SHA"
+          version=$(bun -e '
+            const records = require("node:fs").readFileSync(process.env.WRANGLER_OUTPUT_FILE_PATH, "utf8")
+              .trim().split("\n").filter(Boolean).map(line => JSON.parse(line));
+            const id = records.findLast(record => record.type === "version-upload")?.version_id;
+            if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(id || ""))
+              throw new Error("Cloudflare did not return an uploaded version ID");
+            console.log(id);
+          ')
+          bun --bun node_modules/wrangler/bin/wrangler.js versions deploy "$version@100%" --yes --message "$GITHUB_SHA"
 
   publication:
     name: Publication readiness
@@ -85,8 +204,5 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
-      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: "1.4.2"
-      - run: bun install --frozen-lockfile
+      - uses: ./.github/actions/setup
       - run: bun run check:publication

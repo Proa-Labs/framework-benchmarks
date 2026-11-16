@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { validateResult as validateFramework } from "../../benchmarks/framework-ssr/report.ts";
 import { validateProaRenderRun } from "../../benchmarks/rendering/canonical/render-contract.mjs";
 import suites from "../../benchmarks/suites.json" with { type: "json" };
+import { readRawJson } from "./raw.mjs";
 
 export const refreshFolders = {
   rendering: suites.rendering.directory,
@@ -15,7 +16,7 @@ export const refreshFolders = {
   streaming: suites.streaming.directory,
   startup: suites.startup.directory,
 };
-const read = (path) => JSON.parse(readFileSync(path, "utf8"));
+const read = readRawJson;
 const idOf = (d) => d.capture_id ?? d.captureId;
 const sourcePath = (root, suite, d) =>
   join(root, refreshFolders[suite], "results/raw", idOf(d), "source.tar.gz");
@@ -49,9 +50,11 @@ export function validateProaPair(suite, pair, base, manifest) {
         `Different hardware/OS profile: ${key}`,
       );
     if (suite === "rendering" || suite === "scaling") {
+      const rendererIds = manifest.rendererIds ?? ["proa"];
+      assert.ok(rendererIds.includes("proa"));
       assert.deepEqual(
         d.renderers.map((r) => r.id),
-        ["proa"],
+        rendererIds,
       );
       const keys =
         suite === "rendering"
@@ -61,22 +64,28 @@ export function validateProaPair(suite, pair, base, manifest) {
         Object.keys(d.measurements.proa).sort(),
         [...keys].sort(),
       );
-      for (const key of keys) {
-        assert.equal(d.parity.proa[key].status, "pass");
-        assert.equal(
-          d.parity.proa[key].canonical_sha256,
-          base.parity.proa[key].canonical_sha256,
+      for (const renderer of rendererIds) {
+        assert.deepEqual(
+          Object.keys(d.measurements[renderer]).sort(),
+          [...keys].sort(),
         );
-        assert.equal(
-          d.parity.proa[key].output_bytes,
-          base.parity.proa[key].output_bytes,
-        );
-        assert.equal(d.measurements.proa[key].independent_processes, 5);
-        for (const field of ["samples_per_process", "warmups_per_process"])
+        for (const key of keys) {
+          assert.equal(d.parity[renderer][key].status, "pass");
           assert.equal(
-            d.measurements.proa[key][field],
-            base.measurements.proa[key][field],
+            d.parity[renderer][key].canonical_sha256,
+            base.parity[renderer][key].canonical_sha256,
           );
+          assert.equal(
+            d.parity[renderer][key].output_bytes,
+            base.parity[renderer][key].output_bytes,
+          );
+          assert.equal(d.measurements[renderer][key].independent_processes, 5);
+          for (const field of ["samples_per_process", "warmups_per_process"])
+            assert.equal(
+              d.measurements[renderer][key][field],
+              base.measurements[renderer][key][field],
+            );
+        }
       }
     } else {
       assert.deepEqual(
@@ -173,17 +182,26 @@ export function validateProaPair(suite, pair, base, manifest) {
 }
 export function loadProaRefresh(root, input, buffers) {
   const manifest = read(join(root, "site/data/performance/proa-refresh.json"));
-  assert.equal(manifest.schemaVersion, 1);
+  assert.ok([1, 2].includes(manifest.schemaVersion));
   assert.equal(manifest.reviewOnly, true);
-  assert.deepEqual(
-    Object.keys(manifest.runs).sort(),
-    Object.keys(refreshFolders).sort(),
-  );
+  if (manifest.schemaVersion === 1) {
+    assert.deepEqual(
+      Object.keys(manifest.runs).sort(),
+      Object.keys(refreshFolders).sort(),
+    );
+    assert.equal(manifest.rendererIds, undefined);
+  } else {
+    // A rendering-only review can retain the paired controls without claiming
+    // that the rest of the published cohort was rerun.
+    assert.deepEqual(Object.keys(manifest.runs), ["rendering"]);
+    assert.deepEqual(manifest.rendererIds, ["proa", "sailfish", "askama"]);
+  }
   for (const key of ["beforeRevision", "afterRevision"])
     assert.match(manifest[key], /^[a-f0-9]{40}$/);
   const captures = {},
     sourcePairs = [];
-  for (const [suite, folder] of Object.entries(refreshFolders)) {
+  for (const suite of Object.keys(manifest.runs)) {
+    const folder = refreshFolders[suite];
     const base =
       suite === "scaling"
         ? read(join(root, "benchmarks/rendering/results/product-scaling.json"))
@@ -226,17 +244,37 @@ export function loadProaRefresh(root, input, buffers) {
             ? d.raw_artifact
             : d.raw_artifacts.find((r) => r.label === "Per-process summaries")
                 .path;
-        assert.equal(raw, `raw/${id}/process-summaries.json`);
+        assert.ok(
+          [
+            `raw/${id}/process-summaries.json`,
+            `raw/${id}/process-summaries.json.gz`,
+          ].includes(raw),
+        );
         const records = read(join(root, folder, "results", raw));
-        assert.equal(records.length, 15);
-        records.forEach(validateProaRenderRun);
-        for (const key of Object.keys(d.measurements.proa)) {
-          const rows = records.filter((r) =>
-            suite === "scaling"
-              ? String(r.workload_cardinality) === key
-              : r.workload === key,
-          );
-          assert.deepEqual(rows.map((r) => r.repeat).sort(), [0, 1, 2, 3, 4]);
+        assert.equal(
+          records.length,
+          Object.keys(d.measurements.proa).length *
+            5 *
+            (manifest.rendererIds?.length ?? 1),
+        );
+        assert.deepEqual(
+          [...new Set(records.map((r) => r.framework_id))].sort(),
+          [...(manifest.rendererIds ?? ["proa"])].sort(),
+        );
+        records
+          .filter((r) => r.framework_id === "proa")
+          .forEach(validateProaRenderRun);
+        for (const renderer of manifest.rendererIds ?? ["proa"]) {
+          for (const key of Object.keys(d.measurements[renderer])) {
+            const rows = records.filter(
+              (r) =>
+                r.framework_id === renderer &&
+                (suite === "scaling"
+                  ? String(r.workload_cardinality) === key
+                  : r.workload === key),
+            );
+            assert.deepEqual(rows.map((r) => r.repeat).sort(), [0, 1, 2, 3, 4]);
+          }
         }
       }
     }

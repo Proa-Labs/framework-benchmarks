@@ -5,6 +5,10 @@ import type roster from "../benchmarks/rendering/canonical/roster.json";
 import type workloadManifest from "../benchmarks/rendering/canonical/workloads.json";
 import type rendering from "../benchmarks/rendering/results/latest.json";
 import type streaming from "../benchmarks/streaming/results/latest.json";
+import type {
+  MemorySummary,
+  ProcessMemory,
+} from "../tooling/capture/process-memory.mjs";
 import type catalog from "./data/performance/catalog.json";
 import type { Project } from "./feature-schema.ts";
 
@@ -52,6 +56,7 @@ export interface Workload {
   label: string;
   description: string;
   cardinality: number;
+  fixture?: string;
 }
 export interface BaseRow {
   id: string;
@@ -82,6 +87,8 @@ export interface RenderRow
   samples: number[];
   runPercentiles: Percentiles[];
   outputBytes: number;
+  memory?: { samples: number[]; percentiles: Percentiles; scope: string };
+  host?: CaptureMeta["host"];
 }
 export interface HttpRow extends BaseRow {
   seriesSamples: Partial<Record<Metric, number[]>>;
@@ -124,6 +131,7 @@ export interface StartupRow
 }
 export type ChartRow = RenderRow | HttpRow | StreamRow | StartupRow;
 export interface CaptureMeta {
+  pendingWorkloads?: Record<string, string>;
   reviewRefresh?: { note: string };
   date: string;
   capturedAt: string;
@@ -177,6 +185,7 @@ export interface BenchmarkData {
       label: string;
       fixedRateRps: number;
       capacityDurationSeconds: number;
+      capacityConcurrency: number;
       latencyDurationSeconds: number;
     }[];
     sourceSnapshot: string;
@@ -185,12 +194,16 @@ export interface BenchmarkData {
 }
 type RenderMeasurement = Omit<
   typeof rendering.measurements.proa.cards,
-  "capture_id"
-> & { capture_id?: string };
+  "capture_id" | "memory"
+> & { capture_id?: string; memory?: MemorySummary };
 type RenderingCapture = Omit<
   typeof rendering,
-  "measurements" | "refresh" | "proa_output"
+  "measurements" | "parity" | "refresh" | "proa_output"
 > & {
+  workloadCaptures?: Record<
+    string,
+    { capturedAt: string; host: CaptureMeta["host"] }
+  >;
   refresh?: {
     renderer: string;
     baseline_captured_at: string;
@@ -198,6 +211,10 @@ type RenderingCapture = Omit<
   } | null;
   proa_output?: string;
   measurements: Record<string, Record<string, RenderMeasurement>>;
+  parity: Record<
+    string,
+    Record<string, typeof rendering.parity.proa.cards & { fixture?: string }>
+  >;
 };
 type HttpCapture = Omit<typeof http, "engines" | "generatorLimitedPhases"> & {
   generatorLimitedPhases?: unknown[];
@@ -216,18 +233,22 @@ export interface RawRun {
   p95_us: number;
   p99_us: number;
   source_capture_id?: string;
+  memory?: ProcessMemory;
 }
 export interface Inputs {
-  reviewRefresh?: Record<
-    View,
-    {
-      note: string;
-      baseline_capture_id: string;
-      baseline_captured_at: string;
-      proa_capture_id: string;
-      proa_captured_at: string;
-      proa_revision: string;
-    }
+  reviewRefresh?: Partial<
+    Record<
+      View,
+      {
+        note: string;
+        baseline_capture_id: string;
+        baseline_captured_at: string;
+        proa_capture_id: string;
+        proa_captured_at: string;
+        proa_revision: string;
+        rendererIds?: string[];
+      }
+    >
   >;
   rendering: RenderingCapture;
   http: HttpCapture;

@@ -111,7 +111,7 @@ function fixture() {
       const outputBytes = 1_000 + index + (rendererId === "proa" ? 0 : 10);
       result.parity[rendererId][workload.id] = {
         status: "pass",
-        mode: "semantic DOM",
+        mode: workload.fixture === "showcase-v1" ? "shared showcase DOM/CSS" : "semantic DOM",
         canonical_sha256: "a".repeat(64),
         output_bytes: outputBytes,
         payload_delta_bytes: rendererId === "proa" ? 0 : 10,
@@ -296,24 +296,10 @@ test("the retained latest artifact is complete when present", () => {
   assert.doesNotThrow(() =>
     validateCanonicalResult(latest, captured.roster, captured.workloads),
   );
-  // generate-report.mjs joins scoreboard.md and engineering.md with this
-  // break, replaces every marker pair, and splits them again to write.
-  const pages = ["docs/reports/scoreboard.md", "docs/reports/engineering.md"]
-    .map((name) => readFileSync(join(workspaceDirectory, name), "utf8"))
-    .join("\n<!-- generate-report:page-break -->\n");
-  const historicalReport = readFileSync(
-    join(workspaceDirectory, "docs/archive", "public-report-2026-08-31.md"),
-    "utf8",
-  );
-  assert.doesNotThrow(() =>
-    assertReadmeCurrent(
-      pages,
-      latest,
-      captured.roster,
-      captured.workloads,
-      historicalReport,
-    ),
-  );
+  // Validate the current generated pages without relying on superseded data.
+  assert.doesNotThrow(() => execFileSync(process.execPath, [
+    join(renderingDirectory, "generate-report.mjs"), "--check",
+  ], { cwd: workspaceDirectory, stdio: "pipe" }));
 });
 
 test("the retained capture has one parity pass per roster/workload cell", () => {
@@ -327,7 +313,7 @@ test("the retained capture has one parity pass per roster/workload cell", () => 
       ).length,
     0,
   );
-  assert.equal(passes, latest.renderers.length * workloads.workloads.length);
+  assert.equal(passes, latest.renderers.length * latest.workloads.length);
 });
 
 test("source fingerprints ignore generated files but include source edits", () => {
@@ -387,6 +373,10 @@ test("only the declared Exact adaptation can bypass strict DOM/class equality", 
       style_checks: 100,
       negative_controls: "pass",
     });
+  for (const workload of workloads.workloads.filter(w=>w.fixture==="showcase-v1")) Object.assign(data.parity.exact[workload.id], {
+    fixture:"exact-showcase-native-v1",mode:"adapted business content and compiled native styles",semantic_sha256:"c".repeat(64),negative_controls:4,
+    adaptation:{engineRevision:"94b8671f70fe",nativeCssSha256:"d".repeat(64),styleValidationSha256:"e".repeat(64),omittedStyles:[],evidence:[]}
+  });
   validateCanonicalResult(data, roster, workloads);
   for (const mutate of [
     (d) => {
@@ -412,4 +402,33 @@ test("only the declared Exact adaptation can bypass strict DOM/class equality", 
     mutate(changed);
     assert.throws(() => validateCanonicalResult(changed, roster, workloads));
   }
+});
+
+
+test("review controls retain their new capture while untouched peers retain the baseline", () => {
+  const result = JSON.parse(readFileSync(join(renderingDirectory, "results/latest.json"), "utf8"));
+  const contract = capturedRenderingContract(workspaceDirectory, result);
+  const baselineId = result.capture_id;
+  result.capture_kind = "proa_refresh";
+  result.capture_id = "review-control-capture";
+  result.refresh = {
+    renderer: "proa",
+    rendererIds: ["proa", "sailfish", "askama"],
+    baseline_capture_id: baselineId,
+    baseline_captured_at: result.captured_at,
+    baseline_sha256: "a".repeat(64),
+  };
+  for (const id of result.refresh.rendererIds)
+    for (const measurement of Object.values(result.measurements[id]))
+      measurement.capture_id = result.capture_id;
+  const validate = () => validateCanonicalResult(result, contract.roster, contract.workloads);
+  validate();
+  result.measurements.sailfish.cards.capture_id = baselineId;
+  assert.throws(validate, /sailfish\/cards comes from a different capture/);
+  result.measurements.sailfish.cards.capture_id = result.capture_id;
+  result.measurements.react.cards.capture_id = result.capture_id;
+  assert.throws(validate, /react\/cards comes from a different capture/);
+  result.measurements.react.cards.capture_id = baselineId;
+  result.refresh.rendererIds.push("unknown");
+  assert.throws(validate, /refresh renderer IDs are invalid/);
 });

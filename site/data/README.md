@@ -48,3 +48,17 @@ watches this directory recursively, including added and removed review files.
 
 Run `bun run test:site` and `bun run typecheck` from the repository root after
 editing data; run `bun run --cwd site test:browser` to check the built UI.
+
+Workload miniatures live in `performance/thumbnails/`. Refresh them with
+`bun site/generate-thumbnails.ts` after changing a fixture. The source hash
+manifest binds each small WebP to its preview HTML; normal site builds verify
+those hashes without needing Chrome. Full HTML previews remain available.
+Generation needs Playwright Chromium (`bun node_modules/playwright/cli.js install chromium`).
+
+Showcase previews retain the CSS embedded in each pinned Proa page.
+`performance/showcase/proa.css` is the original utility sheet requested by the
+legacy Airbnb page, with its revision and SHA-256 in `assets.json`. The current
+public Airbnb fixture contains its own stylesheet and does not request it. It replaces that
+page's `/proa.css` link in the same cascade position. Do not add the site's
+Tailwind stylesheet to these documents: its reset changes their typography and
+layout. Refresh the snapshot alongside the upstream showcase fixtures.

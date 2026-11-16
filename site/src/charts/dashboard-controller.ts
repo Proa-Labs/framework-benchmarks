@@ -8,7 +8,7 @@ import type {
   View,
 } from "../../benchmark-types.ts";
 import { required } from "../../required.ts";
-import type { ChartPoint } from "./chart-markup.ts";
+import type { ChartOutput, ChartPoint } from "./chart-markup.ts";
 
 type Latency = { values: Percentiles; unit: string; scope: string };
 type StatEntry = { id: string; stats: Latency | null };
@@ -91,7 +91,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   const restore = () => model.restore(location.search);
   const markup = createChartMarkup(model);
   const { lineKey, pointMarker } = markup;
-  function showChart(rows: ChartRow[], mode: ChartMode) {
+  function showChart(rows: ChartRow[], mode: ChartMode): ChartOutput {
     const target = $("[data-results]");
     // Comparison tables already have the exact server-rendered state and use
     // CSS for sizing. Preserve those nodes instead of parsing and laying out
@@ -100,10 +100,12 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       mode === "compare" &&
       target.dataset.initialChart === JSON.stringify(state);
     delete target.dataset.initialChart;
+    if (reuse)
+      return { html: "", note: $("[data-chart-note]").textContent || "" };
     const width =
       mode === "compare" ? 720 : target.getBoundingClientRect().width || 720;
     const chart = markup.draw(rows, mode, width);
-    if (!reuse) target.innerHTML = chart.html;
+    target.innerHTML = chart.html;
     $("[data-chart-note]").textContent = chart.note;
     return chart;
   }
@@ -122,6 +124,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       "workload",
       "chart",
       "rate",
+      "render",
       "http",
       "framework",
       "stream",
@@ -150,6 +153,12 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const percentilePopup = $("[data-percentile-popup]");
   let popupAnchor: Element | null = null;
+  // Interactive source notes retain keyboard focus; plain numeric tooltips
+  // can still follow the pointer between measurements.
+  const popupHasFocus = () =>
+    percentilePopup.hasAttribute("data-support-popover") &&
+    (percentilePopup.contains(document.activeElement) ||
+      Boolean(popupAnchor?.contains(document.activeElement)));
   let popupPinned = false;
   let supportHideTimer = 0;
   let returningPopupFocus = false;
@@ -158,9 +167,23 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     pointerY = Number.NaN;
   const percentileTarget =
     ".fw-row[data-focus], .fw-comparison [data-focus], .fw-comparison [data-render-support]";
+  function schedulePercentileHide() {
+    // A row leave and a popup leave can arrive together. Keep one timer so
+    // an older callback cannot close a newly opened note.
+    clearTimeout(supportHideTimer);
+    const anchor = popupAnchor;
+    supportHideTimer = window.setTimeout(() => {
+      if (
+        popupAnchor === anchor &&
+        !percentilePopup.matches(":hover") &&
+        !anchor?.matches(":hover, :focus-visible")
+      )
+        hidePercentiles();
+    }, 150);
+  }
   function hidePercentiles(force = false) {
     clearTimeout(supportHideTimer);
-    if (popupPinned && !force) return;
+    if (!force && (popupPinned || popupHasFocus())) return;
     // Hiding a popup can uncover a different cell beneath the stationary mouse.
     // Wait for actual pointer movement before accepting another hover.
     if (force) dismissedHover = true;
@@ -169,7 +192,6 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         ? popupAnchor
         : null;
     popupPinned = false;
-    percentilePopup.hidden = true;
     if (popupAnchor) {
       popupAnchor.removeAttribute("aria-describedby");
       popupAnchor = null;
@@ -179,6 +201,9 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       restore.focus({ preventScroll: true });
       returningPopupFocus = false;
     }
+    // Move focus first: hiding its focused child can queue browser focus
+    // fixup that would otherwise steal focus back from the restored trigger.
+    percentilePopup.hidden = true;
   }
   function placePercentiles(event: MouseEvent | null, anchor: Element) {
     const rootRect = root.getBoundingClientRect(),
@@ -215,6 +240,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     anchor: Element,
     heading = "",
   ) {
+    if (popupHasFocus()) return;
     const ready = entries.filter((e): e is StatEntry & { stats: Latency } =>
       Boolean(e.stats?.values),
     );
@@ -258,6 +284,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   }
   function showRowPercentiles(row: HTMLElement) {
     clearTimeout(supportHideTimer);
+    if (popupHasFocus()) return;
     if (row.dataset.renderAdaptation) {
       const id = row.dataset.renderAdaptation;
       const adapted = required(renderer(id)?.renderingAdaptation);
@@ -300,7 +327,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         framework
           ? data.framework.workloads[required(workload)]
           : workload
-            ? data.rendering.rows[workload]
+            ? model.renderingRows(workload)
             : getRows()
       ).find((r) => r.id === row.dataset.focus),
       stats =
@@ -348,12 +375,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       const next =
         event.relatedTarget instanceof Node ? event.relatedTarget : null;
       if (percentilePopup.hasAttribute("data-support-popover")) {
-        if (!percentilePopup.contains(next))
-          supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
+        if (!percentilePopup.contains(next)) schedulePercentileHide();
       } else hidePercentiles();
     }
   });
-  listen(root, "pointermove", (event) => {
+  listen(document, "pointermove", (event) => {
     // movementX/Y can stay zero outside pointer lock. Compare viewport
     // coordinates so a real move can reopen a dismissed explanation reliably.
     const moved = event.clientX !== pointerX || event.clientY !== pointerY;
@@ -362,7 +388,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     if (!dismissedHover || !moved) return;
     dismissedHover = false;
     const row = closest(event, percentileTarget);
-    if (row) showRowPercentiles(row);
+    if (row && root.contains(row)) showRowPercentiles(row);
   });
   listen(percentilePopup, "pointerenter", () => clearTimeout(supportHideTimer));
   listen(percentilePopup, "pointerleave", () => {
@@ -370,9 +396,25 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       percentilePopup.hasAttribute("data-support-popover") &&
       !percentilePopup.contains(document.activeElement)
     )
-      supportHideTimer = window.setTimeout(() => hidePercentiles(), 150);
+      schedulePercentileHide();
   });
   listen(root, "focusin", (event) => {
+    const cell = closest(
+      event,
+      ".fw-comparison td > button, .fw-comparison thead button",
+    );
+    if (cell && !returningPopupFocus) {
+      const scroll = cell.closest(".fw-table-scroll");
+      const name = cell.closest(".fw-comparison")?.querySelector("thead th");
+      if (scroll && name) {
+        const bounds = cell.getBoundingClientRect();
+        if (
+          bounds.left < name.getBoundingClientRect().right - 1 ||
+          bounds.right > scroll.getBoundingClientRect().right + 1
+        )
+          cell.scrollIntoView({ block: "nearest", inline: "nearest" });
+      }
+    }
     const row = closest(event, percentileTarget);
     if (row && !returningPopupFocus) {
       dismissedHover = false;
@@ -380,6 +422,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     }
   });
   listen(root, "focusout", (event) => {
+    if (returningPopupFocus) return;
     const next =
       event.relatedTarget instanceof Node ? event.relatedTarget : null;
     if (percentilePopup.contains(next)) return;
@@ -462,9 +505,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       choice.hidden =
         state.view === "framework"
           ? !frameworkWorkloads().some((w) => w.id === button.dataset.workload)
-          : button.dataset.workload === "catalog";
+          : state.view === "http"
+            ? !data.http.rows[required(button.dataset.workload)]
+            : button.dataset.workload === "catalog";
       const miniature = choice.querySelector<HTMLImageElement>("img");
-      const src = `/thumbnails/${state.view === "framework" && frameworkWorkloads().some((w) => w.id === button.dataset.workload) ? "framework-" : ""}${button.dataset.workload}.svg`;
+      const src = `/thumbnails/${state.view === "framework" && frameworkWorkloads().some((w) => w.id === button.dataset.workload) ? "framework-" : ""}${button.dataset.workload}.webp`;
       if (miniature && miniature.getAttribute("src") !== src)
         miniature.src = src;
       choice.dataset.active = String(selected);
@@ -765,10 +810,12 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     });
     $("[data-performance]").hidden = state.section !== "performance";
     $("[data-ecosystem]").hidden = state.section !== "ecosystem";
-    $("[data-results-title]").hidden = state.view === "rendering";
+    $("[data-results-title]").hidden =
+      state.view === "rendering" && state.render !== "rss";
     const description = $("[data-experiment-description]");
     description.textContent = model.experimentDescription();
     description.hidden = !description.textContent;
+    $("[data-coverage-note]").hidden = state.view === "rendering";
     const validationNote = $("[data-validation-note]");
     const note = model.validationNote();
     validationNote.hidden = !note;
@@ -791,9 +838,18 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     $$<HTMLButtonElement>("[data-chart]").forEach((b) => {
       b.setAttribute("aria-pressed", String(b.dataset.chart === state.chart));
     });
-    $('[data-chart="balls"]').hidden = ["framework", "streaming"].includes(
-      state.view,
-    );
+    $('[data-chart="balls"]').hidden =
+      ["framework", "streaming"].includes(state.view) ||
+      (state.view === "rendering" && state.render === "rss");
+    if (
+      state.view === "rendering" &&
+      state.render === "rss" &&
+      state.chart === "balls"
+    )
+      state.chart = "bars";
+    $<HTMLSelectElement>("[data-render-view]").hidden =
+      state.view !== "rendering";
+    $<HTMLSelectElement>("[data-render-view]").value = state.render;
     $('[data-chart="table"]').hidden = state.view === "streaming";
     $(".fw-view-switch").hidden = state.view === "streaming";
     $<HTMLSelectElement>("[data-framework-view]").hidden =
@@ -846,7 +902,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     if (state.chart === "compare") drawComparison(rows);
     else if (!rows.length) {
       $("[data-results]").innerHTML =
-        '<div class="fw-empty">No measurements for this selection.</div>';
+        `<div class="fw-empty">${esc(data[state.view].pendingWorkloads?.[state.workload] ?? (state.view === "rendering" && state.render === "rss" ? "Peak RSS was not recorded in these captures. New benchmark runs will include it." : "No measurements for this selection."))}</div>`;
       $("[data-chart-note]").textContent = "";
     } else if (
       state.chart === "lines" &&
@@ -958,7 +1014,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     const exportData = {
       reviewRefresh: s.reviewRefresh,
       measurementStatus:
-        metric() === "breakdown" ? "not instrumented" : "measured",
+        metric() === "breakdown"
+          ? "not instrumented"
+          : exportRows.length
+            ? "measured"
+            : "not measured",
       experiment: state.view,
       captures:
         state.chart === "compare"
@@ -1279,6 +1339,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       state.types = (el as HTMLInputElement).checked
         ? [...new Set([...state.types, el.dataset.type])]
         : state.types.filter((id) => id !== el.dataset.type);
+    else if (el.hasAttribute("data-render-view"))
+      state.render = el.value as "p50" | "rss";
     else if (el.hasAttribute("data-framework-view"))
       state.framework = el.value as Metric;
     else if (el.hasAttribute("data-http-view")) state.http = el.value as Metric;

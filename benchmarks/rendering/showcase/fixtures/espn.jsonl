@@ -1,0 +1,541 @@
+{"texts":["Yankees at Dodgers Box Score - ESPN","benchmark-request"],"groups":[[1,2],[3,4,5],[6,7,8,9,10,11],[12,13,14,15,16,17,18],[19,20,21,22,23],[24,25,26,27],[72,73,74,75],[76,77],[78,79],[100,101,102],[516,517],[518,519,520,521],[522,523,524],[525,526,527,528],[529,530],[537,538,539,540]],"variants":[]}
+{"texts":["viewport","width=device-width, initial-scale=1"],"groups":[],"variants":[]}
+{"texts":["robots","noindex, nofollow"],"groups":[],"variants":[]}
+{"texts":[],"groups":[],"variants":[]}
+{"texts":[],"groups":[],"variants":[]}
+{"texts":[],"groups":[],"variants":[]}
+{"texts":["NFL","#"],"groups":[],"variants":[0]}
+{"texts":["NBA","#"],"groups":[],"variants":[0]}
+{"texts":["MLB","#"],"groups":[],"variants":[0]}
+{"texts":["NHL","#"],"groups":[],"variants":[0]}
+{"texts":["Soccer","#"],"groups":[],"variants":[0]}
+{"texts":["More","⌄","#"],"groups":[],"variants":[1]}
+{"texts":["Home","#"],"groups":[],"variants":[]}
+{"texts":["Scores","#"],"groups":[],"variants":[]}
+{"texts":["Schedule","#"],"groups":[],"variants":[]}
+{"texts":["Standings","#"],"groups":[],"variants":[]}
+{"texts":["Stats","#"],"groups":[],"variants":[]}
+{"texts":["Teams","#"],"groups":[],"variants":[]}
+{"texts":["Transactions","#"],"groups":[],"variants":[]}
+{"texts":["FINAL","BOS","4","ATL","2","score-tile"],"groups":[],"variants":[]}
+{"texts":["FINAL","CHC","1","CIN","6","score-tile"],"groups":[],"variants":[]}
+{"texts":["FINAL","NYY","2","LAD","18","score-tile score-tile--active"],"groups":[],"variants":[]}
+{"texts":["FINAL","SF","3","MIA","4","score-tile"],"groups":[],"variants":[]}
+{"texts":["FINAL","MIN","2","SEA","5","score-tile"],"groups":[],"variants":[]}
+{"texts":["MLB","May 31, 2025","Dodger Stadium · Los Angeles, CA"],"groups":[],"variants":[0]}
+{"texts":[],"groups":[[28,29,30]],"variants":[1]}
+{"texts":[],"groups":[[33,34,35,36,37,38,39,40,41,42,43,44,45],[46,47]],"variants":[2]}
+{"texts":["Recap","#recap"],"groups":[[70,71]],"variants":[3]}
+{"texts":["/images/espn/nyy.png","Yankees","New York","Yankees","35-22","2"],"groups":[],"variants":[0]}
+{"texts":["Final","R","May 31","7:15 PM"],"groups":[[31,32]],"variants":[1]}
+{"texts":["18","Los Angeles","Dodgers","36-22","/images/espn/lad.png","Dodgers"],"groups":[],"variants":[2]}
+{"texts":["H"],"groups":[],"variants":[]}
+{"texts":["E"],"groups":[],"variants":[]}
+{"texts":[],"groups":[],"variants":[0]}
+{"texts":["1"],"groups":[],"variants":[1]}
+{"texts":["2"],"groups":[],"variants":[1]}
+{"texts":["3"],"groups":[],"variants":[1]}
+{"texts":["4"],"groups":[],"variants":[1]}
+{"texts":["5"],"groups":[],"variants":[1]}
+{"texts":["6"],"groups":[],"variants":[1]}
+{"texts":["7"],"groups":[],"variants":[1]}
+{"texts":["8"],"groups":[],"variants":[1]}
+{"texts":["9"],"groups":[],"variants":[1]}
+{"texts":["R"],"groups":[],"variants":[1]}
+{"texts":["H"],"groups":[],"variants":[1]}
+{"texts":["E"],"groups":[],"variants":[1]}
+{"texts":["NYY","2"],"groups":[[48,49,50,51,52,53,54,55,56],[66,67]],"variants":[]}
+{"texts":["LAD","18"],"groups":[[57,58,59,60,61,62,63,64,65],[68,69]],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["6"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["—"],"groups":[],"variants":[]}
+{"texts":["7"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["21"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["W: ","L. Knack (3-2)"],"groups":[],"variants":[]}
+{"texts":["L: ","W. Warren (3-3)"],"groups":[],"variants":[]}
+{"texts":["Gamecast","false"],"groups":[],"variants":[]}
+{"texts":["Box Score","true"],"groups":[],"variants":[]}
+{"texts":["Play-by-Play","false"],"groups":[],"variants":[]}
+{"texts":["Videos","false"],"groups":[],"variants":[]}
+{"texts":["/images/espn/muncy-recap.jpg","Max Muncy celebrates a home run","▶"],"groups":[],"variants":[0]}
+{"texts":["MLB","Muncy powers Dodgers with 7 RBIs in 18-2 rout of Yankees","Max Muncy hit two three-run homers and tied his career high with seven RBI, helping Los Angeles post its most runs ever against New York.","Watch highlights","#"],"groups":[],"variants":[1]}
+{"texts":["Win Probability","Game Flow","Dodgers win probability rose from 52 to 100 percent"],"groups":[[80,81],[82,83],[84,85,86,87,88,89,90,91,92]],"variants":[0]}
+{"texts":["Scoring Summary","1st Inning","2nd Inning","4th Inning","⚾","Judge homered to center (446 feet).","NYY 1, LAD 10","5th Inning","⚾","Muncy homered to right, Freeman and Smith scored.","NYY 1, LAD 14","7th Inning","⚾","Pages homered to left center (390 feet).","NYY 1, LAD 15","8th Inning","⚾","Rushing homered to left, Edman and Kim scored.","NYY 1, LAD 18","9th Inning","⚾","Judge homered to left center (395 feet).","NYY 2, LAD 18"],"groups":[[93,94,95,96],[97,98,99]],"variants":[1]}
+{"texts":["nyy-dot","NYY 0%"],"groups":[],"variants":[]}
+{"texts":["lad-dot","LAD 100%"],"groups":[],"variants":[]}
+{"texts":["18","32"],"groups":[],"variants":[]}
+{"texts":["194","682"],"groups":[],"variants":[]}
+{"texts":["1","25"],"groups":[],"variants":[]}
+{"texts":["2","100"],"groups":[],"variants":[]}
+{"texts":["3","177"],"groups":[],"variants":[]}
+{"texts":["4","254"],"groups":[],"variants":[]}
+{"texts":["5","331"],"groups":[],"variants":[]}
+{"texts":["6","408"],"groups":[],"variants":[]}
+{"texts":["7","485"],"groups":[],"variants":[]}
+{"texts":["8","562"],"groups":[],"variants":[]}
+{"texts":["9","664"],"groups":[],"variants":[]}
+{"texts":["⚾","Smith singled to right, Ohtani scored, Smith to second, Freeman to third.","NYY 0, LAD 1"],"groups":[],"variants":[]}
+{"texts":["⚾","Muncy singled to center, Freeman scored, Smith to third.","NYY 0, LAD 2"],"groups":[],"variants":[]}
+{"texts":["⚾","Conforto hit sacrifice fly to right, Smith scored, Muncy to third.","NYY 0, LAD 3"],"groups":[],"variants":[]}
+{"texts":["⚾","Edman doubled to left, Muncy scored, Pages to third.","NYY 0, LAD 4"],"groups":[],"variants":[]}
+{"texts":["⚾","Muncy homered to center (400 feet), T. Hernández scored and Smith scored.","NYY 0, LAD 7"],"groups":[],"variants":[]}
+{"texts":["⚾","Edman doubled to left, Conforto scored.","NYY 0, LAD 8"],"groups":[],"variants":[]}
+{"texts":["⚾","Kim homered to right center (412 feet), Edman scored.","NYY 0, LAD 10"],"groups":[],"variants":[]}
+{"texts":["/images/espn/nyy.png","","New York Yankees","35-22","2"],"groups":[[103,104,105]],"variants":[0]}
+{"texts":["/images/espn/lad.png","","Los Angeles Dodgers","36-22","18"],"groups":[[106,107,108]],"variants":[0]}
+{"texts":["Game Information","/images/espn/dodger-stadium.jpg","Dodger Stadium"],"groups":[[512,513,514,515]],"variants":[1]}
+{"texts":["Yankees Batting","Totals","player-table batting-table"],"groups":[[109,110,111,112,113,114,115,116,117],[147,148,149,150,151,152,153,154,155,156,157],[474,475,476,477,478,479,480,481]],"variants":[0]}
+{"texts":["Batting"],"groups":[[508,509]],"variants":[1]}
+{"texts":["Yankees Pitching","Totals","player-table pitching-table"],"groups":[[118,119,120,121,122,123,124,125,126,127],[158,159,160,161,162,163,164,165],[482,483,484,485,486,487,488,489,490]],"variants":[0]}
+{"texts":["Dodgers Batting","Totals","player-table batting-table"],"groups":[[128,129,130,131,132,133,134,135,136],[166,167,168,169,170,171,172,173,174,175,176,177],[491,492,493,494,495,496,497,498]],"variants":[0]}
+{"texts":["Batting"],"groups":[[510,511]],"variants":[1]}
+{"texts":["Dodgers Pitching","Totals","player-table pitching-table"],"groups":[[137,138,139,140,141,142,143,144,145,146],[178,179,180,181],[499,500,501,502,503,504,505,506,507]],"variants":[0]}
+{"texts":["Hitters"],"groups":[],"variants":[]}
+{"texts":["H-AB"],"groups":[],"variants":[]}
+{"texts":["AB"],"groups":[],"variants":[]}
+{"texts":["R"],"groups":[],"variants":[]}
+{"texts":["H"],"groups":[],"variants":[]}
+{"texts":["RBI"],"groups":[],"variants":[]}
+{"texts":["HR"],"groups":[],"variants":[]}
+{"texts":["BB"],"groups":[],"variants":[]}
+{"texts":["K"],"groups":[],"variants":[]}
+{"texts":["Pitchers"],"groups":[],"variants":[]}
+{"texts":["IP"],"groups":[],"variants":[]}
+{"texts":["H"],"groups":[],"variants":[]}
+{"texts":["R"],"groups":[],"variants":[]}
+{"texts":["ER"],"groups":[],"variants":[]}
+{"texts":["BB"],"groups":[],"variants":[]}
+{"texts":["K"],"groups":[],"variants":[]}
+{"texts":["HR"],"groups":[],"variants":[]}
+{"texts":["PC-ST"],"groups":[],"variants":[]}
+{"texts":["ERA"],"groups":[],"variants":[]}
+{"texts":["Hitters"],"groups":[],"variants":[]}
+{"texts":["H-AB"],"groups":[],"variants":[]}
+{"texts":["AB"],"groups":[],"variants":[]}
+{"texts":["R"],"groups":[],"variants":[]}
+{"texts":["H"],"groups":[],"variants":[]}
+{"texts":["RBI"],"groups":[],"variants":[]}
+{"texts":["HR"],"groups":[],"variants":[]}
+{"texts":["BB"],"groups":[],"variants":[]}
+{"texts":["K"],"groups":[],"variants":[]}
+{"texts":["Pitchers"],"groups":[],"variants":[]}
+{"texts":["IP"],"groups":[],"variants":[]}
+{"texts":["H"],"groups":[],"variants":[]}
+{"texts":["R"],"groups":[],"variants":[]}
+{"texts":["ER"],"groups":[],"variants":[]}
+{"texts":["BB"],"groups":[],"variants":[]}
+{"texts":["K"],"groups":[],"variants":[]}
+{"texts":["HR"],"groups":[],"variants":[]}
+{"texts":["PC-ST"],"groups":[],"variants":[]}
+{"texts":["ERA"],"groups":[],"variants":[]}
+{"texts":["T. Grisham","#player","CF"],"groups":[[182,183,184,185,186,187,188,189]],"variants":[0]}
+{"texts":["A. Judge","#player","RF"],"groups":[[190,191,192,193,194,195,196,197]],"variants":[0]}
+{"texts":["C. Bellinger","#player","LF"],"groups":[[198,199,200,201,202,203,204,205]],"variants":[0]}
+{"texts":["P. Goldschmidt","#player","1B"],"groups":[[206,207,208,209,210,211,212,213]],"variants":[0]}
+{"texts":["J.C. Escarra","#player","C"],"groups":[[214,215,216,217,218,219,220,221]],"variants":[0]}
+{"texts":["J. Domínguez","#player","RF"],"groups":[[222,223,224,225,226,227,228,229]],"variants":[0]}
+{"texts":["A. Volpe","#player","SS"],"groups":[[230,231,232,233,234,235,236,237]],"variants":[0]}
+{"texts":["O. Peraza","#player","2B"],"groups":[[238,239,240,241,242,243,244,245]],"variants":[0]}
+{"texts":["A. Wells","#player","C"],"groups":[[246,247,248,249,250,251,252,253]],"variants":[0]}
+{"texts":["D. LeMahieu","#player","2B"],"groups":[[254,255,256,257,258,259,260,261]],"variants":[0]}
+{"texts":["J. Vivas","#player","3B"],"groups":[[262,263,264,265,266,267,268,269]],"variants":[0]}
+{"texts":["W. Warren","#player","L, 3-3"],"groups":[[270,271,272,273,274,275,276,277,278]],"variants":[0]}
+{"texts":["B. Headrick","#player"],"groups":[[279,280,281,282,283,284,285,286,287]],"variants":[1]}
+{"texts":["I. Hamilton","#player"],"groups":[[288,289,290,291,292,293,294,295,296]],"variants":[1]}
+{"texts":["M. Leiter Jr.","#player"],"groups":[[297,298,299,300,301,302,303,304,305]],"variants":[1]}
+{"texts":["Y. De los Santos","#player"],"groups":[[306,307,308,309,310,311,312,313,314]],"variants":[1]}
+{"texts":["D. Williams","#player"],"groups":[[315,316,317,318,319,320,321,322,323]],"variants":[1]}
+{"texts":["L. Weaver","#player"],"groups":[[324,325,326,327,328,329,330,331,332]],"variants":[1]}
+{"texts":["P. Reyes","#player"],"groups":[[333,334,335,336,337,338,339,340,341]],"variants":[1]}
+{"texts":["S. Ohtani","#player","DH"],"groups":[[342,343,344,345,346,347,348,349]],"variants":[0]}
+{"texts":["D. Rushing","#player","C"],"groups":[[350,351,352,353,354,355,356,357]],"variants":[0]}
+{"texts":["T. Hernández","#player","LF"],"groups":[[358,359,360,361,362,363,364,365]],"variants":[0]}
+{"texts":["E. Hernández","#player","1B"],"groups":[[366,367,368,369,370,371,372,373]],"variants":[0]}
+{"texts":["F. Freeman","#player","1B"],"groups":[[374,375,376,377,378,379,380,381]],"variants":[0]}
+{"texts":["M. Rojas","#player","SS"],"groups":[[382,383,384,385,386,387,388,389]],"variants":[0]}
+{"texts":["W. Smith","#player","C"],"groups":[[390,391,392,393,394,395,396,397]],"variants":[0]}
+{"texts":["M. Muncy","#player","3B"],"groups":[[398,399,400,401,402,403,404,405]],"variants":[0]}
+{"texts":["A. Pages","#player","CF"],"groups":[[406,407,408,409,410,411,412,413]],"variants":[0]}
+{"texts":["M. Conforto","#player","DH"],"groups":[[414,415,416,417,418,419,420,421]],"variants":[0]}
+{"texts":["T. Edman","#player","LF"],"groups":[[422,423,424,425,426,427,428,429]],"variants":[0]}
+{"texts":["H. Kim","#player","SS"],"groups":[[430,431,432,433,434,435,436,437]],"variants":[0]}
+{"texts":["L. Knack","#player","W, 3-2"],"groups":[[438,439,440,441,442,443,444,445,446]],"variants":[0]}
+{"texts":["A. Banda","#player"],"groups":[[447,448,449,450,451,452,453,454,455]],"variants":[1]}
+{"texts":["C. Stratton","#player"],"groups":[[456,457,458,459,460,461,462,463,464]],"variants":[1]}
+{"texts":["E. Hernández","#player"],"groups":[[465,466,467,468,469,470,471,472,473]],"variants":[1]}
+{"texts":["0-3"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["3-4"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1-4"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0-3"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0-1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1-4"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["0-2"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0-1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1-4"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0-2"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1-3"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1.1"],"groups":[],"variants":[]}
+{"texts":["6"],"groups":[],"variants":[]}
+{"texts":["7"],"groups":[],"variants":[]}
+{"texts":["7"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["57-29"],"groups":[],"variants":[]}
+{"texts":["5.19"],"groups":[],"variants":[]}
+{"texts":["0.2"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["20-14"],"groups":[],"variants":[]}
+{"texts":["3.24"],"groups":[],"variants":[]}
+{"texts":["2.0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["30-20"],"groups":[],"variants":[]}
+{"texts":["4.50"],"groups":[],"variants":[]}
+{"texts":["0.2"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["19-13"],"groups":[],"variants":[]}
+{"texts":["3.70"],"groups":[],"variants":[]}
+{"texts":["0.2"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["23-14"],"groups":[],"variants":[]}
+{"texts":["3.00"],"groups":[],"variants":[]}
+{"texts":["0.2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["6-3"],"groups":[],"variants":[]}
+{"texts":["6.53"],"groups":[],"variants":[]}
+{"texts":["1.0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["14-9"],"groups":[],"variants":[]}
+{"texts":["1.05"],"groups":[],"variants":[]}
+{"texts":["1.0"],"groups":[],"variants":[]}
+{"texts":["5"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["18-12"],"groups":[],"variants":[]}
+{"texts":["27.00"],"groups":[],"variants":[]}
+{"texts":["2-4"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["1-2"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0-3"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["2-2"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["2-3"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0-2"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["2-6"],"groups":[],"variants":[]}
+{"texts":["6"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["3-6"],"groups":[],"variants":[]}
+{"texts":["6"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["7"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1-4"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0-2"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["4-5"],"groups":[],"variants":[]}
+{"texts":["5"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["4-4"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["4"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["6.0"],"groups":[],"variants":[]}
+{"texts":["5"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["3"],"groups":[],"variants":[]}
+{"texts":["6"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["102-63"],"groups":[],"variants":[]}
+{"texts":["4.58"],"groups":[],"variants":[]}
+{"texts":["1.0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["2"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["19-11"],"groups":[],"variants":[]}
+{"texts":["3.86"],"groups":[],"variants":[]}
+{"texts":["1.0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["18-13"],"groups":[],"variants":[]}
+{"texts":["8.00"],"groups":[],"variants":[]}
+{"texts":["1.0"],"groups":[],"variants":[]}
+{"texts":["1"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["0"],"groups":[],"variants":[]}
+{"texts":["7-5"],"groups":[],"variants":[]}
+{"texts":["0.00"],"groups":[],"variants":[]}
+{"texts":[],"groups":[],"variants":[0]}
+{"texts":["38"],"groups":[],"variants":[1]}
+{"texts":["2"],"groups":[],"variants":[1]}
+{"texts":["7"],"groups":[],"variants":[1]}
+{"texts":["2"],"groups":[],"variants":[1]}
+{"texts":["2"],"groups":[],"variants":[1]}
+{"texts":["6"],"groups":[],"variants":[1]}
+{"texts":["10"],"groups":[],"variants":[1]}
+{"texts":["8.0"],"groups":[],"variants":[1]}
+{"texts":["21"],"groups":[],"variants":[1]}
+{"texts":["18"],"groups":[],"variants":[1]}
+{"texts":["18"],"groups":[],"variants":[1]}
+{"texts":["6"],"groups":[],"variants":[1]}
+{"texts":["10"],"groups":[],"variants":[1]}
+{"texts":["5"],"groups":[],"variants":[1]}
+{"texts":["187-114"],"groups":[],"variants":[1]}
+{"texts":[],"groups":[],"variants":[0]}
+{"texts":[],"groups":[],"variants":[0]}
+{"texts":["38"],"groups":[],"variants":[1]}
+{"texts":["18"],"groups":[],"variants":[1]}
+{"texts":["21"],"groups":[],"variants":[1]}
+{"texts":["18"],"groups":[],"variants":[1]}
+{"texts":["5"],"groups":[],"variants":[1]}
+{"texts":["6"],"groups":[],"variants":[1]}
+{"texts":["10"],"groups":[],"variants":[1]}
+{"texts":["8.0"],"groups":[],"variants":[1]}
+{"texts":["7"],"groups":[],"variants":[1]}
+{"texts":["2"],"groups":[],"variants":[1]}
+{"texts":["2"],"groups":[],"variants":[1]}
+{"texts":["6"],"groups":[],"variants":[1]}
+{"texts":["10"],"groups":[],"variants":[1]}
+{"texts":["2"],"groups":[],"variants":[1]}
+{"texts":["187-114"],"groups":[],"variants":[1]}
+{"texts":[],"groups":[],"variants":[0]}
+{"texts":["2B: Judge (13)"],"groups":[],"variants":[]}
+{"texts":["HR: Judge 2 (21)"],"groups":[],"variants":[]}
+{"texts":["2B: Edman 2 (15), Freeman (18), Smith (9)"],"groups":[],"variants":[]}
+{"texts":["HR: Muncy 2 (7), Kim (3), Pages (11), Rushing (2)"],"groups":[],"variants":[]}
+{"texts":["Venue","Dodger Stadium"],"groups":[],"variants":[]}
+{"texts":["Location","Los Angeles, California"],"groups":[],"variants":[]}
+{"texts":["Attendance","51,746"],"groups":[],"variants":[]}
+{"texts":["Game Time","3:04"],"groups":[],"variants":[]}
+{"texts":["All Innings"],"groups":[],"variants":[]}
+{"texts":["9th Inning"],"groups":[],"variants":[]}
+{"texts":["⚾","Smith singled to right, Ohtani scored, Smith to second, Freeman to third.","NYY 0, LAD 1"],"groups":[],"variants":[]}
+{"texts":["⚾","Muncy singled to center, Freeman scored, Smith to third.","NYY 0, LAD 2"],"groups":[],"variants":[]}
+{"texts":["⚾","Conforto hit sacrifice fly to right, Smith scored, Muncy to third.","NYY 0, LAD 3"],"groups":[],"variants":[]}
+{"texts":["⚾","Edman doubled to left, Muncy scored, Pages to third.","NYY 0, LAD 4"],"groups":[],"variants":[]}
+{"texts":["⚾","Muncy homered to center (400 feet), T. Hernández scored and Smith scored.","NYY 0, LAD 7"],"groups":[],"variants":[]}
+{"texts":["⚾","Edman doubled to left, Conforto scored.","NYY 0, LAD 8"],"groups":[],"variants":[]}
+{"texts":["⚾","Kim homered to right center (412 feet), Edman scored.","NYY 0, LAD 10"],"groups":[],"variants":[]}
+{"texts":["⚾","Judge homered to left center (395 feet).","NYY 2, LAD 18"],"groups":[],"variants":[]}
+{"texts":["•","Peraza grounded out to third.","NYY 2, LAD 18"],"groups":[],"variants":[]}
+{"texts":["•","Wells grounded out to shortstop, Domínguez to third.","NYY 2, LAD 18"],"groups":[],"variants":[]}
+{"texts":["•","LeMahieu flied out to center.","Final"],"groups":[],"variants":[]}
+{"texts":["Top Performers"],"groups":[[531,532]],"variants":[0]}
+{"texts":["MLB News"],"groups":[[533,534,535,536]],"variants":[1]}
+{"texts":["/images/espn/lad.png","","Max Muncy","LAD · 3B","3-6","2 HR, 7 RBI"],"groups":[],"variants":[]}
+{"texts":["/images/espn/nyy.png","","Aaron Judge","NYY · RF","3-4","2 HR, 2 RBI"],"groups":[],"variants":[]}
+{"texts":["/images/espn/wetherholt.jpg","","Rookie JJ Wetherholt, Cardinals agree to 8-year deal, sources say","Infielder JJ Wetherholt and the Cardinals are in agreement on an eight-year extension, sources told ESPN.","#"],"groups":[],"variants":[0]}
+{"texts":["/images/espn/ohtani-news.jpg","","Shohei Ohtani dealing with knee irritation, to miss All-Star Game","Ohtani was scratched from his scheduled pitching start due to continued irritation in his left knee.","#"],"groups":[],"variants":[0]}
+{"texts":["/images/espn/nance-news.jpg","","Twins acquire reliever Tommy Nance from Blue Jays","Minnesota added the right-handed reliever in a trade with Toronto.","#"],"groups":[],"variants":[0]}
+{"texts":["All MLB News →","#"],"groups":[],"variants":[1]}
+{"texts":["Terms of Use","#"],"groups":[],"variants":[]}
+{"texts":["Privacy Policy","#"],"groups":[],"variants":[]}
+{"texts":["Your US State Privacy Rights","#"],"groups":[],"variants":[]}
+{"texts":["Children's Online Privacy Policy","#"],"groups":[],"variants":[]}
