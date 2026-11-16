@@ -23,14 +23,12 @@ function About() {
       </p>
       <p>
         Performance is only one part of choosing a framework. Features,
-        developer tooling and ecosystem support matter too. Proa’s built-in{" "}
-        <a href="https://proa.so/docs/core/markdown">
-          typed Markdown rendering
-        </a>
-        , for example, is a capability a render-time benchmark does not capture.
-        Our <Link to="/features">feature comparison</Link> distinguishes
-        built-in features from official packages and community integrations, so
-        you can weigh speed alongside what your application needs.
+        developer tooling and ecosystem support matter too. Capabilities such as
+        content rendering, routing and data handling are not captured by a
+        render-time ranking alone. Our{" "}
+        <Link to="/features">feature comparison</Link> distinguishes built-in
+        features from official packages and community integrations, so you can
+        weigh speed alongside what your application needs.
       </p>
       <h2>The costs we want to measure</h2>
       <p>
