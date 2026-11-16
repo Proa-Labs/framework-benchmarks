@@ -847,9 +847,12 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       state.chart === "balls"
     )
       state.chart = "bars";
-    $<HTMLSelectElement>("[data-render-view]").hidden =
-      state.view !== "rendering";
-    $<HTMLSelectElement>("[data-render-view]").value = state.render;
+    $("[data-render-metric]").hidden = state.view !== "rendering";
+    $$<HTMLInputElement>("[data-render-view]").forEach((input) => {
+      input.checked = input.value === state.render;
+    });
+    $(".fw-toolbar").hidden =
+      state.view === "rendering" && state.chart === "compare";
     $('[data-chart="table"]').hidden = state.view === "streaming";
     $(".fw-view-switch").hidden = state.view === "streaming";
     $<HTMLSelectElement>("[data-framework-view]").hidden =

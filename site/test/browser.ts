@@ -140,9 +140,7 @@ try {
     path: join(siteRoot, "test-results/desktop.png"),
     fullPage: true,
   });
-  await page
-    .getByLabel("SSR Rendering analysis", { exact: true })
-    .selectOption("rss");
+  await page.getByRole("radio", { name: "Peak RSS", exact: true }).check();
   assert.equal(new URL(page.url()).searchParams.get("render"), "rss");
   assert.equal(await page.locator(".fw-row").count(), memoryCount);
   if (!memoryCount)
@@ -157,7 +155,12 @@ try {
     );
   assert.equal(await page.locator('[data-chart="balls"]').isVisible(), false);
   await reload();
-  assert.equal(await page.locator("[data-render-view]").inputValue(), "rss");
+  assert.equal(
+    await page
+      .getByRole("radio", { name: "Peak RSS", exact: true })
+      .isChecked(),
+    true,
+  );
   await page.getByText("Method & data", { exact: true }).click();
   const memoryExport = JSON.parse(
     decodeURIComponent(
@@ -183,20 +186,27 @@ try {
   );
   for (const width of [375, 751, 1440]) {
     await page.setViewportSize({ width, height: 934 });
-    const analysis = page.getByLabel("SSR Rendering analysis", { exact: true });
+    const analysis = page.getByRole("group", {
+      name: "SSR Rendering analysis",
+      exact: true,
+    });
     assert.equal(
       await analysis.isVisible(),
       true,
       `Measurement selector at ${width}px`,
     );
-    await analysis.selectOption("p50");
+    await analysis
+      .getByRole("radio", { name: "Render time", exact: true })
+      .check();
     assert.equal(new URL(page.url()).searchParams.get("chart"), "compare");
     assert.ok(
       (
         await page.locator(".fw-comparison thead small").allTextContents()
       ).every((unit) => unit === "µs"),
     );
-    await analysis.selectOption("rss");
+    await analysis
+      .getByRole("radio", { name: "Peak RSS", exact: true })
+      .check();
     assert.ok(
       (
         await page.locator(".fw-comparison thead small").allTextContents()
@@ -217,9 +227,7 @@ try {
     path: join(siteRoot, "test-results/render-memory.png"),
     fullPage: true,
   });
-  await page
-    .getByLabel("SSR Rendering analysis", { exact: true })
-    .selectOption("p50");
+  await page.getByRole("radio", { name: "Render time", exact: true }).check();
   assert.equal(await page.locator(".fw-row").count(), renderCount);
   checks.push(
     "render RSS selection survives reload and exports only recorded memory",

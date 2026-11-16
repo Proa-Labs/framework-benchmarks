@@ -1585,6 +1585,33 @@
   #frameworks-explorer .fw-sidebar-label {
     @apply text-sm [letter-spacing:0.7px] uppercase text-muted [margin-bottom:12px];
   }
+  #frameworks-explorer .fw-render-metric {
+    @apply [border:0] [padding:0] [margin:0_0_24px] [max-width:280px];
+  }
+  #frameworks-explorer .fw-render-metric legend {
+    @apply text-sm text-muted [margin-bottom:8px];
+  }
+  #frameworks-explorer .fw-metric-options {
+    @apply grid grid-cols-2 [gap:2px] [padding:3px] [border:1px_solid_var(--fw-line)] [border-radius:6px];
+  }
+  #frameworks-explorer .fw-metric-options label {
+    @apply relative cursor-pointer;
+  }
+  #frameworks-explorer .fw-metric-options input {
+    @apply absolute inset-0 m-0 h-full w-full cursor-pointer opacity-0;
+  }
+  #frameworks-explorer .fw-metric-options span {
+    @apply flex items-center justify-center [min-height:36px] [padding:4px_6px] [border-radius:3px] text-sm text-muted whitespace-nowrap;
+  }
+  #frameworks-explorer .fw-metric-options label:hover span {
+    @apply text-ink [background:var(--fw-hover)];
+  }
+  #frameworks-explorer .fw-metric-options input:checked + span {
+    @apply text-ink [background:var(--fw-selected)];
+  }
+  #frameworks-explorer .fw-metric-options input:focus-visible + span {
+    @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:1px];
+  }
   #frameworks-explorer .fw-workload-tabs {
     @apply flex-col;
   }
@@ -1675,6 +1702,11 @@
     }
     #frameworks-explorer[data-compare="true"] .fw-sidebar-label {
       @apply flex items-center [min-height:var(--fw-comparison-heading-height)] [margin:0];
+    }
+    #frameworks-explorer[data-compare="true"]
+      .fw-render-metric:not([hidden])
+      ~ .fw-sidebar-label {
+      @apply [min-height:0] [margin-bottom:12px];
     }
     #frameworks-explorer[data-compare="true"] .fw-comparison thead {
       @apply [min-height:var(--fw-comparison-heading-height)];
@@ -1936,6 +1968,9 @@
   }
   #frameworks-explorer .fw-tool-search input {
     @apply [width:100%] [min-width:0] [padding:0] text-ink [background:transparent] [border:0] [font:inherit] text-sm [outline-offset:5px];
+  }
+  #frameworks-explorer .fw-tool-search input:focus {
+    @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:4px] [border-radius:2px];
   }
   #frameworks-explorer .fw-tool-types {
     @apply flex [gap:12px] [border:0] [margin:0] [padding:12px_8px] text-sm text-muted;

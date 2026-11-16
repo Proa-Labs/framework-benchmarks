@@ -192,7 +192,32 @@ export function PerformancePage({
           role="tabpanel"
           aria-labelledby={`experiment-${state.view}`}
         >
-          <aside className="fw-scenarios" aria-label="Workloads">
+          <aside className="fw-scenarios" aria-label="Benchmark controls">
+            <fieldset
+              className="fw-render-metric"
+              data-render-metric
+              aria-label="SSR Rendering analysis"
+              hidden={state.view !== "rendering"}
+            >
+              <legend>Measure</legend>
+              <div className="fw-metric-options">
+                {[
+                  ["p50", "Render time"],
+                  ["rss", "Peak RSS"],
+                ].map(([value, label]) => (
+                  <label key={value}>
+                    <input
+                      type="radio"
+                      name="render-metric"
+                      data-render-view
+                      value={value}
+                      defaultChecked={state.render === value}
+                    />
+                    <span>{label}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
             <h2 className="fw-sidebar-label">Workloads</h2>
             <fieldset
               className="fw-workload-tabs"
@@ -238,7 +263,10 @@ export function PerformancePage({
             >
               {validationNote}
             </p>
-            <div className="fw-toolbar">
+            <div
+              className="fw-toolbar"
+              hidden={state.view === "rendering" && state.chart === "compare"}
+            >
               <fieldset
                 className="fw-view-switch"
                 aria-label="Chart view"
@@ -276,16 +304,6 @@ export function PerformancePage({
                   Table
                 </button>
               </fieldset>
-              <select
-                data-render-view
-                className="fw-native-select"
-                aria-label="SSR Rendering analysis"
-                hidden={state.view !== "rendering"}
-                defaultValue={state.render}
-              >
-                <option value="p50">Render time</option>
-                <option value="rss">Peak RSS</option>
-              </select>
               <select
                 data-framework-view
                 className="fw-native-select"
