@@ -1,0 +1,33 @@
+name: Restore the pinned Exact checkout and compiler
+description: >-
+  Reuse the pinned expo/exact clone and the compiler Exact keeps for the machine
+  (~/.cache/exact). Without it, every job clones Exact, installs its own Rust
+  toolchain and compiles its web compiler before the first adapter build.
+
+runs:
+  using: composite
+  steps:
+    - name: Read the Exact pin
+      id: pin
+      shell: bash
+      run: |
+        set -euo pipefail
+        rendering="$(grep -oE '[0-9a-f]{40}' benchmarks/rendering/external/exact/build.mjs | head -n 1)"
+        framework="$(jq -r .exactCommit benchmarks/framework-ssr/contract.json)"
+        if [[ "$rendering" != "$framework" ]]; then
+          echo "::error::Exact pins differ: rendering $rendering, framework $framework" >&2
+          exit 1
+        fi
+        echo "commit=$rendering" >> "$GITHUB_OUTPUT"
+
+    # The checkout is verified against the pin (and for local edits) by every
+    # build; Exact itself checks each kept compiler against its source bytes.
+    - name: Restore Exact
+      uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+      with:
+        path: |
+          ~/.cache/exact
+          benchmarks/framework-ssr/.cache/exact
+          !benchmarks/framework-ssr/.cache/exact/target
+          !benchmarks/framework-ssr/.cache/exact/**/node_modules
+        key: exact-v1-${{ runner.os }}-${{ steps.pin.outputs.commit }}
