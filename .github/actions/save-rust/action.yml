@@ -1,26 +1,16 @@
 name: Save the workspace crates' artifacts
 description: >-
-  Run as a job's last step, before rust-cache's post-job cleanup removes the
-  workspace crates. Only main saves: pull requests restore main's artifacts,
-  and a pull request that changes a crate rebuilds it on every push anyway.
-
-inputs:
-  key:
-    description: setup-rust's artifact-key output
-    required: true
-  paths:
-    description: setup-rust's artifact-paths output
-    required: true
-  hit:
-    description: setup-rust's artifact-hit output
-    default: ""
+  Run as the last step of a job set up with a rust family, before rust-cache's
+  post-job cleanup removes the workspace crates. Only main saves: pull requests
+  restore main's artifacts, and one that changes a crate has new inputs, so a
+  new key, on every push.
 
 runs:
   using: composite
   steps:
     - name: Save the workspace crates for these inputs
-      if: inputs.hit != 'true' && github.ref == 'refs/heads/main'
+      if: env.WORKSPACE_CRATES_RESTORED != 'true' && github.ref == 'refs/heads/main'
       uses: actions/cache/save@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
       with:
-        key: ${{ inputs.key }}
-        path: ${{ inputs.paths }}
+        key: ${{ env.WORKSPACE_CRATES_KEY }}
+        path: ${{ env.WORKSPACE_CRATES_PATHS }}

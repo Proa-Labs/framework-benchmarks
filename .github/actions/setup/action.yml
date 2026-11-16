@@ -1,0 +1,106 @@
+name: Set up the workspace
+description: >-
+  Install the pinned Bun and the workspace's packages, and optionally start the
+  Chromium install, set up Node.js, and set up Rust with its dependency and
+  workspace-crate caches. Slow installs run in the background beside the rest.
+  A Rust job ends with ./.github/actions/save-rust; a Chromium job joins the
+  install with `.github/scripts/background.sh wait chromium` before using it.
+
+inputs:
+  chromium:
+    description: Start Playwright's Chromium install in the background
+    default: "false"
+  node:
+    description: Set up the pinned Node.js
+    default: "false"
+  rust:
+    description: >-
+      Dependency cache family; empty skips Rust. Jobs that compile the same
+      profile and feature set share a family, so their dependencies are built
+      once and restored everywhere.
+    default: ""
+  rust-artifacts:
+    description: Workspace-crate artifact family; defaults to the rust family
+    default: ""
+  rust-workspaces:
+    description: Cargo workspaces and their target directories, as rust-cache expects
+    default: ". -> target"
+
+runs:
+  using: composite
+  steps:
+    - name: Start the Rust toolchain install
+      if: inputs.rust != ''
+      shell: bash
+      run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
+
+    - name: Set up Bun
+      uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      with:
+        bun-version: "1.4.2"
+
+    # Also required by Rust: proa_bench's build script generates its showcase
+    # fixtures with the workspace's Bun and packages.
+    - name: Install JavaScript dependencies
+      shell: bash
+      run: bun install --frozen-lockfile
+
+    - name: Start the Chromium install
+      if: inputs.chromium == 'true'
+      shell: bash
+      run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
+
+    - name: Set up Node.js
+      if: inputs.node == 'true'
+      uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+      with:
+        node-version: "26.13.0"
+
+    # Before the cache steps: their keys include the active rustc version.
+    - name: Finish the Rust toolchain install
+      if: inputs.rust != ''
+      shell: bash
+      run: |
+        .github/scripts/background.sh wait rustup
+        rustc --version
+
+    # Dependencies only. Pull requests restore main's entry; one that changes
+    # a key input (lockfile, toolchain, CI environment) saves its own.
+    - name: Restore compiled dependencies
+      if: inputs.rust != ''
+      uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      with:
+        shared-key: ${{ inputs.rust }}
+        workspaces: ${{ inputs.rust-workspaces }}
+
+    # Exported for save-rust as well.
+    - name: Key the workspace crates by their inputs
+      if: inputs.rust != ''
+      shell: bash
+      env:
+        FAMILY: ${{ inputs.rust-artifacts || inputs.rust }}
+      run: |
+        set -euo pipefail
+        {
+          echo "WORKSPACE_CRATES_KEY=rust-local-v1-${RUNNER_OS}-${FAMILY}-$(.github/scripts/rust-artifacts.sh key)"
+          echo 'WORKSPACE_CRATES_PATHS<<EOF'
+          .github/scripts/rust-artifacts.sh paths
+          echo EOF
+        } >> "$GITHUB_ENV"
+
+    # Exact matches only: a partial match would pair artifacts with sources
+    # they were not built from.
+    - name: Restore the workspace crates for identical inputs
+      if: inputs.rust != ''
+      id: restore
+      uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+      with:
+        key: ${{ env.WORKSPACE_CRATES_KEY }}
+        path: ${{ env.WORKSPACE_CRATES_PATHS }}
+
+    - name: Date unchanged inputs before their restored artifacts
+      if: steps.restore.outputs.cache-hit == 'true'
+      shell: bash
+      run: |
+        .github/scripts/rust-artifacts.sh normalize
+        echo "WORKSPACE_CRATES_RESTORED=true" >> "$GITHUB_ENV"

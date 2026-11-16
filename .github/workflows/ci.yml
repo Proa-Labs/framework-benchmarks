@@ -27,7 +27,7 @@ env:
 # Each suite runs as its own job so the slowest one, not their sum, sets the
 # wall-clock time. Pull requests run only the suites their files can affect
 # (.github/scripts/affected-suites.sh); main and manual runs run everything.
-# The two final jobs keep the branch ruleset's required check names.
+# The final `required` job reports the branch ruleset's required check names.
 jobs:
   changes:
     name: Select affected suites
@@ -85,10 +85,8 @@ jobs:
           persist-credentials: false
       - name: Lint workflows and embedded shell
         uses: ./.github/actions/workflow-lint
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: "1.4.2"
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
@@ -98,7 +96,6 @@ jobs:
       - name: Validate browser and research tooling
         run: |
           set -euo pipefail
-          bun install --frozen-lockfile
           bun tooling/maintenance/prune-results.mjs --check
           bun run test
           bun test benchmarks/rendering/external/sveltekit/stream-validator.test.mjs experiments/sveltekit-streaming/benchmark.test.mjs
@@ -107,123 +104,46 @@ jobs:
       - name: Check Rust formatting
         run: cargo fmt --all -- --check
 
-  clippy:
-    name: Rust correctness lints
+  rust:
+    name: ${{ matrix.name }}
     needs: changes
     if: needs.changes.outputs.rust == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Rust correctness lints
+            family: clippy
+            # The Airbnb fixture is its own workspace beside the root one.
+            workspaces: |
+              . -> target
+              fixtures/airbnb-parity-dump -> target
+            run: |
+              cargo clippy --workspace --all-targets --all-features --locked -- -A clippy::all -D clippy::correctness
+              cargo check --manifest-path fixtures/airbnb-parity-dump/Cargo.toml --locked
+          - name: Rust comparison fixtures
+            family: test
+            run: cargo test --workspace --all-features --locked
+          - name: Rust benchmark targets
+            family: bench
+            run: cargo bench --workspace --all-features --locked --no-run
     steps:
       - name: Checkout tested benchmark revision
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Start the Rust toolchain install
-        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
         with:
-          bun-version: "1.4.2"
-      # proa_bench's build script generates its showcase fixtures with the
-      # workspace's pinned Bun and its packages.
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
-      - name: Set up Rust
-        id: rust
-        uses: ./.github/actions/setup-rust
-        with:
-          cache-key: clippy
-          workspaces: |
-            . -> target
-            fixtures/airbnb-parity-dump -> target
-          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
-      - name: Run Clippy correctness lints
-        run: |
-          cargo clippy --workspace --all-targets --all-features --locked -- \
-            -A clippy::all -D clippy::correctness
-      - name: Check linked Airbnb fixture
-        run: cargo check --manifest-path fixtures/airbnb-parity-dump/Cargo.toml --locked
+          rust: ${{ matrix.family }}
+          rust-workspaces: ${{ matrix.workspaces || '. -> target' }}
+      - name: ${{ matrix.name }}
+        run: ${{ matrix.run }}
       - name: Save the workspace crates
         uses: ./.github/actions/save-rust
-        with:
-          key: ${{ steps.rust.outputs.artifact-key }}
-          paths: ${{ steps.rust.outputs.artifact-paths }}
-          hit: ${{ steps.rust.outputs.artifact-hit }}
-
-  test:
-    name: Rust comparison fixtures
-    needs: changes
-    if: needs.changes.outputs.rust == 'true'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    steps:
-      - name: Checkout tested benchmark revision
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          ref: ${{ github.sha }}
-          persist-credentials: false
-      - name: Start the Rust toolchain install
-        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: "1.4.2"
-      # proa_bench's build script generates its showcase fixtures with the
-      # workspace's pinned Bun and its packages.
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
-      - name: Set up Rust
-        id: rust
-        uses: ./.github/actions/setup-rust
-        with:
-          cache-key: test
-          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
-      - name: Test Rust comparison fixtures
-        run: cargo test --workspace --all-features --locked
-      - name: Save the workspace crates
-        uses: ./.github/actions/save-rust
-        with:
-          key: ${{ steps.rust.outputs.artifact-key }}
-          paths: ${{ steps.rust.outputs.artifact-paths }}
-          hit: ${{ steps.rust.outputs.artifact-hit }}
-
-  bench:
-    name: Rust benchmark targets
-    needs: changes
-    if: needs.changes.outputs.rust == 'true'
-    runs-on: ubuntu-24.04
-    timeout-minutes: 30
-    steps:
-      - name: Checkout tested benchmark revision
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-        with:
-          ref: ${{ github.sha }}
-          persist-credentials: false
-      - name: Start the Rust toolchain install
-        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: "1.4.2"
-      # proa_bench's build script generates its showcase fixtures with the
-      # workspace's pinned Bun and its packages.
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
-      - name: Set up Rust
-        id: rust
-        uses: ./.github/actions/setup-rust
-        with:
-          cache-key: bench
-          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
-      - name: Link every Rust benchmark target
-        run: cargo bench --workspace --all-features --locked --no-run
-      - name: Save the workspace crates
-        uses: ./.github/actions/save-rust
-        with:
-          key: ${{ steps.rust.outputs.artifact-key }}
-          paths: ${{ steps.rust.outputs.artifact-paths }}
-          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   dom-parity:
     name: Standard page DOM parity
@@ -237,34 +157,17 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Start the Rust toolchain install
-        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
         with:
-          bun-version: "1.4.2"
-      # proa_bench's build script generates its showcase fixtures with the
-      # workspace's pinned Bun and its packages.
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
-      - name: Start the Chromium install
-        run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
-      - name: Set up Rust
-        id: rust
-        uses: ./.github/actions/setup-rust
-        with:
-          cache-key: release-default
-          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
+          rust: release-default
+          chromium: true
       - name: Finish the Chromium install
         run: .github/scripts/background.sh wait chromium
       - name: Compare normalized browser DOM
         run: bun benchmarks/rendering/standard_page_parity.mjs
       - name: Save the workspace crates
         uses: ./.github/actions/save-rust
-        with:
-          key: ${{ steps.rust.outputs.artifact-key }}
-          paths: ${{ steps.rust.outputs.artifact-paths }}
-          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   # The matrix shards by toolchain. Every shard includes Proa, the parity
   # reference, so each renderer is still compared against the same canonical
@@ -278,29 +181,34 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [native, jvm-ruby, javascript, frameworks]
+        shard: [native, jvm, ruby, javascript, frameworks]
     steps:
       - name: Checkout tested benchmark revision
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Start the Rust toolchain install
-        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
+      # It may install from apt; finish it before the browser's apt step.
+      - name: Set up PHP
+        if: matrix.shard == 'native'
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: "8.5"
       - name: Select this shard's renderers
         id: shard
         env:
           SHARD: ${{ matrix.shard }}
         run: |
           set -euo pipefail
-          # native: compiled templates and scripting runtimes; jvm-ruby: Rails,
-          # jte and Rocker; javascript: unbuilt Bun adapters; frameworks: every
-          # other adapter, including any newly added setup.
+          # native: compiled templates and scripting runtimes; jvm: jte and
+          # Rocker; ruby: Rails; javascript: unbuilt Bun adapters; frameworks:
+          # every other adapter, including any newly added setup.
           renderers="$(jq -r --arg shard "$SHARD" \
             --slurpfile adapters benchmarks/rendering/canonical/adapters.json '
               def group:
                 if (.setup | IN("rust", "go", "php", "jinja2")) then "native"
-                elif (.setup | IN("rails", "jte", "rocker")) then "jvm-ruby"
+                elif (.setup | IN("jte", "rocker")) then "jvm"
+                elif .setup == "rails" then "ruby"
                 elif .setup == "bun" and (has("build") | not) then "javascript"
                 else "frameworks" end;
               ["proa"] + [.renderers[].id | select(. != "proa")
@@ -308,43 +216,16 @@ jobs:
               | join(",")' benchmarks/rendering/canonical/roster.json)"
           echo "renderers=$renderers" >> "$GITHUB_OUTPUT"
           echo "Renderers: $renderers"
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
         with:
-          bun-version: "1.4.2"
-      # proa_bench's build script generates its showcase fixtures with the
-      # workspace's pinned Bun and its packages.
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
-      - name: Set up Rust
-        id: rust
-        uses: ./.github/actions/setup-rust
-        with:
-          cache-key: release-topcoat
-          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
+          chromium: true
+          node: ${{ matrix.shard == 'frameworks' }}
+          rust: release-topcoat
       - name: Start the release build
         run: |
           .github/scripts/background.sh start rust \
             cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench
-      # These may install from apt; finish them before the browser's apt step.
-      - name: Install native RSS supervisor
-        run: |
-          if [[ ! -x /usr/bin/time ]]; then
-            sudo apt-get update
-            sudo apt-get install -y time
-          fi
-      - name: Set up PHP
-        if: matrix.shard == 'native'
-        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
-        with:
-          php-version: "8.5"
-      - name: Start the Chromium install
-        run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
-      - name: Set up Node.js
-        if: matrix.shard == 'frameworks'
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: "26.13.0"
       - name: Set up Python
         if: matrix.shard == 'native'
         id: python
@@ -364,18 +245,18 @@ jobs:
           go-version: "1.25.5"
           cache: false
       - name: Set up Java
-        if: matrix.shard == 'jvm-ruby'
+        if: matrix.shard == 'jvm'
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
           distribution: temurin
           java-version: "17"
       - name: Set up Gradle
-        if: matrix.shard == 'jvm-ruby'
+        if: matrix.shard == 'jvm'
         uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
         with:
           gradle-version: "9.2.0"
       - name: Set up Ruby
-        if: matrix.shard == 'jvm-ruby'
+        if: matrix.shard == 'ruby'
         uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
         with:
           ruby-version: "4.0.6"
@@ -403,10 +284,6 @@ jobs:
         run: bun benchmarks/rendering/external/exact/check-admission.mjs
       - name: Save the workspace crates
         uses: ./.github/actions/save-rust
-        with:
-          key: ${{ steps.rust.outputs.artifact-key }}
-          paths: ${{ steps.rust.outputs.artifact-paths }}
-          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   # One job per page-load workload; the first also runs the cold-start smoke,
   # which reuses that job's adapter builds.
@@ -426,35 +303,19 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Start the Rust toolchain install
-        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
       - name: Bound loopback TIME_WAIT sockets
         uses: ./.github/actions/bound-time-wait
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
         with:
-          bun-version: "1.4.2"
-      # proa_bench's build script generates its showcase fixtures with the
-      # workspace's pinned Bun and its packages.
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
-      - name: Set up Rust
-        id: rust
-        uses: ./.github/actions/setup-rust
-        with:
-          cache-key: release-http
-          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
+          chromium: true
+          node: true
+          rust: release-http
       - name: Start the release build
         run: |
           .github/scripts/background.sh start rust \
             cargo build --release --locked -p proa_bench --features http-load,topcoat \
               --bin proa_page_server --bin representative_suite_bench
-      - name: Start the Chromium install
-        run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
-      - name: Set up Node.js
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: "26.13.0"
       - name: Set up Go
         uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
@@ -479,10 +340,6 @@ jobs:
         run: bun run bench:cold-start:smoke
       - name: Save the workspace crates
         uses: ./.github/actions/save-rust
-        with:
-          key: ${{ steps.rust.outputs.artifact-key }}
-          paths: ${{ steps.rust.outputs.artifact-paths }}
-          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   streaming:
     name: Suspense streaming fixtures
@@ -496,35 +353,19 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Start the Rust toolchain install
-        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
       - name: Bound loopback TIME_WAIT sockets
         uses: ./.github/actions/bound-time-wait
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
         with:
-          bun-version: "1.4.2"
-      # proa_bench's build script generates its showcase fixtures with the
-      # workspace's pinned Bun and its packages.
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
-      - name: Set up Rust
-        id: rust
-        uses: ./.github/actions/setup-rust
-        with:
-          cache-key: release-http
-          artifact-key: release-http-suspense
-          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
+          chromium: true
+          node: true
+          rust: release-http
+          rust-artifacts: release-http-suspense
       - name: Start the release build
         run: |
           .github/scripts/background.sh start rust \
             cargo build --release --locked -p proa_bench --features http-load,topcoat --bin proa_suspense_server
-      - name: Start the Chromium install
-        run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
-      - name: Set up Node.js
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: "26.13.0"
       - name: Finish the release build
         run: .github/scripts/background.sh wait rust
       - name: Finish the Chromium install
@@ -535,10 +376,6 @@ jobs:
           bun experiments/sveltekit-streaming/run.mjs --smoke
       - name: Save the workspace crates
         uses: ./.github/actions/save-rust
-        with:
-          key: ${{ steps.rust.outputs.artifact-key }}
-          paths: ${{ steps.rust.outputs.artifact-paths }}
-          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   # One job per workload: every phase of the smoke is ~10 s (the largest
   # native pages need a full batch), so the complete contract ran ~14 min in
@@ -559,81 +396,44 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-      - name: Start the Rust toolchain install
-        run: .github/scripts/background.sh start rustup rustup toolchain install --no-self-update
       - name: Bound loopback TIME_WAIT sockets
         uses: ./.github/actions/bound-time-wait
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
         with:
-          bun-version: "1.4.2"
-      - name: Set up Node.js
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: "26.13.0"
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
+          node: true
+          rust: framework
+          rust-workspaces: benchmarks/framework-ssr/adapters/proa -> ../../../../target
       - name: Restore the pinned Exact checkout and compiler
         uses: ./.github/actions/exact-cache
-      - name: Set up Rust
-        id: rust
-        uses: ./.github/actions/setup-rust
-        with:
-          cache-key: framework
-          workspaces: benchmarks/framework-ssr/adapters/proa -> ../../../../target
-          proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
-      # proa_bench is the adapter's slow path dependency and needs none of the
-      # fixtures build.ts writes first; compile it beside the JavaScript and
-      # Exact builds. build.ts's own Cargo run then reuses it.
-      - name: Start the release build
-        run: |
-          .github/scripts/background.sh start rust \
-            cargo build --release --locked -p proa_bench --target-dir target \
-              --manifest-path benchmarks/framework-ssr/adapters/proa/Cargo.toml
-      - name: Build every full-framework adapter
-        run: bun benchmarks/framework-ssr/build.ts
-      - name: Finish the release build
-        run: .github/scripts/background.sh wait rust
+      - name: Build the full-framework adapters for this workload
+        env:
+          WORKLOAD: ${{ matrix.workload }}
+        run: bun benchmarks/framework-ssr/build.ts --workload "$WORKLOAD"
       - name: Gate this full-framework SSR workload
         env:
           WORKLOAD: ${{ matrix.workload }}
         run: bun benchmarks/framework-ssr/run.ts --no-build --smoke --workers 2 --shard-workload "$WORKLOAD"
       - name: Save the workspace crates
         uses: ./.github/actions/save-rust
-        with:
-          key: ${{ steps.rust.outputs.artifact-key }}
-          paths: ${{ steps.rust.outputs.artifact-paths }}
-          hit: ${{ steps.rust.outputs.artifact-hit }}
 
-  # Required by the branch ruleset. A suite skipped because the change cannot
-  # affect it counts as passing; every suite that ran must have succeeded.
-  rendering:
-    name: Rendering builds and framework parity
+  # The branch ruleset requires both check names; each covers every suite. A
+  # suite skipped because the change cannot affect it counts as passing; every
+  # suite that ran must have succeeded.
+  required:
+    name: ${{ matrix.check }}
     # Do not create a final job after the workflow itself was canceled.
     if: ${{ always() && !cancelled() }}
-    needs: [changes, clippy, test, bench, dom-parity, canonical, http, streaming, framework]
+    needs: [changes, quality, rust, dom-parity, canonical, http, streaming, framework]
     runs-on: ubuntu-24.04
     timeout-minutes: 2
+    strategy:
+      matrix:
+        check: [Rendering builds and framework parity, "lint, clippy, build, test"]
     steps:
-      - name: Require every rendering prerequisite
+      - name: Require every suite that ran to pass
         env:
           NEEDS: ${{ toJSON(needs) }}
         run: |
           jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<< "$NEEDS"
-          jq -e '.changes.result == "success"
-            and all(.[]; .result == "success" or .result == "skipped")' <<< "$NEEDS" > /dev/null
-
-  ci:
-    name: lint, clippy, build, test
-    if: ${{ always() && !cancelled() }}
-    needs: [changes, quality, clippy, test, bench, dom-parity, canonical, http, streaming, framework]
-    runs-on: ubuntu-24.04
-    timeout-minutes: 2
-    steps:
-      - name: Require every merge prerequisite
-        env:
-          NEEDS: ${{ toJSON(needs) }}
-        run: |
-          jq -r 'to_entries[] | "\(.key): \(.value.result)"' <<< "$NEEDS"
-          jq -e '.changes.result == "success" and .quality.result == "success"
-            and all(.[]; .result == "success" or .result == "skipped")' <<< "$NEEDS" > /dev/null
+          jq -e 'all(.[]; .result == "success" or .result == "skipped")' <<< "$NEEDS" > /dev/null
