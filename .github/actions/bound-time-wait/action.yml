@@ -1,0 +1,16 @@
+name: Bound loopback TIME_WAIT sockets
+description: >-
+  Before each closed-loop phase the load driver waits until fewer than 1,500
+  sockets are in TIME_WAIT, a guard against macOS's small ephemeral port range.
+  Linux holds TIME_WAIT for a fixed 60 seconds, so after a saturated smoke phase
+  the next one idled for ~55 s. Capping the kernel's TIME_WAIT table below that
+  limit lets smoke phases start at once. These smoke runs only use loopback,
+  where TIME_WAIT's protection against delayed segments does not apply, and
+  they are not measurements.
+
+runs:
+  using: composite
+  steps:
+    - name: Cap the TIME_WAIT table
+      shell: bash
+      run: sudo sysctl -w net.ipv4.tcp_max_tw_buckets=1000
