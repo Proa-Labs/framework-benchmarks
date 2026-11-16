@@ -120,6 +120,7 @@ jobs:
       - name: Install JavaScript dependencies
         run: bun install --frozen-lockfile
       - name: Set up Rust
+        id: rust
         uses: ./.github/actions/setup-rust
         with:
           cache-key: clippy
@@ -133,6 +134,12 @@ jobs:
             -A clippy::all -D clippy::correctness
       - name: Check linked Airbnb fixture
         run: cargo check --manifest-path fixtures/airbnb-parity-dump/Cargo.toml --locked
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+        with:
+          key: ${{ steps.rust.outputs.artifact-key }}
+          paths: ${{ steps.rust.outputs.artifact-paths }}
+          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   test:
     name: Rust comparison fixtures
@@ -155,12 +162,19 @@ jobs:
       - name: Install JavaScript dependencies
         run: bun install --frozen-lockfile
       - name: Set up Rust
+        id: rust
         uses: ./.github/actions/setup-rust
         with:
           cache-key: test
           proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
       - name: Test Rust comparison fixtures
         run: cargo test --workspace --all-features --locked
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+        with:
+          key: ${{ steps.rust.outputs.artifact-key }}
+          paths: ${{ steps.rust.outputs.artifact-paths }}
+          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   bench:
     name: Rust benchmark targets
@@ -183,12 +197,19 @@ jobs:
       - name: Install JavaScript dependencies
         run: bun install --frozen-lockfile
       - name: Set up Rust
+        id: rust
         uses: ./.github/actions/setup-rust
         with:
           cache-key: bench
           proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
       - name: Link every Rust benchmark target
         run: cargo bench --workspace --all-features --locked --no-run
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+        with:
+          key: ${{ steps.rust.outputs.artifact-key }}
+          paths: ${{ steps.rust.outputs.artifact-paths }}
+          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   dom-parity:
     name: Standard page DOM parity
@@ -211,6 +232,7 @@ jobs:
       - name: Install JavaScript dependencies
         run: bun install --frozen-lockfile
       - name: Set up Rust
+        id: rust
         uses: ./.github/actions/setup-rust
         with:
           cache-key: release-default
@@ -225,6 +247,12 @@ jobs:
         run: .github/scripts/background.sh wait rust
       - name: Compare normalized browser DOM
         run: bun benchmarks/rendering/standard_page_parity.mjs
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+        with:
+          key: ${{ steps.rust.outputs.artifact-key }}
+          paths: ${{ steps.rust.outputs.artifact-paths }}
+          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   # The matrix shards by toolchain. Every shard includes Proa, the parity
   # reference, so each renderer is still compared against the same canonical
@@ -275,6 +303,7 @@ jobs:
       - name: Install JavaScript dependencies
         run: bun install --frozen-lockfile
       - name: Set up Rust
+        id: rust
         uses: ./.github/actions/setup-rust
         with:
           cache-key: release-topcoat
@@ -358,6 +387,12 @@ jobs:
       - name: Verify unchanged-fixture exclusion evidence
         if: matrix.shard == 'frameworks'
         run: bun benchmarks/rendering/external/exact/check-admission.mjs
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+        with:
+          key: ${{ steps.rust.outputs.artifact-key }}
+          paths: ${{ steps.rust.outputs.artifact-paths }}
+          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   http:
     name: Canonical page servers and cold start
@@ -382,6 +417,7 @@ jobs:
       - name: Install JavaScript dependencies
         run: bun install --frozen-lockfile
       - name: Set up Rust
+        id: rust
         uses: ./.github/actions/setup-rust
         with:
           cache-key: release-http
@@ -416,6 +452,12 @@ jobs:
             --tolerate-generator-limits --out benchmarks/http/results/smoke.json
       - name: Validate cold starts
         run: bun run bench:cold-start:smoke
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+        with:
+          key: ${{ steps.rust.outputs.artifact-key }}
+          paths: ${{ steps.rust.outputs.artifact-paths }}
+          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   streaming:
     name: Suspense streaming fixtures
@@ -440,9 +482,11 @@ jobs:
       - name: Install JavaScript dependencies
         run: bun install --frozen-lockfile
       - name: Set up Rust
+        id: rust
         uses: ./.github/actions/setup-rust
         with:
           cache-key: release-http
+          artifact-key: release-http-suspense
           proa-token: ${{ secrets.PROA_FRAMEWORK_TOKEN }}
       - name: Start the release build
         run: |
@@ -462,6 +506,12 @@ jobs:
         run: |
           bun run bench:suspense-load:smoke
           bun experiments/sveltekit-streaming/run.mjs --smoke
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+        with:
+          key: ${{ steps.rust.outputs.artifact-key }}
+          paths: ${{ steps.rust.outputs.artifact-paths }}
+          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   # One job per workload: every phase of the smoke is ~10 s (the largest
   # native pages need a full batch), so the complete contract ran ~14 min in
@@ -485,6 +535,7 @@ jobs:
       - name: Bound loopback TIME_WAIT sockets
         uses: ./.github/actions/bound-time-wait
       - name: Set up Rust
+        id: rust
         uses: ./.github/actions/setup-rust
         with:
           cache-key: framework
@@ -508,6 +559,12 @@ jobs:
         env:
           WORKLOAD: ${{ matrix.workload }}
         run: bun benchmarks/framework-ssr/run.ts --no-build --smoke --workers 2 --shard-workload "$WORKLOAD"
+      - name: Save the workspace crates
+        uses: ./.github/actions/save-rust
+        with:
+          key: ${{ steps.rust.outputs.artifact-key }}
+          paths: ${{ steps.rust.outputs.artifact-paths }}
+          hit: ${{ steps.rust.outputs.artifact-hit }}
 
   # Required by the branch ruleset. A suite skipped because the change cannot
   # affect it counts as passing; every suite that ran must have succeeded.

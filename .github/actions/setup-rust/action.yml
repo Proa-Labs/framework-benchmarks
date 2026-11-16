@@ -1,18 +1,35 @@
 name: Set up pinned Rust
-description: Install rust-toolchain.toml, enable Proa access and restore a target-directory cache
+description: >-
+  Install rust-toolchain.toml, enable Proa access, restore compiled
+  dependencies and, when every input is unchanged, the workspace crates
+  themselves. Pair with ./.github/actions/save-rust as the job's last step.
 
 inputs:
   cache-key:
     description: >-
-      Cache family. Jobs that compile the same profile and feature set share a
-      key, so their dependency artifacts are built once and restored everywhere.
+      Dependency cache family. Jobs that compile the same profile and feature
+      set share a key, so their dependencies are built once and restored everywhere.
     required: true
+  artifact-key:
+    description: Workspace-crate artifact family; defaults to cache-key
+    default: ""
   workspaces:
     description: Cargo workspaces and their target directories, as rust-cache expects
     default: ". -> target"
   proa-token:
     description: Optional read-only token for Proa-Labs/proa (fork PRs receive none)
     default: ""
+
+outputs:
+  artifact-key:
+    description: Exact cache key of the workspace crates' artifacts
+    value: ${{ steps.artifacts.outputs.key }}
+  artifact-paths:
+    description: Cache paths of the workspace crates' artifacts
+    value: ${{ steps.artifacts.outputs.paths }}
+  artifact-hit:
+    description: Whether the workspace crates were restored for these exact inputs
+    value: ${{ steps.restore.outputs.cache-hit }}
 
 runs:
   using: composite
@@ -31,18 +48,46 @@ runs:
             "https://github.com/Proa-Labs/proa"
         fi
 
-    # Before the cache step: its key includes the active rustc version.
+    # Before the cache steps: their keys include the active rustc version.
     - name: Install the pinned toolchain
       shell: bash
       run: |
         rustup toolchain install --no-self-update
         rustc --version
 
-    # Dependencies only: workspace crates rebuild from the checked-out sources.
-    # Pull requests restore main's entry; a pull request that changes a key
-    # input (lockfile, toolchain, CI environment) saves its own for later pushes.
+    # Dependencies only. Pull requests restore main's entry; a pull request
+    # that changes a key input (lockfile, toolchain, CI environment) saves its
+    # own for later pushes.
     - name: Restore compiled dependencies
       uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       with:
         shared-key: ${{ inputs.cache-key }}
         workspaces: ${{ inputs.workspaces }}
+
+    - name: Key the workspace crates by their inputs
+      id: artifacts
+      shell: bash
+      env:
+        FAMILY: ${{ inputs.artifact-key || inputs.cache-key }}
+      run: |
+        set -euo pipefail
+        echo "key=rust-local-v1-${RUNNER_OS}-${FAMILY}-$(.github/scripts/rust-artifacts.sh key)" >> "$GITHUB_OUTPUT"
+        {
+          echo 'paths<<EOF'
+          .github/scripts/rust-artifacts.sh paths
+          echo EOF
+        } >> "$GITHUB_OUTPUT"
+
+    # Exact matches only: a partial match would pair artifacts with sources
+    # they were not built from.
+    - name: Restore the workspace crates for identical inputs
+      id: restore
+      uses: actions/cache/restore@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+      with:
+        key: ${{ steps.artifacts.outputs.key }}
+        path: ${{ steps.artifacts.outputs.paths }}
+
+    - name: Date unchanged inputs before their restored artifacts
+      if: steps.restore.outputs.cache-hit == 'true'
+      shell: bash
+      run: .github/scripts/rust-artifacts.sh normalize
