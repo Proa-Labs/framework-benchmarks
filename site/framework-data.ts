@@ -3,6 +3,7 @@ import {
   validateResult,
   workloadDefinitions,
 } from "../benchmarks/framework-ssr/report.ts";
+import { isShowcase } from "../benchmarks/rendering/showcase/admission.mjs";
 import { summarize } from "../tooling/stats.mjs";
 import type { Percentiles } from "./benchmark-types.ts";
 
@@ -25,9 +26,10 @@ export function frameworkRows(
     );
     const closed = phases.filter((p) => p.mode === "closed");
     const open = phases.filter((p) => p.mode === "open");
-    const rate = workloadDefinitions(capture).find(
+    const definition = workloadDefinitions(capture).find(
       (w) => w.id === workload,
-    )?.fixedRateRps;
+    );
+    const rate = definition?.fixedRateRps;
     if (!rate) throw new Error(`Missing Framework SSR workload: ${workload}`);
     const parity = engine.parityByWorkload?.[workload] || engine.parity;
     const seriesSamples = {
@@ -53,7 +55,7 @@ export function frameworkRows(
       },
       equalLoadRps: rate,
       errors: phases.reduce((sum, p) => sum + p.errorCount, 0),
-      detail: `${engine.framework}; ${engine.runtime}; ${parity.responseBytes} response bytes. Production HTTP → complete SSR HTML; ${capture.methodology.concurrency} connections at capacity; equal load ${rate} requests/s.`,
+      detail: `${engine.framework}; ${engine.runtime};${engine.id === "exact" && isShowcase(workload) ? " Adapted named styles and markup; identical business data, with unsupported CSS omitted. Not identical HTML/CSS parity." : ""} ${parity.responseBytes} response bytes. Production HTTP → complete SSR HTML; ${definition?.capacityConcurrency} connections at capacity; equal load ${rate} requests/s.`,
     };
   });
 }

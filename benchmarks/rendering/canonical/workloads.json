@@ -36,7 +36,61 @@
         "from": "All products",
         "to": "All products changed"
       }
+    },
+    {
+      "id": "airbnb-home",
+      "label": "Airbnb landing page",
+      "cardinality": 64,
+      "description": "64 home, experience and service cards from the public showcase, plus navigation, search panels and footer",
+      "warmup": 20,
+      "iterations": 200,
+      "fixture": "showcase-v1"
+    },
+    {
+      "id": "nike-catalog",
+      "label": "Nike catalog",
+      "cardinality": 117,
+      "description": "117 products and 397 color swatches",
+      "warmup": 20,
+      "iterations": 200,
+      "fixture": "showcase-v1"
+    },
+    {
+      "id": "github-pr",
+      "label": "GitHub PR review",
+      "cardinality": 16,
+      "description": "16 files, 603 code rows and 622 diff rows including hunk headers",
+      "warmup": 10,
+      "iterations": 100,
+      "fixture": "showcase-v1"
+    },
+    {
+      "id": "sentry-otel",
+      "label": "Sentry logs",
+      "cardinality": 400,
+      "description": "400 structured log rows and the trace/navigation interface",
+      "warmup": 5,
+      "iterations": 50,
+      "fixture": "showcase-v1"
+    },
+    {
+      "id": "espn",
+      "label": "ESPN game page",
+      "cardinality": 2,
+      "description": "2 teams, 27 plays and 4 player tables",
+      "warmup": 20,
+      "iterations": 200,
+      "fixture": "showcase-v1"
     }
   ],
-  "display_order": ["cards", "products", "table"]
+  "display_order": [
+    "cards",
+    "products",
+    "table",
+    "airbnb-home",
+    "nike-catalog",
+    "github-pr",
+    "sentry-otel",
+    "espn"
+  ]
 }

@@ -66,6 +66,13 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Install native RSS supervisor
+        run: |
+          if [[ ! -x /usr/bin/time ]]; then
+            sudo apt-get update
+            sudo apt-get install -y time
+          fi
+
       - name: Set up Go
         if: matrix.suite == 'rendering'
         uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
@@ -113,6 +120,7 @@ jobs:
         run: |
           set -euo pipefail
           bun install --frozen-lockfile
+          bun tooling/maintenance/prune-results.mjs --check
           bun run test
           bun test benchmarks/rendering/external/sveltekit/stream-validator.test.mjs experiments/sveltekit-streaming/benchmark.test.mjs
           bun experiments/sveltekit-streaming/report.mjs --check

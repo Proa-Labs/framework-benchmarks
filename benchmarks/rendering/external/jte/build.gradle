@@ -22,7 +22,7 @@ dependencies {
 }
 
 jte {
-    sourceDirectory = file('src/main/jte').toPath()
+    sourceDirectory = file('build/showcase/templates').toPath()
     targetDirectory = file("${buildDir}/jte-classes").toPath()
     contentType = gg.jte.ContentType.Html
     binaryStaticContent = true
@@ -38,4 +38,15 @@ tasks.register('copyJteBinaryStaticContent', Copy) {
 
 tasks.named('run') {
     dependsOn tasks.named('copyJteBinaryStaticContent')
+}
+
+// Generate native showcase code before the ordinary template compilation.
+sourceSets.main.java.srcDir 'build/showcase/java'
+tasks.register('generateShowcase', Exec) {
+    workingDir projectDir
+    commandLine new File(projectDir, '../../../../node_modules/.bin/bun').absolutePath,
+        '../../showcase/generate-java.mjs', '--engine', projectDir.name
+}
+tasks.matching { it.name in ['generateJte', 'precompileJte', 'generateMainRockerTemplateSource', 'compileJava'] }.configureEach {
+    dependsOn tasks.named('generateShowcase')
 }

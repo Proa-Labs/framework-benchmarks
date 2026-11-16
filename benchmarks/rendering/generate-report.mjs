@@ -8,9 +8,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
-  assertReadmeCurrent,
+  SCOREBOARD_START, SCOREBOARD_END, COVERAGE_START, COVERAGE_END, DETAILS_START, DETAILS_END,
+  renderScoreboard, renderCoverage, renderReadmeDetails,
   renderDetailedReport,
-  updateReadme,
+
   validateCanonicalResult,
 } from "./canonical/report.mjs";
 
@@ -23,21 +24,13 @@ const productScalingPath = join(
   "results",
   "product-scaling.json",
 );
-// The canonical blocks live in scoreboard.md; the product-scaling and archived
-// blocks live in engineering.md. report.mjs replaces every marker pair in one
-// string, so the two pages are joined for generation and split for writing.
+// Update each current section independently; historical reports live in Git history.
 const scoreboardPath = join(workspaceDirectory, "docs/reports/scoreboard.md");
 const engineeringPath = join(workspaceDirectory, "docs/reports/engineering.md");
 const pageBreak = "\n<!-- generate-report:page-break -->\n";
-const historicalReportPath = join(
-  workspaceDirectory,
-  "docs/archive",
-  "public-report-2026-08-31.md",
-);
 const result = JSON.parse(readFileSync(resultPath, "utf8"));
 const { roster, workloads, sourceDirectory } = capturedRenderingContract(workspaceDirectory, result);
 const productScaling = JSON.parse(readFileSync(productScalingPath, "utf8"));
-const historicalReport = readFileSync(historicalReportPath, "utf8");
 
 const productScalingStart = "<!-- product-scaling:start -->";
 const productScalingEnd = "<!-- product-scaling:end -->";
@@ -161,13 +154,16 @@ const detailed = formatReportLinks(`${
 const currentPages = [scoreboardPath, engineeringPath]
   .map((path) => readFileSync(path, "utf8"))
   .join(pageBreak);
-const canonicalPages = updateReadme(
-  currentPages,
-  result,
-  roster,
-  workloads,
-  historicalReport,
-);
+let canonicalPages = currentPages;
+for (const [start, end, render] of [
+  [SCOREBOARD_START, SCOREBOARD_END, renderScoreboard],
+  [COVERAGE_START, COVERAGE_END, renderCoverage],
+  [DETAILS_START, DETAILS_END, renderReadmeDetails],
+]) {
+  const from = canonicalPages.indexOf(start), to = canonicalPages.indexOf(end);
+  if (from < 0 || to < from) throw new Error(`Missing report markers: ${start}`);
+  canonicalPages = canonicalPages.slice(0, from) + render(result, roster, workloads).trimEnd() + canonicalPages.slice(to + end.length);
+}
 const generatedPages = formatReportLinks(updateProductScaling(canonicalPages, productScaling), scoreboardPath);
 
 if (process.argv.includes("--check")) {
@@ -176,13 +172,6 @@ if (process.argv.includes("--check")) {
       "benchmarks/rendering/results/latest.md is stale; run node benchmarks/rendering/generate-report.mjs",
     );
   }
-  assertReadmeCurrent(
-    currentPages,
-    result,
-    roster,
-    workloads,
-    historicalReport,
-  );
   if (generatedPages !== currentPages) {
     throw new Error(
       "engineering.md product-scaling section is stale; run node benchmarks/rendering/generate-report.mjs",

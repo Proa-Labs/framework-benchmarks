@@ -3,7 +3,7 @@ set -euo pipefail
 sudo sed -i s,http://archive.ubuntu.com,https://archive.ubuntu.com,g /etc/apt/sources.list.d/ubuntu.sources
 sudo sed -i s,http://security.ubuntu.com,https://security.ubuntu.com,g /etc/apt/sources.list.d/ubuntu.sources
 sudo apt-get update -o APT::Update::Error-Mode=any
-sudo apt-get install -y python3-venv libyaml-dev libreadline-dev zlib1g-dev libffi-dev openjdk-17-jdk-headless php-cli php-xml php-mbstring
+sudo apt-get install -y time python3-venv libyaml-dev libreadline-dev zlib1g-dev libffi-dev openjdk-17-jdk-headless php-cli php-xml php-mbstring
 mkdir -p /work/tools/bin
 fetch_checked() {
   curl -fL --retry 3 --connect-timeout 20 "$1" -o "$3"

@@ -14,13 +14,19 @@ import {
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
+import { renderReport } from "../../benchmarks/framework-ssr/report.ts";
+import { aggregateFrameworkShards } from "../capture/framework-shards.mjs";
 import { verifyPublication } from "../checks/publication.mjs";
+import { downloadArtifact } from "./artifacts.mjs";
 import {
   jobManifest,
+  prioritizeSuites,
+  shardedSuiteIds,
   suiteIds,
   validateOptions,
   validateReconnect,
 } from "./plan.mjs";
+import { retryObservation, transientTransportError } from "./transport.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const { values: args } = parseArgs({
@@ -32,6 +38,7 @@ const { values: args } = parseArgs({
     out: { type: "string" },
     context: { type: "string" },
     smoke: { type: "boolean" },
+    "framework-shards": { type: "boolean" },
     plan: { type: "boolean" },
   },
   strict: true,
@@ -54,8 +61,12 @@ const options = {
   ),
   campaignId: previous?.options.campaignId || `publication-${randomUUID()}`,
   smoke: args.smoke || previous?.options.smoke || false,
+  ...(args["framework-shards"] || previous?.options.frameworkShards
+    ? { frameworkShards: true }
+    : {}),
 };
 validateOptions(options);
+const workerSuiteIds = options.frameworkShards ? shardedSuiteIds : suiteIds;
 if (previous)
   assert.deepEqual(
     options,
@@ -109,8 +120,17 @@ async function command(
     });
   });
 }
-const kube = (args, config) =>
-  command("kubectl", [...kubeArgs, "--request-timeout=60s", ...args], config);
+let transportFailure = false;
+const kube = async (args, config) => {
+  const invoke = () =>
+    command("kubectl", [...kubeArgs, "--request-timeout=60s", ...args], config);
+  try {
+    return await (args[0] === "get" ? retryObservation(invoke) : invoke());
+  } catch (error) {
+    transportFailure ||= transientTransportError(error);
+    throw error;
+  }
+};
 const jobs = new Set();
 let stopping = false;
 for (const signal of ["SIGINT", "SIGTERM"])
@@ -288,14 +308,21 @@ async function runSuite(suite) {
     if (result !== "running") exitCode = Number(result);
     else await delay(10000);
   }
-  const logs = await exec(
-    [
-      "bash",
-      "-c",
-      "cd /work; tar -czf - worker.log bootstrap.log cpu-topology.txt cpu-quota.txt 2>/dev/null || true",
-    ],
-    { binary: true },
-  );
+  await exec([
+    "bash",
+    "-c",
+    "cd /work; tar -czf logs.tar.gz worker.log bootstrap.log cpu-topology.txt cpu-quota.txt 2>/dev/null || true",
+  ]);
+  const download = async (path) => {
+    try {
+      return await downloadArtifact(exec, path);
+    } catch (error) {
+      // Retain the completed worker for a verified download on resume.
+      transportFailure = true;
+      throw error;
+    }
+  };
+  const logs = await download("/work/logs.tar.gz");
   await writeFile(
     join(output, `${suite}-attempt-${attempt}-logs.tar.gz`),
     logs,
@@ -318,9 +345,7 @@ async function runSuite(suite) {
       `${suite}: failed (${exitCode}); logs retained at ${output}`,
     );
   }
-  const artifact = await exec(["cat", "/work/results.tar.gz"], {
-    binary: true,
-  });
+  const artifact = await download("/work/results.tar.gz");
   await writeFile(join(output, `${suite}.tar.gz`), artifact);
   state.suites[suite] = {
     ...state.suites[suite],
@@ -336,7 +361,7 @@ async function runSuite(suite) {
 }
 try {
   if (args.plan) {
-    for (const suite of suiteIds)
+    for (const suite of workerSuiteIds)
       console.log(JSON.stringify(jobManifest(options, suite)));
   } else {
     // Concurrency applies to whole suites. Rendering and its scaling diagnostic
@@ -344,7 +369,7 @@ try {
     state.status = "running";
     delete state.error;
     await save();
-    const queue = [...suiteIds];
+    const queue = prioritizeSuites(workerSuiteIds, state.suites);
     const outcomes = await Promise.allSettled(
       Array.from({ length: options.parallel }, async () => {
         while (queue.length && !stopping) await runSuite(queue.shift());
@@ -379,12 +404,25 @@ try {
       await command("git", ["rev-parse", "HEAD"], { cwd: stage }),
       options.revision,
     );
-    for (const suite of suiteIds)
+    for (const suite of workerSuiteIds)
       await command("python3", [
         join(root, "tooling/cloud/extract.py"),
         join(output, `${suite}.tar.gz`),
         stage,
       ]);
+    if (options.frameworkShards) {
+      const framework = aggregateFrameworkShards(stage, {
+        smoke: options.smoke,
+      });
+      await writeFile(
+        join(
+          stage,
+          "benchmarks/framework-ssr/results",
+          options.smoke ? "local/smoke.md" : "latest.md",
+        ),
+        renderReport(framework),
+      );
+    }
     if (options.smoke) {
       state.status = "smoke-complete";
       console.log(
@@ -405,7 +443,12 @@ try {
           options.campaignId,
           "Collected results belong to a different campaign",
         );
-        assert.equal(verified.protocol, "per-suite-host-v1");
+        assert.equal(
+          verified.protocol,
+          options.frameworkShards
+            ? "per-workload-host-v1"
+            : "per-suite-host-v1",
+        );
       } catch (error) {
         if (original) await writeFile(selection, original);
         throw error;
@@ -427,5 +470,7 @@ try {
   await save();
   throw error;
 } finally {
-  await cleanup();
+  // A lost control connection is not a failed measurement. Retain active jobs
+  // for verified reconnection; Kubernetes still enforces their four-hour limit.
+  if (!transportFailure || stopping) await cleanup();
 }

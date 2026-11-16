@@ -1,4 +1,6 @@
 import { execFileSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { workspaceSources } from "../../tooling/capture/workspace-sources.mjs";
 
 // Shared by capture and publication checks, including newly added adapter files.
@@ -14,6 +16,8 @@ export function frameworkSourceFiles(root: string) {
       "--",
       "benchmarks/framework-ssr",
       "tooling/capture/captures.mjs",
+      "tooling/capture/raw.mjs",
+      "tooling/capture/framework-shards.mjs",
       "tooling/capture/verify-source.mjs",
       "tooling/load/driver.mjs",
       "tooling/load/worker.mjs",
@@ -25,6 +29,8 @@ export function frameworkSourceFiles(root: string) {
       "bunfig.toml",
       "turbo.json",
       "benchmarks/rendering/src",
+      "benchmarks/rendering/build.rs",
+      "benchmarks/rendering/showcase",
       "benchmarks/rendering/Cargo.toml",
       "benchmarks/rendering/external/shared/suite_data.mjs",
       "benchmarks/rendering/external/shared/suite_data.d.mts",
@@ -32,7 +38,14 @@ export function frameworkSourceFiles(root: string) {
     { cwd: root, encoding: "utf8" },
   )
     .split("\0")
-    .filter((p) => p && !p.startsWith("benchmarks/framework-ssr/results/"))
+    .filter(
+      (p) =>
+        p &&
+        existsSync(join(root, p)) &&
+        !p.startsWith("benchmarks/framework-ssr/results/") &&
+        !p.endsWith(".md") &&
+        !/\.test\.[cm]?[jt]sx?$/.test(p),
+    )
     .sort();
   return [...new Set([...files, ...workspaceSources(root)])].sort();
 }

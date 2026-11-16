@@ -60,7 +60,9 @@ export async function verifyPreview(url: string, expectedEntryScript?: string) {
       await initial.locator("[data-framework-comparison]").count(),
       0,
     );
-    for (const workload of data.workloads)
+    for (const workload of data.workloads.filter(
+      (w) => !data.rendering.pendingWorkloads?.[w.id],
+    ))
       for (const row of data.rendering.rows[workload.id]) {
         const expected = Number(row.p50).toLocaleString("en-US", {
           maximumFractionDigits: Number(row.p50) < 10 ? 2 : 1,
@@ -68,14 +70,16 @@ export async function verifyPreview(url: string, expectedEntryScript?: string) {
         assert.equal(
           await table
             .locator(
-              `td [data-stat-suite="rendering"][data-focus="${row.id}"][data-stat-workload="${workload.id}"] .fw-comparison-value`,
+              `td [data-stat-suite="rendering"][data-focus="${row.id}"][data-stat-workload="${workload.id}"].fw-comparison-value`,
             )
             .textContent(),
           expected,
           `${row.id}/${workload.id} must be a render-only value in server HTML`,
         );
       }
-    for (const workload of data.framework.workloadDefinitions) {
+    for (const workload of data.framework.workloadDefinitions.filter(
+      (w) => !data.framework.pendingWorkloads?.[w.id],
+    )) {
       await initial.goto(
         new URL(`/?view=framework&framework=p50&workload=${workload.id}`, url)
           .href,
@@ -126,7 +130,9 @@ export async function verifyPreview(url: string, expectedEntryScript?: string) {
     await page.locator("[data-percentile-popup]").waitFor({ state: "visible" });
     await page.getByRole("tab", { name: "Framework SSR", exact: true }).click();
     await page.locator("[data-framework-view]").selectOption("p50");
-    for (const workload of data.framework.workloadDefinitions) {
+    for (const workload of data.framework.workloadDefinitions.filter(
+      (w) => !data.framework.pendingWorkloads?.[w.id],
+    )) {
       await page.locator(`[data-workload="${workload.id}"]`).click();
       for (const row of data.framework.workloads[workload.id]) {
         const cell = page.locator(`.fw-row[data-focus="${row.id}"]`);

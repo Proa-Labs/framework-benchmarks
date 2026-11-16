@@ -25,9 +25,18 @@ import {
   captureId as newCaptureId,
   retainCapture,
 } from "../../../tooling/capture/captures.mjs";
+import {
+  runWithMemory,
+  summarizeMemory,
+  validateProcessMemory,
+} from "../../../tooling/capture/process-memory.mjs";
+import { writeRawJson } from "../../../tooling/capture/raw.mjs";
 import { acquireRunLock, hostMetadata } from "../../../tooling/load/driver.mjs";
 import { repositoryRoot } from "../../../tooling/repository.mjs";
 import { validateAdaptedFixture } from "../external/exact/parity.mjs";
+import { validateShowcaseHtml } from "../showcase/admission.mjs";
+import { loadFixture } from "../showcase/fixture.mjs";
+import { canonicalDigest } from "../showcase/import.mjs";
 import { canonicalDocument, firstDifference } from "./dom.mjs";
 import { refreshProa } from "./refresh-proa.mjs";
 import { validateProaRenderRun } from "./render-contract.mjs";
@@ -208,9 +217,9 @@ const javaEnvironment =
     ? resolveJavaEnvironment()
     : null;
 const railsDirectory = join(externalDirectory, "rails");
-const rustBinary = join(
+const rustBinary = resolve(
   workspaceDirectory,
-  "target",
+  process.env.CARGO_TARGET_DIR ?? "target",
   "release",
   "representative_suite_bench",
 );
@@ -237,11 +246,20 @@ const rockerBinary = join(
 function railsOptions() {
   return {
     cwd: railsDirectory,
-    env: { ...process.env, PATH: `${ruby.rubyDirectory}:${process.env.PATH}` },
+    env: {
+      ...process.env,
+      BUNDLE_FROZEN: "true",
+      PATH: `${ruby.rubyDirectory}:${process.env.PATH}`,
+    },
   };
 }
 
 function buildAll() {
+  const showcaseSelected = workloads.some((w) => w.fixture === "showcase-v1");
+  if (showcaseSelected)
+    run(process.execPath, ["benchmarks/framework-ssr/prepare-fixtures.ts"], {
+      stdio: "inherit",
+    });
   console.log(`Building selected adapters: ${requiredIds.join(", ")}`);
   for (const id of requiredIds) {
     const adapter = adapters[id];
@@ -265,9 +283,59 @@ function buildAll() {
         "topcoat",
         "--bin",
         "representative_suite_bench",
+        ...(showcaseSelected ? ["--bin", "showcase_suite_bench"] : []),
       ],
       { stdio: "inherit" },
     );
+  if (showcaseSelected) {
+    run(
+      process.execPath,
+      [
+        "benchmarks/rendering/showcase/generate-templates.mjs",
+        "--out",
+        "benchmarks/rendering/showcase/.generated",
+      ],
+      { stdio: "inherit" },
+    );
+    if (requiredIds.includes("go-html-template"))
+      run(
+        "go",
+        [
+          "build",
+          "-trimpath",
+          "-o",
+          "benchmarks/rendering/showcase/.generated/go-admission",
+          "benchmarks/rendering/showcase/drivers/go.go",
+        ],
+        { stdio: "inherit" },
+      );
+    for (const [id, directory] of [
+      ["astro", "astro"],
+      ["sveltekit", "sveltekit"],
+      ["nextjs", "next"],
+    ])
+      if (requiredIds.includes(id))
+        run(process.execPath, ["run", "build"], {
+          cwd: join(
+            workspaceDirectory,
+            "benchmarks/framework-ssr/adapters",
+            directory,
+          ),
+          env: {
+            ...process.env,
+            NODE_ENV: "production",
+            NEXT_TELEMETRY_DISABLED: "1",
+            ASTRO_TELEMETRY_DISABLED: "1",
+          },
+          stdio: "inherit",
+        });
+    if (requiredIds.includes("exact"))
+      run(
+        process.execPath,
+        ["benchmarks/rendering/showcase/generate-exact.mjs"],
+        { env: { ...process.env, NODE_ENV: "production" }, stdio: "inherit" },
+      );
+  }
   if (selectedSetups.has("rails")) {
     try {
       run(ruby.bundle, ["check"], { ...railsOptions(), stdio: "ignore" });
@@ -315,12 +383,42 @@ function buildAll() {
 
 function invocation(rendererId, workloadId, extraArguments) {
   const adapter = adapters[rendererId];
+  if (
+    workloadManifest.workloads.find((w) => w.id === workloadId)?.fixture ===
+    "showcase-v1"
+  )
+    return {
+      command: process.execPath,
+      args: [
+        join(renderingDirectory, "showcase/dispatch.mjs"),
+        "--framework",
+        rendererId,
+        "--workload",
+        workloadId,
+        ...extraArguments,
+      ],
+      options: {
+        cwd: workspaceDirectory,
+        env: {
+          ...process.env,
+          ...javaEnvironment,
+          NODE_ENV: "production",
+          ...(adapter.setup === "rails"
+            ? {
+                BUNDLE_FROZEN: "true",
+                PATH: `${ruby.rubyDirectory}:${process.env.PATH}`,
+              }
+            : {}),
+        },
+      },
+    };
   const selected = adapterInvocation(adapter, workspaceDirectory, {
     bun: process.execPath,
     bundle: ruby?.bundle,
   });
   return {
     ...selected,
+    command: adapter.setup === "rust" ? rustBinary : selected.command,
     args: [...selected.args, "--workload", workloadId, ...extraArguments],
     options: {
       cwd: selected.cwd,
@@ -331,16 +429,40 @@ function invocation(rendererId, workloadId, extraArguments) {
           : {}),
         NODE_ENV: "production",
         ...(adapter.setup === "rails"
-          ? { PATH: `${ruby.rubyDirectory}:${process.env.PATH}` }
+          ? {
+              BUNDLE_FROZEN: "true",
+              PATH: `${ruby.rubyDirectory}:${process.env.PATH}`,
+            }
           : {}),
       },
     },
   };
 }
 
-function runCell(rendererId, workloadId, extraArguments) {
+function runCell(
+  rendererId,
+  workloadId,
+  extraArguments,
+  collectMemory = false,
+) {
   const selected = invocation(rendererId, workloadId, extraArguments);
-  return run(selected.command, selected.args, selected.options);
+  // Showcase dispatch records its own native child's RSS. Measuring the outer
+  // Bun dispatcher here would rank launcher memory instead of the renderer.
+  const showcase =
+    workloadManifest.workloads.find((w) => w.id === workloadId)?.fixture ===
+    "showcase-v1";
+  if (!collectMemory || showcase)
+    return run(selected.command, selected.args, selected.options);
+  const result = runWithMemory(
+    selected.command,
+    selected.args,
+    selected.options,
+  );
+  const path = extraArguments[extraArguments.indexOf("--out") + 1];
+  const cell = JSON.parse(readFileSync(path, "utf8"));
+  cell.memory = result.memory;
+  writeFileSync(path, JSON.stringify(cell));
+  return result.stdout;
 }
 
 function sha256(value) {
@@ -357,6 +479,45 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
   const page = await browser.newPage();
   const parity = Object.fromEntries(requiredIds.map((id) => [id, {}]));
   try {
+    if (activeWorkloads.some((w) => w.fixture === "showcase-v1"))
+      for (const rendererId of requiredIds) {
+        const adapter = adapters[rendererId];
+        const probe =
+          rendererId === "exact"
+            ? "exact-probe.mjs"
+            : [
+                  "proa",
+                  "askama",
+                  "sailfish",
+                  "leptos",
+                  "dioxus",
+                  "topcoat",
+                  "rails",
+                  "jinja2",
+                  "php",
+                  "go-html-template",
+                  "jte",
+                  "rocker",
+                ].includes(rendererId)
+              ? "process-probe.mjs"
+              : "native-probe.mjs";
+        const env = {
+          ...process.env,
+          ...javaEnvironment,
+          NODE_ENV: "production",
+          ...(adapter.setup === "rails"
+            ? {
+                BUNDLE_FROZEN: "true",
+                PATH: `${ruby.rubyDirectory}:${process.env.PATH}`,
+              }
+            : {}),
+        };
+        run(
+          process.execPath,
+          [join(renderingDirectory, "showcase", probe), "--engine", rendererId],
+          { env },
+        );
+      }
     for (const workload of activeWorkloads) {
       let expectedHtml;
       let expectedCanonical;
@@ -377,6 +538,61 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
         ]);
         let adaptation;
         const html = readFileSync(dumpPath, "utf8");
+        const showcase = workload.fixture === "showcase-v1";
+        if (showcase) {
+          const fixture = loadFixture(workload.id),
+            request =
+              fixture.data.texts[fixture.definition.controls.requestIndex];
+          const semantic = validateShowcaseHtml(html, workload.id, request, {
+            adapted: rendererId === "exact",
+          });
+          if (rendererId === "exact") {
+            const report = JSON.parse(
+              readFileSync(
+                join(
+                  renderingDirectory,
+                  "showcase/.generated/exact",
+                  workload.id,
+                  "adaptation.json",
+                ),
+                "utf8",
+              ),
+            );
+            copyFileSync(
+              join(
+                renderingDirectory,
+                "showcase/.generated/exact",
+                workload.id,
+                "dist/style.css",
+              ),
+              cssPath,
+            );
+            adaptation = {
+              fixture: "exact-showcase-native-v1",
+              mode: "adapted business content and compiled native styles",
+              semantic_sha256: semantic,
+              adaptation: report,
+            };
+          }
+          parityBytes[rendererId] ??= {};
+          parityBytes[rendererId][workload.id] = Buffer.byteLength(html);
+          parity[rendererId][workload.id] = {
+            status: "pass",
+            mode: "shared showcase DOM/CSS",
+            negative_controls: 4,
+            canonical_sha256:
+              rendererId === "exact" ? sha256(semantic) : canonicalDigest(html),
+            output_bytes: Buffer.byteLength(html),
+            payload_delta_bytes:
+              Buffer.byteLength(html) - Buffer.byteLength(expectedHtml ?? html),
+            byte_equal_to_proa:
+              rendererId === referenceId || html === expectedHtml,
+            ...adaptation,
+          };
+          if (rendererId === referenceId) expectedHtml = html;
+          process.stdout.write(".");
+          continue;
+        }
         const canonical = JSON.stringify(await canonicalDocument(page, html));
         if (rendererId === referenceId) {
           expectedHtml = html;
@@ -421,7 +637,8 @@ async function parityGate(temporaryDirectory, activeWorkloads = workloads) {
           output_bytes: Buffer.byteLength(html),
           payload_delta_bytes:
             Buffer.byteLength(html) - Buffer.byteLength(expectedHtml),
-          byte_equal_to_proa: html === expectedHtml,
+          byte_equal_to_proa:
+            rendererId === referenceId || html === expectedHtml,
           ...adaptation,
         };
         process.stdout.write(".");
@@ -472,15 +689,21 @@ function benchmark(temporaryDirectory, activeWorkloads = workloads) {
           temporaryDirectory,
           `run-${repeat}-${workload.id}-${rendererId}.json`,
         );
-        const output = runCell(rendererId, workload.id, [
-          "--iterations",
-          String(iterations),
-          "--warmup",
-          String(warmup),
-          "--out",
-          resultPath,
-        ]).trim();
+        const output = runCell(
+          rendererId,
+          workload.id,
+          [
+            "--iterations",
+            String(iterations),
+            "--warmup",
+            String(warmup),
+            "--out",
+            resultPath,
+          ],
+          true,
+        ).trim();
         const cell = JSON.parse(readFileSync(resultPath, "utf8"));
+        validateProcessMemory(cell.memory);
         if (rendererId === "proa") validateProaRenderRun(cell);
         if (cell.framework_id !== rendererId || cell.workload !== workload.id) {
           throw new Error(
@@ -559,6 +782,7 @@ function benchmark(temporaryDirectory, activeWorkloads = workloads) {
         warmups_per_process: cells[0].warmup,
         output_bytes: cells[0].output_bytes,
         allocation_policy: cells[0].allocation_policy,
+        memory: summarizeMemory(cells),
       };
     }
   }
@@ -610,9 +834,9 @@ async function captureProductScaling(temporaryDirectory) {
   if (!smoke) {
     const rawDirectory = join(storageDirectory, "raw", captureId);
     mkdirSync(rawDirectory, { recursive: true });
-    writeFileSync(
-      join(rawDirectory, "process-summaries.json"),
-      `${JSON.stringify(processResults, null, 2)}\n`,
+    writeRawJson(
+      join(rawDirectory, "process-summaries.json.gz"),
+      processResults,
     );
   }
   const result = {
@@ -643,7 +867,7 @@ async function captureProductScaling(temporaryDirectory) {
     ],
     ...(smoke
       ? {}
-      : { raw_artifact: `raw/${captureId}/process-summaries.json` }),
+      : { raw_artifact: `raw/${captureId}/process-summaries.json.gz` }),
   };
   if (!smoke && rendererIds.includes("exact")) {
     const path = `raw/${captureId}/products-exact.css`;
@@ -895,8 +1119,22 @@ try {
       process.exit(0);
     }
     for (const path of [
-      ["rust", rustBinary],
-      ["go", goBinary],
+      [
+        "rust",
+        workloads.every((w) => w.fixture === "showcase-v1")
+          ? resolve(
+              workspaceDirectory,
+              process.env.CARGO_TARGET_DIR ?? "target",
+              "release/showcase_suite_bench",
+            )
+          : rustBinary,
+      ],
+      [
+        "go",
+        workloads.every((w) => w.fixture === "showcase-v1")
+          ? join(renderingDirectory, "showcase/.generated/go-admission")
+          : goBinary,
+      ],
       ["jte", jteBinary],
       ["rocker", rockerBinary],
     ]
@@ -994,7 +1232,7 @@ try {
           limitations: [
             "Renderer-only latency excludes routing, middleware, databases, HTTP transfer, hydration, and network latency.",
             "Semantic DOM parity permits documented serializer metadata and whitespace differences; payload deltas remain visible.",
-            "This capture describes one machine and these three workloads; it is not a universal application ranking.",
+            "This capture describes one machine and these eight workloads; it is not a universal application ranking.",
             ...(rendererIds.includes("exact")
               ? [
                   "Exact uses the disclosed exact-native-v1 adaptation: named native styles, generated classes, text/list wrappers and separated table borders. Content, attributes, formatting and representative computed CSS are checked separately; strict DOM parity is not claimed. Fresh per-render VM/runtime initialization, prepared-input binding, DOM construction and HTML serialization are inside timing; source compilation and input-data construction are outside.",
@@ -1004,7 +1242,7 @@ try {
           raw_artifacts: [
             {
               label: "Per-process summaries",
-              path: `raw/${captureId}/process-summaries.json`,
+              path: `raw/${captureId}/process-summaries.json.gz`,
             },
             { label: "Result-table migration map", path: "../MIGRATION.md" },
           ],
@@ -1023,10 +1261,9 @@ try {
               path: `raw/${captureId}/${filename}`,
             });
           }
-        writeFileSync(
-          join(rawDirectory, "process-summaries.json"),
-          `${JSON.stringify(benchmarkResult.processResults, null, 2)}\n`,
-          { flag: "wx" },
+        writeRawJson(
+          join(rawDirectory, "process-summaries.json.gz"),
+          benchmarkResult.processResults,
         );
         if (!smoke && !engineering) {
           const checks = ["exact"].flatMap((id) => {
@@ -1052,6 +1289,17 @@ try {
           }
         }
         if (smoke || engineering || explicitOutput) {
+          // Validate publication metadata even when sampling is diagnostic.
+          if (rendererIds.includes("proa"))
+            validateCanonicalResult(
+              { ...result, capture_kind: "historical_partial" },
+              {
+                renderers: roster.renderers.filter((row) =>
+                  rendererIds.includes(row.id),
+                ),
+              },
+              { workloads },
+            );
           retainCapture(
             workspaceDirectory,
             storageDirectory,

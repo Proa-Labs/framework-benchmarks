@@ -1,10 +1,26 @@
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
+import { isShowcase } from "../benchmarks/rendering/showcase/admission.mjs";
+import {
+  loadFixture,
+  renderReference,
+} from "../benchmarks/rendering/showcase/fixture.mjs";
+import { readRaw } from "../tooling/capture/raw.mjs";
+import showcaseAssets from "./data/performance/showcase/assets.json";
+import rasterManifest from "./data/performance/thumbnails/manifest.json";
+import { copyGenerated } from "./generated-files.ts";
 import { required } from "./required.ts";
 // Render the existing canonical adapter; preview styling stays outside timing.
 
-import { mkdir, readFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { join } from "node:path";
-import { type DefaultTreeAdapterMap, parse, serialize } from "parse5";
+import {
+  type DefaultTreeAdapterMap,
+  parse,
+  parseFragment,
+  serialize,
+} from "parse5";
 import type { ComponentType } from "react";
 import type { Capture } from "../benchmarks/framework-ssr/report.ts";
 import { writeGenerated as writeFile } from "./generated-files.ts";
@@ -54,45 +70,183 @@ export function thumbnailHtml(html: string) {
   trim(document);
   return serialize(document);
 }
-// An SVG image is inert: browsers cannot run scripts or inject frame tools into
-// its XHTML illustration. Serialize parsed nodes as XML, including SVG namespaces.
-export function thumbnailSvg(html: string) {
-  const document = parse(thumbnailHtml(html));
-  const escapeXml = (value: string) =>
-    value
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;");
-  function xml(
-    node: DefaultTreeAdapterMap["node"],
-    namespace = "http://www.w3.org/2000/svg",
-  ): string {
-    if ("tagName" in node) {
-      if (node.tagName === "script") return "";
-      const attributes = node.attrs
-        .filter(({ name }) => name !== "xmlns")
-        .map(
-          ({ name, value, prefix }) =>
-            ` ${prefix ? `${prefix}:` : ""}${name}="${escapeXml(value)}"`,
-        )
-        .join("");
-      const declaration =
-        node.namespaceURI !== namespace ? ` xmlns="${node.namespaceURI}"` : "";
-      return `<${node.tagName}${declaration}${attributes}>${node.childNodes.map((child) => xml(child, node.namespaceURI)).join("")}</${node.tagName}>`;
-    }
-    if ("value" in node) return escapeXml(node.value);
-    if ("childNodes" in node)
-      return node.childNodes.map((child) => xml(child, namespace)).join("");
-    return "";
+// Bind raster illustrations to their source HTML, excluding request attributes
+// and framework scripts that do not change the workload's appearance.
+export function thumbnailSourceHash(html: string) {
+  const doc = parse(thumbnailHtml(html));
+  function strip(node: DefaultTreeAdapterMap["node"]) {
+    if (!("childNodes" in node)) return;
+    node.childNodes = node.childNodes.filter(
+      (child) => !("tagName" in child) || child.tagName !== "script",
+    );
+    if ("attrs" in node)
+      node.attrs = node.attrs.filter(
+        (attr) => attr.name !== "data-bench-request",
+      );
+    for (const child of node.childNodes) strip(child);
   }
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="640" viewBox="0 0 800 640"><foreignObject width="800" height="640">${xml(document)}</foreignObject></svg>`;
+  strip(doc);
+  return createHash("sha256").update(serialize(doc)).digest("hex");
+}
+
+export function showcasePreview(html: string) {
+  const css = readFileSync(
+    new URL("./data/performance/showcase/proa.css", import.meta.url),
+    "utf8",
+  );
+  if (
+    createHash("sha256").update(css).digest("hex") !==
+    showcaseAssets.utilityStylesheet.sha256
+  )
+    throw new Error("Upstream showcase stylesheet snapshot changed");
+  // Replace only a stylesheet the original page actually requests, in place:
+  // its order relative to the page's own rules is part of the cascade.
+  const document = parse(html);
+  const asset = (value: string) => {
+    if (!value.startsWith("/images/")) return value;
+    // Nike's source filenames include literal percent signs. Preserve valid
+    // escapes while encoding stray % characters that the asset server rejects.
+    return `https://proa.so${value.replace(/%(?![\da-f]{2})/gi, "%25")}`;
+  };
+  const cssAssets = (value: string) =>
+    value.replace(
+      /url\((\s*["']?)(\/images\/[^)"']+)/g,
+      (_, quote, path) => `url(${quote}${asset(path)}`,
+    );
+  function visit(node: DefaultTreeAdapterMap["node"]) {
+    if (!("childNodes" in node)) return;
+    if ("attrs" in node) {
+      const attr = (name: string) => node.attrs.find((a) => a.name === name);
+      if (
+        node.tagName === "link" &&
+        attr("rel")?.value === "stylesheet" &&
+        attr("href")?.value === "/proa.css"
+      ) {
+        node.tagName = node.nodeName = "style";
+        node.attrs = [{ name: "data-preview-utility", value: "" }];
+        node.childNodes = [{ nodeName: "#text", value: css, parentNode: node }];
+      }
+      for (const a of node.attrs) {
+        if (["src", "href", "poster"].includes(a.name))
+          a.value = asset(a.value);
+        if (a.name === "srcset")
+          a.value = a.value.replace(
+            /(^|,\s*)(\/images\/\S+)/g,
+            (_, separator, path) => `${separator}${asset(path)}`,
+          );
+        if (a.name === "style") a.value = cssAssets(a.value);
+      }
+      if (node.tagName === "style")
+        for (const child of node.childNodes)
+          if ("value" in child) child.value = cssAssets(child.value);
+    }
+    for (const child of node.childNodes) visit(child);
+  }
+  visit(document);
+  return serialize(document);
+}
+
+// These are inert workload illustrations, not running showcase applications.
+// Annotate the emitted preview only; admission, timing and thumbnail bindings
+// continue to use the unchanged measured document supplied to writePreview.
+export function staticPreviewState(filename: string, html: string) {
+  if (!/^(?:framework-)?sentry-otel\.html$/.test(filename)) return html;
+  const document = parse(html);
+  let rows = 0;
+  let lastBatch = 1;
+  let head: DefaultTreeAdapterMap["element"] | undefined;
+  const footers: DefaultTreeAdapterMap["element"][] = [];
+  const batchControls: DefaultTreeAdapterMap["element"][] = [];
+  const counters: DefaultTreeAdapterMap["element"][] = [];
+  function visit(node: DefaultTreeAdapterMap["node"]) {
+    if (!("childNodes" in node)) return;
+    if ("tagName" in node) {
+      const classes =
+        node.attrs.find((a) => a.name === "class")?.value.split(/\s+/) ?? [];
+      if (classes.includes("log-row")) rows++;
+      if (node.tagName === "head") head = node;
+      for (const attr of node.attrs) {
+        if (attr.name === "data-batch")
+          lastBatch = Math.max(lastBatch, Number(attr.value));
+        if (attr.name === "data-visible-batches") batchControls.push(node);
+      }
+      if (classes.includes("trace-stats")) {
+        for (const group of node.childNodes) {
+          if (!("childNodes" in group)) continue;
+          const label = group.childNodes.find(
+            (child) => "tagName" in child && child.tagName === "dt",
+          );
+          if (
+            label &&
+            "childNodes" in label &&
+            label.childNodes.some(
+              (child) => "value" in child && child.value === "Logs",
+            )
+          ) {
+            const count = group.childNodes.find(
+              (child) => "tagName" in child && child.tagName === "dd",
+            );
+            if (count && "tagName" in count) counters.push(count);
+          }
+        }
+      }
+      if (classes.includes("loading-more")) footers.push(node);
+      if (classes.includes("auto-refresh")) {
+        node.attrs = node.attrs.filter(
+          (a) => !["disabled", "aria-pressed", "title"].includes(a.name),
+        );
+        node.attrs.push(
+          { name: "disabled", value: "" },
+          { name: "aria-pressed", value: "false" },
+          {
+            name: "title",
+            value:
+              "Live updates are disabled in this static benchmark preview.",
+          },
+        );
+      }
+    }
+    for (const child of node.childNodes) visit(child);
+  }
+  visit(document);
+  for (const control of batchControls) {
+    const attr = control.attrs.find(
+      (attr) => attr.name === "data-visible-batches",
+    );
+    if (attr) attr.value = String(lastBatch);
+  }
+  for (const counter of counters)
+    counter.childNodes = [
+      { nodeName: "#text", value: String(rows), parentNode: counter },
+    ];
+  const style = parseFragment(
+    `<style data-preview-sentry>${readFileSync(new URL("./src/sentry-preview.css", import.meta.url), "utf8")}</style>`,
+  ).childNodes[0];
+  if (!head || !style || !("parentNode" in style))
+    throw new Error(
+      "Sentry preview document is missing its stylesheet container",
+    );
+  style.parentNode = head;
+  head.childNodes.push(style);
+  for (const footer of footers) {
+    footer.attrs.push({ name: "role", value: "note" });
+    footer.childNodes = [
+      {
+        nodeName: "#text",
+        value: `Static preview · all ${rows.toLocaleString("en-US")} log entries are shown.`,
+        parentNode: footer,
+      },
+    ];
+  }
+  return serialize(document);
 }
 export async function buildPreviews(
   directory: string,
   frameworkCapture: Capture,
   workloads: { id: string }[],
+  { raster = true } = {},
 ) {
+  const sourceHashes: Record<string, string> = {};
   let React: typeof import("react"),
     renderToString: typeof import("react-dom/server").renderToString,
     ROOTS: Record<string, ComponentType>;
@@ -111,11 +265,39 @@ export async function buildPreviews(
   await mkdir(join(directory, "previews"), { recursive: true });
   await mkdir(join(directory, "thumbnails"), { recursive: true });
   async function writePreview(filename: string, html: string) {
-    await writeFile(join(directory, "previews", filename), html);
+    sourceHashes[filename] = thumbnailSourceHash(html);
     await writeFile(
-      join(directory, "thumbnails", filename.replace(/\.html$/, ".svg")),
-      thumbnailSvg(html),
+      join(directory, "previews", filename),
+      staticPreviewState(filename, html),
     );
+    if (raster) {
+      const snapshots = rasterManifest.thumbnails as Record<
+        string,
+        { sourceSha256: string; file: string }
+      >;
+      const snapshot = snapshots[filename];
+      if (!snapshot || snapshot.sourceSha256 !== sourceHashes[filename])
+        throw new Error(
+          `Thumbnail source changed for ${filename}; run bun site/generate-thumbnails.ts`,
+        );
+      if (!/^[a-z0-9-]+\.webp$/.test(snapshot.file))
+        throw new Error("Invalid thumbnail path");
+      const source = new URL(
+        `./data/performance/thumbnails/${snapshot.file}`,
+        import.meta.url,
+      );
+      // A damaged/missing source asset must fail the build, not become a blank icon.
+      const image = readFileSync(source);
+      if (
+        image.subarray(0, 4).toString() !== "RIFF" ||
+        image.subarray(8, 12).toString() !== "WEBP"
+      )
+        throw new Error("Invalid WebP thumbnail");
+      await copyGenerated(
+        source.pathname,
+        join(directory, "thumbnails", filename.replace(/\.html$/, ".webp")),
+      );
+    }
   }
   if (frameworkCapture) {
     const { validateSemanticHtml } = await import(
@@ -133,21 +315,40 @@ export async function buildPreviews(
         frameworkCapture.schemaVersion === 2
           ? `proa-${id}-parity.html`
           : "proa-parity.html";
-      const body = await readFile(
-        new URL(
-          `../benchmarks/framework-ssr/results/raw/${frameworkCapture.captureId}/${filename}`,
-          import.meta.url,
-        ),
-        "utf8",
+      const rawPath = new URL(
+        `../benchmarks/framework-ssr/results/raw/${frameworkCapture.captureId}/${filename}`,
+        import.meta.url,
       );
-      const expected = (proa.parityByWorkload?.[id] || proa.parity)
-        .semanticSha256;
+      let body = readRaw(
+        existsSync(rawPath) ? rawPath.pathname : `${rawPath.pathname}.gz`,
+      ).toString("utf8");
+      const parity = proa.parityByWorkload?.[id] || proa.parity;
+      const expected = parity.semanticSha256;
+      if (isShowcase(id)) {
+        const { definition, data } = loadFixture(id);
+        const { canonicalDigest } = await import(
+          "../benchmarks/rendering/showcase/import.mjs"
+        );
+        data.texts[definition.controls.requestIndex] = "fresh-b";
+        const reference = renderReference(definition, data);
+        if (canonicalDigest(body) !== canonicalDigest(reference)) {
+          // A corrected fixture must not inherit the old page's latency. The
+          // dashboard detects this same mismatch and withholds stale rankings.
+          if (
+            createHash("sha256").update(body).digest("hex") !==
+            ("responseSha256" in parity ? parity.responseSha256 : undefined)
+          )
+            throw new Error(`Framework ${id} retained preview was modified`);
+          body = reference;
+          validateSemanticHtml(body, "fresh-b", id);
+        } else if (validateSemanticHtml(body, "fresh-b", id) !== expected)
+          throw new Error(
+            `Framework ${id} preview differs from admitted business content`,
+          );
+      }
       if (
-        validateSemanticHtml(
-          body,
-          "fresh-b",
-          id as "cards" | "products" | "table" | "catalog",
-        ) !== expected
+        !isShowcase(id) &&
+        validateSemanticHtml(body, "fresh-b", id) !== expected
       )
         throw new Error(
           `Framework ${id} preview differs from admitted business content`,
@@ -155,7 +356,9 @@ export async function buildPreviews(
       const frameworkStyle = `${style}main[data-bench-page=cards] section{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}main[data-bench-page=cards] section>h2{grid-column:1/-1}article{background:white;border:1px solid #dce1e8;border-radius:8px;padding:14px}main[data-bench-page=products],main[data-bench-page=catalog]{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}main[data-bench-page]>h1,main[data-bench-page]>[data-bench-request]{grid-column:1/-1}article h2,article h3{font-size:16px}[role=list]{font-size:12px;color:#64748b}@media(max-width:650px){main[data-bench-page=products],main[data-bench-page=catalog],main[data-bench-page=cards] section{grid-template-columns:repeat(2,minmax(0,1fr))}}`;
       await writePreview(
         `framework-${id}.html`,
-        body.replace("<head>", `<head><style>${frameworkStyle}</style>`),
+        isShowcase(id)
+          ? showcasePreview(body)
+          : body.replace("<head>", `<head><style>${frameworkStyle}</style>`),
       );
       if (id === "catalog")
         await writePreview(
@@ -165,6 +368,14 @@ export async function buildPreviews(
     }
   }
   for (const { id } of workloads) {
+    if (isShowcase(id)) {
+      const { definition, data } = loadFixture(id);
+      await writePreview(
+        `${id}.html`,
+        showcasePreview(renderReference(definition, data)),
+      );
+      continue;
+    }
     if (!ROOTS[id])
       throw new Error(
         `Preview fixture missing for ${id}: add it to benchmarks/rendering/external/react/suite_components.mjs`,
@@ -188,4 +399,5 @@ export async function buildPreviews(
       : `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${id} workload</title><style>${style}</style></head><body>${body}</body></html>`;
     await writePreview(`${id}.html`, html);
   }
+  return sourceHashes;
 }

@@ -38,14 +38,17 @@ changing a workload, or selecting new publication captures.
 - [Render-only scoreboard](docs/reports/scoreboard.md)
 - [HTTP, streaming and cold-start report](docs/reports/http-capacity.md)
 - [Engineering controls and scaling](docs/reports/engineering.md)
-- [Historical SvelteKit browser-completion comparison](docs/reports/sveltekit.md)
+- [Native streaming and browser-completion experiment](docs/reports/sveltekit.md)
 - [Figure gallery](docs/figures/README.md)
 - [Paired landing-page experiment](experiments/showcase/README.md#landing-page-paired-comparisons)
 - [Measurement protocols](docs/protocol.md)
 
-Retained `results/archive/` JSON, raw samples and source snapshots stay beside
-their owning benchmark. They are evidence, not hand-edited site inputs. Every
-publication must pass the full campaign, parity and source-integrity checks.
+Keep only the latest capture per suite or independent experiment, with its raw
+samples and measured source snapshot. The matching `results/archive/` JSON is
+its immutable current snapshot. Superseded data is available in Git history.
+After publishing a new capture, run `bun tooling/maintenance/prune-results.mjs --write`
+(or `--check` to check retention). These files are evidence, not hand-edited
+site inputs. Publication must pass campaign, parity and source-integrity checks.
 
 ## Checks
 

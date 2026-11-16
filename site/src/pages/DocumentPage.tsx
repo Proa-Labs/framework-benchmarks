@@ -47,10 +47,10 @@ function About() {
         </a>
       </p>
       <p className="disclosure">
-        <strong>Who runs this:</strong> Andrew Hariri maintains this site and
-        founded <a href="https://github.com/Proa-Labs">Proa Labs</a>.{" "}
-        <a href="https://github.com/Proa-Labs/proa">Proa</a> is included in the
-        benchmarks.
+        <strong>Who runs this:</strong>{" "}
+        <a href="https://github.com/Proa-Labs">Proa Labs</a> maintains this site
+        and develops <a href="https://github.com/Proa-Labs/proa">Proa</a>, which
+        is included in the benchmarks.
       </p>
       <p>
         Project names and logos identify their respective owners. Inclusion does
@@ -83,6 +83,16 @@ function Methodology() {
         process P50s.
       </p>
       {metadata.renderingOutput && <p>{metadata.renderingOutput}</p>}
+      <p>
+        Peak RSS is the most physical memory used by a native renderer process
+        over its lifetime, including startup, prepared data, template
+        initialization, warmup, rendering and output verification. The chart
+        shows the median of the independent process peaks in MiB, with each peak
+        retained in the raw data. The operating system records this separately
+        from the render timer. It is whole-process memory, not bytes allocated
+        per render. Older captures without RSS remain unmeasured. Build tools
+        and benchmark launchers are excluded.
+      </p>
       <h2>Framework SSR</h2>
       <p>
         {metadata.framework.scenario.boundary} This is a separate shared

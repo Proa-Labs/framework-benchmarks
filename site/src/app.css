@@ -215,6 +215,11 @@
   #frameworks-explorer [hidden] {
     @apply hidden!;
   }
+  /* Follow the active tab even when React refreshes the initial snapshot. */
+  #frameworks-explorer:has([data-view="rendering"][aria-selected="true"])
+    [data-coverage-note] {
+    @apply hidden!;
+  }
   #frameworks-explorer button,
   #frameworks-explorer select,
   #frameworks-explorer input {
@@ -1180,8 +1185,9 @@
     @apply [min-height:36px];
   }
   #frameworks-explorer .fw-comparison {
-    @apply [width:100%] [min-width:36rem] border-collapse table-fixed text-sm tabular-nums;
-    --fw-name-column: 25%;
+    @apply [width:100%] border-collapse table-fixed text-sm tabular-nums;
+    --fw-name-column: 11rem;
+    min-width: calc(var(--fw-name-column) + var(--fw-workload-count) * 10rem);
     display: block;
   }
   #frameworks-explorer .fw-comparison thead,
@@ -1199,14 +1205,19 @@
   }
   #frameworks-explorer .fw-comparison tbody tr {
     content-visibility: auto;
-    contain-intrinsic-block-size: auto 45px;
+    contain-intrinsic-block-size: auto 56px;
   }
   #frameworks-explorer .fw-comparison th:first-child {
     @apply text-left;
+    /* Keep names beside their measurements when the wider workload set scrolls. */
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--fw-bg);
   }
   #frameworks-explorer .fw-comparison th,
   #frameworks-explorer .fw-comparison td {
-    @apply [padding:8px_12px] font-normal text-right [vertical-align:middle];
+    @apply [padding:12px_16px] font-normal text-right [vertical-align:middle];
   }
   #frameworks-explorer .fw-comparison th:first-child {
     @apply [padding-left:0];
@@ -1226,6 +1237,13 @@
   #frameworks-explorer .fw-comparison tbody tr:hover {
     @apply [background:var(--fw-hover)];
   }
+  #frameworks-explorer
+    .fw-comparison
+    tbody
+    tr:is(:hover, .fw-comparison-focused)
+    > th:first-child {
+    background: inherit;
+  }
   #frameworks-explorer .fw-comparison-focused {
     @apply [background:var(--fw-selected)];
   }
@@ -1238,19 +1256,22 @@
   #frameworks-explorer .fw-comparison th > button {
     @apply [width:100%];
   }
+  #frameworks-explorer .fw-comparison td > button,
+  #frameworks-explorer .fw-comparison thead button {
+    scroll-margin-inline-start: var(--fw-name-column);
+  }
   #frameworks-explorer .fw-comparison .fw-comparison-cell {
     @apply [padding:0];
   }
   #frameworks-explorer .fw-comparison-cell > button {
-    @apply block [width:100%] [padding:8px_12px] text-right;
+    @apply block [width:100%] [padding:12px_16px] text-right;
   }
   #frameworks-explorer
     .fw-comparison
     tbody
     tr:is(:hover, :focus-within, .fw-comparison-focused)
-    .fw-comparison-track
-    > span {
-    @apply [background:var(--brand)];
+    .fw-comparison-value {
+    --fw-bar-color: var(--brand);
   }
   #frameworks-explorer
     .fw-comparison
@@ -1272,11 +1293,14 @@
   #frameworks-explorer .fw-comparison-value {
     @apply [font:0.875rem_/_1.5_ui-monospace,_monospace];
   }
-  #frameworks-explorer .fw-comparison-track {
-    @apply block [height:3px] [margin-top:5px] [background:var(--fw-track)];
-  }
-  #frameworks-explorer .fw-comparison-track > span {
-    @apply block [height:100%] [background:var(--fw-plot)];
+  #frameworks-explorer .fw-comparison-value::after {
+    content: "";
+    @apply block [height:3px] [margin-top:5px];
+    background: linear-gradient(
+      to right,
+      var(--fw-bar-color, var(--fw-plot)) var(--fw-bar-width),
+      var(--fw-track) var(--fw-bar-width)
+    );
   }
   @media (max-width: 560px) {
     #frameworks-explorer .fw-intro {
@@ -1289,14 +1313,14 @@
       @apply [padding:7px_8px] text-sm text-center;
     }
     #frameworks-explorer .fw-comparison {
-      --fw-name-column: 32%;
+      --fw-name-column: 10rem;
     }
     #frameworks-explorer .fw-comparison th,
     #frameworks-explorer .fw-comparison td {
-      @apply [padding:8px_5px];
+      @apply [padding:12px_12px];
     }
     #frameworks-explorer .fw-comparison-cell > button {
-      @apply [padding:8px_5px];
+      @apply [padding:12px_12px];
     }
     #frameworks-explorer .fw-comparison .fw-renderer {
       @apply text-sm [gap:5px] [overflow-wrap:anywhere];
@@ -1315,9 +1339,6 @@
     }
   }
 
-  #frameworks-explorer[data-compare="true"] .fw-toolbar {
-    @apply hidden;
-  }
   #frameworks-explorer .fw-main-heading {
     @apply [padding:16px_0_10px];
   }
@@ -1342,10 +1363,10 @@
   }
   #frameworks-explorer .fw-comparison th,
   #frameworks-explorer .fw-comparison td {
-    @apply [padding-top:5px] [padding-bottom:5px];
+    @apply [padding-top:12px] [padding-bottom:12px];
   }
   #frameworks-explorer .fw-comparison thead th {
-    @apply [padding-top:7px] [padding-bottom:7px];
+    @apply [padding-top:12px] [padding-bottom:12px];
   }
   #frameworks-explorer .fw-top-actions {
     @apply [gap:4px] text-base [line-height:1.5];
@@ -1400,7 +1421,7 @@
     @apply relative block [width:40px] [height:32px] overflow-hidden shrink-0 [background:#fafbfc] [margin:4px_0_4px_4px] [border-radius:2px] pointer-events-none;
   }
   #frameworks-explorer .fw-workload-thumb img {
-    @apply [width:800px] [height:640px] [max-width:none] [border:0] [transform:scale(0.05)] [transform-origin:top_left] pointer-events-none;
+    @apply block [width:100%] [height:100%] [border:0] object-cover [object-position:top_left] pointer-events-none;
   }
   #frameworks-explorer .fw-fixture-dialog {
     @apply fixed [inset:0] [margin:auto] [width:min(1100px,_calc(100%_-_32px))] [height:min(850px,_calc(100dvh_-_40px))] [padding:16px] [border:1px_solid_var(--fw-border)] [border-radius:9px] text-ink [background:var(--fw-bg)];
@@ -1481,9 +1502,6 @@
   @media (max-width: 560px) {
     #frameworks-explorer .fw-workload-thumb {
       @apply block [width:24px] [height:22px] [margin:3px_0_3px_3px];
-    }
-    #frameworks-explorer .fw-workload-thumb img {
-      @apply [transform:scale(0.03)];
     }
     #frameworks-explorer .fw-workload-choice button {
       @apply [padding:6px_4px] text-sm;
@@ -1579,9 +1597,6 @@
   #frameworks-explorer .fw-workload-thumb {
     @apply [width:32px] [height:28px];
   }
-  #frameworks-explorer .fw-workload-thumb img {
-    @apply [transform:scale(0.04)];
-  }
   #frameworks-explorer .fw-type-filters {
     @apply [margin-top:22px] flex-col items-stretch [gap:6px];
   }
@@ -1656,16 +1671,16 @@
   }
   @media (min-width: 700px) {
     #frameworks-explorer[data-compare="true"] {
-      --fw-comparison-heading-height: 48px;
+      --fw-comparison-heading-height: 5.5rem;
     }
     #frameworks-explorer[data-compare="true"] .fw-sidebar-label {
       @apply flex items-center [min-height:var(--fw-comparison-heading-height)] [margin:0];
     }
     #frameworks-explorer[data-compare="true"] .fw-comparison thead {
-      @apply [height:var(--fw-comparison-heading-height)];
+      @apply [min-height:var(--fw-comparison-heading-height)];
     }
-    #frameworks-explorer[data-compare="true"] .fw-toolbar {
-      @apply hidden;
+    #frameworks-explorer[data-compare="true"] .fw-comparison thead tr {
+      @apply [min-height:var(--fw-comparison-heading-height)];
     }
   }
   @media (max-width: 560px) {
