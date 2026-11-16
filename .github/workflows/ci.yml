@@ -42,13 +42,17 @@ jobs:
       streaming: ${{ steps.select.outputs.streaming }}
       http: ${{ steps.select.outputs.http }}
       framework: ${{ steps.select.outputs.framework }}
+      framework-workloads: ${{ steps.workloads.outputs.framework }}
     steps:
       - name: Checkout suite selection rules
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
-          sparse-checkout: .github/scripts
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/scripts/
+            benchmarks/framework-ssr/contract.json
       - name: Select suites affected by this change
         id: select
         env:
@@ -57,6 +61,9 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPOSITORY: ${{ github.repository }}
         run: .github/scripts/affected-suites.sh
+      - name: List full-framework workloads
+        id: workloads
+        run: echo "framework=$(jq -c '[.workloads[].id]' benchmarks/framework-ssr/contract.json)" >> "$GITHUB_OUTPUT"
 
   quality:
     name: Code and repository quality
@@ -104,6 +111,14 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      # proa_bench's build script generates its showcase fixtures with the
+      # workspace's pinned Bun and its packages.
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
         with:
@@ -131,6 +146,14 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      # proa_bench's build script generates its showcase fixtures with the
+      # workspace's pinned Bun and its packages.
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
         with:
@@ -151,6 +174,14 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      # proa_bench's build script generates its showcase fixtures with the
+      # workspace's pinned Bun and its packages.
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
         with:
@@ -171,6 +202,14 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      # proa_bench's build script generates its showcase fixtures with the
+      # workspace's pinned Bun and its packages.
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
         with:
@@ -180,12 +219,6 @@ jobs:
         run: |
           .github/scripts/background.sh start rust \
             cargo build --release --locked -p proa_bench --bin standard_page_dump
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: "1.4.2"
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
       - name: Install Chromium
         run: bun node_modules/playwright/cli.js install --with-deps chromium
       - name: Finish the release build
@@ -233,6 +266,14 @@ jobs:
               | join(",")' benchmarks/rendering/canonical/roster.json)"
           echo "renderers=$renderers" >> "$GITHUB_OUTPUT"
           echo "Renderers: $renderers"
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      # proa_bench's build script generates its showcase fixtures with the
+      # workspace's pinned Bun and its packages.
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
         with:
@@ -254,12 +295,6 @@ jobs:
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: "8.5"
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: "1.4.2"
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
       - name: Start the Chromium install
         run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
       - name: Set up Node.js
@@ -338,6 +373,14 @@ jobs:
           persist-credentials: false
       - name: Bound loopback TIME_WAIT sockets
         uses: ./.github/actions/bound-time-wait
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      # proa_bench's build script generates its showcase fixtures with the
+      # workspace's pinned Bun and its packages.
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
         with:
@@ -348,12 +391,6 @@ jobs:
           .github/scripts/background.sh start rust \
             cargo build --release --locked -p proa_bench --features http-load,topcoat \
               --bin proa_page_server --bin representative_suite_bench
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: "1.4.2"
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
       - name: Start the Chromium install
         run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
       - name: Set up Node.js
@@ -394,6 +431,14 @@ jobs:
           persist-credentials: false
       - name: Bound loopback TIME_WAIT sockets
         uses: ./.github/actions/bound-time-wait
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: "1.4.2"
+      # proa_bench's build script generates its showcase fixtures with the
+      # workspace's pinned Bun and its packages.
+      - name: Install JavaScript dependencies
+        run: bun install --frozen-lockfile
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
         with:
@@ -403,12 +448,6 @@ jobs:
         run: |
           .github/scripts/background.sh start rust \
             cargo build --release --locked -p proa_bench --features http-load,topcoat --bin proa_suspense_server
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: "1.4.2"
-      - name: Install JavaScript dependencies
-        run: bun install --frozen-lockfile
       - name: Start the Chromium install
         run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
       - name: Set up Node.js
@@ -424,12 +463,19 @@ jobs:
           bun run bench:suspense-load:smoke
           bun experiments/sveltekit-streaming/run.mjs --smoke
 
+  # One job per workload: every phase of the smoke is ~10 s (the largest
+  # native pages need a full batch), so the complete contract ran ~14 min in
+  # sequence. Shards use the runner's own --shard-workload selection.
   framework:
-    name: Full-framework SSR workloads
+    name: Full-framework SSR (${{ matrix.workload }})
     needs: changes
     if: needs.changes.outputs.framework == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        workload: ${{ fromJSON(needs.changes.outputs.framework-workloads) }}
     steps:
       - name: Checkout tested benchmark revision
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
@@ -456,10 +502,12 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Restore the pinned Exact checkout and compiler
         uses: ./.github/actions/exact-cache
-      - name: Build and gate all full-framework SSR workloads
-        run: |
-          bun benchmarks/framework-ssr/build.ts
-          bun benchmarks/framework-ssr/run.ts --no-build --smoke --workers 2
+      - name: Build every full-framework adapter
+        run: bun benchmarks/framework-ssr/build.ts
+      - name: Gate this full-framework SSR workload
+        env:
+          WORKLOAD: ${{ matrix.workload }}
+        run: bun benchmarks/framework-ssr/run.ts --no-build --smoke --workers 2 --shard-workload "$WORKLOAD"
 
   # Required by the branch ruleset. A suite skipped because the change cannot
   # affect it counts as passing; every suite that ran must have succeeded.
