@@ -607,7 +607,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
 
   function heading() {
     if (state.view === "rendering" && state.render === "rss")
-      return "SSR Rendering · peak process RSS";
+      return "SSR Rendering · memory usage";
     if (state.view === "framework")
       return {
         throughput: "Framework SSR capacity",

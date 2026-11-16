@@ -192,7 +192,26 @@ export function PerformancePage({
           role="tabpanel"
           aria-labelledby={`experiment-${state.view}`}
         >
-          <aside className="fw-scenarios" aria-label="Workloads">
+          <aside className="fw-scenarios" aria-label="Benchmark controls">
+            <div
+              className="fw-render-metric"
+              data-render-metric
+              hidden={state.view !== "rendering"}
+            >
+              <label className="fw-sidebar-label" htmlFor="render-metric">
+                Measure
+              </label>
+              <select
+                id="render-metric"
+                data-render-view
+                className="fw-native-select"
+                aria-label="SSR Rendering analysis"
+                defaultValue={state.render}
+              >
+                <option value="p50">Render time</option>
+                <option value="rss">Memory usage</option>
+              </select>
+            </div>
             <h2 className="fw-sidebar-label">Workloads</h2>
             <fieldset
               className="fw-workload-tabs"
@@ -238,7 +257,10 @@ export function PerformancePage({
             >
               {validationNote}
             </p>
-            <div className="fw-toolbar">
+            <div
+              className="fw-toolbar"
+              hidden={state.view === "rendering" && state.chart === "compare"}
+            >
               <fieldset
                 className="fw-view-switch"
                 aria-label="Chart view"
@@ -276,16 +298,6 @@ export function PerformancePage({
                   Table
                 </button>
               </fieldset>
-              <select
-                data-render-view
-                className="fw-native-select"
-                aria-label="SSR Rendering analysis"
-                hidden={state.view !== "rendering"}
-                defaultValue={state.render}
-              >
-                <option value="p50">Render time</option>
-                <option value="rss">Peak RSS</option>
-              </select>
               <select
                 data-framework-view
                 className="fw-native-select"

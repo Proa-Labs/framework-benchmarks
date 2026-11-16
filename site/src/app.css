@@ -1583,7 +1583,16 @@
     @apply [min-width:0];
   }
   #frameworks-explorer .fw-sidebar-label {
-    @apply text-sm [letter-spacing:0.7px] uppercase text-muted [margin-bottom:12px];
+    @apply block text-sm font-normal [letter-spacing:0.7px] uppercase text-muted [margin-bottom:12px];
+  }
+  #frameworks-explorer .fw-render-metric {
+    @apply [border:0] [padding:0] [margin:0_0_24px] [max-width:280px];
+  }
+  #frameworks-explorer .fw-render-metric select {
+    @apply w-full [min-height:40px] [padding:6px_34px_6px_10px] [background-color:var(--fw-surface)] [border:1px_solid_var(--fw-line)] [border-radius:5px] text-sm text-ink;
+  }
+  #frameworks-explorer .fw-render-metric select:focus-visible {
+    @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:3px];
   }
   #frameworks-explorer .fw-workload-tabs {
     @apply flex-col;
@@ -1600,8 +1609,8 @@
   #frameworks-explorer .fw-type-filters {
     @apply [margin-top:22px] flex-col items-stretch [gap:6px];
   }
-  #frameworks-explorer .fw-type-filters > span {
-    @apply [margin-bottom:3px];
+  #frameworks-explorer .fw-type-filters > legend {
+    @apply [margin-bottom:12px];
   }
   #frameworks-explorer .fw-type-filters button {
     @apply text-left;
@@ -1631,11 +1640,11 @@
     #frameworks-explorer .fw-type-filters {
       @apply [margin-top:12px] flex-row items-center;
     }
-    #frameworks-explorer .fw-type-filters > span {
-      @apply [width:auto] [margin:0_3px_0_0];
+    #frameworks-explorer .fw-type-filters > legend {
+      @apply [margin:0_0_12px];
     }
     #frameworks-explorer .fw-sidebar-label {
-      @apply hidden;
+      @apply block;
     }
   }
 
@@ -1673,8 +1682,15 @@
     #frameworks-explorer[data-compare="true"] {
       --fw-comparison-heading-height: 5.5rem;
     }
-    #frameworks-explorer[data-compare="true"] .fw-sidebar-label {
+    #frameworks-explorer[data-compare="true"]
+      .fw-scenarios
+      > .fw-sidebar-label {
       @apply flex items-center [min-height:var(--fw-comparison-heading-height)] [margin:0];
+    }
+    #frameworks-explorer[data-compare="true"]
+      .fw-render-metric:not([hidden])
+      ~ .fw-sidebar-label {
+      @apply [min-height:0] [margin-bottom:12px];
     }
     #frameworks-explorer[data-compare="true"] .fw-comparison thead {
       @apply [min-height:var(--fw-comparison-heading-height)];
@@ -1936,6 +1952,9 @@
   }
   #frameworks-explorer .fw-tool-search input {
     @apply [width:100%] [min-width:0] [padding:0] text-ink [background:transparent] [border:0] [font:inherit] text-sm [outline-offset:5px];
+  }
+  #frameworks-explorer .fw-tool-search input:focus {
+    @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:4px] [border-radius:2px];
   }
   #frameworks-explorer .fw-tool-types {
     @apply flex [gap:12px] [border:0] [margin:0] [padding:12px_8px] text-sm text-muted;
