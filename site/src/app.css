@@ -2023,13 +2023,13 @@
     @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:4px] [border-radius:2px];
   }
   #frameworks-explorer .fw-tool-types {
-    @apply flex [gap:12px] [border:0] [margin:0] [padding:12px_8px] text-sm text-muted;
+    @apply flex flex-wrap [gap:10px_12px] [border:0] [margin:0] [padding:12px_8px] text-sm text-muted;
   }
   #frameworks-explorer .fw-tool-types label {
     @apply flex items-center [gap:5px];
   }
   #frameworks-explorer .fw-tool-types input {
-    @apply [margin:0] [width:12px] [height:12px] [accent-color:var(--fw-fg)];
+    @apply [margin:0] [width:12px] [height:12px] shrink-0 [accent-color:var(--fw-fg)];
   }
   #frameworks-explorer .fw-tool-picker-actions,
   #frameworks-explorer .fw-tool-picker-footer {
