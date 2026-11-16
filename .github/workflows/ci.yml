@@ -242,7 +242,13 @@ jobs:
         run: |
           .github/scripts/background.sh start rust \
             cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench
-      # PHP may install from apt; finish it before the browser's apt step.
+      # These may install from apt; finish them before the browser's apt step.
+      - name: Install native RSS supervisor
+        run: |
+          if [[ ! -x /usr/bin/time ]]; then
+            sudo apt-get update
+            sudo apt-get install -y time
+          fi
       - name: Set up PHP
         if: matrix.shard == 'native'
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
