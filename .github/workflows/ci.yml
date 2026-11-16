@@ -193,18 +193,46 @@ jobs:
       - name: Compare normalized browser DOM
         run: bun benchmarks/rendering/standard_page_parity.mjs
 
+  # The matrix shards by toolchain. Every shard includes Proa, the parity
+  # reference, so each renderer is still compared against the same canonical
+  # DOM; the shard filter assigns every roster entry to exactly one shard.
   canonical:
-    name: Canonical framework matrix
+    name: Canonical framework matrix (${{ matrix.shard }})
     needs: changes
     if: needs.changes.outputs.rendering == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [native, jvm-ruby, javascript, frameworks]
     steps:
       - name: Checkout tested benchmark revision
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Select this shard's renderers
+        id: shard
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: |
+          set -euo pipefail
+          # native: compiled templates and scripting runtimes; jvm-ruby: Rails,
+          # jte and Rocker; javascript: unbuilt Bun adapters; frameworks: every
+          # other adapter, including any newly added setup.
+          renderers="$(jq -r --arg shard "$SHARD" \
+            --slurpfile adapters benchmarks/rendering/canonical/adapters.json '
+              def group:
+                if (.setup | IN("rust", "go", "php", "jinja2")) then "native"
+                elif (.setup | IN("rails", "jte", "rocker")) then "jvm-ruby"
+                elif .setup == "bun" and (has("build") | not) then "javascript"
+                else "frameworks" end;
+              ["proa"] + [.renderers[].id | select(. != "proa")
+                | select($adapters[0][.] | group == $shard)]
+              | join(",")' benchmarks/rendering/canonical/roster.json)"
+          echo "renderers=$renderers" >> "$GITHUB_OUTPUT"
+          echo "Renderers: $renderers"
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
         with:
@@ -216,6 +244,7 @@ jobs:
             cargo build --locked --release -p proa_bench --features topcoat --bin representative_suite_bench
       # PHP may install from apt; finish it before the browser's apt step.
       - name: Set up PHP
+        if: matrix.shard == 'native'
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
           php-version: "8.5"
@@ -228,52 +257,65 @@ jobs:
       - name: Start the Chromium install
         run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
       - name: Set up Node.js
+        if: matrix.shard == 'frameworks'
         uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: "26.13.0"
       - name: Set up Python
+        if: matrix.shard == 'native'
         id: python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.13"
+      - name: Restore the Jinja environment
+        if: matrix.shard == 'native'
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
+        with:
+          path: benchmarks/rendering/external/jinja/.venv
+          key: jinja-venv-${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ hashFiles('benchmarks/rendering/external/jinja/requirements.txt') }}
       - name: Set up Go
+        if: matrix.shard == 'native'
         uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
           go-version: "1.25.5"
           cache: false
       - name: Set up Java
+        if: matrix.shard == 'jvm-ruby'
         uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
           distribution: temurin
           java-version: "17"
       - name: Set up Gradle
+        if: matrix.shard == 'jvm-ruby'
         uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
         with:
           gradle-version: "9.2.0"
       - name: Set up Ruby
+        if: matrix.shard == 'jvm-ruby'
         uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
         with:
           ruby-version: "4.0.6"
           bundler-cache: true
           working-directory: benchmarks/rendering/external/rails
-      - name: Restore the Jinja environment
-        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0
-        with:
-          path: benchmarks/rendering/external/jinja/.venv
-          key: jinja-venv-${{ runner.os }}-${{ steps.python.outputs.python-version }}-${{ hashFiles('benchmarks/rendering/external/jinja/requirements.txt') }}
       - name: Restore the pinned Exact checkout and compiler
+        if: matrix.shard == 'frameworks'
         uses: ./.github/actions/exact-cache
       - name: Finish the release build
         run: .github/scripts/background.sh wait rust
-      - name: Build every adapter
-        run: ./benchmarks/rendering/run-all --setup-only
+      - name: Build this shard's adapters
+        env:
+          RENDERERS: ${{ steps.shard.outputs.renderers }}
+        run: ./benchmarks/rendering/run-all --setup-only --renderers "$RENDERERS"
       - name: Finish the Chromium install
         run: .github/scripts/background.sh wait chromium
       - name: Validate canonical framework matrix
+        env:
+          RENDERERS: ${{ steps.shard.outputs.renderers }}
         run: |
-          ./benchmarks/rendering/run-all --smoke --no-setup
-          ./benchmarks/rendering/run-all --product-scaling --smoke --no-setup
+          ./benchmarks/rendering/run-all --smoke --no-setup --renderers "$RENDERERS"
+          ./benchmarks/rendering/run-all --product-scaling --smoke --no-setup --renderers "$RENDERERS"
       - name: Verify unchanged-fixture exclusion evidence
+        if: matrix.shard == 'frameworks'
         run: bun benchmarks/rendering/external/exact/check-admission.mjs
 
   http:
@@ -288,6 +330,8 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Bound loopback TIME_WAIT sockets
+        uses: ./.github/actions/bound-time-wait
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
         with:
@@ -342,6 +386,8 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Bound loopback TIME_WAIT sockets
+        uses: ./.github/actions/bound-time-wait
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
         with:
@@ -384,6 +430,8 @@ jobs:
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
+      - name: Bound loopback TIME_WAIT sockets
+        uses: ./.github/actions/bound-time-wait
       - name: Set up Rust
         uses: ./.github/actions/setup-rust
         with:

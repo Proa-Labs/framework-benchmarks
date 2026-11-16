@@ -66,21 +66,17 @@ jobs:
       - name: Verify contributor benchmark path
         run: bun run bench run rendering --renderers react,vue --workloads cards
 
-  # Each page audits on its own VM: the same mobile and desktop presets, runs
-  # and median-100 gate as one sequential audit, without the queue.
+  # Each page and device audits on its own VM: the same presets, runs and
+  # median-100 gate as one sequential audit, without waiting in its queue.
   lighthouse:
-    name: Lighthouse ${{ matrix.page }}
+    name: Lighthouse ${{ matrix.device }} ${{ matrix.page }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - { page: "/", slug: home }
-          - { page: "/features", slug: features }
-          - { page: "/?section=ecosystem", slug: ecosystem }
-          - { page: "/about", slug: about }
-          - { page: "/methodology", slug: methodology }
+        device: [mobile, desktop]
+        page: ["/", "/features", "/?section=ecosystem", "/about", "/methodology"]
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -97,15 +93,25 @@ jobs:
           node-version: "26.13.0"
       - name: Finish the Chromium install
         run: .github/scripts/background.sh wait chromium
-      - name: Audit mobile and desktop Lighthouse scores
+      - name: Audit Lighthouse scores
         env:
+          DEVICE: ${{ matrix.device }}
           PAGE: ${{ matrix.page }}
-        run: bun site/test/lighthouse.ts --runs 3 --save-assets --pages "$PAGE"
+        run: bun site/test/lighthouse.ts --runs 3 --save-assets --device "$DEVICE" --pages "$PAGE"
+      - name: Name the report artifact
+        if: always()
+        id: report
+        env:
+          DEVICE: ${{ matrix.device }}
+          PAGE: ${{ matrix.page }}
+        run: |
+          slug="$(tr -c 'a-z0-9\n' '-' <<< "${PAGE#/}" | sed 's/^-*$/home/')"
+          echo "name=lighthouse-reports-$DEVICE-$slug" >> "$GITHUB_OUTPUT"
       - name: Retain Lighthouse reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: lighthouse-reports-${{ matrix.slug }}
+          name: ${{ steps.report.outputs.name }}
           path: site/test-results/lighthouse/
           if-no-files-found: ignore
           retention-days: 14
@@ -133,10 +139,6 @@ jobs:
       - name: Start the Chromium install
         if: github.event_name == 'pull_request'
         run: .github/scripts/background.sh start chromium bun node_modules/playwright/cli.js install --with-deps chromium
-      - name: Set up Cloudflare local tooling host
-        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
-        with:
-          node-version: "26.13.0"
       - name: Build the validated revision
         run: bun site/build.ts
       - name: Finish the Chromium install
