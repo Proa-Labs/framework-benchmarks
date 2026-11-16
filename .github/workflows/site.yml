@@ -104,17 +104,19 @@ jobs:
       - name: Verify contributor benchmark path
         run: bun run bench run rendering --renderers react,vue --workloads cards
 
-  # Each page and device audits on its own VM, in parallel, with the same
-  # presets, runs and median-100 gate as the former sequential audit.
+  # Two Lighthouse batches per device run in parallel with the same presets,
+  # runs and median-100 gate. Pages keep their order within a batch: an
+  # audit's scores depend on whether its Chrome is fresh, and the first batch
+  # keeps /features (the heaviest page) after the homepage, as it always ran.
   lighthouse:
-    name: Lighthouse ${{ matrix.device }} ${{ matrix.page }}
+    name: Lighthouse ${{ matrix.device }} ${{ matrix.pages }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         device: [mobile, desktop]
-        page: ["/", "/features", "/?section=ecosystem", "/about", "/methodology"]
+        pages: ["/,/features", "/?section=ecosystem,/about,/methodology"]
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -140,16 +142,16 @@ jobs:
       - name: Audit Lighthouse scores
         env:
           DEVICE: ${{ matrix.device }}
-          PAGE: ${{ matrix.page }}
-        run: bun site/test/lighthouse.ts --runs 3 --save-assets --device "$DEVICE" --pages "$PAGE"
+          PAGES: ${{ matrix.pages }}
+        run: bun site/test/lighthouse.ts --runs 3 --save-assets --device "$DEVICE" --pages "$PAGES"
       - name: Name the report artifact
         if: always()
         id: report
         env:
           DEVICE: ${{ matrix.device }}
-          PAGE: ${{ matrix.page }}
+          PAGES: ${{ matrix.pages }}
         run: |
-          slug="$(tr -c 'a-z0-9\n' '-' <<< "${PAGE#/}" | sed 's/^-*$/home/')"
+          slug="$(sed -E -e 's#^/,#home,#' -e 's#[^a-z0-9]+#-#g' -e 's#^-|-$##g' <<< "$PAGES")"
           echo "name=lighthouse-reports-$DEVICE-$slug" >> "$GITHUB_OUTPUT"
       - name: Retain Lighthouse reports
         if: always()
