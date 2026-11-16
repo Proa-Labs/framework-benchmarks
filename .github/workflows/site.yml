@@ -104,8 +104,8 @@ jobs:
       - name: Verify contributor benchmark path
         run: bun run bench run rendering --renderers react,vue --workloads cards
 
-  # Each page and device audits on its own VM: the same presets, runs and
-  # median-100 gate as one sequential audit, without waiting in its queue.
+  # Each page and device audits on its own VM, in parallel, with the same
+  # presets, runs and median-100 gate as the former sequential audit.
   lighthouse:
     name: Lighthouse ${{ matrix.device }} ${{ matrix.page }}
     runs-on: ubuntu-latest
