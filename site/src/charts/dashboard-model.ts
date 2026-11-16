@@ -76,6 +76,12 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     framework = state.view === "framework" && state.section === "performance",
   ) =>
     `<span class="fw-renderer">${logo(id)}<span>${renderer(id)?.renderingAdaptation && state.view === "rendering" && state.section === "performance" ? `<span class="fw-fixture-adapted">${esc(name(id))}</span><sup>†</sup>` : esc(name(id))}${id === "exact" && ((framework && frameworkUsesJsSsr()) || (state.view === "rendering" && state.section === "performance" && renderer(id)?.renderingAdaptation)) ? " (JS SSR)" : ""}</span></span>`;
+  const repositoryLink = (id: string) => {
+    const repository = renderer(id)?.repository;
+    return repository
+      ? `<a class="fw-repo-link" href="${esc(repository)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(name(id))} GitHub repository (opens in a new tab)" title="${esc(name(id))} on GitHub"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6M21 3l-9 9"/><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5"/></svg></a>`
+      : "";
+  };
   const defaults: DashboardState = {
     section: "performance",
     view: "rendering",
@@ -647,6 +653,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     name,
     logo,
     label,
+    repositoryLink,
     isVisible,
     frameworkWorkloads,
     frameworkUsesJsSsr,

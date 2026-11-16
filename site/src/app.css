@@ -1011,6 +1011,15 @@
   .document h2 {
     @apply [margin-top:37px] text-ink [font-size:20px] font-medium;
   }
+  .document :is(p, li) a {
+    @apply underline underline-offset-4 [text-decoration-color:var(--fw-border)];
+  }
+  .document :is(p, li) a:hover {
+    @apply text-ink [text-decoration-color:currentColor];
+  }
+  .document :is(p, li) a:focus-visible {
+    @apply [outline:2px_solid_var(--fw-muted)] [outline-offset:3px];
+  }
   .document ul {
     @apply [padding-left:21px];
   }
@@ -1561,6 +1570,57 @@
   @media (max-width: 650px) {
     #frameworks-explorer .fw-row {
       @apply [grid-template-columns:108px_minmax(0,_1fr)_78px];
+    }
+  }
+
+  /* Keep repository links as siblings of result buttons, with their own hit area. */
+  #frameworks-explorer .fw-result-row {
+    --fw-result-name-width: 148px;
+    display: grid;
+    grid-template-columns: var(--fw-result-name-width) minmax(0, 1fr);
+    align-items: center;
+  }
+  #frameworks-explorer .fw-result-row > .fw-row {
+    grid-area: 1 / 1 / 2 / -1;
+  }
+  #frameworks-explorer .fw-result-row > .fw-row > .fw-renderer {
+    padding-right: 26px;
+  }
+  #frameworks-explorer .fw-result-row > .fw-repo-link {
+    grid-area: 1 / 1;
+    justify-self: end;
+    z-index: 1;
+  }
+  #frameworks-explorer .fw-repo-link {
+    @apply inline-flex shrink-0 items-center justify-center text-muted rounded-sm;
+    width: 24px;
+    height: 28px;
+  }
+  #frameworks-explorer .fw-repo-link:hover {
+    @apply text-ink [background:var(--fw-hover)];
+  }
+  #frameworks-explorer .fw-repo-link:focus-visible {
+    outline: 2px solid var(--fw-muted);
+    outline-offset: 2px;
+  }
+  #frameworks-explorer .fw-result-identity,
+  #frameworks-explorer .fw-legend-item {
+    @apply inline-flex items-center gap-1;
+  }
+  #frameworks-explorer .fw-result-identity > button {
+    min-width: 0;
+    width: auto;
+  }
+  @media (max-width: 650px) {
+    #frameworks-explorer .fw-result-row {
+      --fw-result-name-width: 108px;
+    }
+    #frameworks-explorer .fw-result-flow {
+      grid-template-columns: minmax(0, 1fr) 106px;
+    }
+    #frameworks-explorer .fw-result-flow > .fw-repo-link {
+      align-self: start;
+      margin-top: 8px;
     }
   }
 

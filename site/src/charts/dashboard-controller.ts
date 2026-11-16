@@ -75,6 +75,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     name,
     logo,
     label,
+    repositoryLink,
     isVisible,
     frameworkWorkloads,
     suites,
@@ -704,7 +705,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
             `<section class="fw-stream-panel" aria-label="Completion ${p}"><h3>Completion latency · ${p}</h3><div data-completion-panel="${p}"></div></section>`,
         )
         .join("") +
-      `<div class="fw-legend">${rows.map((r) => `<button type="button" data-focus="${r.id}" aria-pressed="${state.focus === r.id}">${lineKey(r.id)}${logo(r.id)}${esc(name(r.id))}</button>`).join("")}</div>`;
+      `<div class="fw-legend">${rows.map((r) => `<span class="fw-legend-item"><button type="button" data-focus="${r.id}" aria-pressed="${state.focus === r.id}">${lineKey(r.id)}${logo(r.id)}${esc(name(r.id))}</button>${repositoryLink(r.id)}</span>`).join("")}</div>`;
     for (const p of ["P50", "P99"] as const)
       drawLines(rows, {
         target: $(`[data-completion-panel="${p}"]`),
