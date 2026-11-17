@@ -259,11 +259,15 @@ test("coverage links follow recorded suites without substituting renderer timing
   const model = createDashboardModel(data);
   for (const id of ["astro", "exact", "nextjs"])
     assert.deepEqual(model.measurementLinks(id), [
-      { label: "Framework SSR", href: "?view=framework" },
+      { label: "HTTP E2E · Framework routes", href: "?view=framework" },
     ]);
   assert.deepEqual(
     model.measurementLinks("sveltekit").map((link) => link.label),
-    ["Framework SSR", "HTTP", "Cold Start"],
+    [
+      "HTTP E2E · Framework routes",
+      "HTTP E2E · Renderer servers",
+      "Cold Start",
+    ],
   );
   data.framework.rows = data.framework.rows.filter((r) => r.id !== "astro");
   assert.deepEqual(model.measurementLinks("astro"), []);

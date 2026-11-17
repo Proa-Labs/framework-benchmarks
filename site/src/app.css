@@ -418,11 +418,11 @@
     @apply grid [grid-template-columns:148px_minmax(0,_1fr)_83px] items-center [gap:14px] [width:100%] [min-height:31px];
   }
   #frameworks-explorer .fw-row:hover,
-  #frameworks-explorer .fw-row:focus-visible {
+  #frameworks-explorer .fw-row:focus-within {
     @apply [background:var(--fw-hover)];
   }
   #frameworks-explorer
-    .fw-row:is(:hover, :focus-visible, [aria-pressed="true"]) {
+    .fw-row:is(:hover, :focus-within, [data-focused="true"]) {
     @apply [color:var(--brand)];
   }
   #frameworks-explorer .fw-logo-mark {
@@ -432,17 +432,17 @@
     @apply [content:""] absolute [inset:0] [background:currentColor] [opacity:0];
   }
   #frameworks-explorer
-    .fw-row:is(:hover, :focus-visible, [aria-pressed="true"])
+    .fw-row:is(:hover, :focus-within, [data-focused="true"])
     .fw-logo-mark::after {
     @apply [mask:var(--logo-mask)_center_/_contain_no-repeat] [opacity:1];
   }
   #frameworks-explorer
-    .fw-row:is(:hover, :focus-visible, [aria-pressed="true"])
+    .fw-row:is(:hover, :focus-within, [data-focused="true"])
     .fw-logo {
     @apply [opacity:0];
   }
   #frameworks-explorer
-    .fw-row:is(:hover, :focus-visible, [aria-pressed="true"])
+    .fw-row:is(:hover, :focus-within, [data-focused="true"])
     :is(.fw-number, .fw-value-unit, .fw-flow-value, .fw-flow-value small) {
     @apply [color:inherit];
   }
@@ -462,8 +462,8 @@
     @apply block absolute [top:6px] [height:8px] [width:var(--fw-length)] [background:var(--fw-muted)] [transition:width_180ms,_background_120ms];
   }
   #frameworks-explorer .fw-row:hover .fw-bar,
-  #frameworks-explorer .fw-row:focus-visible .fw-bar,
-  #frameworks-explorer .fw-row[aria-pressed="true"] .fw-bar {
+  #frameworks-explorer .fw-row:focus-within .fw-bar,
+  #frameworks-explorer .fw-row[data-focused="true"] .fw-bar {
     @apply [background:var(--brand)];
   }
   #frameworks-explorer .fw-whisker {
@@ -479,12 +479,12 @@
     @apply absolute [width:1px] [height:7px] [top:7px] [background:var(--fw-plot-border)];
   }
   #frameworks-explorer
-    .fw-row:is(:hover, :focus-visible, [aria-pressed="true"])
+    .fw-row:is(:hover, :focus-within, [data-focused="true"])
     :is(.fw-whisker, .fw-cap, .fw-median) {
     @apply [background:var(--brand)];
   }
   #frameworks-explorer
-    .fw-row:is(:hover, :focus-visible, [aria-pressed="true"])
+    .fw-row:is(:hover, :focus-within, [data-focused="true"])
     .fw-box {
     @apply [background:color-mix(in_srgb,_var(--brand)_55%,_var(--fw-bg))] [border-color:var(--brand)];
   }
@@ -625,6 +625,15 @@
   }
   #frameworks-explorer .fw-evidence {
     @apply [padding:16px_0_0] grid [gap:12px] [font:0.875rem_/_1.7_Arial,_sans-serif] [overflow-wrap:anywhere];
+  }
+  #frameworks-explorer .fw-tool-selection {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  #frameworks-explorer .fw-tool-selection legend {
+    margin-bottom: 8px;
+    font-weight: 500;
   }
   #frameworks-explorer .fw-options {
     @apply grid [grid-template-columns:repeat(4,_minmax(0,_1fr))] [gap:6px_14px];
@@ -795,7 +804,7 @@
     #frameworks-explorer .fw-flow-row {
       @apply [grid-template-columns:minmax(0,_1fr)_96px] [gap:0_10px] [min-height:88px] [padding-top:8px];
     }
-    #frameworks-explorer .fw-flow-row .fw-renderer {
+    #frameworks-explorer .fw-flow-row > .fw-result-identity {
       @apply [grid-column:1] [grid-row:1];
     }
     #frameworks-explorer .fw-flow-value {
@@ -1573,23 +1582,28 @@
     }
   }
 
-  /* Keep repository links as siblings of result buttons, with their own hit area. */
-  #frameworks-explorer .fw-result-row {
-    --fw-result-name-width: 148px;
-    display: grid;
-    grid-template-columns: var(--fw-result-name-width) minmax(0, 1fr);
-    align-items: center;
+  /* One row action and an independent repository link beside the name. */
+  #frameworks-explorer .fw-row {
+    position: relative;
   }
-  #frameworks-explorer .fw-result-row > .fw-row {
-    grid-area: 1 / 1 / 2 / -1;
+  #frameworks-explorer .fw-row-action {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
   }
-  #frameworks-explorer .fw-result-row > .fw-row > .fw-renderer {
-    padding-right: 26px;
+  #frameworks-explorer .fw-row > :not(.fw-row-action) {
+    position: relative;
+    pointer-events: none;
   }
-  #frameworks-explorer .fw-result-row > .fw-repo-link {
-    grid-area: 1 / 1;
-    justify-self: end;
-    z-index: 1;
+  #frameworks-explorer .fw-row .fw-repo-link {
+    pointer-events: auto;
+  }
+  #frameworks-explorer .fw-row > .fw-result-identity {
+    justify-self: start;
+    max-width: 100%;
+    min-width: 0;
   }
   #frameworks-explorer .fw-repo-link {
     @apply inline-flex shrink-0 items-center justify-center text-muted rounded-sm;
@@ -1611,19 +1625,6 @@
     min-width: 0;
     width: auto;
   }
-  @media (max-width: 650px) {
-    #frameworks-explorer .fw-result-row {
-      --fw-result-name-width: 108px;
-    }
-    #frameworks-explorer .fw-result-flow {
-      grid-template-columns: minmax(0, 1fr) 106px;
-    }
-    #frameworks-explorer .fw-result-flow > .fw-repo-link {
-      align-self: start;
-      margin-top: 8px;
-    }
-  }
-
   #frameworks-explorer header {
     @apply [column-gap:4px];
   }

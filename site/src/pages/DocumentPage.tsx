@@ -154,8 +154,8 @@ function About() {
       <h2>How to use the results</h2>
       <p>
         Compare tools within the same experiment. Render-only timing excludes
-        HTTP; Framework SSR includes routing and rendering. Every measured
-        adapter must pass that workload’s output checks.
+        HTTP; HTTP E2E includes routing, rendering and response transfer. Every
+        measured adapter must pass that workload’s output checks.
       </p>
       <p>
         <Link to="/methodology">Methodology &amp; raw data ↗</Link> ·{" "}
@@ -210,7 +210,15 @@ function Methodology() {
         per render. Older captures without RSS remain unmeasured. Build tools
         and benchmark launchers are excluded.
       </p>
-      <h2>Framework SSR</h2>
+      <h2>HTTP E2E</h2>
+      <p>
+        Both suites measure complete HTML responses over HTTP, including SSR.
+        Neither measures browser rendering or hydration. Framework routes use
+        native production page handlers; Renderer servers expose shared renderer
+        fixtures over HTTP. Their contracts and load settings differ, so compare
+        tools within the same suite.
+      </p>
+      <h3>Framework routes</h3>
       <p>
         {metadata.framework.scenario.boundary} This is a separate shared
         workload contract for application frameworks. Generated classes and
@@ -241,7 +249,7 @@ function Methodology() {
           capture. The tested backend and version are retained in the raw data.
         </p>
       )}
-      <h2>HTTP</h2>
+      <h3>Renderer servers</h3>
       <p>
         The normal production servers handle the same parity-gated pages over
         loopback HTTP/1.1. Capacity uses 64 keep-alive connections; fixed-rate

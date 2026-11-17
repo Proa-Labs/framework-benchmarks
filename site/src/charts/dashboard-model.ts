@@ -104,7 +104,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   const frameworkWorkloads = () => data.framework.workloadDefinitions;
   const suites = {
     framework: {
-      title: "Framework SSR",
+      title: "HTTP E2E · Framework routes",
       path: "benchmarks/framework-ssr/results/latest.json",
       method: `${data.framework.methodology.repeats} rotated independent production server processes per phase kind. Capacity settings are shared within each workload. ${frameworkWorkloads()
         .map(
@@ -139,7 +139,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       },
     },
     http: {
-      title: "HTTP capacity",
+      title: "HTTP E2E · Renderer servers",
       path: "benchmarks/http/results/latest.json",
       method:
         "Three fresh server processes per workload. Capacity and CPU: 64 closed-loop connections. Equal-load latency: fixed-rate arrivals.",
@@ -419,6 +419,14 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   function samples(r: ChartRow) {
     return "samples" in r ? r.samples : r.seriesSamples[metric()] || [];
   }
+  function experimentTools() {
+    const rows =
+      state.view === "rendering" && state.chart === "compare"
+        ? orderedWorkloads().flatMap((w) => renderingRows(w.id))
+        : getRows();
+    const ids = new Set(rows.map((row) => row.id));
+    return data.renderers.filter((renderer) => ids.has(renderer.id));
+  }
   function comparisonMeasurements() {
     return orderedWorkloads().flatMap((w) =>
       renderingRows(w.id)
@@ -535,12 +543,18 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   function measurementLinks(id: string) {
     const links: { label: string; href: string }[] = [];
     if (data.framework.rows.some((r) => r.id === id))
-      links.push({ label: "Framework SSR", href: "?view=framework" });
+      links.push({
+        label: "HTTP E2E · Framework routes",
+        href: "?view=framework",
+      });
     const workload = orderedWorkloads().find((w) =>
       data.http.rows[w.id]?.some((r) => r.id === id),
     );
     if (workload)
-      links.push({ label: "HTTP", href: `?view=http&workload=${workload.id}` });
+      links.push({
+        label: "HTTP E2E · Renderer servers",
+        href: `?view=http&workload=${workload.id}`,
+      });
     if (data.startup.rows.some((r) => r.id === id))
       links.push({ label: "Cold Start", href: "?view=startup" });
     return links;
@@ -590,6 +604,10 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   }
 
   function experimentDescription() {
+    if (state.view === "framework")
+      return "Framework routes: complete HTML responses through each framework’s native production page handlers. Compare tools within this suite; Renderer servers use a different workload contract and load settings.";
+    if (state.view === "http")
+      return "Renderer servers: shared renderer fixtures served over HTTP, with canonical output checks. Compare tools within this suite; Framework routes use native page handlers and different load settings.";
     if (state.view === "rendering" && state.render === "rss")
       return "Peak resident memory of the native benchmark process, including its runtime and prepared data. This is measured separately from render duration.";
     if (
@@ -607,14 +625,27 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
   function heading() {
     if (state.view === "rendering" && state.render === "rss")
       return "SSR Rendering · memory usage";
-    if (state.view === "framework")
+    if (state.view === "framework" || state.view === "http")
       return {
-        throughput: "Framework SSR capacity",
-        p50: "Framework SSR · equal-load P50",
-        p99: "Framework SSR · equal-load P99",
-        cpu: "Framework SSR · CPU per response",
-        rss: "Framework SSR · peak memory",
-      }[metric() as "throughput" | "p50" | "p99" | "cpu" | "rss"];
+        throughput: "HTTP E2E capacity",
+        p50: "HTTP E2E · equal-load P50",
+        p99: "HTTP E2E · equal-load P99",
+        cpu: "HTTP E2E · CPU per response",
+        rss: "HTTP E2E · peak memory",
+        utilization: "HTTP E2E · CPU utilization",
+        waterfall: "HTTP E2E · response waterfall",
+        breakdown: "HTTP E2E · where the work happens",
+      }[
+        metric() as
+          | "throughput"
+          | "p50"
+          | "p99"
+          | "cpu"
+          | "rss"
+          | "utilization"
+          | "waterfall"
+          | "breakdown"
+      ];
     if (state.view === "streaming" && state.stream === "completion")
       return "Stream completion latency · P50 & P99";
     return (
@@ -659,6 +690,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
     restore,
     metric,
     getRows,
+    experimentTools,
     samples,
     comparisonMeasurements,
     value,

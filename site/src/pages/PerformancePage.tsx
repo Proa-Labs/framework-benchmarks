@@ -113,7 +113,11 @@ export function PerformancePage({
               aria-current={state.view === "rendering" ? "page" : undefined}
             >
               SSR Rendering
-              <span className="fw-experiment-info" aria-hidden="true">
+              <span
+                className="fw-experiment-info"
+                data-info-for="rendering-info"
+                aria-hidden="true"
+              >
                 <svg
                   viewBox="0 0 20 20"
                   width="15"
@@ -136,31 +140,52 @@ export function PerformancePage({
               </span>
             </button>
           </div>
-          <button
-            type="button"
-            className="cursor-interaction"
-            role="tab"
-            id="experiment-framework"
-            aria-controls="experiment-panel"
-            aria-selected={state.view === "framework"}
-            aria-current={state.view === "framework" ? "page" : undefined}
-            data-view="framework"
-            hidden={!data.framework}
-          >
-            Framework SSR
-          </button>
-          <button
-            type="button"
-            className="cursor-interaction"
-            role="tab"
-            id="experiment-http"
-            aria-controls="experiment-panel"
-            aria-selected={state.view === "http"}
-            aria-current={state.view === "http" ? "page" : undefined}
-            data-view="http"
-          >
-            HTTP
-          </button>
+          <div className="fw-experiment-tab" role="presentation">
+            <button
+              type="button"
+              className="cursor-interaction"
+              role="tab"
+              id="experiment-http-e2e"
+              aria-controls="experiment-panel"
+              aria-selected={
+                state.view === "framework" || state.view === "http"
+              }
+              aria-current={
+                state.view === "framework" || state.view === "http"
+                  ? "page"
+                  : undefined
+              }
+              data-view="http-e2e"
+              aria-describedby="http-e2e-info"
+            >
+              HTTP E2E
+              <span
+                className="fw-experiment-info"
+                data-info-for="http-e2e-info"
+                aria-hidden="true"
+              >
+                <svg
+                  viewBox="0 0 20 20"
+                  width="15"
+                  height="15"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
+                  <circle cx="10" cy="10" r="7.5"></circle>
+                  <path d="M10 9v5"></path>
+                  <circle
+                    cx="10"
+                    cy="6"
+                    r=".5"
+                    fill="currentColor"
+                    stroke="none"
+                  ></circle>
+                </svg>
+              </span>
+            </button>
+          </div>
           <button
             type="button"
             className="cursor-interaction"
@@ -203,9 +228,29 @@ export function PerformancePage({
           className="fw-experiment-layout"
           id="experiment-panel"
           role="tabpanel"
-          aria-labelledby={`experiment-${state.view}`}
+          aria-labelledby={`experiment-${state.view === "framework" || state.view === "http" ? "http-e2e" : state.view}`}
         >
           <aside className="fw-scenarios" aria-label="Benchmark controls">
+            <div
+              className="fw-render-metric"
+              data-http-suite
+              hidden={state.view !== "framework" && state.view !== "http"}
+            >
+              <label className="fw-sidebar-label" htmlFor="http-suite">
+                Benchmark suite
+              </label>
+              <select
+                id="http-suite"
+                data-http-suite-view
+                className="fw-native-select"
+                defaultValue={state.view === "http" ? "http" : "framework"}
+              >
+                <option value="framework" hidden={!data.framework}>
+                  Framework routes
+                </option>
+                <option value="http">Renderer servers</option>
+              </select>
+            </div>
             <div
               className="fw-render-metric"
               data-render-metric
@@ -314,7 +359,7 @@ export function PerformancePage({
               <select
                 data-framework-view
                 className="fw-native-select"
-                aria-label="Framework SSR analysis"
+                aria-label="Framework routes analysis"
                 hidden={state.view !== "framework"}
                 defaultValue={state.framework}
               >
@@ -327,7 +372,7 @@ export function PerformancePage({
               <select
                 data-http-view=""
                 className="fw-native-select"
-                aria-label="HTTP analysis"
+                aria-label="Renderer servers analysis"
                 hidden={state.view !== "http"}
                 defaultValue={state.http}
               >
@@ -465,14 +510,34 @@ export function PerformancePage({
                       ))}
                     </dl>
                   </details>
-                  <div className="fw-options"></div>
+                  <fieldset className="fw-tool-selection">
+                    <legend>Tools to display</legend>
+                    <div
+                      className="fw-options"
+                      data-engines={model
+                        .experimentTools()
+                        .map((r) => r.id)
+                        .join(",")}
+                    >
+                      {model.experimentTools().map((r) => (
+                        <label className="cursor-interaction" key={r.id}>
+                          <input
+                            type="checkbox"
+                            data-engine={r.id}
+                            defaultChecked={state.selected.includes(r.id)}
+                          />
+                          {r.label}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
                   <div className="fw-export">
                     <button
                       type="button"
                       className="cursor-interaction"
                       data-all=""
                     >
-                      All renderers
+                      Select all listed tools
                     </button>
                     <a
                       data-json=""
@@ -592,6 +657,25 @@ export function PerformancePage({
           Each adapter uses its declared native output type; Proa’s RenderBuffer
           avoids String conversion. Includes rendering, formatting and output
           allocation. Excludes HTTP, routing, data loading and hydration.
+        </p>
+      </div>
+      <div
+        id="http-e2e-info"
+        className="fw-experiment-popover"
+        popover="manual"
+        role="tooltip"
+      >
+        <strong>HTTP request to complete HTML</strong>
+        <p>
+          Client-observed time from sending a request until the complete HTML
+          response arrives. Includes server routing, SSR and response transfer.
+          Capacity measures completed responses per second. Excludes asset
+          downloads, browser rendering, hydration and client-side JavaScript.
+        </p>
+        <p>
+          Framework routes use native production page handlers. Renderer servers
+          serve shared renderer fixtures over HTTP. The suites use different
+          contracts and load settings; compare tools within the same suite.
         </p>
       </div>
       <div

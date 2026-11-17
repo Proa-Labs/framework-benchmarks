@@ -128,7 +128,8 @@ export async function verifyPreview(url: string, expectedEntryScript?: string) {
     await page.locator('[data-app-ready="true"]').waitFor();
     await page.locator("[data-stat-workload]").first().hover();
     await page.locator("[data-percentile-popup]").waitFor({ state: "visible" });
-    await page.getByRole("tab", { name: "Framework SSR", exact: true }).click();
+    await page.getByRole("tab", { name: "HTTP E2E", exact: true }).click();
+    await page.locator("[data-http-suite-view]").selectOption("framework");
     await page.locator("[data-framework-view]").selectOption("p50");
     for (const workload of data.framework.workloadDefinitions.filter(
       (w) => !data.framework.pendingWorkloads?.[w.id],
