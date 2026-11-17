@@ -127,6 +127,155 @@ try {
   );
   await hydrationPage.close();
   checks.push("server-rendered comparison nodes survive hydration");
+  for (const view of [
+    "rendering",
+    "framework",
+    "http",
+    "streaming",
+    "startup",
+  ] as const) {
+    await navigate(
+      `${server.url}/?view=${view}&chart=bars&workload=cards&rate=1000&stream=completeP50`,
+    );
+    const expectedRows =
+      view === "rendering"
+        ? benchmarkData.rendering.rows.cards
+        : view === "framework"
+          ? benchmarkData.framework.workloads.cards
+          : view === "http"
+            ? benchmarkData.http.rows.cards
+            : view === "streaming"
+              ? benchmarkData.streaming.rows["1000"]
+              : benchmarkData.startup.rows;
+    const expected = new Set(expectedRows.map((row) => row.id));
+    await page.getByText("Method & data", { exact: true }).click();
+    assert.deepEqual(
+      new Set(
+        await page
+          .locator(".fw-options [data-engine]")
+          .evaluateAll((elements) =>
+            elements.map((element) => (element as HTMLElement).dataset.engine),
+          ),
+      ),
+      expected,
+    );
+    assert.equal(
+      await page
+        .getByRole("group", { name: "Tools to display", exact: true })
+        .count(),
+      1,
+    );
+    const identities = await page
+      .locator(
+        view === "streaming"
+          ? ".fw-legend-item"
+          : ".fw-row > .fw-result-identity",
+      )
+      .evaluateAll((elements) =>
+        elements.map((identity) => {
+          const name = identity.querySelector(".fw-renderer, button");
+          const link = identity.querySelector(".fw-repo-link");
+          return name && link
+            ? {
+                gap:
+                  link.getBoundingClientRect().left -
+                  name.getBoundingClientRect().right,
+                nested: Boolean(link.closest("button")),
+              }
+            : null;
+        }),
+      );
+    assert.equal(identities.length, expected.size);
+    assert.ok(
+      identities.every(
+        (identity) =>
+          identity &&
+          identity.gap >= 0 &&
+          identity.gap <= 8 &&
+          !identity.nested,
+      ),
+      `${view}: repository links sit beside names`,
+    );
+    if (view !== "streaming") {
+      const row = page.locator(".fw-row").first();
+      await row.locator(".fw-row-action").click();
+      assert.equal(await row.getAttribute("data-focused"), "true");
+      assert.equal(
+        await row.locator(".fw-row-action").getAttribute("aria-pressed"),
+        "true",
+      );
+      await row.press("Escape");
+    }
+  }
+  checks.push(
+    "evidence tool choices match every experiment; repository links sit beside names with independent row actions",
+  );
+
+  for (const suite of ["framework", "http"] as const) {
+    await navigate(`${server.url}/?view=${suite}&workload=products&chart=bars`);
+    assert.equal(
+      await page.getByRole("tab", { name: "HTTP E2E", exact: true }).count(),
+      1,
+    );
+    assert.equal(
+      await page
+        .locator('[role="tab"][aria-selected="true"]')
+        .getAttribute("id"),
+      "experiment-http-e2e",
+    );
+    assert.equal(
+      await page.locator("#experiment-panel").getAttribute("aria-labelledby"),
+      "experiment-http-e2e",
+    );
+    assert.equal(
+      await page.locator("[data-http-suite-view]").inputValue(),
+      suite,
+    );
+    assert.equal(
+      await page.locator('[data-view="framework"], [data-view="http"]').count(),
+      0,
+    );
+  }
+  await page.locator("[data-http-suite-view]").selectOption("framework");
+  await page.locator('[data-workload="github-pr"]').click();
+  await page.locator("[data-framework-view]").selectOption("p50");
+  await page.locator("[data-http-suite-view]").selectOption("http");
+  assert.equal(new URL(page.url()).searchParams.get("view"), "http");
+  assert.equal(
+    await page.locator('[data-workload="github-pr"]').isVisible(),
+    false,
+  );
+  await page.locator("[data-http-view]").selectOption("p99");
+  await page.locator("[data-http-suite-view]").selectOption("framework");
+  assert.equal(new URL(page.url()).searchParams.get("workload"), "github-pr");
+  assert.equal(await page.locator("[data-framework-view]").inputValue(), "p50");
+  await page.locator("[data-http-suite-view]").selectOption("http");
+  assert.equal(await page.locator("[data-http-view]").inputValue(), "p99");
+  await reload();
+  assert.equal(
+    await page.locator("[data-http-suite-view]").inputValue(),
+    "http",
+  );
+  await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
+  await page.locator("#experiment-rendering").press("ArrowRight");
+  assert.equal(
+    await page.locator("[data-http-suite-view]").inputValue(),
+    "http",
+  );
+  assert.equal(await page.locator("[data-http-view]").inputValue(), "p99");
+  await page.locator("#http-e2e-info").waitFor({ state: "visible" });
+  await page.locator("#experiment-http-e2e").press("Escape");
+  assert.equal(await page.locator("#http-e2e-info").isVisible(), false);
+  await page.locator('[data-info-for="http-e2e-info"]').hover();
+  await page.locator("#http-e2e-info").hover();
+  assert.equal(await page.locator("#http-e2e-info").isVisible(), true);
+  await page.locator("h1").hover();
+  await page.locator("#experiment-http-e2e").blur();
+  await page.locator("#http-e2e-info").waitFor({ state: "hidden" });
+  checks.push(
+    "HTTP E2E unifies legacy tabs, preserves separate suite settings and explains the boundary on hover and keyboard focus",
+  );
+
   await navigate(`${server.url}/?chart=bars`);
   await page.locator(".fw-row").first().waitFor();
   assert.equal(await page.locator(".fw-row").count(), renderCount);
@@ -147,7 +296,7 @@ try {
     );
   }
 
-  const renderingInfo = page.locator(".fw-experiment-info");
+  const renderingInfo = page.locator('[data-info-for="rendering-info"]');
   await renderingInfo.hover();
   assert.equal(await page.locator("#rendering-info").isVisible(), true);
   await page.locator("#rendering-info").hover();
@@ -387,7 +536,11 @@ try {
     "theme toggle, keyboard, persistence, navigation and system preference",
   );
   for (const suite of ["rendering", "http", "streaming", "startup"]) {
-    await page.locator(`[data-view="${suite}"]`).click();
+    await page
+      .locator(`[data-view="${suite === "http" ? "http-e2e" : suite}"]`)
+      .click();
+    if (suite === "http")
+      await page.locator("[data-http-suite-view]").selectOption("http");
     if (suite === "rendering")
       await page.locator('[data-workload="cards"]').click();
     for (const chart of suite === "streaming"
@@ -408,7 +561,8 @@ try {
       checks.push(`${suite}/${chart}`);
     }
   }
-  await page.locator('[data-view="http"]').click();
+  await page.locator('[data-view="http-e2e"]').click();
+  await page.locator("[data-http-suite-view]").selectOption("http");
   await page.locator('[data-chart="bars"]').click();
   await page.locator("[data-http-view]").selectOption("waterfall");
   assert.match(
@@ -903,7 +1057,8 @@ try {
   const relatedData: BenchmarkData = await (
     await context.request.get(`${server.url}/data/results.json`)
   ).json();
-  await page.getByRole("tab", { name: "Framework SSR", exact: true }).click();
+  await page.getByRole("tab", { name: "HTTP E2E", exact: true }).click();
+  await page.locator("[data-http-suite-view]").selectOption("framework");
   await page.locator("[data-framework-view]").selectOption("p50");
   for (const workload of relatedData.framework.workloadDefinitions) {
     await page.locator(`[data-workload="${workload.id}"]`).click();
@@ -1224,7 +1379,8 @@ try {
   checks.push(
     "comparison cells show their own workload percentiles on hover and keyboard focus without click shifts",
   );
-  await page.locator('[data-view="framework"]').click();
+  await page.locator('[data-view="http-e2e"]').click();
+  await page.locator("[data-http-suite-view]").selectOption("framework");
   await page.locator('[data-workload="cards"]').click();
   await page.locator('[data-chart="bars"]').click();
   assert.equal(await page.locator(".fw-row").count(), 5);
@@ -1803,6 +1959,11 @@ try {
     ["/?view=framework&workload=cards", ".fw-row", 5],
     ["/?view=framework&workload=products", ".fw-row", 5],
     ["/?view=framework&workload=table", ".fw-row", 5],
+    [
+      "/?view=http&workload=products",
+      ".fw-row",
+      benchmarkData.http.rows.products.length,
+    ],
     ["/?view=streaming", ".fw-stream-panel svg", 2],
     [
       "/features?group=server&display=matrix&tools=astro,nextjs",
@@ -1887,14 +2048,16 @@ try {
     "Cold Start definition renders on the server and follows experiment tab selection",
   );
   for (const [view, label] of [
-    ["framework", "Framework SSR"],
-    ["http", "HTTP"],
+    ["framework", "HTTP E2E"],
+    ["http", "HTTP E2E"],
     ["streaming", "Streaming"],
     ["startup", "Cold Start"],
     ["rendering", "SSR Rendering"],
   ]) {
     await initial.goto(`${server.url}/?view=${view}`);
     await page.getByRole("tab", { name: label, exact: true }).click();
+    if (view === "framework" || view === "http")
+      await page.locator("[data-http-suite-view]").selectOption(view);
     for (const current of [initial, page])
       assert.equal(
         await current.locator("[data-coverage-note]").isVisible(),
@@ -1902,7 +2065,7 @@ try {
       );
   }
   checks.push(
-    "partial experiment coverage is disclosed in SSR and follows all five experiment tabs",
+    "partial experiment coverage is disclosed in SSR and follows the unified HTTP suites and other experiment tabs",
   );
   await initial.goto(`${server.url}/methodology`);
   const methodology = required(await initial.locator("main").textContent());
@@ -1994,6 +2157,8 @@ try {
     for (const path of [
       "/",
       "/?view=streaming",
+      "/?view=framework",
+      "/?view=http",
       "/features",
       "/features?display=matrix&group=server&tools=nextjs,astro,exact,proa",
       "/about",
@@ -2030,21 +2195,23 @@ try {
     }
     for (const view of ["http", "framework", "streaming"]) {
       await navigate(`${server.url}/?view=${view}`);
-      const select = page.locator("select:visible");
-      assert.equal(await select.count(), 1);
-      const style = await select.evaluate((element) => {
-        const css = getComputedStyle(element);
-        return {
-          appearance: css.appearance,
-          inset: css.backgroundPosition,
-          padding: parseFloat(css.paddingRight),
-          image: css.backgroundImage,
-        };
-      });
-      assert.equal(style.appearance, "none");
-      assert.ok(style.inset.includes("12px"));
-      assert.ok(style.padding >= 34);
-      assert.ok(style.image.includes("svg"));
+      const selects = page.locator("select:visible");
+      assert.equal(await selects.count(), view === "streaming" ? 1 : 2);
+      for (const select of await selects.all()) {
+        const style = await select.evaluate((element) => {
+          const css = getComputedStyle(element);
+          return {
+            appearance: css.appearance,
+            inset: css.backgroundPosition,
+            padding: parseFloat(css.paddingRight),
+            image: css.backgroundImage,
+          };
+        });
+        assert.equal(style.appearance, "none");
+        assert.ok(style.inset.includes("12px"));
+        assert.ok(style.padding >= 34);
+        assert.ok(style.image.includes("svg"));
+      }
     }
   }
   await page.setViewportSize({ width: 375, height: 812 });

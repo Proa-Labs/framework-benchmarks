@@ -89,6 +89,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     uncaptured,
     latencyStats,
   } = model;
+  let httpSuite: "framework" | "http" =
+    state.view === "http" || !data.framework ? "http" : "framework";
   const restore = () => model.restore(location.search);
   const markup = createChartMarkup(model);
   const { lineKey, pointMarker } = markup;
@@ -168,6 +170,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     pointerY = Number.NaN;
   const percentileTarget =
     ".fw-row[data-focus], .fw-comparison [data-focus], .fw-comparison [data-render-support]";
+  const percentileRow = (event: Event) =>
+    closest(event, ".fw-repo-link") ? null : closest(event, percentileTarget);
   function schedulePercentileHide() {
     // A row leave and a popup leave can arrive together. Keep one timer so
     // an older callback cannot close a newly opened note.
@@ -353,7 +357,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     );
   }
   listen(root, "mouseover", (event) => {
-    const row = closest(event, percentileTarget);
+    const row = percentileRow(event);
     if (
       row &&
       !row.contains(
@@ -366,7 +370,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     }
   });
   listen(root, "pointerout", (event) => {
-    const row = closest(event, percentileTarget);
+    const row = percentileRow(event);
     if (
       row &&
       !row.contains(
@@ -388,7 +392,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     pointerY = event.clientY;
     if (!dismissedHover || !moved) return;
     dismissedHover = false;
-    const row = closest(event, percentileTarget);
+    const row = percentileRow(event);
     if (row && root.contains(row)) showRowPercentiles(row);
   });
   listen(percentilePopup, "pointerenter", () => clearTimeout(supportHideTimer));
@@ -416,7 +420,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
           cell.scrollIntoView({ block: "nearest", inline: "nearest" });
       }
     }
-    const row = closest(event, percentileTarget);
+    const row = percentileRow(event);
     if (row && !returningPopupFocus) {
       dismissedHover = false;
       showRowPercentiles(row);
@@ -433,7 +437,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       next !== popupAnchor
     )
       hidePercentiles(true);
-    else if (closest(event, percentileTarget)) hidePercentiles();
+    else if (percentileRow(event)) hidePercentiles();
   });
   listen(document, "keydown", (event) => {
     if (event.key === "Escape") hidePercentiles(true);
@@ -783,7 +787,11 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     document.title = `${state.section === "ecosystem" ? "Ecosystem" : "Web framework benchmarks"} · Frameworks`;
     stop();
     model.normalizeState();
-    $("[data-view=framework]").hidden = !data.framework;
+    const httpE2e = state.view === "framework" || state.view === "http";
+    if (httpE2e) httpSuite = state.view as "framework" | "http";
+    const activeTab = httpE2e ? "http-e2e" : state.view;
+    $("[data-http-suite]").hidden = !httpE2e;
+    $<HTMLSelectElement>("[data-http-suite-view]").value = httpSuite;
     if (state.chart === "compare" && state.view !== "rendering")
       state.chart = "bars";
     root.dataset.compare = String(state.chart === "compare");
@@ -832,9 +840,9 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     renderScenarios();
     $$("[data-view]").forEach((b) => {
       b.removeAttribute("aria-current");
-      b.setAttribute("aria-selected", String(b.dataset.view === state.view));
-      b.tabIndex = b.dataset.view === state.view ? 0 : -1;
-      if (b.dataset.view === state.view) b.setAttribute("aria-current", "page");
+      b.setAttribute("aria-selected", String(b.dataset.view === activeTab));
+      b.tabIndex = b.dataset.view === activeTab ? 0 : -1;
+      if (b.dataset.view === activeTab) b.setAttribute("aria-current", "page");
     });
     $$<HTMLButtonElement>("[data-chart]").forEach((b) => {
       b.setAttribute("aria-pressed", String(b.dataset.chart === state.chart));
@@ -885,7 +893,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       ["waterfall", "utilization", "breakdown"].includes(metric());
     $("#experiment-panel").setAttribute(
       "aria-labelledby",
-      `experiment-${state.view}`,
+      `experiment-${activeTab}`,
     );
     const all = getRows(),
       rows = all
@@ -978,6 +986,18 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     captureNote.hidden = !captureNote.textContent;
     $("[data-source]").innerHTML =
       `<a href="${s.download}" download>${s.reviewRefresh ? "Review comparison" : "Original capture"} ↗</a> · <a href="${s.reviewRefresh ? "/data/proa-refresh/manifest.json" : `https://github.com/Proa-Labs/framework-benchmarks/blob/main/${s.source}`}" target="_blank" rel="noreferrer">View source ↗</a><br><span class="fw-source-hash">${s.sourceSnapshot ? `<a href="${s.sourceSnapshot}" download>Captured source snapshot ↗</a><br>` : ""}${s.reviewRefresh ? "Proa source SHA-256" : "Source SHA-256"} ${esc(s.hash)} · Artifact SHA-256 ${esc(s.artifactSha256)}</span>${s.note ? `<br>${esc(s.note)}` : ""}`;
+    const options = $(".fw-options");
+    const tools = model.experimentTools();
+    const engineIds = tools.map((r) => r.id).join(",");
+    if (options.dataset.engines !== engineIds) {
+      options.innerHTML = tools
+        .map(
+          (r) =>
+            `<label class="cursor-interaction"><input type="checkbox" data-engine="${r.id}">${esc(r.label)}</label>`,
+        )
+        .join("");
+      options.dataset.engines = engineIds;
+    }
     $$<HTMLInputElement>("[data-engine]").forEach((el) => {
       (el as HTMLInputElement).checked = state.selected.includes(
         required(el.dataset.engine),
@@ -1160,54 +1180,50 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   }
   $("[data-load-points]").innerHTML =
     `<span>Inspect load · req/s</span>${data.rates.map((rate) => `<button type="button" data-load="${rate}" aria-label="Inspect ${rate.toLocaleString("en-US")} requests per second" aria-pressed="false">${rate.toLocaleString("en-US")}</button>`).join("")}`;
-  $(".fw-options").innerHTML = data.renderers
-    .map(
-      (r) =>
-        `<label class="cursor-interaction"><input type="checkbox" data-engine="${r.id}">${esc(r.label)}</label>`,
-    )
-    .join("");
-  const infoButton = $(".fw-experiment-info");
-  const infoFocusTarget = $("#experiment-rendering");
-  const infoPopup = $("#rendering-info");
-  let infoHovered = false,
-    infoFocused = false,
-    infoHideTimer: ReturnType<typeof setTimeout> | undefined;
-  const showInfo = () => {
-    clearTimeout(infoHideTimer);
-    const bounds = infoButton.getBoundingClientRect();
-    const width = Math.min(320, window.innerWidth - 32);
-    infoPopup.style.left = `${Math.min(Math.max(16, bounds.left), window.innerWidth - width - 16)}px`;
-    infoPopup.style.top = `${bounds.bottom + 8}px`;
-    if (!infoPopup.matches(":popover-open")) infoPopup.showPopover();
-  };
-  const hideInfoSoon = () => {
-    clearTimeout(infoHideTimer);
-    infoHideTimer = setTimeout(() => {
-      if (!infoHovered && !infoFocused && infoPopup.matches(":popover-open"))
-        infoPopup.hidePopover();
-    }, 150);
-  };
-  for (const element of [infoButton, infoPopup]) {
-    listen(element, "pointerenter", () => {
-      infoHovered = true;
-      showInfo();
+  const infoCleanups = $$(".fw-experiment-info").map((infoButton) => {
+    const infoFocusTarget = required(infoButton.closest("button"));
+    const infoPopup = $<HTMLElement>(`#${infoButton.dataset.infoFor}`);
+    let infoHovered = false,
+      infoFocused = false,
+      infoHideTimer: ReturnType<typeof setTimeout> | undefined;
+    const showInfo = () => {
+      clearTimeout(infoHideTimer);
+      const bounds = infoButton.getBoundingClientRect();
+      const width = Math.min(320, window.innerWidth - 32);
+      infoPopup.style.left = `${Math.min(Math.max(16, bounds.left), window.innerWidth - width - 16)}px`;
+      infoPopup.style.top = `${bounds.bottom + 8}px`;
+      if (!infoPopup.matches(":popover-open")) infoPopup.showPopover();
+    };
+    const hideInfoSoon = () => {
+      clearTimeout(infoHideTimer);
+      infoHideTimer = setTimeout(() => {
+        if (!infoHovered && !infoFocused && infoPopup.matches(":popover-open"))
+          infoPopup.hidePopover();
+      }, 150);
+    };
+    for (const element of [infoButton, infoPopup]) {
+      listen(element, "pointerenter", () => {
+        infoHovered = true;
+        showInfo();
+      });
+      listen(element, "pointerleave", () => {
+        infoHovered = false;
+        hideInfoSoon();
+      });
+    }
+    listen(infoFocusTarget, "focus", () => {
+      infoFocused = infoFocusTarget.matches(":focus-visible");
+      if (infoFocused) showInfo();
     });
-    listen(element, "pointerleave", () => {
-      infoHovered = false;
+    listen(infoFocusTarget, "blur", () => {
+      infoFocused = false;
       hideInfoSoon();
     });
-  }
-  listen(infoFocusTarget, "focus", () => {
-    infoFocused = infoFocusTarget.matches(":focus-visible");
-    if (infoFocused) showInfo();
-  });
-  listen(infoFocusTarget, "blur", () => {
-    infoFocused = false;
-    hideInfoSoon();
-  });
-  listen(document, "keydown", (event) => {
-    if (event.key === "Escape" && infoPopup.matches(":popover-open"))
-      infoPopup.hidePopover();
+    listen(document, "keydown", (event) => {
+      if (event.key === "Escape" && infoPopup.matches(":popover-open"))
+        infoPopup.hidePopover();
+    });
+    return () => clearTimeout(infoHideTimer);
   });
   $(".fw-fixture-dialog").addEventListener(
     "close",
@@ -1273,7 +1289,9 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     }
     if (el.dataset.section) state.section = el.dataset.section;
     else if (el.dataset.view) {
-      switchView(el.dataset.view as View);
+      switchView(
+        el.dataset.view === "http-e2e" ? httpSuite : (el.dataset.view as View),
+      );
     } else if (el.dataset.chart) {
       state.chart = el.dataset.chart as ChartMode;
       if (state.chart === "balls") {
@@ -1294,12 +1312,13 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       state.focus = null;
     } else if (el.dataset.focus) {
       state.focus = state.focus === el.dataset.focus ? null : el.dataset.focus;
-      if (el.classList.contains("fw-row")) {
+      if (el.classList.contains("fw-row-action")) {
         $$(".fw-row[data-focus]").forEach((row) => {
-          row.setAttribute(
-            "aria-pressed",
-            String(row.dataset.focus === state.focus),
-          );
+          const focused = String(row.dataset.focus === state.focus);
+          row.dataset.focused = focused;
+          row
+            .querySelector(".fw-row-action")
+            ?.setAttribute("aria-pressed", focused);
         });
         save();
         return;
@@ -1319,7 +1338,12 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
         return;
       }
     } else if (el.hasAttribute("data-all")) {
-      state.selected = data.renderers.map((r) => r.id);
+      state.selected = [
+        ...new Set([
+          ...state.selected,
+          ...model.experimentTools().map((r) => r.id),
+        ]),
+      ];
       state.types = [...ALL_GROUPS];
     } else return;
     render();
@@ -1341,6 +1365,8 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
       state.types = (el as HTMLInputElement).checked
         ? [...new Set([...state.types, el.dataset.type])]
         : state.types.filter((id) => id !== el.dataset.type);
+    else if (el.hasAttribute("data-http-suite-view"))
+      switchView(el.value as "framework" | "http");
     else if (el.hasAttribute("data-render-view"))
       state.render = el.value as "p50" | "rss";
     else if (el.hasAttribute("data-framework-view"))
@@ -1358,7 +1384,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
     save();
   });
   listen(root, "click", (event) => {
-    const row = closest(event, percentileTarget);
+    const row = percentileRow(event);
     if (row) {
       if (row.isConnected) {
         dismissedHover = false;
@@ -1427,7 +1453,7 @@ export function mountDashboard(root: HTMLElement, data: BenchmarkData) {
   const dispose = () => {
     lifecycle.abort();
     stop();
-    clearTimeout(infoHideTimer);
+    for (const cleanup of infoCleanups) cleanup();
     observer?.disconnect();
   };
   dispose.setLocation = (search: string) => {
