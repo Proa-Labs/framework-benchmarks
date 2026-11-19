@@ -14,4 +14,6 @@ The repository's other suites answer different questions and retain their method
 - [`experiments/travel-agent/`](../experiments/travel-agent/) covers a multi-site browser-agent workflow; and
 - [`docs/engineering/`](engineering/) contains mechanism and implementation experiments.
 
+[`compare/`](../compare/) diffs two retained JSON captures of one suite. It does not join values across suites, and it does not replace a capture.
+
 Never join values from those suites into the renderer scoreboard. Superseded reports are available in Git history.
