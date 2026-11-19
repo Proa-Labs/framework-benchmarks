@@ -36,6 +36,8 @@ machine and workload within each suite; published results must pass output parit
 sampling and source-integrity checks. Read the [measurement protocols](docs/protocol.md)
 and inspect the [rendering results](docs/reports/scoreboard.md) or
 [HTTP, streaming and startup results](docs/reports/http-capacity.md).
+To turn HTTP CPU per response into cores needed at a chosen request rate, see
+[fleet size from CPU per response](fleet-size/).
 
 ## Run an SSR benchmark
 
