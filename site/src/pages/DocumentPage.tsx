@@ -188,16 +188,15 @@ function Methodology() {
         recorded versions on the recorded host. They are historical evidence,
         not a claim about every framework's latest release.
       </p>
-      <h2>SSR Rendering</h2>
+      <h2>SSR</h2>
       <p>
-        Prepared input to one complete, independently owned HTML response. Each
-        adapter uses its declared native output type; Proa’s fresh RenderBuffer
-        excludes flattening to a String. Output boundaries and per-row capture
-        dates are retained in the data. Compilation and fixture construction
-        happen before timing; routing, HTTP, databases and hydration are
-        excluded. The canonical suite validates semantic DOM parity before
-        measuring. Headline values are medians of five independently measured
-        process P50s.
+        Each adapter renders prepared input into one complete, independently
+        owned HTML page using its native output type. The data records each
+        adapter’s output boundary and capture date. Compilation and fixture
+        construction happen before timing. The timer excludes routing, HTTP,
+        database access and hydration. The canonical suite validates semantic
+        DOM parity before measuring. Headline values are medians of five
+        independently measured process P50s.
       </p>
       {metadata.renderingOutput && <p>{metadata.renderingOutput}</p>}
       <p>
@@ -257,7 +256,7 @@ function Methodology() {
         server-process measurements. The load generator validates responses and
         checks that it is not the bottleneck.
       </p>
-      <h2>Streaming</h2>
+      <h2>Streaming SSR</h2>
       <p>
         A 96-card grid arrives through eight async boundaries with 5–90 ms
         in-memory delays. Scheduled-arrival timings include queueing. Each load
