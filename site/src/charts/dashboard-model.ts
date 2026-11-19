@@ -135,7 +135,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       get scope() {
         return state.render === "rss"
           ? "Whole-process lifetime: runtime startup, prepared data, template initialization, warmup, rendering and output verification. This is resident process memory, not allocation per render. Compare within this workload and memory metric."
-          : "Prepared data → a complete, freshly owned HTML output. Each adapter uses its declared native output type; Proa may return a RenderBuffer without String conversion. Includes rendering, formatting, and output allocation. Excludes data setup, HTTP, routing, databases, hydration, and network transfer. Strict rows passed unchanged DOM/class parity. Exact† uses separately checked native styles and markup; its adaptation is disclosed.";
+          : "Prepared data → a complete, freshly owned HTML output. Each adapter uses its declared native output type. Includes rendering, formatting, and output allocation. Excludes data setup, HTTP, routing, databases, hydration, and network transfer. Strict rows passed unchanged DOM/class parity. Exact† uses separately checked native styles and markup; its adaptation is disclosed.";
       },
     },
     http: {
@@ -147,7 +147,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
         "HTTP/1.1 loopback, keep-alive, compression off; one core of work. Every response matches its parity-gated dump. No database or external I/O.",
     },
     streaming: {
-      title: "Streaming",
+      title: "Streaming SSR",
       path: "benchmarks/streaming/results/latest.json",
       method:
         "Median of three independent phases per offered rate. Latency starts at scheduled arrival and includes queueing.",
@@ -616,7 +616,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
       data.workloads.find((w) => w.id === state.workload)?.fixture ===
         "showcase-v1"
     )
-      return "Each tool renders a shared re-creation of this page from prepared data. These timings are separate from benchmarks of Proa’s original app code.";
+      return "Each tool renders a shared re-creation of this page from prepared data.";
     return state.view === "startup"
       ? "Time from launching a fresh server process to receiving its first complete product-grid response. Includes runtime startup and rendering; builds run beforehand and the disk cache is warm."
       : "";
@@ -624,7 +624,7 @@ export function createDashboardModel(data: BenchmarkData, search = "") {
 
   function heading() {
     if (state.view === "rendering" && state.render === "rss")
-      return "SSR Rendering · memory usage";
+      return "SSR · memory usage";
     if (state.view === "framework" || state.view === "http")
       return {
         throughput: "HTTP E2E capacity",

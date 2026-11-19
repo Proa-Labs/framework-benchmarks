@@ -112,7 +112,7 @@ export function PerformancePage({
               aria-describedby="rendering-info"
               aria-current={state.view === "rendering" ? "page" : undefined}
             >
-              SSR Rendering
+              SSR
               <span
                 className="fw-experiment-info"
                 data-info-for="rendering-info"
@@ -196,7 +196,7 @@ export function PerformancePage({
             aria-current={state.view === "streaming" ? "page" : undefined}
             data-view="streaming"
           >
-            Streaming
+            Streaming SSR
           </button>
           <button
             type="button"
@@ -263,7 +263,7 @@ export function PerformancePage({
                 id="render-metric"
                 data-render-view
                 className="fw-native-select"
-                aria-label="SSR Rendering analysis"
+                aria-label="SSR analysis"
                 defaultValue={state.render}
               >
                 <option value="p50">Render time</option>
@@ -305,7 +305,7 @@ export function PerformancePage({
             </p>
             <InfoCallout data-coverage-note hidden={state.view === "rendering"}>
               Coverage is a work in progress. We aim to extend these tests to
-              the remaining frameworks listed in SSR Rendering.
+              the remaining frameworks listed in SSR.
             </InfoCallout>
             <p
               className="fw-validation-note"
@@ -387,7 +387,7 @@ export function PerformancePage({
               <select
                 data-stream-view=""
                 className="fw-native-select"
-                aria-label="Streaming analysis"
+                aria-label="Streaming SSR analysis"
                 hidden={state.view !== "streaming"}
                 defaultValue={state.stream}
               >
@@ -651,12 +651,13 @@ export function PerformancePage({
         popover="manual"
         role="tooltip"
       >
-        <strong>SSR render latency</strong>
+        <strong>Server-side rendering (SSR)</strong>
         <p>
-          Time to turn prepared data into complete, freshly owned HTML output.
-          Each adapter uses its declared native output type; Proa’s RenderBuffer
-          avoids String conversion. Includes rendering, formatting and output
-          allocation. Excludes HTTP, routing, data loading and hydration.
+          This benchmark measures the equivalent of React’s{" "}
+          <code>renderToString</code> for each tool. It times rendering prepared
+          data into complete HTML, including formatting and allocating fresh
+          output in the tool’s native format. HTTP, routing, data loading and
+          browser hydration are outside the timer.
         </p>
       </div>
       <div

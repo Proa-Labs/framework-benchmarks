@@ -256,7 +256,7 @@ try {
     await page.locator("[data-http-suite-view]").inputValue(),
     "http",
   );
-  await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
+  await page.getByRole("tab", { name: "SSR", exact: true }).click();
   await page.locator("#experiment-rendering").press("ArrowRight");
   assert.equal(
     await page.locator("[data-http-suite-view]").inputValue(),
@@ -311,9 +311,7 @@ try {
     path: join(siteRoot, "test-results/desktop.png"),
     fullPage: true,
   });
-  await page
-    .getByLabel("SSR Rendering analysis", { exact: true })
-    .selectOption("rss");
+  await page.getByLabel("SSR analysis", { exact: true }).selectOption("rss");
   assert.equal(new URL(page.url()).searchParams.get("render"), "rss");
   assert.equal(await page.locator(".fw-row").count(), memoryCount);
   if (!memoryCount)
@@ -354,7 +352,7 @@ try {
   );
   for (const width of [375, 751, 1440]) {
     await page.setViewportSize({ width, height: 934 });
-    const analysis = page.getByLabel("SSR Rendering analysis", { exact: true });
+    const analysis = page.getByLabel("SSR analysis", { exact: true });
     assert.equal(
       await analysis.isVisible(),
       true,
@@ -388,9 +386,7 @@ try {
     path: join(siteRoot, "test-results/render-memory.png"),
     fullPage: true,
   });
-  await page
-    .getByLabel("SSR Rendering analysis", { exact: true })
-    .selectOption("p50");
+  await page.getByLabel("SSR analysis", { exact: true }).selectOption("p50");
   assert.equal(await page.locator(".fw-row").count(), renderCount);
   checks.push(
     "render RSS selection survives reload and exports only recorded memory",
@@ -1127,14 +1123,14 @@ try {
       original.engines.filter((e: { id: string }) => e.id !== "proa"),
     );
   }
-  await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
+  await page.getByRole("tab", { name: "SSR", exact: true }).click();
   assert.equal(await page.locator("[data-renderer-comparison]").count(), 1);
   assert.equal(await page.locator("[data-framework-comparison]").count(), 0);
   await page.locator('[data-type="frameworks"]').uncheck();
   assert.equal(await page.locator('[data-type="baselines"]').count(), 0);
   assert.equal(await page.locator('[data-stat-suite="framework"]').count(), 0);
   checks.push(
-    "SSR Rendering keeps render-only columns and exports; all 15 HTTP values and millisecond hover percentiles stay in Framework SSR",
+    "SSR keeps render-only columns and exports; all 15 HTTP values and millisecond hover percentiles stay in Framework SSR",
   );
   const filtered: TestExport = JSON.parse(
     decodeURIComponent(
@@ -2035,7 +2031,7 @@ try {
     await page.locator("[data-capture-note-copy]").textContent(),
     captures.startup.reviewRefresh?.note || "",
   );
-  await page.getByRole("tab", { name: "SSR Rendering", exact: true }).click();
+  await page.getByRole("tab", { name: "SSR", exact: true }).click();
   assert.equal(
     await page.locator("[data-experiment-description]").isVisible(),
     false,
@@ -2050,9 +2046,9 @@ try {
   for (const [view, label] of [
     ["framework", "HTTP E2E"],
     ["http", "HTTP E2E"],
-    ["streaming", "Streaming"],
+    ["streaming", "Streaming SSR"],
     ["startup", "Cold Start"],
-    ["rendering", "SSR Rendering"],
+    ["rendering", "SSR"],
   ]) {
     await initial.goto(`${server.url}/?view=${view}`);
     await page.getByRole("tab", { name: label, exact: true }).click();
