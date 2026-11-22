@@ -2,7 +2,7 @@
   "id": "solidstart",
   "scope": "SolidStart v2 with Solid v1, Solid Router v1 and Vite v8. Subpath and HTTP error findings also inspect source revision 68ce20b; deployment plugins are named separately.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -394,6 +394,13 @@
       "note": "The documented Nitro plugin prerenders listed or crawled routes into static output. Server functions still require a server.",
       "url": "https://docs.solidjs.com/solid-start/v2/building-your-application/route-prerendering",
       "label": "Nitro prerendering"
+    },
+    "separateAssetHosting": {
+      "status": "community",
+      "note": "The Nitroship integration publishes the Nitro Node preset's .output/public directory to its CDN and runs .output/server/index.mjs for SSR and APIs. Asset placement uses the provider's deployment configuration.",
+      "url": "https://docs.nitroship.co/frameworks/solidstart/",
+      "label": "Nitroship SolidStart integration",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "community",

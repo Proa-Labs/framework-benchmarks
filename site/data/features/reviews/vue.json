@@ -2,7 +2,7 @@
   "id": "vue",
   "scope": "Vue 3 documentation. Vue Router and external application/i18n packages are identified separately.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -398,6 +398,12 @@
       "url": "https://vuejs.org/guide/best-practices/production-deployment.html",
       "label": "CSR static build",
       "reviewedOn": "2026-11-10"
+    },
+    "separateAssetHosting": {
+      "status": "scope",
+      "note": "Vue's SSR renderer runs in a host application. A build tool or application framework supplies publishable browser files and configures their CDN URLs.",
+      "url": "https://vuejs.org/guide/scaling-up/ssr.html#higher-level-solutions",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "scope",

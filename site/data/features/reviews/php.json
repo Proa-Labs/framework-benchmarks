@@ -2,7 +2,7 @@
   "id": "php",
   "scope": "Native PHP templates and runtime extensions; no PHP application framework is implied.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -380,6 +380,12 @@
       "status": "scope",
       "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
       "url": "https://www.php.net/manual/en/tutorial.php"
+    },
+    "separateAssetHosting": {
+      "status": "scope",
+      "note": "PHP templates emit application-authored asset URLs. The application and its build or deployment tooling produce the files and publish them to the asset host.",
+      "url": "https://www.php.net/manual/en/tutorial.php",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "scope",

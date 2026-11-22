@@ -2,7 +2,7 @@
   "id": "marko",
   "scope": "Marko 6 documentation; @marko/run application features are identified explicitly.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -402,6 +402,13 @@
       "note": "The static adapter emits deployable files; request-time server handlers are unavailable.",
       "url": "https://markojs.com/docs/marko-run/adapters",
       "label": "@marko/run static adapter"
+    },
+    "separateAssetHosting": {
+      "status": "official",
+      "note": "Publish the Vite client output to the asset host. The official Marko Vite plugin resolves managed asset URLs through Vite's build-time base or through basePathVar, which must be set before loading the SSR bundle.",
+      "url": "https://github.com/marko-js/vite#optionsbasepathvar",
+      "label": "Marko Vite asset base",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "undocumented",

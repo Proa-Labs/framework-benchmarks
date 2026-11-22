@@ -491,6 +491,12 @@
       "definition": "Export files deployable without an application server; notes describe features lost in this mode."
     },
     {
+      "id": "separateAssetHosting",
+      "group": "deployment",
+      "label": "Separate asset hosting",
+      "definition": "Publish production browser files to a CDN or static host while the application server keeps handling SSR and APIs. This requires a publishable asset build, URLs in HTML, stylesheets and module imports that resolve on the asset host, and cross-origin headers where needed. Publish the files before the app references them and retain earlier versions while pages still use them. Notes explain which files are covered and when the asset host is configured."
+    },
+    {
       "id": "containers",
       "group": "deployment",
       "label": "Containers",

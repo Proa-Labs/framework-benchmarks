@@ -2,7 +2,7 @@
   "id": "handlebars",
   "scope": "Standalone templating API; adding a host framework can provide separate application features.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -357,6 +357,12 @@
       "status": "scope",
       "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
       "url": "https://handlebarsjs.com/guide/"
+    },
+    "separateAssetHosting": {
+      "status": "scope",
+      "note": "Handlebars can precompile templates for the browser. The host application or build tool packages the browser files, configures their URLs, and publishes them separately.",
+      "url": "https://handlebarsjs.com/api-reference/compilation.html#handlebars-precompile-template-options",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "scope",

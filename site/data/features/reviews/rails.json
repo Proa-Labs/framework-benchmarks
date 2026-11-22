@@ -2,7 +2,7 @@
   "id": "rails",
   "scope": "Rails documentation. Optional browser frameworks are not attributed to the server template engine.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -392,6 +392,13 @@
       "status": "scope",
       "note": "Public assets can be served statically, but dynamic Rails controllers/templates need a Ruby host; complete static-site export is not supplied here.",
       "url": "https://guides.rubyonrails.org/getting_started.html"
+    },
+    "separateAssetHosting": {
+      "status": "partial",
+      "note": "Precompile Propshaft assets and set config.asset_host for helper-generated URLs. The guide documents a pull-through CDN. A separate static origin requires a deployment step to publish the precompiled files and keep the matching manifest with Rails.",
+      "url": "https://guides.rubyonrails.org/asset_pipeline.html#cdns",
+      "label": "Rails asset host",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "native",
