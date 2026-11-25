@@ -1,7 +1,13 @@
 #!/usr/bin/env bun
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
@@ -120,32 +126,54 @@ export function scaffoldAdapter(id, destination = root) {
   assert.match(id ?? "", /^[a-z][a-z0-9-]*$/, "Use a lowercase adapter ID");
   const registry = readAdapters(destination);
   assert.ok(!registry[id], "Adapter already exists");
-  const directory = join(destination, "benchmarks/rendering/external", id);
+  const workspace = `benchmarks/rendering/external/${id}`;
+  const directory = join(destination, workspace);
   assert.ok(!existsSync(directory), "Adapter directory already exists");
-  mkdirSync(directory);
-  writeFileSync(
-    join(directory, "suite_bench.mjs"),
-    readFileSync(
-      join(root, "tooling/adapters/templates/adapter.mjs.txt"),
-      "utf8",
-    ).replaceAll("ADAPTER_ID", id),
-    { flag: "wx" },
+  const template = readFileSync(
+    join(root, "tooling/adapters/templates/adapter.mjs.txt"),
+    "utf8",
   );
+  const manifest = {
+    name: `proa-bench-${id}`,
+    private: true,
+    type: "module",
+  };
   registry[id] = {
     id,
     label: id,
     language: "JavaScript",
-    setup: "custom",
-    cwd: `benchmarks/rendering/external/${id}`,
+    setup: "bun",
+    cwd: workspace,
     command: "{bun}",
     args: ["suite_bench.mjs"],
   };
-  atomicWrite(
-    join(destination, "benchmarks/rendering/canonical/adapters.json"),
-    `${JSON.stringify(registry, null, 2)}\n`,
-  );
+  mkdirSync(directory);
+  try {
+    writeFileSync(
+      join(directory, "suite_bench.mjs"),
+      template.replaceAll("ADAPTER_ID", id),
+      { flag: "wx" },
+    );
+    writeFileSync(
+      join(directory, "package.json"),
+      `${JSON.stringify(manifest, null, 2)}\n`,
+      { flag: "wx" },
+    );
+    atomicWrite(
+      join(destination, "benchmarks/rendering/canonical/adapters.json"),
+      `${JSON.stringify(registry, null, 2)}\n`,
+    );
+  } catch (error) {
+    rmSync(directory, { recursive: true, force: true });
+    throw error;
+  }
   console.log(
-    `Created ${directory}/suite_bench.mjs and registered ${id} for local runs.\nImplement render() with your renderer, then: bun run bench run rendering --renderers ${id} --workloads cards\nPublic roster and site remain unchanged until review and a full capture.`,
+    [
+      `Created ${workspace}/suite_bench.mjs and package.json for ${id}.`,
+      "Add the pinned renderer dependency to that workspace and implement render().",
+      `Verify parity: bun run bench run rendering --renderers ${id} --workloads cards --parity-only`,
+      "See CONTRIBUTING.md#add-a-renderer for the review and publication steps.",
+    ].join("\n"),
   );
 }
 async function main() {

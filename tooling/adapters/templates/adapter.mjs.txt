@@ -1,4 +1,4 @@
-import { runStringAdapter } from "../../../tooling/string-adapter.mjs";
+import { runStringAdapter } from "../../../../tooling/adapters/string-adapter.mjs";
 // Construct deterministic inputs and compile templates HERE, before timing.
 // Port the existing fixture semantics from ../react/suite_components.mjs.
 // Shared data is in ../shared/suite_data.mjs. Do not read pre-rendered HTML.

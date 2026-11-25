@@ -50,9 +50,11 @@ bun run bench doctor rendering
 bun run bench run rendering --renderers react,vue --workloads cards
 ```
 
-Smoke results validate implementations; use the publication protocol for rankings.
-See [CONTRIBUTING.md](CONTRIBUTING.md) to add a framework, change a workload or run
-the full suite, and the [GCP campaign guide](tooling/cloud/README.md) for isolated
+Smoke results validate implementations. The publication protocol governs rankings.
+
+[Add a framework or template engine](CONTRIBUTING.md#add-a-renderer) starting
+with one renderer and one workload. See [CONTRIBUTING.md](CONTRIBUTING.md) for
+other changes, and the [GCP campaign guide](tooling/cloud/README.md) for isolated
 parallel benchmark runs.
 
 ## Repository guide

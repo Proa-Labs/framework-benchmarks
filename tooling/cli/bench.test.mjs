@@ -1,5 +1,7 @@
 import { expect, test } from "bun:test";
+import { spawnSync } from "node:child_process";
 import {
+  copyFileSync,
   mkdirSync,
   mkdtempSync,
   readFileSync,
@@ -58,25 +60,39 @@ test("registry covers public roster and selection does not silently admit unknow
 test("scaffold adds local adapter wiring, refuses overwrites, and leaves public roster alone", () => {
   const destination = mkdtempSync(join(tmpdir(), "adapter-scaffold-"));
   try {
-    mkdirSync(join(destination, "benchmarks/rendering/canonical"), {
-      recursive: true,
-    });
+    const canonical = join(destination, "benchmarks/rendering/canonical");
+    mkdirSync(canonical, { recursive: true });
     mkdirSync(join(destination, "benchmarks/rendering/external"));
-    writeFileSync(
-      join(destination, "benchmarks/rendering/canonical/adapters.json"),
-      "{}",
-    );
+    mkdirSync(join(destination, "tooling/adapters"), { recursive: true });
+    for (const file of [
+      "benchmarks/rendering/canonical/workloads.json",
+      "tooling/adapters/string-adapter.mjs",
+    ]) {
+      copyFileSync(join(root, file), join(destination, file));
+    }
+    writeFileSync(join(canonical, "adapters.json"), "{}");
+    const roster = '{"renderers":[]}';
+    writeFileSync(join(canonical, "roster.json"), roster);
+
     scaffoldAdapter("example", destination);
-    expect(readAdapters(destination).example.command).toBe("{bun}");
+
+    const example = readAdapters(destination).example;
+    expect(example).toMatchObject({ command: "{bun}", setup: "bun" });
+    expect(readFileSync(join(canonical, "roster.json"), "utf8")).toBe(roster);
     expect(
-      readFileSync(
-        join(
-          destination,
-          "benchmarks/rendering/external/example/suite_bench.mjs",
-        ),
-        "utf8",
-      ),
-    ).toContain('id: "example"');
+      JSON.parse(readFileSync(join(destination, example.cwd, "package.json"))),
+    ).toEqual({ name: "proa-bench-example", private: true, type: "module" });
+
+    const invocation = adapterInvocation(example, destination, {
+      bun: process.execPath,
+    });
+    const run = spawnSync(
+      invocation.command,
+      [...invocation.args, "--workload", "cards", "--dump-only"],
+      { cwd: invocation.cwd, encoding: "utf8" },
+    );
+    expect(run.status).toBe(1);
+    expect(run.stderr).toContain("Implement example render(cards)");
     expect(() => scaffoldAdapter("example", destination)).toThrow();
     expect(() => scaffoldAdapter("../bad", destination)).toThrow();
   } finally {
