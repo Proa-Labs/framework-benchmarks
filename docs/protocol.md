@@ -8,6 +8,8 @@ Three suites measure HTTP responses with the shared load-driver rules in [`tooli
 - [`benchmarks/framework-ssr/`](../benchmarks/framework-ssr/) measures complete HTML responses through each framework’s production routes.
 - [`benchmarks/streaming/`](../benchmarks/streaming/) streams a Suspense-heavy page through Proa, Marko, React, and Leptos.
 
+[`fleet-size/`](../fleet-size/) translates a publication HTTP capture's CPU per response into cores needed at a chosen request rate. It does not join that translation back into the renderer scoreboard.
+
 The repository's other suites answer different questions and retain their methods beside their evidence:
 
 - [`experiments/showcase/`](../experiments/showcase/) covers application-shaped SSR and verified browser JavaScript;

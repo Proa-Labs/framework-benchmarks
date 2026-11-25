@@ -98,7 +98,7 @@ jobs:
           set -euo pipefail
           bun tooling/maintenance/prune-results.mjs --check
           bun run test
-          bun test benchmarks/rendering/external/sveltekit/stream-validator.test.mjs experiments/sveltekit-streaming/benchmark.test.mjs
+          bun test benchmarks/rendering/external/sveltekit/stream-validator.test.mjs experiments/sveltekit-streaming/benchmark.test.mjs fleet-size/fleet-size.test.mjs
           bun experiments/sveltekit-streaming/report.mjs --check
           bash -n tooling/maintenance/refresh-proa.sh benchmarks/rendering/run_all.sh benchmarks/framework-ssr/cloud/*.sh tooling/cloud/*.sh .github/scripts/*.sh
       - name: Check Rust formatting
