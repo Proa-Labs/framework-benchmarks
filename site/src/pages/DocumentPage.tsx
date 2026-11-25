@@ -8,13 +8,14 @@ function About() {
   return (
     <>
       <p>
-        We built frameworks.run to see how web frameworks perform when they’re
-        serving interfaces under load. Many web framework benchmarks focus on
-        simple HTTP endpoints, which are useful for measuring request handling
-        and throughput. We wanted to know how much work it takes to render and
-        stream a page. We also plan to measure the JavaScript the browser has to
-        download and run. Shared pages and test conditions make those costs
-        easier to compare across frameworks.
+        Many web framework benchmarks are really web server benchmarks. They
+        often use toy workloads like routing a request and returning a tiny JSON
+        response. That’s useful for isolating HTTP overhead. I wanted to see how
+        frameworks handle the kind of work we do in production, like rendering
+        and streaming full pages under load. I also wanted to know how much
+        JavaScript the browser has to download and run. I couldn’t find a
+        resource that brought those comparisons together, so I built
+        frameworks.run.
       </p>
       <p>
         That means equivalent workloads, output checks, documented test
