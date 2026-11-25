@@ -35,7 +35,8 @@ server measurements exclude browser JavaScript execution. Competitors share a
 machine and workload within each suite; published results must pass output parity,
 sampling and source-integrity checks. Read the [measurement protocols](docs/protocol.md)
 and inspect the [rendering results](docs/reports/scoreboard.md) or
-[HTTP, streaming and startup results](docs/reports/http-capacity.md).
+[HTTP, streaming and startup results](docs/reports/http-capacity.md),
+or diff two captures with the [capture comparison](compare/) tool.
 
 ## Run an SSR benchmark
 
