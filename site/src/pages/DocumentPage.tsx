@@ -9,11 +9,14 @@ function About() {
   return (
     <>
       <p>
-        We built frameworks.run to make apples-to-apples comparisons of web
-        frameworks easier. Bold performance claims are hard to evaluate when
-        every project benchmarks a different page, setup or definition of
-        “fast.” We wanted a shared set of benchmarks that lets people check
-        those claims for themselves.
+        Many web framework benchmarks are really web server benchmarks. They
+        often use toy workloads like routing a request and returning a tiny JSON
+        response. That’s useful for isolating HTTP overhead. I wanted to see how
+        frameworks handle the kind of work we do in production, like rendering
+        and streaming full pages under load. I also wanted to know how much
+        JavaScript the browser has to download and run. I couldn’t find a
+        resource that brought those comparisons together, so I built
+        frameworks.run.
       </p>
       <p>
         That means equivalent workloads, output checks, documented test
@@ -110,6 +113,25 @@ function About() {
         tests.
       </p>
       <h2>Prior work</h2>
+      <p>
+        <a href="https://http-arena.com/">HttpArena</a>,{" "}
+        <a href="https://www.techempower.com/benchmarks/">
+          TechEmpower Framework Benchmarks
+        </a>
+        ,{" "}
+        <a href="https://github.com/the-benchmarker/web-frameworks">
+          the-benchmarker’s Web Frameworks
+        </a>{" "}
+        and <a href="https://github.com/sharkbench/sharkbench">SharkBench</a>{" "}
+        are useful references for server performance. Across their suites, they
+        exercise focused workloads such as routing, JSON serialization and
+        database access. Some workloads also exercise server-side templates,
+        including TechEmpower’s{" "}
+        <a href="https://github.com/TechEmpower/FrameworkBenchmarks/wiki/Project-Information-Framework-Tests-Overview#fortunes">
+          Fortunes test
+        </a>{" "}
+        and HttpArena’s template profile.
+      </p>
       <p>
         Earlier projects such as{" "}
         <a href="https://github.com/eknkc/ssr-benchmark">
