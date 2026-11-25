@@ -52,10 +52,10 @@ bun run bench run rendering --renderers react,vue --workloads cards
 
 Smoke results validate implementations. The publication protocol governs rankings.
 
-[Add a framework or template engine](CONTRIBUTING.md#add-a-renderer) starting
-with one renderer and one workload. See [CONTRIBUTING.md](CONTRIBUTING.md) for
-other changes, and the [GCP campaign guide](tooling/cloud/README.md) for isolated
-parallel benchmark runs.
+[Add a framework or template engine](CONTRIBUTING.md#add-a-renderer) with
+`bench new-adapter` and verify its first workload with `bench check-adapter`.
+The [contributor guide](CONTRIBUTING.md) covers other changes. The
+[GCP campaign guide](tooling/cloud/README.md) covers isolated parallel runs.
 
 ## Repository guide
 

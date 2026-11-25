@@ -91,7 +91,9 @@ jobs:
       - name: Verify browser interactions
         run: bun site/test/browser.ts
       - name: Verify contributor benchmark path
-        run: bun run bench run rendering --renderers react,vue --workloads cards
+        run: |
+          bun run bench check-adapter react --smoke
+          bun run bench check-adapter vue --smoke --out benchmarks/rendering/results/local/contributor-smoke.json
 
   # Lighthouse batches run in parallel with the same presets, runs and
   # median-100 gate. An audit on a fresh Chrome scores lower than later ones,

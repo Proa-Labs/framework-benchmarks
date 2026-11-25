@@ -13,7 +13,7 @@ one working workload is welcome. Delete this section for other changes. -->
 
 - **Suite, adapter and workloads**
 - **Renderer version and production API used**
-- **Parity or smoke command and result**
+- **Parity or smoke evidence** (Actions link or local command and result)
 - **Known workload gaps or contract deviations**
 
 <!-- Attach local results if useful. A passing smoke run supports review.

@@ -22,6 +22,7 @@ import {
 import { Footer } from "../components/Footer.tsx";
 import { Header } from "../components/Header.tsx";
 import { InfoCallout } from "../components/InfoCallout.tsx";
+import { ADD_FRAMEWORK_GUIDE } from "../project-links.ts";
 export function PerformancePage({
   data = benchmarkData as BenchmarkData,
 }: {
@@ -305,7 +306,14 @@ export function PerformancePage({
             </p>
             <InfoCallout data-coverage-note hidden={state.view === "rendering"}>
               Coverage is a work in progress. We aim to extend these tests to
-              the remaining frameworks listed in SSR.
+              the remaining frameworks listed in SSR.{" "}
+              <a
+                href={ADD_FRAMEWORK_GUIDE}
+                className="font-medium underline underline-offset-2 hover:text-ink"
+              >
+                Add a framework
+              </a>
+              .
             </InfoCallout>
             <p
               className="fw-validation-note"

@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import { ADD_FRAMEWORK_GUIDE, BENCHMARK_REPOSITORY } from "../project-links.ts";
 import { Wordmark } from "./Wordmark.tsx";
 
-const repository = "https://github.com/Proa-Labs/framework-benchmarks";
 export function Footer({
   comparisonActions = false,
 }: {
@@ -54,13 +54,20 @@ export function Footer({
           <Link to="/methodology" search={{}}>
             Methodology
           </Link>
+          <a href={ADD_FRAMEWORK_GUIDE} target="_blank" rel="noreferrer">
+            Add a framework ↗
+          </a>
           <Link to="/about" search={{}}>
             Ownership &amp; disclosure
           </Link>
-          <a href={repository} target="_blank" rel="noreferrer">
+          <a href={BENCHMARK_REPOSITORY} target="_blank" rel="noreferrer">
             GitHub ↗
           </a>
-          <a href={`${repository}/issues/new`} target="_blank" rel="noreferrer">
+          <a
+            href={`${BENCHMARK_REPOSITORY}/issues/new`}
+            target="_blank"
+            rel="noreferrer"
+          >
             Suggest a correction ↗
           </a>
           {comparisonActions && (

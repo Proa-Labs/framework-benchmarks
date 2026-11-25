@@ -8,11 +8,15 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { join, resolve } from "node:path";
+import { join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parseArgs } from "node:util";
 import { chromium } from "playwright";
+import renderingWorkloads from "../../benchmarks/rendering/canonical/workloads.json" with {
+  type: "json",
+};
 import suites from "../../benchmarks/suites.json" with { type: "json" };
-import { readAdapters } from "../adapters/adapters.mjs";
+import { readAdapters, selectIds } from "../adapters/adapters.mjs";
 import { atomicWrite, captureId } from "../capture/captures.mjs";
 import { repositoryRoot } from "../repository.mjs";
 
@@ -122,10 +126,90 @@ function doctor(id) {
   }
   if (failed) process.exitCode = 1;
 }
-export function scaffoldAdapter(id, destination = root) {
+export function planAdapterCheck(id, args, destination = root) {
+  assert.ok(
+    Object.hasOwn(readAdapters(destination), id),
+    `Unknown rendering adapter ${id ?? ""}. Run bun run bench list`,
+  );
+  const { values } = parseArgs({
+    args,
+    options: {
+      workloads: { type: "string" },
+      smoke: { type: "boolean", default: false },
+      out: { type: "string" },
+    },
+    allowPositionals: false,
+  });
+  if (values.out !== undefined) {
+    assert.ok(values.smoke, "--out requires --smoke");
+    const localResults = join(
+      root,
+      suites.rendering.directory,
+      "results/local",
+    );
+    assert.ok(
+      resolve(root, values.out).startsWith(localResults + sep),
+      "Save check-adapter output under benchmarks/rendering/results/local/",
+    );
+  }
+  const workloads = selectIds(
+    values.workloads,
+    ["cards"],
+    renderingWorkloads.workloads.map(({ id }) => id),
+    "workload",
+  ).join(",");
+  const flags = ["--renderers", id, "--workloads", workloads];
+  if (!values.smoke) flags.push("--parity-only");
+  if (values.out !== undefined) flags.push("--out", values.out);
+  return {
+    command: planRun("rendering", flags),
+    workloads,
+    smoke: values.smoke,
+  };
+}
+
+function checkAdapter(id, args) {
+  const { command, workloads, smoke } = planAdapterCheck(id, args);
+  run(command);
+  const evidence = smoke
+    ? command[command.indexOf("--out") + 1]
+    : "benchmarks/rendering/results/canonical-parity.json";
+  console.log(`${id} passed ${smoke ? "smoke" : "parity"} for ${workloads}.`);
+  console.log(`Evidence saved to ${evidence}`);
+  console.log("Include the command and result in your pull request.");
+}
+
+function parsePinnedPackage(specifier) {
+  const separator = specifier.lastIndexOf("@");
+  const name = specifier.slice(0, separator);
+  const version = specifier.slice(separator + 1);
+  const semver =
+    /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)(?:-([a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*))?(?:\+[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)?$/.exec(
+      version,
+    );
+  assert.ok(
+    separator > 0 &&
+      /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/.test(name) &&
+      semver &&
+      !semver[1]?.split(".").some((identifier) => /^0\d+$/.test(identifier)),
+    "--package needs a name and exact version, e.g. @scope/renderer@1.2.3",
+  );
+  return { name, version };
+}
+
+export function scaffoldAdapter(id, destination = root, args = []) {
   assert.match(id ?? "", /^[a-z][a-z0-9-]*$/, "Use a lowercase adapter ID");
+  const { values } = parseArgs({
+    args,
+    options: { label: { type: "string" }, package: { type: "string" } },
+    allowPositionals: false,
+  });
+  const label = values.label?.trim() ?? id;
+  assert.ok(label && !/[\r\n]/.test(label), "Use a single-line display label");
+  const dependency =
+    values.package === undefined ? null : parsePinnedPackage(values.package);
   const registry = readAdapters(destination);
-  assert.ok(!registry[id], "Adapter already exists");
+  assert.ok(!Object.hasOwn(registry, id), "Adapter already exists");
   const workspace = `benchmarks/rendering/external/${id}`;
   const directory = join(destination, workspace);
   assert.ok(!existsSync(directory), "Adapter directory already exists");
@@ -137,21 +221,27 @@ export function scaffoldAdapter(id, destination = root) {
     name: `proa-bench-${id}`,
     private: true,
     type: "module",
+    ...(dependency && {
+      dependencies: { [dependency.name]: dependency.version },
+    }),
   };
   registry[id] = {
     id,
-    label: id,
+    label,
     language: "JavaScript",
     setup: "bun",
     cwd: workspace,
     command: "{bun}",
     args: ["suite_bench.mjs"],
+    ...(dependency && { versionPackage: dependency.name }),
   };
   mkdirSync(directory);
   try {
     writeFileSync(
       join(directory, "suite_bench.mjs"),
-      template.replaceAll("ADAPTER_ID", id),
+      template.replace(/ADAPTER_ID|ADAPTER_LABEL/g, (token) =>
+        JSON.stringify(token === "ADAPTER_ID" ? id : label),
+      ),
       { flag: "wx" },
     );
     writeFileSync(
@@ -170,8 +260,11 @@ export function scaffoldAdapter(id, destination = root) {
   console.log(
     [
       `Created ${workspace}/suite_bench.mjs and package.json for ${id}.`,
-      "Add the pinned renderer dependency to that workspace and implement render().",
-      `Verify parity: bun run bench run rendering --renderers ${id} --workloads cards --parity-only`,
+      dependency
+        ? "Run bun install at the repository root to record the pinned dependency."
+        : "Add a pinned renderer dependency to the new workspace.",
+      `Implement render() in ${workspace}/suite_bench.mjs.`,
+      `Run bun run bench check-adapter ${id} to verify the component page.`,
       "See CONTRIBUTING.md#add-a-renderer for the review and publication steps.",
     ].join("\n"),
   );
@@ -197,7 +290,8 @@ async function main() {
     const { validateCapture } = await import("../checks/validate.mjs");
     await validateCapture(id, args[0], root);
     console.log(`${id}: publication contract and retained source verified`);
-  } else if (command === "new-adapter") scaffoldAdapter(id);
+  } else if (command === "new-adapter") scaffoldAdapter(id, root, args);
+  else if (command === "check-adapter") checkAdapter(id, args);
   else if (command === "check") {
     for (const task of ["lint", "typecheck", "test:contracts", "test:site"])
       run(["run", task]);
@@ -207,7 +301,18 @@ async function main() {
     run(["site/build.ts"]);
   } else {
     console.log(
-      "bun run bench list\nbun run bench doctor <suite>\nbun run bench run <suite> [options]           # local smoke, preserves publication\nbun run bench run <suite> --publish          # full protocol, retains evidence\nbun run bench validate <suite> [capture.json]  # publication + source checks\nbun run bench new-adapter <id>\nbun run bench check                          # portable contributor checks\n\nSee CONTRIBUTING.md for adding adapters/workloads and reproducible capture instructions.",
+      [
+        "bun run bench list",
+        "bun run bench doctor <suite>",
+        "bun run bench run <suite> [options]            # local smoke",
+        "bun run bench run <suite> --publish            # full publication protocol",
+        "bun run bench validate <suite> [capture.json]  # retained publication evidence",
+        "bun run bench new-adapter <id> [--label <name>] [--package <name>@<version>]",
+        "bun run bench check-adapter <id> [--workloads <ids>] [--smoke [--out <capture.json>]]",
+        "bun run bench check                            # portable contributor checks",
+        "",
+        "See CONTRIBUTING.md for adding adapters and reproducing captures.",
+      ].join("\n"),
     );
     if (command && !["--help", "help"].includes(command)) process.exitCode = 1;
   }

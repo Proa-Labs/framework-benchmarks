@@ -65,13 +65,15 @@ Bun and Chromium for a JavaScript renderer.
    `my-renderer-package@1.2.3` with the renderer's package and version.
 
    ```sh
-   bun run bench new-adapter my-renderer
-   bun add --cwd benchmarks/rendering/external/my-renderer --exact my-renderer-package@1.2.3
+   bun run bench new-adapter my-renderer --label "My Renderer" --package my-renderer-package@1.2.3
+   bun install
    ```
 
-   The scaffold creates a private Bun workspace with a `suite_bench.mjs` entry
-   and registers it for selected runs. Keep the updated root `bun.lock` with
-   your changes. The public roster is handled separately during review.
+   The scaffold creates a private Bun workspace and registers the adapter for
+   local checks. `--package` pins a dependency and registers it as the version
+   source. Scoped names work too, such as `@scope/renderer@1.2.3`. Omit the
+   option if you want to configure the adapter dependencies yourself. Keep the
+   updated root `bun.lock` with your changes.
 
 2. Implement the generated `render(workload)` callback using the renderer's
    documented production API. Use the shared fixture inputs and the
@@ -79,22 +81,29 @@ Bun and Chromium for a JavaScript renderer.
    Construct data and compile templates before timing. Each call must return
    fresh, complete HTML using the workload's dynamic values.
 
-3. Run parity first, then a short timed run once it passes.
+3. Run the component-page check, then add a short timed run once it passes.
 
    ```sh
-   bun run bench run rendering --renderers my-renderer --workloads cards --parity-only
-   bun run bench run rendering --renderers my-renderer --workloads cards
+   bun run bench check-adapter my-renderer
+   bun run bench check-adapter my-renderer --smoke
    ```
 
-   Parity checks the rendered DOM in Chromium against the reference and
-   exercises a deliberately incorrect output. The timed smoke run prints the
-   capture path under `benchmarks/rendering/results/local/`.
-
-4. Share the command and result in your draft PR. Expand coverage to the
-   [remaining workloads](benchmarks/rendering/canonical/workloads.json) as you
-   finish their implementations. The
+   The check compares the rendered DOM in Chromium against the reference and
+   exercises a deliberately incorrect output. The CLI prints the local evidence
+   path after a passing run. Add `--workloads cards,products,table` as you port
+   the other core workloads. The
    [showcase pages](benchmarks/rendering/showcase/README.md) use their own
    fixtures and dispatch path.
+
+4. Share the command and result in the draft PR along with the actual render
+   API and any remaining workload gaps. GitHub Actions runs a component-page
+   smoke check when a rendering adapter's own files or registry entry change.
+   Local-only adapters are included. The job summary has the rerun command and
+   the capture artifact details when the check passes.
+
+The focused checks give reviewers correctness evidence and diagnostic timings.
+Leaderboard numbers come from the full matched campaign described in the
+[publication gate](#merge-and-launch-gate).
 
 The scaffold targets synchronous render-to-string APIs. Async or non-JavaScript
 renderers can use a native harness following
