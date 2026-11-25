@@ -11,7 +11,7 @@ use std::{env, sync::OnceLock};
 use dioxus::prelude::*;
 use leptos::prelude::{
     view as leptos_view, ClassAttribute, CollectView, CustomAttribute, ElementChild,
-    GlobalAttributes, RenderHtml,
+    GlobalAttributes, IntoView as LeptosIntoView, RenderHtml,
 };
 use topcoat::{
     context::Cx,
@@ -275,38 +275,43 @@ fn render_leptos_products() -> String {
             <main class="mx-auto w-full max-w-6xl px-4 py-10">
                 <h1 class="text-2xl font-bold tracking-tight">"All products"</h1>
                 <div class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                    {products().iter().map(|product| {
-                        let href = format!("/products/{}", product.id);
-                        let filled = (product.rating_tenths + 5) / 10;
-                        let rating = topcoat_product_grid::format_rating(product.rating_tenths);
-                        let price = topcoat_product_grid::format_price(product.price_cents);
-                        leptos_view! {
-                            <a href=href class="group flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md">
-                                <div class="mb-4 flex h-32 items-center justify-center rounded-lg bg-slate-100 text-3xl font-bold text-slate-300">{product.category.as_str()}</div>
-                                <p class="text-xs font-medium uppercase tracking-wide text-slate-400">{product.category.as_str()}</p>
-                                <h3 class="mt-1 text-sm font-semibold text-slate-900 group-hover:text-indigo-600">{product.name.as_str()}</h3>
-                                <div class="mt-2 flex items-center gap-1">
-                                    <div class="flex">
-                                        {(0..5u32).map(|index| {
-                                            let class = if index < filled { "h-4 w-4 text-amber-400" } else { "h-4 w-4 text-slate-200" };
-                                            leptos_view! {
-                                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class=class>
-                                                    <path d=STAR_PATH></path>
-                                                </svg>
-                                            }
-                                        }).collect_view()}
-                                    </div>
-                                    <span class="text-xs text-slate-500">{rating}" ("{product.review_count}")"</span>
-                                </div>
-                                <p class="mt-3 text-lg font-bold">{price}</p>
-                            </a>
-                        }
-                    }).collect_view()}
+                    {leptos_product_cards(products())}
                 </div>
             </main>
         }
         .to_html()
     })
+}
+
+/// Render the same cards in the product grid and in each streaming panel.
+pub fn leptos_product_cards(products: &'static [Product]) -> impl LeptosIntoView {
+    products.iter().map(|product| {
+        let href = format!("/products/{}", product.id);
+        let filled = (product.rating_tenths + 5) / 10;
+        let rating = topcoat_product_grid::format_rating(product.rating_tenths);
+        let price = topcoat_product_grid::format_price(product.price_cents);
+        leptos_view! {
+            <a href=href class="group flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md">
+                <div class="mb-4 flex h-32 items-center justify-center rounded-lg bg-slate-100 text-3xl font-bold text-slate-300">{product.category.as_str()}</div>
+                <p class="text-xs font-medium uppercase tracking-wide text-slate-400">{product.category.as_str()}</p>
+                <h3 class="mt-1 text-sm font-semibold text-slate-900 group-hover:text-indigo-600">{product.name.as_str()}</h3>
+                <div class="mt-2 flex items-center gap-1">
+                    <div class="flex">
+                        {(0..5u32).map(|index| {
+                            let class = if index < filled { "h-4 w-4 text-amber-400" } else { "h-4 w-4 text-slate-200" };
+                            leptos_view! {
+                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class=class>
+                                    <path d=STAR_PATH></path>
+                                </svg>
+                            }
+                        }).collect_view()}
+                    </div>
+                    <span class="text-xs text-slate-500">{rating}" ("{product.review_count}")"</span>
+                </div>
+                <p class="mt-3 text-lg font-bold">{price}</p>
+            </a>
+        }
+    }).collect_view()
 }
 
 // proa-perf-ok(scope): Dioxus 0.6 cannot emit the document-level html element;

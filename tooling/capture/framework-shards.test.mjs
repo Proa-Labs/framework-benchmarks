@@ -15,6 +15,9 @@ import { gzipSync } from "node:zlib";
 import contract from "../../benchmarks/framework-ssr/contract.json" with {
   type: "json",
 };
+import previousContract from "../../benchmarks/framework-ssr/contract-v4.json" with {
+  type: "json",
+};
 import {
   sha256,
   validateSemanticHtml,
@@ -37,8 +40,8 @@ import {
 import { readRaw, readRawJson } from "./raw.mjs";
 import { verifyRetainedSource } from "./retained-source.mjs";
 
-function inputs() {
-  return contract.workloads.map((w, index) => {
+function inputs(scenario = contract) {
+  return scenario.workloads.map((w, index) => {
     const result = {
       schemaVersion: 2,
       status: "pass",
@@ -46,8 +49,8 @@ function inputs() {
       shard: { workload: w.id, smoke: false },
       captureId: `shard-${w.id}`,
       capturedAt: "2026-11-15T00:00:00Z",
-      scenario: { ...contract, workloads: [w] },
-      methodology: contract.publication,
+      scenario: { ...scenario, workloads: [w] },
+      methodology: scenario.publication,
       host: {
         machineId: index.toString(16).padStart(64, "a"),
         campaignId: "publication-test",
@@ -67,7 +70,7 @@ function inputs() {
         dirty: false,
       },
       commands: {
-        runtime: contract.runtime,
+        runtime: scenario.runtime,
         build: "build",
         capture: "capture",
       },
@@ -75,7 +78,7 @@ function inputs() {
       engines: [],
     };
     const definition = workloadDefinitions(result)[0];
-    result.engines = contract.engines.map((id) => {
+    result.engines = scenario.engines.map((id) => {
       const proof = {
         pass: true,
         semanticSha256: "e".repeat(64),
@@ -86,7 +89,9 @@ function inputs() {
       return {
         id,
         framework: id,
-        runtime: id === "proa" ? "Rust / Tokio" : contract.runtime,
+        runtime: ["proa", "leptos"].includes(id)
+          ? "Rust / Tokio"
+          : scenario.runtime,
         parity: proof,
         parityByWorkload: { [w.id]: proof },
         phases: ["closed", "open"].flatMap((mode) =>
@@ -122,6 +127,18 @@ test("a workload shard cannot satisfy the publication gate alone", () => {
   assert.doesNotThrow(() => validateResult(shard, false));
   assert.throws(() => validateResult(shard, true));
 });
+test("retained historical shards validate with their original roster and cannot form a new capture", () => {
+  const shards = inputs(previousContract);
+  assert.doesNotThrow(() => validateResult(shards[0], false));
+  assert.throws(() => mergeFrameworkShards(shards));
+  const result = mergeFrameworkShards(shards, { retained: true });
+  assert.deepEqual(result.scenario, previousContract);
+  assert.deepEqual(
+    result.engines.map((engine) => engine.id),
+    previousContract.engines,
+  );
+  assert.match(result.limitations.at(-1), /all five competitors/i);
+});
 test("aggregation keeps every measured phase and discloses each physical workload host", () => {
   const shards = inputs(),
     original = JSON.stringify(shards),
@@ -129,7 +146,7 @@ test("aggregation keeps every measured phase and discloses each physical workloa
   assert.equal(result.host.machineId, null);
   assert.equal(result.host.campaignProtocol, "per-workload-host-v1");
   assert.equal(Object.keys(result.host.workloadHosts).length, 8);
-  assert.equal(result.engines.length, 5);
+  assert.equal(result.engines.length, contract.engines.length);
   for (const e of result.engines) {
     assert.equal(e.phases.length, 48);
     for (const w of contract.workloads)

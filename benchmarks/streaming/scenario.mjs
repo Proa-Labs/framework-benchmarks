@@ -3,6 +3,7 @@ import { buildProducts } from "../rendering/external/shared/suite_data.mjs";
 // The published page: the canonical 96-card product grid split across eight
 // Suspense boundaries, one per delay tier, twelve cards each. Cards per panel
 // may be set to 0 for the tiny-panel scheduling stress variant.
+export const STREAMING_ENGINE_ORDER = Object.freeze(["proa", "marko", "react", "leptos"]);
 export const DEFAULT_BOUNDARY_COUNT = 8;
 export const DEFAULT_CARDS_PER_PANEL = 12;
 export const DELAY_TIERS_MS = Object.freeze([5, 8, 12, 18, 27, 40, 60, 90]);

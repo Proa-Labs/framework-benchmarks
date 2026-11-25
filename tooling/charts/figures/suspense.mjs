@@ -6,9 +6,9 @@ import {
 } from '../lib/svg.mjs';
 
 const COL = WIDTH - PAD * 2;
-const COLORS = { Proa: C.proa, Marko: C.peer, React: C.alt };
+const COLORS = { Proa: C.proa, Marko: C.peer, React: C.alt, Leptos: C.floor };
 
-function panel({ x, y, w, h, title, sub, rows, value, format, ideal = false }) {
+function panel({ x, y, w, h, title, sub, rows, engines, value, format, ideal = false }) {
   const rates = [...new Set(rows.map((row) => row.rate))].sort((a, b) => a - b);
   const values = rows.map(value);
   const x0 = x + 58, x1 = x + w - 18, y0 = y + (sub ? 40 : 25), y1 = y + h - 42;
@@ -35,7 +35,7 @@ function panel({ x, y, w, h, title, sub, rows, value, format, ideal = false }) {
     const maximum = Math.max(...rates);
     body += line([[xs(0), ys(0)], [xs(maximum), ys(maximum)]], C.axis, 1.2, ' stroke-dasharray="4 4"');
   }
-  for (const engine of Object.keys(COLORS)) {
+  for (const engine of engines) {
     const series = rows.filter((row) => row.engine === engine).sort((a, b) => a.rate - b.rate);
     const points = series.map((row) => [xs(row.rate), ys(value(row))]);
     body += line(points, COLORS[engine], engine === 'Proa' ? 2.6 : 2.1);
@@ -59,13 +59,14 @@ export function suspenseLoad(tables, meta) {
     rssMiB: num(row['Peak RSS']),
     errors: num(row.Errors),
   }));
+  const engines = Object.keys(COLORS).filter((engine) => rows.some((row) => row.engine === engine));
   // Latency labels switch to seconds once queueing takes over.
   const latency = (ms) => ms >= 1000 ? `${sig(ms / 1000)} s` : `${sig(ms)} ms`;
 
   const hdr = header(PAD, 44, 'Suspense streaming under load',
     '96 cards · 8 boundaries · one worker/process per engine · medians of 3 processes', COL);
   let body = hdr.svg;
-  body += legend(PAD, 44 + hdr.h + 27, Object.entries(COLORS).map(([label, color]) => ({ shape: 'line', color, label })));
+  body += legend(PAD, 44 + hdr.h + 27, engines.map((label) => ({ shape: 'line', color: COLORS[label], label })));
 
   const top = 44 + hdr.h + 66;
   const gapX = 58, gapY = 42;
@@ -73,12 +74,12 @@ export function suspenseLoad(tables, meta) {
   const panelH = 246;
   body += panel({
     x: PAD, y: top, w: panelW, h: panelH,
-    title: 'Response ends/s', sub: 'Higher is better · dashed: request-rate target', rows,
+    title: 'Response ends/s', sub: 'Higher is better · dashed: request-rate target', rows, engines,
     value: (row) => row.throughput, format: (value) => value >= 1000 ? `${value / 1000}k` : String(value), ideal: true,
   });
   body += panel({
     x: PAD + panelW + gapX, y: top, w: panelW, h: panelH,
-    title: 'Peak server RSS', sub: 'Lower is better', rows,
+    title: 'Peak server RSS', sub: 'Lower is better', rows, engines,
     value: (row) => row.rssMiB, format: (value) => `${Math.round(value)} MiB`,
   });
 
@@ -86,13 +87,13 @@ export function suspenseLoad(tables, meta) {
   // the vertical spread between P50 and P99 reads as the shape of the tail.
   const latTop = top + panelH + gapY;
   const latGap = 24;
-  const latW = (COL - latGap * (Object.keys(COLORS).length - 1)) / Object.keys(COLORS).length;
+  const latW = (COL - latGap * (engines.length - 1)) / engines.length;
   const latH = 280;
   const allLatency = rows.flatMap((row) => [row.p50Ms, row.p95Ms, row.p99Ms]).filter((v) => v > 0);
   // headroom above the highest point so its leader label clears the panel title
   const latLo = Math.min(...allLatency) * 0.6, latHi = Math.max(...allLatency) * 2.6;
   body += eyebrow(PAD, latTop, 'Response-end latency · shared log scale');
-  Object.keys(COLORS).forEach((engine, index) => {
+  engines.forEach((engine, index) => {
     const x = PAD + index * (latW + latGap);
     const x0 = x + 52, x1 = x + latW - 12, y0 = latTop + 54, y1 = latTop + latH - 42;
     const series = rows.filter((row) => row.engine === engine).sort((a, b) => a.rate - b.rate);
@@ -151,7 +152,7 @@ export function suspenseLoad(tables, meta) {
   return doc({
     w: WIDTH,
     h: notesY + notes.h + 12,
-    title: 'Proa, Marko and React streaming resolved HTML under HTTP load',
+    title: `${engines.slice(0, -1).join(', ')} and ${engines.at(-1)} streaming resolved HTML under HTTP load`,
     desc: `Resolved-HTML streaming capture: ${meta.suspenseDate} UTC. All engines share one campaign and host, with one worker thread or process per engine. ` + rows.map((row) => `${row.engine} at ${row.rate} req/s target: ${row.throughput} response ends per second, response-end P50 ${row.p50Ms}, P95 ${row.p95Ms} and P99 ${row.p99Ms} milliseconds, ${row.rssMiB} MiB peak RSS, ${row.errors} failures across three repeats`).join('. ') + '.',
     body: body + notes.svg,
   });

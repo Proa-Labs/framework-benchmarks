@@ -6,6 +6,12 @@ import re
 import sys
 import tarfile
 
+native_locks = {
+    f'{prefix}framework-ssr/adapters/{adapter}/Cargo.lock'
+    for prefix in ('', 'benchmarks/')
+    for adapter in ('proa', 'leptos')
+}
+
 for pair in json.load(sys.stdin):
     def files(path, expected):
         with tarfile.open(path) as archive:
@@ -27,7 +33,7 @@ for pair in json.load(sys.stdin):
     for name in before:
         if before[name] == after[name]:
             continue
-        assert name in ('Cargo.lock', 'framework-ssr/adapters/proa/Cargo.lock', 'benchmarks/framework-ssr/adapters/proa/Cargo.lock'), name
+        assert name == 'Cargo.lock' or name in native_locks, name
         assert before[name].replace(pair['beforeRevision'].encode(), pair['afterRevision'].encode()) == after[name], name
         changed.append(name)
     assert 'Cargo.lock' in changed, 'Proa dependency was not updated'

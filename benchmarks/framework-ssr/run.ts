@@ -67,7 +67,7 @@ const shardWorkload = argument("--shard-workload", "");
 if (shardWorkload)
   assert.ok(
     !proaOnly && contract.workloads.some((w) => w.id === shardWorkload),
-    "Choose one known workload with all five frameworks",
+    "Choose one known workload with the full framework cohort",
   );
 const activeWorkloads = contract.workloads.filter(
   (w) => !shardWorkload || w.id === shardWorkload,
@@ -120,37 +120,32 @@ const labels: Record<string, string> = {
   nextjs: "Next.js",
   astro: "Astro",
   sveltekit: "SvelteKit",
+  leptos: "Leptos",
 };
 const portFor = (id: string) => 16230 + contract.engines.indexOf(id);
 const workloadPath = (id: string) =>
   isShowcase(id) ? showcasePath(id) : `/${id}`;
+const nativeEngine = (id: string) => id === "proa" || id === "leptos";
 function serverFor(id: string, workload: string) {
   const dir = id === "nextjs" ? "next" : id;
   return startServer(
     {
       label: labels[id],
-      command:
-        id === "proa"
-          ? join(targetDirectory, "release/framework-ssr-proa")
-          : process.execPath,
-      args:
-        id === "proa"
-          ? []
-          : id === "exact" && isShowcase(workload)
-            ? [
-                join(
-                  root,
-                  "benchmarks/rendering/showcase/full-exact-server.mjs",
-                ),
-              ]
-            : [
-                join(
-                  here,
-                  "adapters",
-                  dir,
-                  id === "sveltekit" ? "server.ts" : "server.mjs",
-                ),
-              ],
+      command: nativeEngine(id)
+        ? join(targetDirectory, "release", `framework-ssr-${id}`)
+        : process.execPath,
+      args: nativeEngine(id)
+        ? []
+        : id === "exact" && isShowcase(workload)
+          ? [join(root, "benchmarks/rendering/showcase/full-exact-server.mjs")]
+          : [
+              join(
+                here,
+                "adapters",
+                dir,
+                id === "sveltekit" ? "server.ts" : "server.mjs",
+              ),
+            ],
       cwd: root,
     },
     {
@@ -169,10 +164,13 @@ async function ready(server: ReturnType<typeof startServer>, id: string) {
     workerThreads?: number;
   };
   assert.equal(health.engine, id);
-  if (id !== "proa") {
+  if (nativeEngine(id)) {
+    assert.equal(health.workerThreads, 1);
+    if (id === "leptos") assert.equal(health.runtime, "Rust / Tokio");
+  } else {
     assert.equal(health.nodeEnv, "production");
     assert.equal(health.runtime, contract.runtime);
-  } else assert.equal(health.workerThreads, 1);
+  }
   return health;
 }
 async function response(id: string, request: string, workload: string) {

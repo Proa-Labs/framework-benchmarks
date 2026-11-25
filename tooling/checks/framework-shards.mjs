@@ -60,7 +60,7 @@ export function verifyFrameworkShardEvidence(
     }
     return shard;
   });
-  const expected = mergeFrameworkShards(shards, { smoke });
+  const expected = mergeFrameworkShards(shards, { smoke, retained: true });
   for (const key of [
     "status",
     "captureKind",

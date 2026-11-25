@@ -160,6 +160,18 @@ pub fn render_template(engine: &str, id: &str, data: &'static Data, request: &st
     }
 }
 
+/// A native Leptos view for the complete-document HTTP renderer.
+pub fn leptos_view(id: &str, data: &'static Data, request: &str) -> ::leptos::prelude::AnyView {
+    match id {
+        "airbnb-home" => leptos::airbnb_home::view(data, request),
+        "nike-catalog" => leptos::nike_catalog::view(data, request),
+        "github-pr" => leptos::github_pr::view(data, request),
+        "sentry-otel" => leptos::sentry_otel::view(data, request),
+        "espn" => leptos::espn::view(data, request),
+        _ => panic!("unknown showcase fixture"),
+    }
+}
+
 #[cfg(feature = "topcoat")]
 pub fn render_topcoat(
     cx: &::topcoat::context::Cx,
