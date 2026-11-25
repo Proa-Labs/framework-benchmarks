@@ -2,10 +2,11 @@
 
 The public server-rendering scoreboard follows [`benchmarks/rendering/protocol.md`](../benchmarks/rendering/protocol.md). That document defines its workload, ownership, parity, sampling, artifact, and publication contracts.
 
-Two HTTP suites wrap the same pages in each framework's production server and follow the shared load-driver rules in [`tooling/load/README.md`](../tooling/load/README.md):
+Three suites measure HTTP responses with the shared load-driver rules in [`tooling/load/README.md`](../tooling/load/README.md):
 
-- [`benchmarks/http/`](../benchmarks/http/) serves the three canonical pages on one core per engine and reports sustained throughput, CPU per response, and memory; and
-- [`benchmarks/streaming/`](../benchmarks/streaming/) streams a Suspense-heavy page through Proa, Marko, and React.
+- [`benchmarks/http/`](../benchmarks/http/) serves the canonical pages through renderer servers on one core per engine and reports throughput, CPU per response, and memory.
+- [`benchmarks/framework-ssr/`](../benchmarks/framework-ssr/) measures complete HTML responses through each framework’s production routes.
+- [`benchmarks/streaming/`](../benchmarks/streaming/) streams a Suspense-heavy page through Proa, Marko, React, and Leptos.
 
 The repository's other suites answer different questions and retain their methods beside their evidence:
 

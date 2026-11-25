@@ -14,7 +14,12 @@
 # them. Without an exact hit nothing is redated and Cargo rebuilds as usual.
 set -euo pipefail
 
-manifests=(Cargo.toml benchmarks/framework-ssr/adapters/proa/Cargo.toml fixtures/airbnb-parity-dump/Cargo.toml)
+manifests=(
+  Cargo.toml
+  benchmarks/framework-ssr/adapters/proa/Cargo.toml
+  benchmarks/framework-ssr/adapters/leptos/Cargo.toml
+  fixtures/airbnb-parity-dump/Cargo.toml
+)
 target_dirs=(target fixtures/airbnb-parity-dump/target)
 # A superset of every local crate's inputs, including what proa_bench's build
 # script reads (its showcase generator and the Bun packages it imports).
@@ -25,6 +30,7 @@ inputs=(
   benchmarks/rendering/templates benchmarks/rendering/showcase
   fixtures/legacy-ebay-chrome fixtures/airbnb-parity-dump
   benchmarks/framework-ssr/adapters/proa
+  benchmarks/framework-ssr/adapters/leptos
 )
 # Before any real build, after Git's epoch-free range.
 epoch=946684800

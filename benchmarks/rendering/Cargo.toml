@@ -18,6 +18,8 @@ http-load = [
     "dep:tokio",
 ]
 
+leptos-streaming = ["http-load", "topcoat", "dep:any_spawner", "dep:hydration_context"]
+
 [dependencies]
 proa_core.workspace = true
 proa_framework_axum = { workspace = true, optional = true }
@@ -31,6 +33,8 @@ tokio = { version = "1", features = ["macros", "net", "rt-multi-thread", "time"]
 
 # Leptos SSR
 leptos = { version = "0.7", features = ["ssr"] }
+any_spawner = { version = "0.2", features = ["tokio"], optional = true }
+hydration_context = { version = "0.2", optional = true }
 
 # Dioxus SSR
 dioxus = { version = "0.6" }
@@ -95,3 +99,8 @@ required-features = ["http-load", "topcoat"]
 name = "proa_page_server"
 path = "src/bin/proa_page_server.rs"
 required-features = ["http-load", "topcoat"]
+
+[[bin]]
+name = "leptos_suspense_server"
+path = "../streaming/leptos_server.rs"
+required-features = ["leptos-streaming"]

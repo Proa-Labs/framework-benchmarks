@@ -31,14 +31,10 @@ export async function command(args: string[], cwd = root, env = environment) {
   if (code)
     throw new Error(`${args[0]} ${args.slice(1).join(" ")} failed (${code})`);
 }
-export async function buildProa() {
+async function buildRustAdapter(engine: "proa" | "leptos") {
   await Bun.write(
-    join(here, "adapters/proa/fixture.json"),
+    join(here, "adapters", engine, "fixture.json"),
     `${JSON.stringify(fixture)}\n`,
-  );
-  await Bun.write(
-    join(here, "adapters/proa/cards.json"),
-    `${JSON.stringify(cards, null, 2)}\n`,
   );
   await command([
     "cargo",
@@ -46,10 +42,17 @@ export async function buildProa() {
     "--release",
     "--locked",
     "--manifest-path",
-    join(here, "adapters/proa/Cargo.toml"),
+    join(here, "adapters", engine, "Cargo.toml"),
     "--target-dir",
     targetDirectory,
   ]);
+}
+export async function buildProa() {
+  await Bun.write(
+    join(here, "adapters/proa/cards.json"),
+    `${JSON.stringify(cards, null, 2)}\n`,
+  );
+  await buildRustAdapter("proa");
 }
 export async function buildAll() {
   if (Bun.version !== "1.4.2") throw new Error("Use pinned Bun 1.4.2");
@@ -120,6 +123,7 @@ export async function buildAll() {
     "benchmarks/rendering/showcase/generate-exact.mjs",
   ]);
   await buildProa();
-  console.log("Built all five production framework adapters");
+  await buildRustAdapter("leptos");
+  console.log("Built all production framework adapters");
 }
 if (import.meta.main) await buildAll();

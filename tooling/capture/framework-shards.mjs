@@ -1,10 +1,13 @@
 // Combine whole-framework comparisons measured independently by workload.
-// A shard always contains all five competitors on one isolated physical host.
+// A shard contains the full cohort on one isolated physical host.
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { copyFileSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import contract from "../../benchmarks/framework-ssr/contract.json" with {
+import currentContract from "../../benchmarks/framework-ssr/contract.json" with {
+  type: "json",
+};
+import previousContract from "../../benchmarks/framework-ssr/contract-v4.json" with {
   type: "json",
 };
 import {
@@ -23,14 +26,19 @@ import {
 import { readRaw, writeRawJson } from "./raw.mjs";
 import { verifySourceSnapshot } from "./verify-source.mjs";
 
-export function mergeFrameworkShards(shards, { smoke = false } = {}) {
+export function mergeFrameworkShards(
+  shards,
+  { smoke = false, retained = false } = {},
+) {
+  const first = shards[0];
+  const historical = retained && first?.scenario.id === previousContract.id;
+  const contract = historical ? previousContract : currentContract;
   assert.equal(
     shards.length,
     contract.workloads.length,
     "Every workload needs one complete shard",
   );
   const byId = new Map();
-  const first = shards[0];
   const profile = (h) => [
     h.machineClass,
     h.cpuModel,
@@ -41,6 +49,7 @@ export function mergeFrameworkShards(shards, { smoke = false } = {}) {
   for (const shard of shards) {
     validateResult(shard, false);
     assert.equal(shard.captureKind, "shard");
+    assert.equal(shard.scenario.id, contract.id);
     assert.equal(shard.shard.smoke, smoke);
     const id = shard.shard.workload;
     assert.ok(!byId.has(id), `Duplicate workload shard: ${id}`);
@@ -135,7 +144,7 @@ export function mergeFrameworkShards(shards, { smoke = false } = {}) {
     },
     limitations: [
       ...contract.limitations,
-      "Workloads run in parallel on matching isolated C4 hosts. All five competitors within each workload share one physical host. Individual workload hosts and immutable shard captures are retained; no cross-host numbers are combined within a workload ranking.",
+      `Workloads run in parallel on matching isolated C4 hosts. All ${historical ? "five " : ""}competitors within each workload share one physical host. Individual workload hosts and immutable shard captures are retained; no cross-host numbers are combined within a workload ranking.`,
     ],
     workloadCaptures: Object.fromEntries(
       ordered.map((s) => [
@@ -158,7 +167,7 @@ export function aggregateFrameworkShards(root, { smoke = false } = {}) {
   const directory = smoke ? join(base, "local") : base;
   const sources = frameworkSourceFiles(root),
     digest = sourceDigest(root, sources);
-  const shards = contract.workloads.map((w) =>
+  const shards = currentContract.workloads.map((w) =>
     JSON.parse(
       readFileSync(
         join(base, "shards", w.id, smoke ? "smoke.json" : "latest.json"),
