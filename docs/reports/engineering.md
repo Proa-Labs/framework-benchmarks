@@ -5,7 +5,7 @@ These captures answer narrower questions than the scoreboard, and each states it
 <!-- product-scaling:start -->
 ## Product-grid scaling capture
 
-This November 15, 2026 UTC engineering capture repeats the canonical product-grid
+This November 25, 2026 UTC engineering capture repeats the canonical product-grid
 contract at 12, 96, and 768 cards. Every value includes component/template
 execution and a fresh independently owned response; deterministic input
 construction remains outside timing. All 63 renderer/size cells passed the same
@@ -15,33 +15,33 @@ renders per process respectively.
 
 | Renderer | 12 cards P50 | 96 cards P50 | 768 cards P50 |
 | --- | ---: | ---: | ---: |
-| Proa | 1.366 µs | 9.976 µs | 227.620 µs |
-| Marko | 17.337 µs | 110.834 µs | 898.868 µs |
-| React | 58.676 µs | 433.701 µs | 8.210 ms |
-| Vue | 15.229 µs | 91.888 µs | 796.080 µs |
-| Svelte | 13.011 µs | 94.165 µs | 817.946 µs |
-| Rails | 76.322 µs | 466.253 µs | 3.471 ms |
-| jte | 74.591 µs | 627.601 µs | 8.345 ms |
-| Rocker | 125.991 µs | 778.027 µs | 12.092 ms |
-| Handlebars | 37.025 µs | 211.328 µs | 2.178 ms |
-| Go html/template | 127.678 µs | 1.155 ms | 8.826 ms |
-| Jinja2 | 185.709 µs | 1.419 ms | 12.194 ms |
-| PHP | 13.010 µs | 94.028 µs | 2.687 ms |
-| Askama | 3.110 µs | 23.651 µs | 217.460 µs |
-| Sailfish | 3.018 µs | 23.069 µs | 208.962 µs |
-| Leptos | 28.100 µs | 211.433 µs | 1.830 ms |
-| Dioxus | 59.644 µs | 402.624 µs | 4.559 ms |
-| Topcoat | 24.809 µs | 196.286 µs | 1.718 ms |
-| Astro | 51.564 µs | 286.596 µs | 2.702 ms |
-| SvelteKit | 13.197 µs | 91.413 µs | 782.609 µs |
-| Next.js | 55.042 µs | 435.248 µs | 3.987 ms |
-| Exact† | 3.812 ms | 17.529 ms | 101.715 ms |
+| Proa | 1.389 µs | 10.255 µs | 222.147 µs |
+| Marko | 17.636 µs | 112.505 µs | 905.534 µs |
+| React | 62.941 µs | 457.583 µs | 8.402 ms |
+| Vue | 15.773 µs | 96.461 µs | 839.287 µs |
+| Svelte | 14.293 µs | 96.011 µs | 846.678 µs |
+| Rails | 80.828 µs | 494.550 µs | 3.623 ms |
+| jte | 76.025 µs | 643.769 µs | 8.667 ms |
+| Rocker | 117.338 µs | 795.918 µs | 10.832 ms |
+| Handlebars | 37.651 µs | 216.270 µs | 2.336 ms |
+| Go html/template | 128.877 µs | 1.178 ms | 8.966 ms |
+| Jinja2 | 187.986 µs | 1.463 ms | 12.500 ms |
+| PHP | 13.131 µs | 95.852 µs | 2.691 ms |
+| Askama | 3.173 µs | 24.471 µs | 225.495 µs |
+| Sailfish | 3.145 µs | 24.009 µs | 216.823 µs |
+| Leptos | 29.091 µs | 221.183 µs | 1.942 ms |
+| Dioxus | 61.609 µs | 422.427 µs | 4.670 ms |
+| Topcoat | 24.794 µs | 195.549 µs | 1.700 ms |
+| Astro | 52.385 µs | 292.475 µs | 2.618 ms |
+| SvelteKit | 13.442 µs | 93.905 µs | 831.833 µs |
+| Next.js | 57.705 µs | 464.146 µs | 4.475 ms |
+| Exact† | 3.819 ms | 17.732 ms | 103.099 ms |
 
 The 96-card column is an independent engineering capture, not a replacement
 for the canonical result. Reproduce the matrix with
 `./benchmarks/rendering/run-all --product-scaling`; the retained summary and per-process
 measurements are in [`benchmarks/rendering/results/product-scaling.json`](../../benchmarks/rendering/results/product-scaling.json)
-and [its raw process artifact](../../benchmarks/rendering/results/raw/product-scaling-v1-2026-11-15T22-53-54-804Z-43cbd657/process-summaries.json.gz).
+and [its raw process artifact](../../benchmarks/rendering/results/raw/product-scaling-v1-2026-11-25T08-46-19-059Z-814b6390/process-summaries.json.gz).
 <!-- product-scaling:end -->
 
 [![Full fresh-response render scaling for seventeen frameworks across twelve, ninety-six and 768 product cards](../figures/05-product-card-scaling.svg)](../figures/05-product-card-scaling.svg)
