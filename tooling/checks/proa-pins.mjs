@@ -25,16 +25,19 @@ export function proaRevision(lock) {
 
 export function validateProaPins(root) {
   const revision = proaRevision(readFileSync(join(root, "Cargo.lock"), "utf8"));
-  assert.equal(
-    proaRevision(
-      readFileSync(
-        join(root, "benchmarks/framework-ssr/adapters/proa/Cargo.lock"),
-        "utf8",
-      ),
-    ),
-    revision,
-    "Framework SSR and the other suites must pin the same Proa revision",
-  );
+  for (const adapter of ["proa", "leptos"]) {
+    const lock = join(
+      root,
+      "benchmarks/framework-ssr/adapters",
+      adapter,
+      "Cargo.lock",
+    );
+    assert.equal(
+      proaRevision(readFileSync(lock, "utf8")),
+      revision,
+      `Framework SSR (${adapter}) and the other suites must pin the same Proa revision`,
+    );
+  }
   return revision;
 }
 

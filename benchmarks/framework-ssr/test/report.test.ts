@@ -29,7 +29,9 @@ function capture(smoke = false): Capture {
     engines: contract.engines.map((id) => ({
       id,
       framework: id,
-      runtime: id === "proa" ? "Rust" : "Bun 1.4.2",
+      runtime: ["proa", "leptos"].includes(id)
+        ? "Rust / Tokio"
+        : contract.runtime,
       parity: {
         pass: true,
         responseBytes: 100,

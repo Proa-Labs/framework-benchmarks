@@ -9,6 +9,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { summarize } from "../../tooling/stats.mjs";
+import { STREAMING_ENGINE_ORDER } from "./scenario.mjs";
 import { numbersApproximatelyEqual } from "./validation.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -19,7 +20,8 @@ const startMarker = "<!-- suspense-load:start -->";
 const endMarker = "<!-- suspense-load:end -->";
 const check = process.argv.includes("--check");
 const expectedRates = [250, 500, 1_000, 2_000, 3_000, 4_000, 5_000, 6_000];
-const expectedEngines = ["proa", "marko", "react"];
+const originalEngines = ["proa", "marko", "react"];
+const engineLabels = { proa: "Proa", marko: "Marko", react: "React", leptos: "Leptos" };
 const expectedRepeats = 3;
 const expectedDelayTiersMs = [5, 8, 12, 18, 27, 40, 60, 90];
 const expectedBoundaries = 8;
@@ -93,6 +95,8 @@ export function validateResult(result) {
   if (result.methodology.responseValidator !== "resolved-content-v2") {
     fail("streaming results require a rerun with optional loading-placeholder validation");
   }
+  // Historical captures predate the Leptos adapter and retain their full original roster.
+  const expectedEngines = result.methodology.leptosRenderPath ? STREAMING_ENGINE_ORDER : originalEngines;
   if (JSON.stringify(engineIds) !== JSON.stringify(expectedEngines)) {
     fail(`engine roster is ${JSON.stringify(engineIds)}`);
   }
@@ -121,7 +125,10 @@ export function validateResult(result) {
         fail("Proa multi-thread confirmation phases are missing or invalid");
       }
     }
-    if (engine.id !== "proa" && engine.health?.nodeEnv !== "production") {
+    if (engine.id === "leptos" && (engine.health?.workerThreads !== 1 || engine.health?.debugAssertions !== false)) {
+      fail("Leptos did not confirm one Tokio worker with debug assertions disabled");
+    }
+    if ((engine.id === "marko" || engine.id === "react") && engine.health?.nodeEnv !== "production") {
       fail(`${engine.id} did not confirm NODE_ENV=production`);
     }
     if (engine.id === "react" && engine.health?.reactDomBuild !== "production") {
@@ -204,7 +211,7 @@ function rowFor(engine, rate) {
   if (phases.length === 0) throw new Error(`${engine.id} has no ${rate} rps phase`);
   const pick = (selector) => median(phases.map(selector));
   return {
-    engine: engine.id === "proa" ? "Proa" : engine.id === "marko" ? "Marko" : "React",
+    engine: engineLabels[engine.id],
     rate,
     completionRps: pick((phase) => phase.completionThroughputRps),
     shellP50: pick((phase) => phase.latencyMs.scheduledFirstByte.p50),
@@ -224,6 +231,12 @@ function rowFor(engine, rate) {
 function render(result) {
   validateResult(result);
   const rates = result.methodology.ratesRps;
+  const hasLeptos = result.engines.some(({ id }) => id === "leptos");
+  const applications = hasLeptos ? "Proa, Marko, React, and Leptos" : "Proa, Marko, and React";
+  const rustApplications = hasLeptos ? "Proa and Leptos each run" : "Proa runs";
+  const confirmationPeers = hasLeptos
+    ? "Marko, React, and Leptos were not rerun with more workers"
+    : "Marko and React were not rerun with more processes";
   const repeats = result.methodology.repeats;
   const rows = result.engines.flatMap((engine) => rates.map((rate) => rowFor(engine, rate)));
   const date = new Intl.DateTimeFormat("en-US", {
@@ -276,9 +289,9 @@ function render(result) {
 ${result.refresh ? "> **PROA-only refresh.** " + result.refresh.note + "\n" : ""}
 **${date} · ${host} · ${boundaries} async boundaries × ${result.scenario.cardsPerPanel} product cards · one worker thread or process per engine**
 
-This is the product grid from the capacity section, streamed. Equivalent production-mode Proa, Marko, and React applications run over real loopback HTTP/1.1. Every request streams a shell, starts ${boundaries} independent data operations across the ${result.scenario.delayTiersMs.join(", ")} ms delay tiers, may stream loading placeholders while those operations are pending, and completes only after every panel has resolved to its ${result.scenario.cardsPerPanel} product cards on the wire, ${result.scenario.productCards} cards in all. Delayed values stay typed and in memory; there is no JSON serialization, deserialization, or external I/O in the measured request path. Rendering, boundary scheduling, replacement framing, and one flush per boundary are all inside the measurement.
+This is the product grid from the capacity section, streamed. Equivalent production-mode ${applications} applications run over real loopback HTTP/1.1. Every request streams a shell, starts ${boundaries} independent data operations across the ${result.scenario.delayTiersMs.join(", ")} ms delay tiers, may stream loading placeholders while those operations are pending, and completes only after every panel has resolved to its ${result.scenario.cardsPerPanel} product cards on the wire, ${result.scenario.productCards} cards in all. Delayed values stay typed and in memory; there is no JSON serialization, deserialization, or external I/O in the measured request path. Rendering, boundary scheduling, replacement framing, and one flush per boundary are all inside the measurement.
 
-Every engine is limited to one unit of concurrency: Proa runs ${result.methodology.proaWorkerThreads} Tokio worker thread, and Marko and React each run one Bun process. Proa serves this page through \`RouteResponse::ssr_stream_send\`, the compiler-proved \`Send\` streaming path introduced by [Proa PR #82](https://github.com/Proa-Labs/proa/pull/82): Axum polls the response stream directly, with no per-response bridge thread. The cores column shows what each process actually used, and CPU/request charges every thread of every engine the same way.
+Every engine is limited to one unit of concurrency: ${rustApplications} ${result.methodology.proaWorkerThreads} Tokio worker thread, and Marko and React each run one Bun process. Proa serves this page through \`RouteResponse::ssr_stream_send\`, the compiler-proved \`Send\` streaming path introduced by [Proa PR #82](https://github.com/Proa-Labs/proa/pull/82): Axum polls the response stream directly, with no per-response bridge thread. The cores column shows what each process actually used, and CPU/request charges every thread of every engine the same way.
 
 Each row is the median of ${repeats} fresh-process phases under fixed-rate open-loop arrivals from ${result.methodology.generatorWorkers} separate load-generator processes, so saturation remains visible as in-flight work and scheduled-arrival latency instead of being suppressed by a client waiting for each prior response. A ${preRoll}-second pre-roll fills the async pipeline, then successful full responses completed inside a fixed ${duration}-second observation window determine completion throughput. Complete-response percentiles and shell P50 cover requests arriving during that observation window and include load-generator scheduling lag and server queueing. CPU/request is the server process's exact CPU-time delta divided by successful responses across the full phase. Errors are summed across the ${repeats} repeats. Publication aborts if scheduler-lag P95 exceeds ${result.methodology.generatorLagP95LimitMs} ms or any generator worker exceeds ${Math.round(result.methodology.generatorCpuLimit * 100)}% busy in any phase, and each phase waits for the previous phase's client sockets to leave TIME_WAIT before it starts.
 
@@ -286,9 +299,9 @@ Each row is the median of ${repeats} fresh-process phases under fixed-rate open-
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 ${metricRows}
 
-**Every comparative row uses one logical CPU.** Proa runs one Tokio worker thread, and Marko and React each run one Bun process. Server CPU affinity is ${result.host.serverCpuAffinity || "not recorded"}; the load generator runs separately. Above saturation, completed responses can plateau or decline while queueing and failures increase. This capture does not measure multicore capacity.
+**Every comparative row uses one logical CPU.** ${rustApplications} one Tokio worker thread, and Marko and React each run one Bun process. Server CPU affinity is ${result.host.serverCpuAffinity || "not recorded"}; the load generator runs separately. Above saturation, completed responses can plateau or decline while queueing and failures increase. This capture does not measure multicore capacity.
 
-**Reference point, outside the comparison.** Proa alone was rerun at the top rate with ${check.workerThreads} worker threads. ${result.host.serverCpuAffinity ? `CPU affinity remains ${result.host.serverCpuAffinity}; this changes thread count within the same CPU budget and does not measure multi-core scaling.` : "This separate run expands the thread budget."} Marko and React were not rerun with more processes, so this row is not comparable to theirs. With ${check.workerThreads} threads Proa completed ${integer(Math.round(checkRow.completionRps))} responses per second at a request-rate target of ${integer(checkRow.rate)} rps and a P99 of ${ms(checkRow.completeP99)}, using ${fixed(checkRow.cpuCores, 2)} cores.
+**Reference point, outside the comparison.** Proa alone was rerun at the top rate with ${check.workerThreads} worker threads. ${result.host.serverCpuAffinity ? `CPU affinity remains ${result.host.serverCpuAffinity}; this changes thread count within the same CPU budget and does not measure multi-core scaling.` : "This separate run expands the thread budget."} ${confirmationPeers}, so this row is not comparable to theirs. With ${check.workerThreads} threads Proa completed ${integer(Math.round(checkRow.completionRps))} responses per second at a request-rate target of ${integer(checkRow.rate)} rps and a P99 of ${ms(checkRow.completeP99)}, using ${fixed(checkRow.cpuCores, 2)} cores.
 
 | Proa worker threads | Request rate (rps) | Window completions/s | Complete P50 | Complete P99 | CPU/request | Cores | Peak RSS | Errors |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -305,7 +318,7 @@ ${parityRows}
 - Proa source: Cargo.lock revision ${proaRevision}${proaBranch}; Rust release build with native Proa Suspense and the direct \`ssr_stream_send\` Axum route. The same binary also serves the bounded local-executor path (\`ssr_stream\`) at \`/local\` for engineering comparison; it is not part of the published rows.
 - Marko source: optimized ahead-of-time Marko template using native &lt;await&gt; plus &lt;@placeholder&gt;; its compiler is not resident in the measured server.
 - React source: production Bun React server build using renderToReadableStream, Suspense, and use. The shell pipes immediately; allReady is not awaited.
-- JavaScript engines run with \`NODE_ENV=production\`: the driver sets it, each server's health endpoint reports it back, and React reports that it loaded the production \`react-dom/server\` build. The runner refuses to measure otherwise.
+${hasLeptos ? "- Leptos source: native Suspense and Suspend render out-of-order HTML chunks on Axum with a single Tokio worker. The release binary renders the same product cards as the render-only adapter.\n" : ""}- JavaScript engines run with \`NODE_ENV=production\`: the driver sets it, each server's health endpoint reports it back, and React reports that it loaded the production \`react-dom/server\` build. The runner refuses to measure otherwise.
 - Stream bytes differ by protocol, not content: Proa base64-encodes each resolved boundary inside an inert template, so its stream is roughly a third larger on the wire than React's for the same 96 cards. Compression is off in every engine here; enabling it would remove most of that gap, at a CPU cost this benchmark deliberately leaves out.
 - This is a single-host capacity curve, not a universal ranking. Loopback transfer, each framework’s HTTP adapter, boundary protocol, allocation, scheduling, and render work are all intentionally inside the application boundary.
 ${endMarker}`;

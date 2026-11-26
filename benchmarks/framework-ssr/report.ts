@@ -4,6 +4,7 @@ import contract from "./contract.json";
 import legacyContract from "./contract-v1.json";
 import threeWorkloads from "./contract-v2.json";
 import originalShowcases from "./contract-v3.json";
+import refreshedShowcases from "./contract-v4.json";
 export interface Phase {
   repeat: number;
   concurrency?: number | null;
@@ -106,7 +107,9 @@ export function validateResult(result: Capture, publication = true) {
         ? threeWorkloads
         : result.scenario.id === originalShowcases.id
           ? originalShowcases
-          : contract;
+          : result.scenario.id === refreshedShowcases.id
+            ? refreshedShowcases
+            : contract;
   const shard = result.captureKind === "shard";
   const diagnostic = result.captureKind === "smoke" || result.shard?.smoke;
   if (shard) {
@@ -115,11 +118,12 @@ export function validateResult(result: Capture, publication = true) {
       false,
       "A workload shard cannot be published by itself",
     );
+    assert.ok("workloads" in expected);
     assert.ok(
       result.shard &&
-        contract.workloads.some((w) => w.id === result.shard?.workload),
+        expected.workloads.some((w) => w.id === result.shard?.workload),
     );
-    if (!diagnostic) assert.deepEqual(result.methodology, contract.publication);
+    if (!diagnostic) assert.deepEqual(result.methodology, expected.publication);
   }
   assert.equal(result.status, "pass");
   assert.equal(result.scenario.id, expected.id);
@@ -146,7 +150,9 @@ export function validateResult(result: Capture, publication = true) {
   }
   for (const engine of result.engines) {
     assert.equal(engine.parity.pass, true);
-    if (engine.id !== "proa") assert.equal(engine.runtime, contract.runtime);
+    if (engine.id === "leptos") assert.equal(engine.runtime, "Rust / Tokio");
+    else if (engine.id !== "proa")
+      assert.equal(engine.runtime, expected.runtime);
     const workloads = workloadDefinitions(result);
     assert.equal(
       engine.phases.length,

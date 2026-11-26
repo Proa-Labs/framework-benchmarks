@@ -1,18 +1,18 @@
 {
   "schema_version": 1,
   "benchmark_version": "product-scaling-v1",
-  "capture_id": "product-scaling-v1-2026-11-15T22-53-54-804Z-43cbd657",
+  "capture_id": "product-scaling-v1-2026-11-25T08-46-19-059Z-814b6390",
   "capture_kind": "engineering",
   "status": "pass",
-  "captured_at": "2026-11-15T22:53:54.804Z",
-  "completed_at": "2026-11-15T22:59:54.155Z",
+  "captured_at": "2026-11-25T08:46:19.059Z",
+  "completed_at": "2026-11-25T08:52:27.522Z",
   "host": {
-    "machineId": "c4cebf73dabd72dae012c65ee2c81caeb50e374674261483691a58eb78dbdf5f",
-    "campaignId": "publication-f582a29b-8ce2-4501-a508-167096801b71",
+    "machineId": "c6b7f93f0887d2eccf739195441b0249b15f993a346b884066a5f637fedce223",
+    "campaignId": "publication-38e9a0ce-2440-4415-b8a7-5b845ab38200",
     "campaignProtocol": "per-suite-host-v1",
     "machineClass": "c4-standard-16-lssd",
-    "sourceRevision": "3b4453f04f36d15828f06a5cbcebbeda9c4e8374",
-    "nodeName": "gke-proa-ci-runners-c4-7003fc0e-x2hj",
+    "sourceRevision": "7cc21f85d34bd52785a6607d576fe196023ba159",
+    "nodeName": "gke-proa-ci-runners-c4-7003fc0e-5gdq",
     "platform": "linux",
     "release": "6.12.105+",
     "arch": "x64",
@@ -23,7 +23,7 @@
     "javascriptRuntime": "Bun 1.4.2",
     "serverCpuAffinity": "0",
     "cpu_model": "Intel(R) Xeon(R) 6985P-C CPU @ 2.30GHz",
-    "cloud": "GCP C4 c4-standard-16-lssd · gke-proa-ci-runners-c4-7003fc0e-x2hj · isolated node",
+    "cloud": "GCP C4 c4-standard-16-lssd · gke-proa-ci-runners-c4-7003fc0e-5gdq · isolated node",
     "server_cpu_affinity": "0",
     "logical_cpus": 16,
     "memory_bytes": 63200768000,
@@ -710,12 +710,12 @@
   "measurements": {
     "proa": {
       "12": {
-        "p50_us": 1.3659999999999999,
-        "p95_us": 1.438,
-        "p99_us": 1.51501,
-        "mean_us": 1.3898630000000005,
-        "process_p50_min_us": 1.348,
-        "process_p50_max_us": 1.383,
+        "p50_us": 1.389,
+        "p95_us": 1.4440000000000002,
+        "p99_us": 1.4810100000000002,
+        "mean_us": 1.4055639999999907,
+        "process_p50_min_us": 1.375,
+        "process_p50_max_us": 1.409,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -725,23 +725,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 2895872,
+          "peak_rss_bytes": 2899968,
           "process_peak_rss_bytes": [
-            2781184,
-            2826240,
-            2904064,
-            2908160,
-            2895872
+            2895872,
+            2899968,
+            2945024,
+            2990080,
+            2813952
           ]
         }
       },
       "96": {
-        "p50_us": 9.976,
-        "p95_us": 10.23005,
-        "p99_us": 14.51566999999999,
-        "mean_us": 10.289657999999998,
-        "process_p50_min_us": 9.9595,
-        "process_p50_max_us": 10.4495,
+        "p50_us": 10.254999999999999,
+        "p95_us": 10.4843,
+        "p99_us": 15.542229999999998,
+        "mean_us": 10.391632,
+        "process_p50_min_us": 10.2455,
+        "process_p50_max_us": 10.9245,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -753,21 +753,21 @@
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
           "peak_rss_bytes": 3424256,
           "process_peak_rss_bytes": [
-            3354624,
+            3473408,
+            3477504,
+            3407872,
             3424256,
-            3444736,
-            3346432,
-            3489792
+            3395584
           ]
         }
       },
       "768": {
-        "p50_us": 227.62,
-        "p95_us": 334.3689,
-        "p99_us": 353.2241700000001,
-        "mean_us": 217.72666999999987,
-        "process_p50_min_us": 224.0585,
-        "process_p50_max_us": 230.84300000000002,
+        "p50_us": 222.147,
+        "p95_us": 334.5094,
+        "p99_us": 354.7118100000002,
+        "mean_us": 218.1752999999999,
+        "process_p50_min_us": 221.0475,
+        "process_p50_max_us": 226.1415,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -777,25 +777,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 7667712,
+          "peak_rss_bytes": 7614464,
           "process_peak_rss_bytes": [
-            7667712,
-            7589888,
-            7639040,
-            7684096,
-            7729152
+            7651328,
+            7614464,
+            7438336,
+            7708672,
+            7520256
           ]
         }
       }
     },
     "marko": {
       "12": {
-        "p50_us": 17.3365,
-        "p95_us": 28.18315,
-        "p99_us": 43.922139999999985,
-        "mean_us": 43.780888000000004,
-        "process_p50_min_us": 16.886,
-        "process_p50_max_us": 17.452,
+        "p50_us": 17.636000000000003,
+        "p95_us": 28.975949999999997,
+        "p99_us": 52.50219999999997,
+        "mean_us": 44.8919495,
+        "process_p50_min_us": 17.0015,
+        "process_p50_max_us": 18.2675,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -805,23 +805,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 121110528,
+          "peak_rss_bytes": 121065472,
           "process_peak_rss_bytes": [
-            121180160,
-            121573376,
-            121110528,
-            120647680,
-            120586240
+            120131584,
+            120672256,
+            121065472,
+            122089472,
+            121716736
           ]
         }
       },
       "96": {
-        "p50_us": 110.8335,
-        "p95_us": 199.27699999999993,
-        "p99_us": 3183.1435899999997,
-        "mean_us": 206.23649199999988,
-        "process_p50_min_us": 110.039,
-        "process_p50_max_us": 116.20400000000001,
+        "p50_us": 112.505,
+        "p95_us": 202.16354999999984,
+        "p99_us": 3168.84622,
+        "mean_us": 203.85744799999995,
+        "process_p50_min_us": 111.3015,
+        "process_p50_max_us": 123.259,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -831,23 +831,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 121823232,
+          "peak_rss_bytes": 121733120,
           "process_peak_rss_bytes": [
-            121360384,
-            121389056,
-            123072512,
-            123310080,
-            121823232
+            123682816,
+            123256832,
+            121085952,
+            120311808,
+            121733120
           ]
         }
       },
       "768": {
-        "p50_us": 898.8675000000001,
-        "p95_us": 3994.1983499999988,
-        "p99_us": 6373.656390000002,
-        "mean_us": 1443.7328499999996,
-        "process_p50_min_us": 824.8735,
-        "process_p50_max_us": 912.6655,
+        "p50_us": 905.5345,
+        "p95_us": 4047.225449999999,
+        "p99_us": 7881.060530000028,
+        "mean_us": 1466.4678999999999,
+        "process_p50_min_us": 842.865,
+        "process_p50_max_us": 950.403,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -857,25 +857,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 140652544,
+          "peak_rss_bytes": 140193792,
           "process_peak_rss_bytes": [
-            144232448,
-            139653120,
-            144621568,
-            140652544,
-            136663040
+            133959680,
+            140251136,
+            140193792,
+            135098368,
+            141021184
           ]
         }
       }
     },
     "react": {
       "12": {
-        "p50_us": 58.6765,
-        "p95_us": 103.34554999999995,
-        "p99_us": 3550.11759,
-        "mean_us": 164.1862985,
-        "process_p50_min_us": 57.5415,
-        "process_p50_max_us": 61.075,
+        "p50_us": 62.9415,
+        "p95_us": 112.15749999999998,
+        "p99_us": 3584.479899999999,
+        "mean_us": 182.60414400000005,
+        "process_p50_min_us": 61.206,
+        "process_p50_max_us": 65.024,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -885,23 +885,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 87535616,
+          "peak_rss_bytes": 91623424,
           "process_peak_rss_bytes": [
-            89493504,
-            87535616,
-            86441984,
-            91197440,
-            79294464
+            91357184,
+            91623424,
+            89841664,
+            93888512,
+            92942336
           ]
         }
       },
       "96": {
-        "p50_us": 433.70050000000003,
-        "p95_us": 2985.6236499999977,
-        "p99_us": 11648.567839999992,
-        "mean_us": 1171.2706239999998,
-        "process_p50_min_us": 432.9815,
-        "process_p50_max_us": 568.1565,
+        "p50_us": 457.58299999999997,
+        "p95_us": 3203.50065,
+        "p99_us": 10584.590769999983,
+        "mean_us": 1189.2950219999993,
+        "process_p50_min_us": 437.922,
+        "process_p50_max_us": 469.089,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -911,23 +911,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 98951168,
+          "peak_rss_bytes": 95793152,
           "process_peak_rss_bytes": [
-            102383616,
-            97071104,
-            100577280,
-            96899072,
-            98951168
+            100691968,
+            91455488,
+            95690752,
+            95793152,
+            99434496
           ]
         }
       },
       "768": {
-        "p50_us": 8210.068,
-        "p95_us": 22822.25855,
-        "p99_us": 34230.25934000019,
-        "mean_us": 10695.640449999999,
-        "process_p50_min_us": 6366.753000000001,
-        "process_p50_max_us": 9711.0295,
+        "p50_us": 8401.8125,
+        "p95_us": 25480.260349999997,
+        "p99_us": 38413.3846600001,
+        "mean_us": 11323.223289999996,
+        "process_p50_min_us": 7139.5815,
+        "process_p50_max_us": 9150.087,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -937,25 +937,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 157159424,
+          "peak_rss_bytes": 155602944,
           "process_peak_rss_bytes": [
-            151076864,
-            155029504,
-            158793728,
-            159547392,
-            157159424
+            152010752,
+            198082560,
+            167002112,
+            151592960,
+            155602944
           ]
         }
       }
     },
     "vue": {
       "12": {
-        "p50_us": 15.2295,
-        "p95_us": 38.244399999999985,
-        "p99_us": 70.22981,
-        "mean_us": 50.92103099999999,
-        "process_p50_min_us": 14.399999999999999,
-        "process_p50_max_us": 15.597,
+        "p50_us": 15.773,
+        "p95_us": 36.77005,
+        "p99_us": 71.84663,
+        "mean_us": 51.98131350000002,
+        "process_p50_min_us": 14.8845,
+        "process_p50_max_us": 17.351,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -965,23 +965,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 68898816,
+          "peak_rss_bytes": 66809856,
           "process_peak_rss_bytes": [
-            68898816,
-            66506752,
-            74829824,
-            69722112,
-            66650112
+            68562944,
+            66809856,
+            70615040,
+            66670592,
+            66535424
           ]
         }
       },
       "96": {
-        "p50_us": 91.8885,
-        "p95_us": 356.0124999999993,
-        "p99_us": 4135.853149999999,
-        "mean_us": 271.29693199999997,
-        "process_p50_min_us": 89.31,
-        "process_p50_max_us": 98.3715,
+        "p50_us": 96.461,
+        "p95_us": 344.3878499999988,
+        "p99_us": 4628.624979999995,
+        "mean_us": 292.413194,
+        "process_p50_min_us": 93.4745,
+        "process_p50_max_us": 97.2615,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -991,23 +991,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 76795904,
+          "peak_rss_bytes": 78307328,
           "process_peak_rss_bytes": [
-            79441920,
-            78794752,
-            76742656,
-            75755520,
-            76795904
+            78114816,
+            79921152,
+            76992512,
+            78307328,
+            81547264
           ]
         }
       },
       "768": {
-        "p50_us": 796.08,
-        "p95_us": 4873.7481,
-        "p99_us": 12218.716170000105,
-        "mean_us": 1774.8670399999996,
-        "process_p50_min_us": 781.836,
-        "process_p50_max_us": 812.172,
+        "p50_us": 839.287,
+        "p95_us": 5172.195449999999,
+        "p99_us": 9976.84858000009,
+        "mean_us": 1807.3283900000004,
+        "process_p50_min_us": 812.6965,
+        "process_p50_max_us": 857.078,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1017,25 +1017,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 100130816,
+          "peak_rss_bytes": 100937728,
           "process_peak_rss_bytes": [
-            100597760,
-            104214528,
-            100130816,
-            94507008,
-            97763328
+            103616512,
+            100937728,
+            97312768,
+            96092160,
+            103833600
           ]
         }
       }
     },
     "svelte": {
       "12": {
-        "p50_us": 13.011,
-        "p95_us": 35.4736,
-        "p99_us": 50.64681,
-        "mean_us": 28.820368499999994,
-        "process_p50_min_us": 12.8235,
-        "process_p50_max_us": 13.4635,
+        "p50_us": 14.293,
+        "p95_us": 37.597799999999985,
+        "p99_us": 57.707379999999986,
+        "mean_us": 31.140091000000005,
+        "process_p50_min_us": 12.9235,
+        "process_p50_max_us": 14.781,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1045,23 +1045,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 79151104,
+          "peak_rss_bytes": 79884288,
           "process_peak_rss_bytes": [
-            79384576,
-            80871424,
-            78794752,
-            78970880,
-            79151104
+            80486400,
+            78508032,
+            80261120,
+            79097856,
+            79884288
           ]
         }
       },
       "96": {
-        "p50_us": 94.1645,
-        "p95_us": 182.9686999999968,
-        "p99_us": 3135.20457,
-        "mean_us": 230.65057399999998,
-        "process_p50_min_us": 92.13,
-        "process_p50_max_us": 95.62700000000001,
+        "p50_us": 96.0115,
+        "p95_us": 258.0068499999993,
+        "p99_us": 3203.79699,
+        "mean_us": 234.22015799999988,
+        "process_p50_min_us": 91.49199999999999,
+        "process_p50_max_us": 99.511,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1071,23 +1071,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 95784960,
+          "peak_rss_bytes": 95571968,
           "process_peak_rss_bytes": [
-            95342592,
-            95784960,
-            96776192,
-            94699520,
-            96882688
+            95199232,
+            95571968,
+            100839424,
+            94543872,
+            97312768
           ]
         }
       },
       "768": {
-        "p50_us": 817.9455,
-        "p95_us": 4064.130849999999,
-        "p99_us": 6340.612600000007,
-        "mean_us": 1439.4953,
-        "process_p50_min_us": 791.5015000000001,
-        "process_p50_max_us": 848.0995,
+        "p50_us": 846.678,
+        "p95_us": 4251.01325,
+        "p99_us": 5734.926100000002,
+        "mean_us": 1497.1889700000002,
+        "process_p50_min_us": 844.7705000000001,
+        "process_p50_max_us": 901.646,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1097,25 +1097,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 127324160,
+          "peak_rss_bytes": 127016960,
           "process_peak_rss_bytes": [
-            128970752,
-            127324160,
-            126697472,
-            124878848,
-            132894720
+            127016960,
+            122286080,
+            128733184,
+            128155648,
+            120414208
           ]
         }
       }
     },
     "rails": {
       "12": {
-        "p50_us": 76.3215,
-        "p95_us": 110.6802,
-        "p99_us": 473.72257999999994,
-        "mean_us": 92.7449515,
-        "process_p50_min_us": 76.1025,
-        "process_p50_max_us": 76.8545,
+        "p50_us": 80.828,
+        "p95_us": 116.59079999999999,
+        "p99_us": 679.9766500000001,
+        "mean_us": 103.348084,
+        "process_p50_min_us": 80.1965,
+        "process_p50_max_us": 82.085,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1125,23 +1125,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 73342976,
+          "peak_rss_bytes": 73592832,
           "process_peak_rss_bytes": [
-            74579968,
-            73981952,
-            72773632,
-            73003008,
-            73342976
+            73408512,
+            73592832,
+            75046912,
+            73183232,
+            75030528
           ]
         }
       },
       "96": {
-        "p50_us": 466.253,
-        "p95_us": 799.8024499999997,
-        "p99_us": 1930.4461799999997,
-        "mean_us": 537.019294,
-        "process_p50_min_us": 462.99,
-        "process_p50_max_us": 472.4775,
+        "p50_us": 494.5495,
+        "p95_us": 817.2106999999999,
+        "p99_us": 2313.90169,
+        "mean_us": 582.156982,
+        "process_p50_min_us": 463.1725,
+        "process_p50_max_us": 518.184,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1151,23 +1151,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 77328384,
+          "peak_rss_bytes": 77680640,
           "process_peak_rss_bytes": [
-            85340160,
-            77197312,
-            77328384,
-            76992512,
-            85606400
+            77266944,
+            77680640,
+            85557248,
+            77193216,
+            78024704
           ]
         }
       },
       "768": {
-        "p50_us": 3471.412,
-        "p95_us": 5718.001199999993,
-        "p99_us": 9261.719880000004,
-        "mean_us": 3913.10596,
-        "process_p50_min_us": 3461.9965,
-        "process_p50_max_us": 3498.7885,
+        "p50_us": 3622.855,
+        "p95_us": 6790.5365499999925,
+        "p99_us": 11938.64203,
+        "mean_us": 4329.45165,
+        "process_p50_min_us": 3533.5405,
+        "process_p50_max_us": 3961.8505,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1177,25 +1177,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 83288064,
+          "peak_rss_bytes": 83869696,
           "process_peak_rss_bytes": [
-            83435520,
-            83288064,
-            83156992,
-            83988480,
-            83079168
+            83869696,
+            84353024,
+            83030016,
+            83910656,
+            82853888
           ]
         }
       }
     },
     "jte": {
       "12": {
-        "p50_us": 74.5905,
-        "p95_us": 94.3061,
-        "p99_us": 3127.65477,
-        "mean_us": 160.410555,
-        "process_p50_min_us": 72.817,
-        "process_p50_max_us": 75.8165,
+        "p50_us": 76.0255,
+        "p95_us": 95.08105,
+        "p99_us": 3133.12488,
+        "mean_us": 166.323957,
+        "process_p50_min_us": 75.321,
+        "process_p50_max_us": 76.9875,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1205,23 +1205,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 204492800,
+          "peak_rss_bytes": 203980800,
           "process_peak_rss_bytes": [
-            200159232,
-            204492800,
-            203804672,
-            204525568,
-            204537856
+            204865536,
+            203870208,
+            203980800,
+            189530112,
+            204419072
           ]
         }
       },
       "96": {
-        "p50_us": 627.601,
-        "p95_us": 3772.63575,
-        "p99_us": 4404.18971,
-        "mean_us": 1229.88905,
-        "process_p50_min_us": 622.0905,
-        "process_p50_max_us": 658.6895,
+        "p50_us": 643.7685,
+        "p95_us": 3765.36025,
+        "p99_us": 4429.51767,
+        "mean_us": 1264.853556,
+        "process_p50_min_us": 634.2085,
+        "process_p50_max_us": 662.2785,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1231,23 +1231,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 307519488,
+          "peak_rss_bytes": 304132096,
           "process_peak_rss_bytes": [
-            310296576,
-            303300608,
-            302845952,
-            307519488,
-            307744768
+            313098240,
+            304058368,
+            300716032,
+            304152576,
+            304132096
           ]
         }
       },
       "768": {
-        "p50_us": 8345.0715,
-        "p95_us": 11886.31555,
-        "p99_us": 14888.44527,
-        "mean_us": 8742.14106,
-        "process_p50_min_us": 7834.544,
-        "process_p50_max_us": 8829.443,
+        "p50_us": 8667.1605,
+        "p95_us": 12558.41655,
+        "p99_us": 17226.68716,
+        "mean_us": 9028.59838,
+        "process_p50_min_us": 8219.481,
+        "process_p50_max_us": 9766.97,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1257,25 +1257,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 313946112,
+          "peak_rss_bytes": 313516032,
           "process_peak_rss_bytes": [
-            314068992,
-            311644160,
-            311607296,
-            313946112,
-            314175488
+            313397248,
+            313688064,
+            313516032,
+            313618432,
+            313192448
           ]
         }
       }
     },
     "rocker": {
       "12": {
-        "p50_us": 125.991,
-        "p95_us": 162.55365,
-        "p99_us": 3189.56202,
-        "mean_us": 247.979751,
-        "process_p50_min_us": 120.878,
-        "process_p50_max_us": 131.982,
+        "p50_us": 117.3375,
+        "p95_us": 150.3191,
+        "p99_us": 3180.91911,
+        "mean_us": 229.627669,
+        "process_p50_min_us": 114.933,
+        "process_p50_max_us": 124.732,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1285,23 +1285,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 308023296,
+          "peak_rss_bytes": 307585024,
           "process_peak_rss_bytes": [
-            309116928,
-            297283584,
-            313036800,
-            298553344,
-            308023296
+            307499008,
+            293920768,
+            307585024,
+            312700928,
+            308129792
           ]
         }
       },
       "96": {
-        "p50_us": 778.027,
-        "p95_us": 4144.5149,
-        "p99_us": 5047.10503,
-        "mean_us": 1616.055032,
-        "process_p50_min_us": 749.335,
-        "process_p50_max_us": 916.9605,
+        "p50_us": 795.9175,
+        "p95_us": 4166.3526,
+        "p99_us": 5209.46044,
+        "mean_us": 1668.83113,
+        "process_p50_min_us": 709.757,
+        "process_p50_max_us": 835.2565,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1311,23 +1311,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 308805632,
+          "peak_rss_bytes": 310157312,
           "process_peak_rss_bytes": [
-            308895744,
-            311250944,
-            308805632,
-            297267200,
-            307982336
+            309043200,
+            310951936,
+            313200640,
+            307576832,
+            310157312
           ]
         }
       },
       "768": {
-        "p50_us": 12092.2195,
-        "p95_us": 18438.32655,
-        "p99_us": 21493.98645,
-        "mean_us": 12431.09769,
-        "process_p50_min_us": 10848.827,
-        "process_p50_max_us": 12307.536,
+        "p50_us": 10831.968,
+        "p95_us": 18316.2525,
+        "p99_us": 20995.73385,
+        "mean_us": 11388.64699,
+        "process_p50_min_us": 10659.056,
+        "process_p50_max_us": 11582.8775,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1337,25 +1337,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 315314176,
+          "peak_rss_bytes": 319467520,
           "process_peak_rss_bytes": [
-            315002880,
-            317087744,
-            315133952,
-            315314176,
-            320495616
+            321716224,
+            319799296,
+            319029248,
+            315023360,
+            319467520
           ]
         }
       }
     },
     "handlebars": {
       "12": {
-        "p50_us": 37.0245,
-        "p95_us": 56.141999999999996,
-        "p99_us": 284.4415699999998,
-        "mean_us": 82.74421999999998,
-        "process_p50_min_us": 33.9135,
-        "process_p50_max_us": 38.4775,
+        "p50_us": 37.651,
+        "p95_us": 57.04299999999999,
+        "p99_us": 384.9283499999983,
+        "mean_us": 84.6401360000001,
+        "process_p50_min_us": 36.6505,
+        "process_p50_max_us": 38.3485,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1365,23 +1365,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 68464640,
+          "peak_rss_bytes": 70037504,
           "process_peak_rss_bytes": [
-            67448832,
-            69246976,
-            69443584,
-            67829760,
-            68464640
+            68558848,
+            70311936,
+            69894144,
+            73924608,
+            70037504
           ]
         }
       },
       "96": {
-        "p50_us": 211.328,
-        "p95_us": 602.3328499999999,
-        "p99_us": 3335.7524799999997,
-        "mean_us": 417.50087599999983,
-        "process_p50_min_us": 208.4335,
-        "process_p50_max_us": 245.916,
+        "p50_us": 216.2705,
+        "p95_us": 607.5891999999997,
+        "p99_us": 3448.2112999999968,
+        "mean_us": 425.3310500000001,
+        "process_p50_min_us": 208.317,
+        "process_p50_max_us": 245.4035,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1391,23 +1391,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 71299072,
+          "peak_rss_bytes": 70692864,
           "process_peak_rss_bytes": [
-            72032256,
-            71348224,
-            71299072,
-            69996544,
-            71208960
+            74010624,
+            70299648,
+            72073216,
+            70692864,
+            70426624
           ]
         }
       },
       "768": {
-        "p50_us": 2177.8585000000003,
-        "p95_us": 6020.9061999999985,
-        "p99_us": 12279.012060000176,
-        "mean_us": 3089.1617300000003,
-        "process_p50_min_us": 2169.3810000000003,
-        "process_p50_max_us": 2327.083,
+        "p50_us": 2336.0555,
+        "p95_us": 6361.335549999999,
+        "p99_us": 10609.368930000208,
+        "mean_us": 3234.06086,
+        "process_p50_min_us": 2217.5605,
+        "process_p50_max_us": 2381.098,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1417,25 +1417,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 83742720,
+          "peak_rss_bytes": 82857984,
           "process_peak_rss_bytes": [
-            83124224,
-            84746240,
-            83300352,
-            83742720,
-            83836928
+            83935232,
+            82116608,
+            82857984,
+            86446080,
+            82784256
           ]
         }
       }
     },
     "go-html-template": {
       "12": {
-        "p50_us": 127.678,
-        "p95_us": 204.99905,
-        "p99_us": 220.00143,
-        "mean_us": 145.8042659999998,
-        "process_p50_min_us": 127.271,
-        "process_p50_max_us": 128.378,
+        "p50_us": 128.8775,
+        "p95_us": 203.35739999999998,
+        "p99_us": 216.95087,
+        "mean_us": 146.21611900000013,
+        "process_p50_min_us": 127.178,
+        "process_p50_max_us": 132.97899999999998,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1445,23 +1445,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 15527936,
+          "peak_rss_bytes": 14528512,
           "process_peak_rss_bytes": [
-            19759104,
-            15527936,
-            14536704,
-            15167488,
-            19042304
+            14528512,
+            14503936,
+            14520320,
+            19681280,
+            14544896
           ]
         }
       },
       "96": {
-        "p50_us": 1154.923,
-        "p95_us": 1209.1827500000002,
-        "p99_us": 1229.84536,
-        "mean_us": 1154.9961040000003,
-        "process_p50_min_us": 1153.891,
-        "process_p50_max_us": 1157.1095,
+        "p50_us": 1177.7185,
+        "p95_us": 1234.5024,
+        "p99_us": 1318.90106,
+        "mean_us": 1179.7214059999997,
+        "process_p50_min_us": 1159.0525,
+        "process_p50_max_us": 1182.1385,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1471,23 +1471,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 14684160,
+          "peak_rss_bytes": 14839808,
           "process_peak_rss_bytes": [
+            14839808,
+            14594048,
+            15814656,
             14643200,
-            16498688,
-            14581760,
-            14684160,
-            16371712
+            15769600
           ]
         }
       },
       "768": {
-        "p50_us": 8826.085,
-        "p95_us": 10389.86245,
-        "p99_us": 10570.09388,
-        "mean_us": 9050.09661,
-        "process_p50_min_us": 8718.6525,
-        "process_p50_max_us": 9802.99,
+        "p50_us": 8966.411,
+        "p95_us": 10822.34825,
+        "p99_us": 11291.27491,
+        "mean_us": 9527.487390000002,
+        "process_p50_min_us": 8943.6455,
+        "process_p50_max_us": 10014.4715,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1497,25 +1497,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 23543808,
+          "peak_rss_bytes": 23879680,
           "process_peak_rss_bytes": [
-            24125440,
-            23216128,
-            23277568,
-            23629824,
-            23543808
+            23879680,
+            23801856,
+            24096768,
+            23568384,
+            24076288
           ]
         }
       }
     },
     "jinja2": {
       "12": {
-        "p50_us": 185.70850000000002,
-        "p95_us": 193.2661,
-        "p99_us": 196.46249,
-        "mean_us": 186.2778685,
-        "process_p50_min_us": 185.0825,
-        "process_p50_max_us": 190.86599999999999,
+        "p50_us": 187.98649999999998,
+        "p95_us": 196.9451,
+        "p99_us": 201.87972,
+        "mean_us": 188.66909650000002,
+        "process_p50_min_us": 185.923,
+        "process_p50_max_us": 192.9565,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1525,23 +1525,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 23592960,
+          "peak_rss_bytes": 23564288,
           "process_peak_rss_bytes": [
-            23613440,
-            23592960,
-            23597056,
-            23584768,
-            23494656
+            23478272,
+            23629824,
+            23564288,
+            23498752,
+            23609344
           ]
         }
       },
       "96": {
-        "p50_us": 1418.51,
-        "p95_us": 1440.0642,
-        "p99_us": 1456.80621,
-        "mean_us": 1417.435398,
-        "process_p50_min_us": 1392.767,
-        "process_p50_max_us": 1464.045,
+        "p50_us": 1463.0320000000002,
+        "p95_us": 1489.60255,
+        "p99_us": 1508.2534799999999,
+        "mean_us": 1462.650686,
+        "process_p50_min_us": 1430.6554999999998,
+        "process_p50_max_us": 1501.9965,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1551,23 +1551,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 23891968,
+          "peak_rss_bytes": 23842816,
           "process_peak_rss_bytes": [
-            23891968,
-            23891968,
-            23871488,
+            23842816,
+            23855104,
+            23756800,
             23859200,
-            23928832
+            23756800
           ]
         }
       },
       "768": {
-        "p50_us": 12193.8315,
-        "p95_us": 12804.902899999994,
-        "p99_us": 15482.570870000003,
-        "mean_us": 12297.06774,
-        "process_p50_min_us": 12074.0735,
-        "process_p50_max_us": 12547.411,
+        "p50_us": 12499.897,
+        "p95_us": 13274.680849999992,
+        "p99_us": 17150.598370000003,
+        "mean_us": 12642.02076,
+        "process_p50_min_us": 12358.511999999999,
+        "process_p50_max_us": 12800.803,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1577,25 +1577,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 30400512,
+          "peak_rss_bytes": 30388224,
           "process_peak_rss_bytes": [
-            30347264,
+            30441472,
             30248960,
-            30408704,
-            30408704,
-            30400512
+            30437376,
+            30388224,
+            30355456
           ]
         }
       }
     },
     "php": {
       "12": {
-        "p50_us": 13.01,
-        "p95_us": 13.61605,
-        "p99_us": 18.605249999999998,
-        "mean_us": 13.162803999999984,
-        "process_p50_min_us": 12.82,
-        "process_p50_max_us": 13.12,
+        "p50_us": 13.130500000000001,
+        "p95_us": 13.874299999999998,
+        "p99_us": 18.691489999999998,
+        "mean_us": 13.275404000000016,
+        "process_p50_min_us": 12.93,
+        "process_p50_max_us": 13.2295,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1605,23 +1605,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 22335488,
+          "peak_rss_bytes": 22036480,
           "process_peak_rss_bytes": [
-            22335488,
-            22364160,
-            22179840,
-            22487040,
-            22056960
+            21983232,
+            22192128,
+            22093824,
+            22036480,
+            22003712
           ]
         }
       },
       "96": {
-        "p50_us": 94.0275,
-        "p95_us": 101.6714,
-        "p99_us": 104.46037,
-        "mean_us": 95.40719600000006,
-        "process_p50_min_us": 93.53200000000001,
-        "process_p50_max_us": 94.63650000000001,
+        "p50_us": 95.85249999999999,
+        "p95_us": 104.50195,
+        "p99_us": 109.04167999999999,
+        "mean_us": 97.21342600000003,
+        "process_p50_min_us": 95.274,
+        "process_p50_max_us": 98.1375,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1631,23 +1631,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 22917120,
+          "peak_rss_bytes": 23130112,
           "process_peak_rss_bytes": [
-            23191552,
-            23007232,
-            22917120,
-            22904832,
-            22843392
+            23142400,
+            23040000,
+            23130112,
+            23220224,
+            23060480
           ]
         }
       },
       "768": {
-        "p50_us": 2686.8915,
-        "p95_us": 2724.2524000000003,
-        "p99_us": 2744.05915,
-        "mean_us": 2690.4854199999995,
-        "process_p50_min_us": 2671.6059999999998,
-        "process_p50_max_us": 2699.1835,
+        "p50_us": 2690.8734999999997,
+        "p95_us": 2738.72215,
+        "p99_us": 2770.0080800000014,
+        "mean_us": 2689.7374399999994,
+        "process_p50_min_us": 2677.962,
+        "process_p50_max_us": 2737.5209999999997,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1657,25 +1657,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 31862784,
+          "peak_rss_bytes": 31768576,
           "process_peak_rss_bytes": [
-            31727616,
-            31916032,
-            32018432,
-            31862784,
-            31657984
+            31756288,
+            31731712,
+            31768576,
+            31879168,
+            31928320
           ]
         }
       }
     },
     "askama": {
       "12": {
-        "p50_us": 3.11,
-        "p95_us": 3.2240499999999996,
-        "p99_us": 3.3409999999999997,
-        "mean_us": 3.1451580000000012,
-        "process_p50_min_us": 3.1,
-        "process_p50_max_us": 3.124,
+        "p50_us": 3.173,
+        "p95_us": 3.3320499999999997,
+        "p99_us": 3.4991599999999994,
+        "mean_us": 3.2332584999999887,
+        "process_p50_min_us": 3.0989999999999998,
+        "process_p50_max_us": 3.259,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1685,23 +1685,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 2908160,
+          "peak_rss_bytes": 2932736,
           "process_peak_rss_bytes": [
-            2867200,
-            2908160,
-            2973696,
-            2887680,
-            2932736
+            2854912,
+            2936832,
+            2932736,
+            2940928,
+            2891776
           ]
         }
       },
       "96": {
-        "p50_us": 23.651,
-        "p95_us": 24.46935,
-        "p99_us": 30.09501,
-        "mean_us": 24.045570000000016,
-        "process_p50_min_us": 23.5305,
-        "process_p50_max_us": 23.707,
+        "p50_us": 24.471,
+        "p95_us": 25.17295,
+        "p99_us": 31.78025,
+        "mean_us": 24.876252000000004,
+        "process_p50_min_us": 24.2665,
+        "process_p50_max_us": 24.894000000000002,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1711,23 +1711,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 3342336,
+          "peak_rss_bytes": 3391488,
           "process_peak_rss_bytes": [
-            3293184,
-            3416064,
+            3391488,
+            3391488,
+            3280896,
             3342336,
-            3444736,
-            3330048
+            3407872
           ]
         }
       },
       "768": {
-        "p50_us": 217.4605,
-        "p95_us": 237.7105,
-        "p99_us": 252.04728000000034,
-        "mean_us": 222.30498000000003,
-        "process_p50_min_us": 215.328,
-        "process_p50_max_us": 219.0285,
+        "p50_us": 225.49450000000002,
+        "p95_us": 243.75335,
+        "p99_us": 264.22805000000267,
+        "mean_us": 232.74587,
+        "process_p50_min_us": 220.59300000000002,
+        "process_p50_max_us": 230.4275,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1737,25 +1737,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 7602176,
+          "peak_rss_bytes": 7593984,
           "process_peak_rss_bytes": [
-            7548928,
-            7553024,
-            7643136,
-            7688192,
-            7602176
+            7675904,
+            7671808,
+            7593984,
+            7512064,
+            7565312
           ]
         }
       }
     },
     "sailfish": {
       "12": {
-        "p50_us": 3.0180000000000002,
-        "p95_us": 3.13505,
-        "p99_us": 3.4140999999999995,
-        "mean_us": 3.062211500000003,
-        "process_p50_min_us": 3.002,
-        "process_p50_max_us": 3.057,
+        "p50_us": 3.145,
+        "p95_us": 3.30305,
+        "p99_us": 3.4761499999999996,
+        "mean_us": 3.2087294999999982,
+        "process_p50_min_us": 3.126,
+        "process_p50_max_us": 3.191,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1765,23 +1765,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 2994176,
+          "peak_rss_bytes": 2977792,
           "process_peak_rss_bytes": [
-            3035136,
-            2994176,
-            2904064,
-            3096576,
-            2932736
+            2977792,
+            2822144,
+            3026944,
+            2961408,
+            2990080
           ]
         }
       },
       "96": {
-        "p50_us": 23.069499999999998,
-        "p95_us": 23.7069,
-        "p99_us": 29.95683999999999,
-        "mean_us": 23.340799999999987,
-        "process_p50_min_us": 22.908,
-        "process_p50_max_us": 23.355,
+        "p50_us": 24.0085,
+        "p95_us": 24.96745,
+        "p99_us": 30.906530000000004,
+        "mean_us": 24.377432000000013,
+        "process_p50_min_us": 23.7755,
+        "process_p50_max_us": 24.243000000000002,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1791,23 +1791,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 3452928,
+          "peak_rss_bytes": 3461120,
           "process_peak_rss_bytes": [
-            3502080,
-            3399680,
-            3497984,
-            3432448,
-            3452928
+            3547136,
+            3461120,
+            3436544,
+            3551232,
+            3272704
           ]
         }
       },
       "768": {
-        "p50_us": 208.9615,
-        "p95_us": 227.87325,
-        "p99_us": 236.05095000000003,
-        "mean_us": 212.45632,
-        "process_p50_min_us": 207.78050000000002,
-        "process_p50_max_us": 211.6595,
+        "p50_us": 216.823,
+        "p95_us": 234.98155,
+        "p99_us": 250.87225000000004,
+        "mean_us": 220.70721,
+        "process_p50_min_us": 215.3415,
+        "process_p50_max_us": 219.39249999999998,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1817,25 +1817,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 7589888,
+          "peak_rss_bytes": 7663616,
           "process_peak_rss_bytes": [
-            7700480,
-            7569408,
-            7655424,
-            7585792,
-            7589888
+            7667712,
+            7598080,
+            7651328,
+            7745536,
+            7663616
           ]
         }
       }
     },
     "leptos": {
       "12": {
-        "p50_us": 28.099999999999998,
-        "p95_us": 28.51505,
-        "p99_us": 34.202780000000004,
-        "mean_us": 28.31654599999995,
-        "process_p50_min_us": 28.007,
-        "process_p50_max_us": 28.326999999999998,
+        "p50_us": 29.091,
+        "p95_us": 29.65145,
+        "p99_us": 35.852129999999995,
+        "mean_us": 29.353638499999985,
+        "process_p50_min_us": 28.521,
+        "process_p50_max_us": 32.257000000000005,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1845,23 +1845,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 2895872,
+          "peak_rss_bytes": 2945024,
           "process_peak_rss_bytes": [
-            2854912,
-            2961408,
-            2895872,
-            2859008,
-            2949120
+            2957312,
+            2965504,
+            2899968,
+            2908160,
+            2945024
           ]
         }
       },
       "96": {
-        "p50_us": 211.43349999999998,
-        "p95_us": 217.6898,
-        "p99_us": 223.66346999999996,
-        "mean_us": 212.4989559999999,
-        "process_p50_min_us": 210.8765,
-        "process_p50_max_us": 211.69050000000001,
+        "p50_us": 221.1825,
+        "p95_us": 228.49485,
+        "p99_us": 242.23641999999995,
+        "mean_us": 222.867164,
+        "process_p50_min_us": 220.6975,
+        "process_p50_max_us": 245.04399999999998,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1871,23 +1871,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 3534848,
+          "peak_rss_bytes": 3555328,
           "process_peak_rss_bytes": [
-            3629056,
-            3547136,
-            3477504,
-            3534848,
-            3526656
+            3502080,
+            3588096,
+            3502080,
+            3575808,
+            3555328
           ]
         }
       },
       "768": {
-        "p50_us": 1830.0845,
-        "p95_us": 1891.1611,
-        "p99_us": 1963.3411900000003,
-        "mean_us": 1849.15402,
-        "process_p50_min_us": 1824.0794999999998,
-        "process_p50_max_us": 1846.1329999999998,
+        "p50_us": 1942.3539999999998,
+        "p95_us": 2003.1962500000002,
+        "p99_us": 2024.9246200000005,
+        "mean_us": 1942.7962800000005,
+        "process_p50_min_us": 1887.386,
+        "process_p50_max_us": 1949.643,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1897,25 +1897,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 10534912,
+          "peak_rss_bytes": 10698752,
           "process_peak_rss_bytes": [
-            10653696,
-            10670080,
-            10534912,
-            10493952,
-            10518528
+            10498048,
+            10756096,
+            10698752,
+            10747904,
+            10649600
           ]
         }
       }
     },
     "dioxus": {
       "12": {
-        "p50_us": 59.644,
-        "p95_us": 66.14795000000001,
-        "p99_us": 70.60222999999999,
-        "mean_us": 58.818361500000094,
-        "process_p50_min_us": 58.802499999999995,
-        "process_p50_max_us": 61.032,
+        "p50_us": 61.60900000000001,
+        "p95_us": 68.27414999999999,
+        "p99_us": 72.64323999999999,
+        "mean_us": 60.833931499999984,
+        "process_p50_min_us": 59.607,
+        "process_p50_max_us": 62.230500000000006,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -1925,23 +1925,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 3395584,
+          "peak_rss_bytes": 3338240,
           "process_peak_rss_bytes": [
-            3506176,
-            3305472,
-            3342336,
-            3502080,
-            3395584
+            3481600,
+            3534848,
+            3268608,
+            3321856,
+            3338240
           ]
         }
       },
       "96": {
-        "p50_us": 402.624,
-        "p95_us": 461.35684999999995,
-        "p99_us": 478.03014,
-        "mean_us": 408.8172,
-        "process_p50_min_us": 402.21,
-        "process_p50_max_us": 436.822,
+        "p50_us": 422.42650000000003,
+        "p95_us": 481.64765,
+        "p99_us": 504.03186999999997,
+        "mean_us": 428.80271000000016,
+        "process_p50_min_us": 417.8365,
+        "process_p50_max_us": 452.53200000000004,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -1951,23 +1951,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 5042176,
+          "peak_rss_bytes": 5074944,
           "process_peak_rss_bytes": [
-            5017600,
-            5054464,
-            4988928,
-            5042176,
-            5275648
+            5029888,
+            5074944,
+            5283840,
+            5165056,
+            5054464
           ]
         }
       },
       "768": {
-        "p50_us": 4559.403,
-        "p95_us": 4815.26445,
-        "p99_us": 5140.813180000001,
-        "mean_us": 4476.15351,
-        "process_p50_min_us": 4514.407499999999,
-        "process_p50_max_us": 4600.6900000000005,
+        "p50_us": 4670.4995,
+        "p95_us": 4898.541050000001,
+        "p99_us": 5104.094180000001,
+        "mean_us": 4564.211220000001,
+        "process_p50_min_us": 4234.8859999999995,
+        "process_p50_max_us": 4727.4725,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -1977,25 +1977,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 17891328,
+          "peak_rss_bytes": 17793024,
           "process_peak_rss_bytes": [
-            17883136,
-            18550784,
-            18518016,
-            17694720,
-            17891328
+            17793024,
+            18702336,
+            18440192,
+            17268736,
+            17780736
           ]
         }
       }
     },
     "topcoat": {
       "12": {
-        "p50_us": 24.809,
-        "p95_us": 25.54505,
-        "p99_us": 30.40101,
-        "mean_us": 24.921113999999967,
-        "process_p50_min_us": 24.6845,
-        "process_p50_max_us": 24.8645,
+        "p50_us": 24.794,
+        "p95_us": 25.586,
+        "p99_us": 30.65,
+        "mean_us": 24.935207499999976,
+        "process_p50_min_us": 24.283,
+        "process_p50_max_us": 24.919999999999998,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -2005,23 +2005,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 3112960,
+          "peak_rss_bytes": 3055616,
           "process_peak_rss_bytes": [
-            3117056,
-            3043328,
+            2998272,
+            3170304,
+            3002368,
             3112960,
-            3117056,
-            3035136
+            3055616
           ]
         }
       },
       "96": {
-        "p50_us": 196.286,
-        "p95_us": 203.4729,
-        "p99_us": 206.86076999999997,
-        "mean_us": 197.46295000000012,
-        "process_p50_min_us": 195.953,
-        "process_p50_max_us": 196.401,
+        "p50_us": 195.549,
+        "p95_us": 203.2074,
+        "p99_us": 206.58683,
+        "mean_us": 197.06934999999982,
+        "process_p50_min_us": 191.3595,
+        "process_p50_max_us": 195.91150000000002,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -2031,23 +2031,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 3948544,
+          "peak_rss_bytes": 4050944,
           "process_peak_rss_bytes": [
-            3940352,
-            3948544,
-            4063232,
-            4116480,
-            3940352
+            4112384,
+            3993600,
+            3977216,
+            4050944,
+            4083712
           ]
         }
       },
       "768": {
-        "p50_us": 1717.6954999999998,
-        "p95_us": 1755.5331999999999,
-        "p99_us": 2147.845840000001,
-        "mean_us": 1733.18419,
-        "process_p50_min_us": 1707.1295,
-        "process_p50_max_us": 1718.5925000000002,
+        "p50_us": 1700.0675,
+        "p95_us": 1753.7493000000002,
+        "p99_us": 2173.3984900000005,
+        "mean_us": 1715.9969399999993,
+        "process_p50_min_us": 1695.4415000000001,
+        "process_p50_max_us": 1703.438,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -2057,25 +2057,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 13586432,
+          "peak_rss_bytes": 13553664,
           "process_peak_rss_bytes": [
-            13586432,
-            13672448,
-            13594624,
-            13553664,
-            13541376
+            13692928,
+            13545472,
+            13611008,
+            13508608,
+            13553664
           ]
         }
       }
     },
     "astro": {
       "12": {
-        "p50_us": 51.564,
-        "p95_us": 106.06929999999998,
-        "p99_us": 590.3623499999999,
-        "mean_us": 114.66105999999992,
-        "process_p50_min_us": 49.925,
-        "process_p50_max_us": 52.6575,
+        "p50_us": 52.3845,
+        "p95_us": 114.26904999999995,
+        "p99_us": 814.2612499999983,
+        "mean_us": 116.8851749999999,
+        "process_p50_min_us": 50.8185,
+        "process_p50_max_us": 53.304500000000004,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -2085,23 +2085,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 94564352,
+          "peak_rss_bytes": 93810688,
           "process_peak_rss_bytes": [
-            91492352,
-            95182848,
-            93757440,
-            94564352,
-            95821824
+            93691904,
+            94203904,
+            93810688,
+            93483008,
+            95141888
           ]
         }
       },
       "96": {
-        "p50_us": 286.596,
-        "p95_us": 1164.5877499999992,
-        "p99_us": 3395.203409999989,
-        "mean_us": 499.187724,
-        "process_p50_min_us": 284.757,
-        "process_p50_max_us": 290.502,
+        "p50_us": 292.47450000000003,
+        "p95_us": 1050.906299999995,
+        "p99_us": 4259.577589999999,
+        "mean_us": 527.1379020000002,
+        "process_p50_min_us": 291.58299999999997,
+        "process_p50_max_us": 311.104,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -2111,23 +2111,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 108929024,
+          "peak_rss_bytes": 109395968,
           "process_peak_rss_bytes": [
-            112062464,
-            108929024,
-            107749376,
-            107069440,
-            109195264
+            106622976,
+            110305280,
+            112865280,
+            106737664,
+            109395968
           ]
         }
       },
       "768": {
-        "p50_us": 2702.0815000000002,
-        "p95_us": 7325.078199999999,
-        "p99_us": 11370.243080000022,
-        "mean_us": 3565.117529999999,
-        "process_p50_min_us": 2399.3505,
-        "process_p50_max_us": 2907.0339999999997,
+        "p50_us": 2618.246,
+        "p95_us": 8054.9358999999995,
+        "p99_us": 10442.693780000056,
+        "mean_us": 3641.646540000002,
+        "process_p50_min_us": 2248.1425,
+        "process_p50_max_us": 3319.103,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -2137,25 +2137,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 158281728,
+          "peak_rss_bytes": 153038848,
           "process_peak_rss_bytes": [
-            184942592,
-            158281728,
-            149516288,
-            185061376,
-            153370624
+            154390528,
+            153038848,
+            152854528,
+            150958080,
+            181837824
           ]
         }
       }
     },
     "sveltekit": {
       "12": {
-        "p50_us": 13.1975,
-        "p95_us": 20.41835,
-        "p99_us": 35.217819999999996,
-        "mean_us": 30.816673000000005,
-        "process_p50_min_us": 13.047,
-        "process_p50_max_us": 13.417,
+        "p50_us": 13.441500000000001,
+        "p95_us": 21.52215,
+        "p99_us": 33.99151,
+        "mean_us": 29.1591065,
+        "process_p50_min_us": 13.0135,
+        "process_p50_max_us": 14.0715,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -2165,23 +2165,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 56782848,
+          "peak_rss_bytes": 54333440,
           "process_peak_rss_bytes": [
-            54472704,
-            61054976,
-            60448768,
-            56782848,
-            55934976
+            54333440,
+            53710848,
+            56307712,
+            53735424,
+            60436480
           ]
         }
       },
       "96": {
-        "p50_us": 91.41300000000001,
-        "p95_us": 171.24234999999854,
-        "p99_us": 3151.95826,
-        "mean_us": 223.93331999999995,
-        "process_p50_min_us": 89.86,
-        "process_p50_max_us": 93.45400000000001,
+        "p50_us": 93.905,
+        "p95_us": 179.0272499999998,
+        "p99_us": 3272.251769999994,
+        "mean_us": 238.483282,
+        "process_p50_min_us": 92.22200000000001,
+        "process_p50_max_us": 94.447,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -2191,23 +2191,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 69087232,
+          "peak_rss_bytes": 68927488,
           "process_peak_rss_bytes": [
-            68722688,
-            67842048,
-            69562368,
-            69087232,
-            69382144
+            69353472,
+            69165056,
+            68927488,
+            62181376,
+            68890624
           ]
         }
       },
       "768": {
-        "p50_us": 782.609,
-        "p95_us": 4283.4996999999985,
-        "p99_us": 9555.44347000006,
-        "mean_us": 1732.75752,
-        "process_p50_min_us": 773.2035000000001,
-        "process_p50_max_us": 789.883,
+        "p50_us": 831.8335,
+        "p95_us": 4573.6717,
+        "p99_us": 8951.6547100001,
+        "mean_us": 1852.7462200000002,
+        "process_p50_min_us": 772.4865,
+        "process_p50_max_us": 856.4480000000001,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -2217,25 +2217,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 99385344,
+          "peak_rss_bytes": 94863360,
           "process_peak_rss_bytes": [
-            86065152,
-            101650432,
-            102428672,
-            99385344,
-            98811904
+            90992640,
+            98979840,
+            96321536,
+            94863360,
+            90460160
           ]
         }
       }
     },
     "nextjs": {
       "12": {
-        "p50_us": 55.042,
-        "p95_us": 85.43359999999998,
-        "p99_us": 1695.2447999999972,
-        "mean_us": 119.81390800000011,
-        "process_p50_min_us": 53.634,
-        "process_p50_max_us": 55.9275,
+        "p50_us": 57.7045,
+        "p95_us": 92.16135,
+        "p99_us": 1324.9047399999931,
+        "mean_us": 119.86950000000009,
+        "process_p50_min_us": 56.983000000000004,
+        "process_p50_max_us": 58.416,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -2245,23 +2245,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 110075904,
+          "peak_rss_bytes": 109727744,
           "process_peak_rss_bytes": [
-            105123840,
-            108736512,
-            110075904,
-            110161920,
-            110977024
+            109674496,
+            109727744,
+            117358592,
+            110452736,
+            107278336
           ]
         }
       },
       "96": {
-        "p50_us": 435.2475,
-        "p95_us": 2437.038399999992,
-        "p99_us": 4762.149199999991,
-        "mean_us": 767.7532620000001,
-        "process_p50_min_us": 425.875,
-        "process_p50_max_us": 449.1875,
+        "p50_us": 464.14599999999996,
+        "p95_us": 2403.5999499999994,
+        "p99_us": 4654.264149999993,
+        "mean_us": 826.5963819999992,
+        "process_p50_min_us": 439.071,
+        "process_p50_max_us": 479.789,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -2271,23 +2271,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 132734976,
+          "peak_rss_bytes": 133771264,
           "process_peak_rss_bytes": [
-            131567616,
-            129445888,
-            142086144,
-            132734976,
-            138108928
+            139272192,
+            128856064,
+            134172672,
+            133771264,
+            128978944
           ]
         }
       },
       "768": {
-        "p50_us": 3986.919,
-        "p95_us": 17647.243300000002,
-        "p99_us": 22911.449650000115,
-        "mean_us": 6872.9628299999995,
-        "process_p50_min_us": 3831.7355,
-        "process_p50_max_us": 4241.5305,
+        "p50_us": 4475.3875,
+        "p95_us": 19380.8228,
+        "p99_us": 27205.475030000034,
+        "mean_us": 7600.122229999999,
+        "process_p50_min_us": 4422.8945,
+        "process_p50_max_us": 4937.4169999999995,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -2297,25 +2297,25 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 243007488,
+          "peak_rss_bytes": 241197056,
           "process_peak_rss_bytes": [
-            243007488,
-            242294784,
-            245719040,
-            256774144,
-            235065344
+            265363456,
+            219672576,
+            227348480,
+            246960128,
+            241197056
           ]
         }
       }
     },
     "exact": {
       "12": {
-        "p50_us": 3811.8195,
-        "p95_us": 9852.1878,
-        "p99_us": 17928.656469999998,
-        "mean_us": 4700.447564999996,
-        "process_p50_min_us": 3811.1025,
-        "process_p50_max_us": 3833.0975,
+        "p50_us": 3818.7355,
+        "p95_us": 9837.8912,
+        "p99_us": 18059.39276,
+        "mean_us": 4672.590137999996,
+        "process_p50_min_us": 3797.3345,
+        "process_p50_max_us": 3828.9245,
         "independent_processes": 5,
         "samples_per_process": 2000,
         "warmups_per_process": 200,
@@ -2325,23 +2325,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 4022231040,
+          "peak_rss_bytes": 4003762176,
           "process_peak_rss_bytes": [
-            4024344576,
-            4026343424,
-            4022231040,
-            4017967104,
-            4018266112
+            3969355776,
+            4003762176,
+            3984949248,
+            4013105152,
+            4026540032
           ]
         }
       },
       "96": {
-        "p50_us": 17529.000500000002,
-        "p95_us": 60842.73819999995,
-        "p99_us": 89639.52998999998,
-        "mean_us": 23159.420667999995,
-        "process_p50_min_us": 17480.0095,
-        "process_p50_max_us": 17587.807,
+        "p50_us": 17732.213499999998,
+        "p95_us": 64660.524149999954,
+        "p99_us": 94047.51103,
+        "mean_us": 23672.897984000014,
+        "process_p50_min_us": 17721.4355,
+        "process_p50_max_us": 18166.3205,
         "independent_processes": 5,
         "samples_per_process": 500,
         "warmups_per_process": 50,
@@ -2351,23 +2351,23 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 4122554368,
+          "peak_rss_bytes": 4053663744,
           "process_peak_rss_bytes": [
-            4122554368,
-            4099543040,
-            4162310144,
-            4108640256,
-            4131069952
+            4040732672,
+            4171665408,
+            4053663744,
+            4031365120,
+            4075933696
           ]
         }
       },
       "768": {
-        "p50_us": 101715.417,
-        "p95_us": 383680.73415,
-        "p99_us": 598517.1337500006,
-        "mean_us": 140954.41224999996,
-        "process_p50_min_us": 101263.00349999999,
-        "process_p50_max_us": 101925.3435,
+        "p50_us": 103099.21900000001,
+        "p95_us": 394448.7749499999,
+        "p99_us": 665052.6176800005,
+        "mean_us": 144090.75246000002,
+        "process_p50_min_us": 102133.35500000001,
+        "process_p50_max_us": 103968.588,
         "independent_processes": 5,
         "samples_per_process": 100,
         "warmups_per_process": 10,
@@ -2377,13 +2377,13 @@
           "metric": "native-process-peak-rss-v2",
           "method": "os-process-resource-usage",
           "scope": "Peak RSS over the native benchmark process lifetime, including runtime startup, prepared data, template initialization, warmup, rendering and output verification. Not bytes allocated per render.",
-          "peak_rss_bytes": 5597335552,
+          "peak_rss_bytes": 5506490368,
           "process_peak_rss_bytes": [
-            5592793088,
-            5689495552,
-            5597335552,
-            5724602368,
-            5583257600
+            5506490368,
+            5526265856,
+            5459947520,
+            5504290816,
+            5521199104
           ]
         }
       }
@@ -2396,12 +2396,12 @@
     "Vue": "3.5.42 / Bun 1.4.2",
     "Svelte": "5.57.2 / Bun 1.4.2",
     "Rails": "Rails 8.1.3.1 / ruby 4.0.6 (2026-07-14 revision 03b6d3f889) +PRISM [x86_64-linux]",
-    "jte": "3.2.4 / openjdk 17.0.21.0.3 2026-10-24",
-    "Rocker": "2.4.0 / openjdk 17.0.21.0.3 2026-10-24",
+    "jte": "3.2.4 / openjdk 17.0.21.1 2026-11-17",
+    "Rocker": "2.4.0 / openjdk 17.0.21.1 2026-11-17",
     "Handlebars": "4.7.8 / Bun 1.4.2",
     "Go html/template": "go version go1.25.5 linux/amd64",
     "Jinja2": "3.1.6 / Python 3.13.18",
-    "PHP": "PHP 8.3.6 (cli) (built: Oct 19 2026 15:16:58) (NTS)",
+    "PHP": "PHP 8.3.6 (cli) (built: Nov 18 2026 23:42:07) (NTS)",
     "Askama": "0.15.6 / rustc 1.95.0 (59807616e 2026-04-14)",
     "Sailfish": "0.10.2 / rustc 1.95.0 (59807616e 2026-04-14)",
     "Leptos": "0.7.8 / rustc 1.95.0 (59807616e 2026-04-14)",
@@ -2415,9 +2415,9 @@
     "Exact": "94b8671f70fe2e25b307a40e7fce66dc27c9f802"
   },
   "provenance": {
-    "harness_commit": "3b4453f04f36d15828f06a5cbcebbeda9c4e8374",
+    "harness_commit": "7cc21f85d34bd52785a6607d576fe196023ba159",
     "dirty": true,
-    "source_sha256": "84acf1e0193c742e0987575034d50e2ac46c0253a76f0aabae090c43244519ad"
+    "source_sha256": "7530016dc02e56572bcb69aedc76badd35a5050b076c8a3d4179859e3e1229dc"
   },
   "command": "./rendering/run-all --product-scaling",
   "limitations": [
@@ -2425,8 +2425,8 @@
     "Every row builds a fresh independently owned response; fixture data construction is outside the timed region.",
     "This engineering capture describes one machine and one scaling workload; it is not a universal application ranking."
   ],
-  "raw_artifact": "raw/product-scaling-v1-2026-11-15T22-53-54-804Z-43cbd657/process-summaries.json.gz",
+  "raw_artifact": "raw/product-scaling-v1-2026-11-25T08-46-19-059Z-814b6390/process-summaries.json.gz",
   "raw_stylesheets": [
-    "raw/product-scaling-v1-2026-11-15T22-53-54-804Z-43cbd657/products-exact.css"
+    "raw/product-scaling-v1-2026-11-25T08-46-19-059Z-814b6390/products-exact.css"
   ]
 }

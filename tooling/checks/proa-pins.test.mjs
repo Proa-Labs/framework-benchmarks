@@ -22,11 +22,17 @@ test("rejects mixed revisions within or between Proa lockfiles", () => {
   const root = mkdtempSync(join(tmpdir(), "proa-pins-"));
   try {
     const adapter = join(root, "benchmarks/framework-ssr/adapters/proa");
+    const leptos = join(root, "benchmarks/framework-ssr/adapters/leptos");
     mkdirSync(adapter, { recursive: true });
+    mkdirSync(leptos, { recursive: true });
     writeFileSync(join(root, "Cargo.lock"), lock(before));
     writeFileSync(join(adapter, "Cargo.lock"), lock(before));
+    writeFileSync(join(leptos, "Cargo.lock"), lock(before));
     expect(validateProaPins(root)).toBe(before);
     writeFileSync(join(adapter, "Cargo.lock"), lock(after));
+    expect(() => validateProaPins(root)).toThrow(/same Proa revision/);
+    writeFileSync(join(adapter, "Cargo.lock"), lock(before));
+    writeFileSync(join(leptos, "Cargo.lock"), lock(after));
     expect(() => validateProaPins(root)).toThrow(/same Proa revision/);
   } finally {
     rmSync(root, { recursive: true, force: true });

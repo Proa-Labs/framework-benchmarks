@@ -37,6 +37,7 @@ checksum = "41058deaa38c9d9dd933d6d238d825227cffa668e2839b52879f6619c63eee3b"
 dependencies = [
  "futures",
  "thiserror 2.0.20",
+ "tokio",
  "wasm-bindgen-futures",
 ]
 
@@ -3410,12 +3411,14 @@ dependencies = [
 name = "proa_bench"
 version = "0.1.0"
 dependencies = [
+ "any_spawner",
  "askama",
  "axum",
  "criterion",
  "dioxus",
  "dioxus-ssr",
  "futures",
+ "hydration_context",
  "leptos",
  "libc",
  "proa_core",
