@@ -3,6 +3,7 @@ import { useLayoutEffect, useState } from "react";
 import metadata from "../../.generated/metadata.json";
 import { Footer } from "../components/Footer.tsx";
 import { Header } from "../components/Header.tsx";
+import { ADD_FRAMEWORK_GUIDE } from "../project-links.ts";
 
 function About() {
   return (
@@ -355,6 +356,10 @@ function Methodology() {
         checks, declare production settings and versions, and retain its runs.
         Missing capabilities remain unmeasured. Exceptions and author
         affiliations are disclosed.
+      </p>
+      <p>
+        <a href={ADD_FRAMEWORK_GUIDE}>Add a framework</a> by starting with one
+        workload and sharing a passing output check in a draft pull request.
       </p>
     </>
   );

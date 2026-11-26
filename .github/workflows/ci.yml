@@ -44,11 +44,13 @@ jobs:
       framework: ${{ steps.select.outputs.framework }}
       framework-workloads: ${{ steps.workloads.outputs.framework }}
       http-workloads: ${{ steps.workloads.outputs.http }}
+      rendering-adapters: ${{ steps.adapters.outputs.matrix }}
     steps:
       - name: Checkout suite selection rules
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 2
           persist-credentials: false
           sparse-checkout-cone-mode: false
           sparse-checkout: |
@@ -63,6 +65,10 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           REPOSITORY: ${{ github.repository }}
         run: .github/scripts/affected-suites.sh
+      - name: Select changed rendering adapters
+        if: github.event_name == 'pull_request'
+        id: adapters
+        run: node .github/scripts/changed-rendering-adapters.mjs
       - name: List the sharded suites' workloads
         id: workloads
         run: |
@@ -168,6 +174,90 @@ jobs:
         run: bun benchmarks/rendering/standard_page_parity.mjs
       - name: Save the workspace crates
         uses: ./.github/actions/save-rust
+
+  rendering-adapter:
+    name: Rendering adapter smoke (${{ matrix.adapter.id }})
+    needs: changes
+    if: github.event_name == 'pull_request' && needs.changes.outputs.rendering-adapters != '[]'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        adapter: ${{ fromJSON(needs.changes.outputs.rendering-adapters) }}
+    steps:
+      - name: Checkout tested benchmark revision
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Set up PHP
+        if: matrix.adapter.setup == 'php'
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: "8.5"
+      - name: Set up the workspace
+        uses: ./.github/actions/setup
+        with:
+          chromium: true
+          node: true
+      - name: Set up Python
+        if: matrix.adapter.setup == 'jinja2'
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.13"
+      - name: Set up Go
+        if: matrix.adapter.setup == 'go'
+        uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: "1.25.5"
+          cache: false
+      - name: Set up Java
+        if: matrix.adapter.setup == 'jte' || matrix.adapter.setup == 'rocker'
+        uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Set up Gradle
+        if: matrix.adapter.setup == 'jte' || matrix.adapter.setup == 'rocker'
+        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+        with:
+          gradle-version: "9.2.0"
+          cache-disabled: true
+      - name: Set up Ruby
+        if: matrix.adapter.setup == 'rails'
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1
+        with:
+          ruby-version: "4.0.6"
+      - name: Finish the Chromium install
+        run: .github/scripts/background.sh wait chromium
+      - name: Validate the component page and capture a short diagnostic
+        id: check
+        env:
+          ADAPTER: ${{ matrix.adapter.id }}
+        run: bun run bench check-adapter "$ADAPTER" --smoke --out benchmarks/rendering/results/local/contributor-smoke.json
+      - name: Summarize the focused check
+        if: always()
+        env:
+          ADAPTER: ${{ matrix.adapter.id }}
+          RESULT: ${{ steps.check.outcome }}
+        run: |
+          {
+            printf "### Rendering adapter \`%s\`\n\n" "$ADAPTER"
+            printf -- '- Component page parity and timed smoke: **%s**.\n' "$RESULT"
+            printf -- "- Reproduce with \`bun run bench check-adapter %s --smoke\`.\n" "$ADAPTER"
+            printf -- '- Diagnostic only. Public rankings require a validated publication capture.\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Retain diagnostic evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: rendering-smoke-${{ matrix.adapter.id }}-attempt-${{ github.run_attempt }}
+          path: benchmarks/rendering/results/local/contributor-smoke.json
+          if-no-files-found: error
+          retention-days: 7
 
   # The matrix shards by toolchain. Every shard includes Proa, the parity
   # reference, so each renderer is still compared against the same canonical
@@ -427,7 +517,7 @@ jobs:
     name: ${{ matrix.check }}
     # Do not create a final job after the workflow itself was canceled.
     if: ${{ always() && !cancelled() }}
-    needs: [changes, quality, rust, dom-parity, canonical, http, streaming, framework]
+    needs: [changes, quality, rust, dom-parity, rendering-adapter, canonical, http, streaming, framework]
     runs-on: ubuntu-24.04
     timeout-minutes: 2
     strategy:

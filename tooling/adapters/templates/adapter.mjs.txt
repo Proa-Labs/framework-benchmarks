@@ -1,16 +1,19 @@
-import { runStringAdapter } from "../../../tooling/string-adapter.mjs";
-// Construct deterministic inputs and compile templates HERE, before timing.
-// Port the existing fixture semantics from ../react/suite_components.mjs.
-// Shared data is in ../shared/suite_data.mjs. Do not read pre-rendered HTML.
+import { runStringAdapter } from "../../../../tooling/adapters/string-adapter.mjs";
+// Build fixture inputs and compile templates before calling runStringAdapter.
+// The component-page reference is in ../react/suite_components.mjs, with
+// shared data in ../shared/suite_data.mjs. Start with the cards workload.
+
+const id = ADAPTER_ID;
+const label = ADAPTER_LABEL;
 
 function render(workload) {
-  // Call your renderer's normal production render-to-string API here.
-  // It must build a fresh complete result on every call; no output cache/pool.
-  throw new Error(`Implement ADAPTER_ID render(${workload}) before benchmarking`);
+  // Render fresh, complete HTML using the renderer's production API.
+  throw new Error(`Implement ${id} render(${workload}) before benchmarking`);
 }
+
 runStringAdapter({
-  id: "ADAPTER_ID",
-  label: "ADAPTER_ID",
+  id,
+  label,
   language: "JavaScript",
   allocationPolicy: "fresh independently owned string",
   render,

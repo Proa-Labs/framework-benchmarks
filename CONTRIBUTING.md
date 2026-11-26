@@ -17,10 +17,10 @@ bun run bench doctor rendering
 bun run bench run rendering --renderers react,vue --workloads cards
 ```
 
-This installs only the selected JavaScript adapter dependencies, compares their
-HTML in Chromium, checks a deliberate incorrect-output control, and records a
-short timing run. No Rust, Ruby, Java, Go, Python, PHP or cloud credentials are
-needed. Smoke numbers check the implementation; do not quote them as rankings.
+This installs the Bun workspace dependencies and runs just the selected
+adapters. The run compares their HTML in Chromium, checks a deliberately
+incorrect output, and records a short timing run. Bun and Chromium are enough
+for this check. Smoke numbers are for checking the implementation.
 
 ```sh
 bun run bench run rendering --renderers react --workloads cards,products
@@ -56,39 +56,69 @@ See [`site/data/README.md`](site/data/README.md) for adding or updating site inp
 
 ## Add a renderer
 
-```sh
-bun run bench new-adapter my-renderer
-```
+Start with the component page (`cards`). You can open a draft pull request with
+one working workload and a passing parity check. This first check needs only
+Bun and Chromium for a JavaScript renderer.
 
-This creates `benchmarks/rendering/external/my-renderer/suite_bench.mjs` and registers a local
-adapter. Its placeholder throws until you implement the real renderer. It does
-**not** add an unmeasured project to the public scoreboard.
+1. From the repository root, complete the [first-run setup](#first-run-bun-only),
+   then scaffold your adapter. Replace `my-renderer` with your adapter ID and
+   `my-renderer-package@1.2.3` with the renderer's package and version.
 
-1. Install/pin the renderer in its adapter workspace and update the root
-   `bun.lock` when proposing the change. Compile templates and build fixture data
-   outside the timed callback. Use the renderer's documented production API.
-2. Implement the generated `render(workload)` callback. The shared synchronous
-   string harness handles arguments, warmup, sampling and result JSON. Async or
-   non-JavaScript engines can use a native harness following
-   [`adapters/README.md`](benchmarks/rendering/canonical/adapters/README.md).
-3. Run `bun run bench run rendering --renderers my-renderer --workloads cards`.
-   Add the other workloads and rerun. A bad DOM, missing card, changed escaping,
-   wrong output size, nonfinite duration or reused-output declaration stops the
-   run before publication.
-4. For a native implementation, change its registry `command`, `args`, `cwd`
-   and `setup`. A `custom` setup can provide a `build` argument array. Commands
-   run directly, without a shell. Supported substitutions are `{root}`, `{bun}`,
-   `{bundle}` and `{id}`. Existing languages use the shared build families.
-5. Once all workloads pass, propose the public roster entry, catalog metadata,
-   logo/attribution together. Set `versionPackage` (a package name in that adapter
-   directory) or `versionCommand` (an argument array) to record its real version;
-   a new adapter cannot publish without it. Run the full capture before
-   updating the website. A new feature review must distinguish unknown support
-   from unsupported features; a benchmark result is not feature evidence.
+   ```sh
+   bun run bench new-adapter my-renderer --label "My Renderer" --package my-renderer-package@1.2.3
+   bun install
+   ```
 
-The scaffold is for synchronous render-to-string APIs. Do not wrap a streaming
-or full-framework API in it merely to get a number. Add an adapter to the matching
-suite and preserve that suite's response validation and request-specific checks.
+   The scaffold creates a private Bun workspace and registers the adapter for
+   local checks. `--package` pins a dependency and registers it as the version
+   source. Scoped names work too, such as `@scope/renderer@1.2.3`. Omit the
+   option if you want to configure the adapter dependencies yourself. Keep the
+   updated root `bun.lock` with your changes.
+
+2. Implement the generated `render(workload)` callback using the renderer's
+   documented production API. Use the shared fixture inputs and the
+   [React reference](benchmarks/rendering/external/react/suite_components.mjs).
+   Construct data and compile templates before timing. Each call must return
+   fresh, complete HTML using the workload's dynamic values.
+
+3. Run the component-page check, then add a short timed run once it passes.
+
+   ```sh
+   bun run bench check-adapter my-renderer
+   bun run bench check-adapter my-renderer --smoke
+   ```
+
+   The check compares the rendered DOM in Chromium against the reference and
+   exercises a deliberately incorrect output. The CLI prints the local evidence
+   path after a passing run. Add `--workloads cards,products,table` as you port
+   the other core workloads. The
+   [showcase pages](benchmarks/rendering/showcase/README.md) use their own
+   fixtures and dispatch path.
+
+4. Share the command and result in the draft PR along with the actual render
+   API and any remaining workload gaps. GitHub Actions runs a component-page
+   smoke check when a rendering adapter's own files or registry entry change.
+   Local-only adapters are included. The job summary has the rerun command and
+   the capture artifact details when the check passes.
+
+The focused checks give reviewers correctness evidence and diagnostic timings.
+Leaderboard numbers come from the full matched campaign described in the
+[publication gate](#merge-and-launch-gate).
+
+The scaffold targets synchronous render-to-string APIs. Async or non-JavaScript
+renderers can use a native harness following
+[the adapter contract](benchmarks/rendering/canonical/adapters/README.md).
+For a native implementation, update the registry's `command`, `args`, `cwd`
+and `setup`. Commands run directly with substitutions for `{root}`, `{bun}`,
+`{bundle}` and `{id}`. A custom setup can provide a `build` argument array.
+For streaming and full-framework APIs, add an adapter to the matching suite.
+
+For public inclusion, propose the roster entry, catalog metadata, logo and
+attribution together. Set `versionPackage` to the installed package name or
+`versionCommand` to an argument array. The
+[publication gate](#merge-and-launch-gate) requires a full validated capture
+before the benchmark change can ship. Feature reviews use primary sources and
+are independent of measurement results.
 
 ## Add a workload
 
