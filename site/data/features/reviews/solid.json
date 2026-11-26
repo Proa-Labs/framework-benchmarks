@@ -2,7 +2,7 @@
   "id": "solid",
   "scope": "Solid v1 UI library with explicitly named Solid Router and Solid Meta companions. SolidStart application features are reviewed in their own row.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -382,6 +382,12 @@
       "url": "https://docs.solidjs.com/solid-start/v2",
       "label": "Client build",
       "reviewedOn": "2026-11-10"
+    },
+    "separateAssetHosting": {
+      "status": "scope",
+      "note": "The Solid UI library leaves the browser build, asset URLs and CDN deployment to a build tool or application framework.",
+      "url": "https://v1.solidjs.com/quick-start",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "scope",

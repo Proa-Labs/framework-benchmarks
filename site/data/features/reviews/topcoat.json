@@ -2,7 +2,7 @@
   "id": "topcoat",
   "scope": "Topcoat 0.12.1 documentation and source, including explicitly enabled first-party features and named external integrations. The framework remains experimental; rendering benchmarks separately retain Topcoat 0.3.1.",
   "reviewedOn": "2026-11-13",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -444,6 +444,13 @@
       "url": "https://github.com/tokio-rs/topcoat/blob/v0.12.1/README.md",
       "reviewedOn": "2026-11-13",
       "label": "Roadmap"
+    },
+    "separateAssetHosting": {
+      "status": "native",
+      "note": "Upload the fingerprinted bundle files and configure AssetConfig::hosted_at at startup with the asset host and matching manifest. The server retains the manifest to generate URLs and leaves serving those files to the asset host.",
+      "url": "https://github.com/tokio-rs/topcoat/blob/main/docs/asset.md#hosting-assets-externally",
+      "label": "Topcoat external asset hosting",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "undocumented",

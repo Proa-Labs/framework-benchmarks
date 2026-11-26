@@ -2,7 +2,7 @@
   "id": "dioxus",
   "scope": "Dioxus 0.7 documentation, including the optional Fullstack and Router packages.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "official",
@@ -411,6 +411,13 @@
       "note": "SSG emits retained HTML for static hosting; dynamic server functions still require a server.",
       "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/static_site_generation",
       "label": "Fullstack SSG"
+    },
+    "separateAssetHosting": {
+      "status": "undocumented",
+      "note": "The documented Fullstack Axum router serves the public build directory alongside SSR and server functions. The reviewed workflow establishes same-server asset serving.",
+      "url": "https://dioxuslabs.com/learn/0.7/essentials/fullstack/axum/",
+      "label": "Fullstack Axum serving",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "undocumented",

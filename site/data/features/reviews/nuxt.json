@@ -2,7 +2,7 @@
   "id": "nuxt",
   "scope": "Nuxt 4.x with Vue 3, Nitro and explicitly named companion modules. Experimental APIs and provider-specific cache behavior are qualified.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -408,6 +408,13 @@
       "status": "native",
       "note": "Nitro presets target Node, serverless and worker deployments; prerendered output can be static. Target capabilities and caches vary.",
       "url": "https://nuxt.com/docs/4.x/getting-started/deployment"
+    },
+    "separateAssetHosting": {
+      "status": "native",
+      "note": "Publish Nuxt's production public output at the paths configured for app.cdnURL, including /_nuxt/ by default. NUXT_APP_CDN_URL can set the asset host at server startup. The build determines the generated asset directory.",
+      "url": "https://nuxt.com/docs/4.x/api/nuxt-config#cdnurl",
+      "label": "Nuxt CDN URL",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "undocumented",

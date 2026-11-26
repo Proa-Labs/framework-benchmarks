@@ -2,7 +2,7 @@
   "id": "laravel",
   "scope": "Laravel 13.x with Blade. Livewire, Inertia, Laravel Head and other companion packages are identified separately; native PHP has a separate row.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -400,6 +400,13 @@
       "status": "undocumented",
       "note": "Not established in the reviewed Laravel deployment guide. External integrations or application code may provide this behavior.",
       "url": "https://laravel.com/framework/docs/13.x/deployment"
+    },
+    "separateAssetHosting": {
+      "status": "native",
+      "note": "Set ASSET_URL for the Vite build and the Laravel application. Upload the built assets at their matching CDN paths and keep the Vite manifest with Laravel for @vite. Authored absolute URLs need their own configuration.",
+      "url": "https://laravel.com/framework/docs/13.x/vite#custom-base-urls",
+      "label": "Vite asset URLs",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "undocumented",
