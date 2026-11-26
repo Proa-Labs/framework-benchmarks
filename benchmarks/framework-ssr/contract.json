@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "id": "framework_workloads_v4",
+  "id": "framework_workloads_v5",
   "label": "Framework SSR · eight shared workloads",
   "runtime": "Bun 1.4.2",
   "exactCommit": "94b8671f70fe2e25b307a40e7fce66dc27c9f802",
@@ -9,7 +9,8 @@
     "exact",
     "nextjs",
     "astro",
-    "sveltekit"
+    "sveltekit",
+    "leptos"
   ],
   "publication": {
     "repeats": 3,
@@ -27,7 +28,7 @@
     "A separate contract and capture from the synchronous pure-renderer suite; numbers must not be combined.",
     "Every framework uses identical settings within each workload. Core fixtures use 64 capacity connections; showcase fixtures use 16, except Sentry logs (8). These are bounded-concurrency capacity measurements, not a search for each server’s optimal connection count.",
     "Equal-load rates are 10 requests/s for component page, 5 for product grid, 1 for table and other showcase pages, and 0.25 for Sentry logs. Sentry latency runs for 40 seconds; other latency windows are 10 seconds. Lower rates keep the largest production response below overload. All raw sample counts are retained.",
-    "Capacity windows are 60 seconds for table, GitHub PR and Sentry logs, and 10 seconds otherwise. Settings are common to all five frameworks for each workload."
+    "Capacity windows are 60 seconds for table, GitHub PR and Sentry logs, and 10 seconds otherwise. Settings are common to all frameworks for each workload."
   ],
   "workloads": [
     {

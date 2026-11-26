@@ -62,7 +62,7 @@ benchmarks/framework-ssr/results/local/proa.json`; it cannot replace a published
 Run independent comparisons concurrently, each on its own
 `c4-standard-16-lssd` node in the existing GKE `runners-c4` pool. Rendering and
 its product-scaling diagnostic run sequentially on the same worker. With `--framework-shards`, Framework SSR runs as eight workload jobs. Each job
-measures all five competitors on the same physical host. Workloads may use
+measures the full cohort on the same physical host. Workloads may use
 different matching hosts; the aggregate records their individual identities.
 Competitors within a workload are never split across hosts or measured concurrently. Compilation and
 setup finish before that worker starts measuring.
@@ -71,8 +71,8 @@ Framework SSR use 24. Generator validity remains mandatory.
 
 Install all JavaScript workspaces with `bun install --frozen-lockfile` first. The controller needs
 Python 3.12+, `git`, `tar` and an authenticated `kubectl` context.
-When intentionally updating Proa, update both the root `Cargo.lock` and
-`benchmarks/framework-ssr/adapters/proa/Cargo.lock` to the same revision. Run
+When intentionally updating Proa, update the root `Cargo.lock` and both
+Rust adapter lockfiles in `benchmarks/framework-ssr/adapters/` to the same revision. Run
 `bun tooling/checks/proa-pins.mjs` before committing the campaign revision.
 Workers and the publication gate reject mismatched pins; reproducibility runs
 use the committed revisions without advancing them.
@@ -152,7 +152,7 @@ To resume a failed Actions campaign locally, download its artifact and use its
 `campaign.json` directory with the command above.
 
 Workload shards are not publishable individually. Aggregation requires every
-workload, all five competitors, three independent starts, identical measured
+workload, the full cohort, three independent starts, identical measured
 sources and policy, matching hardware/OS profiles, zero request errors, valid
 generators and retained parity artifacts. Original shard results are compressed
 under the selected capture; one verified source snapshot avoids duplicating

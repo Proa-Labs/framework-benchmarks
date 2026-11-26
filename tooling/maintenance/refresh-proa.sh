@@ -11,6 +11,13 @@ fi
 
 export CARGO_NET_GIT_FETCH_WITH_CLI=true
 cargo update --package proa_core --precise "$revision"
+for adapter in proa leptos; do
+  cargo update \
+    --manifest-path "benchmarks/framework-ssr/adapters/$adapter/Cargo.toml" \
+    --package proa_core \
+    --precise "$revision"
+done
+
 cargo update \
   --manifest-path fixtures/airbnb-parity-dump/Cargo.toml \
   --package proa_core \

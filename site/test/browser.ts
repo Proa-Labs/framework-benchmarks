@@ -1059,12 +1059,16 @@ try {
   for (const workload of relatedData.framework.workloadDefinitions) {
     await page.locator(`[data-workload="${workload.id}"]`).click();
     const pending = relatedData.framework.pendingWorkloads?.[workload.id];
-    assert.equal(await page.locator(".fw-row").count(), pending ? 0 : 5);
+    const rows = relatedData.framework.workloads[workload.id];
+    assert.equal(
+      await page.locator(".fw-row").count(),
+      pending ? 0 : rows.length,
+    );
     if (pending) {
       assert.equal(await page.locator(".fw-empty").textContent(), pending);
       continue;
     }
-    for (const row of relatedData.framework.workloads[workload.id]) {
+    for (const row of rows) {
       const cell = page.locator(`.fw-row[data-focus="${row.id}"]`);
       assert.equal(
         await cell.locator(".fw-number").textContent(),
@@ -1130,7 +1134,7 @@ try {
   assert.equal(await page.locator('[data-type="baselines"]').count(), 0);
   assert.equal(await page.locator('[data-stat-suite="framework"]').count(), 0);
   checks.push(
-    "SSR keeps render-only columns and exports; all 15 HTTP values and millisecond hover percentiles stay in Framework SSR",
+    "SSR keeps render-only columns and exports, and Framework SSR displays every measured tool with millisecond hover percentiles",
   );
   const filtered: TestExport = JSON.parse(
     decodeURIComponent(
@@ -1379,7 +1383,10 @@ try {
   await page.locator("[data-http-suite-view]").selectOption("framework");
   await page.locator('[data-workload="cards"]').click();
   await page.locator('[data-chart="bars"]').click();
-  assert.equal(await page.locator(".fw-row").count(), 5);
+  assert.equal(
+    await page.locator(".fw-row").count(),
+    benchmarkData.framework.workloads.cards.length,
+  );
   assert.equal(
     await page.locator("[data-framework-view]").inputValue(),
     "throughput",
@@ -1422,7 +1429,10 @@ try {
   await page.locator('[data-chart="bars"]').click();
   for (const workload of ["products", "table", "cards"]) {
     await page.locator(`[data-workload="${workload}"]`).click();
-    assert.equal(await page.locator(".fw-row").count(), 5);
+    assert.equal(
+      await page.locator(".fw-row").count(),
+      frameworkData.framework.workloads[workload].length,
+    );
     assert.equal(new URL(page.url()).searchParams.get("workload"), workload);
     await page.locator("[data-framework-view]").selectOption("p50");
     await page.locator('.fw-row[data-focus="sveltekit"]').hover();
@@ -1952,9 +1962,21 @@ try {
     ],
     ["/", "[data-framework-comparison] tbody tr[data-framework-row]", 0],
     ["/?chart=bars&workload=products&selected=proa,react", ".fw-row", 2],
-    ["/?view=framework&workload=cards", ".fw-row", 5],
-    ["/?view=framework&workload=products", ".fw-row", 5],
-    ["/?view=framework&workload=table", ".fw-row", 5],
+    [
+      "/?view=framework&workload=cards",
+      ".fw-row",
+      benchmarkData.framework.workloads.cards.length,
+    ],
+    [
+      "/?view=framework&workload=products",
+      ".fw-row",
+      benchmarkData.framework.workloads.products.length,
+    ],
+    [
+      "/?view=framework&workload=table",
+      ".fw-row",
+      benchmarkData.framework.workloads.table.length,
+    ],
     [
       "/?view=http&workload=products",
       ".fw-row",

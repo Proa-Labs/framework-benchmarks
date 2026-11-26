@@ -29,6 +29,7 @@ import {
 import {
   DEFAULT_BOUNDARY_COUNT,
   DEFAULT_CARDS_PER_PANEL,
+  STREAMING_ENGINE_ORDER,
   normalizeBoundaryCount,
   normalizeCardsPerPanel,
   scenarioContract,
@@ -41,8 +42,11 @@ const execFile = promisify(execFileCallback);
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, "../..");
 const defaultOutput = join(here, "results", "latest.json");
-const basePorts = { proa: 15710, react: 15711, marko: 15712 };
-const engineOrder = ["proa", "marko", "react"];
+const basePorts = { proa: 15710, react: 15711, marko: 15712, leptos: 15713 };
+const rustServers = {
+  proa: { binary: "proa_suspense_server", features: "http-load,topcoat" },
+  leptos: { binary: "leptos_suspense_server", features: "leptos-streaming" },
+};
 const PROA_WORKER_THREADS = 1;
 // After the per-core matrix, Proa alone reruns the top rate with this many
 // worker threads. The per-core knee is a thread budget, not a ceiling, and
@@ -96,7 +100,7 @@ const config = {
   // The streamed page is about 290 kB, so the generator hashes ~2 GB/s at
   // Proa's knee; a wider worker pool keeps every worker under the 80% limit.
   workers: positiveIntegerOption("--workers", Math.max(DEFAULT_WORKER_COUNT, Math.min(12, os.cpus().length - 4))),
-  engines: listOption("--engines", engineOrder.join(",")),
+  engines: listOption("--engines", STREAMING_ENGINE_ORDER.join(",")),
   outputPath: isAbsolute(outputOption) ? outputOption : join(root, outputOption),
 };
 
@@ -109,7 +113,7 @@ if (new Set(config.engines).size !== config.engines.length) {
   throw new Error("--engines must not contain duplicates");
 }
 for (const engine of config.engines) {
-  if (!engineOrder.includes(engine)) throw new Error(`unknown engine: ${engine}`);
+  if (!STREAMING_ENGINE_ORDER.includes(engine)) throw new Error(`unknown engine: ${engine}`);
 }
 
 const publicationConfig =
@@ -120,17 +124,18 @@ const publicationConfig =
   config.durationSeconds === 5 &&
   config.repeats === 3 &&
   config.warmupRequests === 24 &&
-  config.engines.join(",") === engineOrder.join(",");
+  config.engines.join(",") === STREAMING_ENGINE_ORDER.join(",");
 if (config.outputPath === defaultOutput && !publicationConfig) {
   throw new Error("custom suspense-load runs require an explicit --out path");
 }
 
-async function buildProaServer() {
-  console.log("Building the Proa release server...");
+async function buildRustServer(engine) {
+  const { binary, features } = rustServers[engine];
+  console.log(`Building the ${engine} release server...`);
   try {
     await execFile(
       "cargo",
-      ["build", "--release", "--locked", "-p", "proa_bench", "--features", "http-load,topcoat", "--bin", "proa_suspense_server"],
+      ["build", "--release", "--locked", "-p", "proa_bench", "--features", features, "--bin", binary],
       { cwd: root, maxBuffer: 16 * 1024 * 1024 },
     );
   } catch (error) {
@@ -154,8 +159,9 @@ async function buildMarkoTemplate() {
 }
 
 function commandFor(engine) {
-  if (engine === "proa") {
-    return { label: "proa", command: join(root, "target", "release", "proa_suspense_server"), args: [], cwd: root };
+  const rustServer = rustServers[engine];
+  if (rustServer) {
+    return { label: engine, command: join(root, "target", "release", rustServer.binary), args: [], cwd: root };
   }
   if (engine === "react") {
     return { label: "react", command: process.execPath, args: [join(here, "react_server.mjs")], cwd: root };
@@ -188,7 +194,10 @@ function validateHealth(engine, health, expectedProaThreads = PROA_WORKER_THREAD
   if (engine === "proa" && health.workerThreads !== expectedProaThreads) {
     mismatches.push(`workerThreads=${health.workerThreads}`);
   }
-  if (engine !== "proa" && health.nodeEnv !== "production") {
+  if (engine === "leptos" && (health.workerThreads !== 1 || health.debugAssertions !== false)) {
+    mismatches.push(`expected one Leptos worker with debug assertions disabled, got workerThreads=${health.workerThreads} debugAssertions=${health.debugAssertions}`);
+  }
+  if (!rustServers[engine] && health.nodeEnv !== "production") {
     mismatches.push(`nodeEnv=${health.nodeEnv}`);
   }
   if (engine === "react" && health.reactDomBuild !== "production") {
@@ -228,7 +237,9 @@ function printPhase(engine, phase, repeat) {
 }
 
 async function main() {
-  if (config.engines.includes("proa")) await buildProaServer();
+  for (const engine of config.engines) {
+    if (rustServers[engine]) await buildRustServer(engine);
+  }
   if (config.engines.includes("marko")) await buildMarkoTemplate();
   const git = await gitMetadata(root, benchmarkSourceFiles);
   const result = {
@@ -241,9 +252,12 @@ async function main() {
     methodology: {
       protocol: "HTTP/1.1 loopback with keep-alive and compression disabled",
       javascriptMode: "production: NODE_ENV=production is set by the driver and confirmed by each JavaScript server's health endpoint; React also reports which react-dom server build it loaded",
-      concurrencyModel: `one server process per engine; Proa runs ${PROA_WORKER_THREADS} Tokio worker thread and ${PROA_WORKER_THREADS} local-stream worker so every engine is measured per core`,
+      concurrencyModel: `one server process per engine; Proa runs ${PROA_WORKER_THREADS} Tokio worker thread and ${PROA_WORKER_THREADS} local-stream worker; Leptos uses one Tokio worker; the JavaScript engines each use one process`,
       reactRenderPath: "Bun production renderToReadableStream; shell piped immediately through Readable.fromWeb; no allReady wait",
       proaRenderPath: "RouteResponse::ssr_stream_send: the compiler-proved Send stream that Axum polls directly",
+      ...(config.engines.includes("leptos") && {
+        leptosRenderPath: "native Leptos Suspense and Suspend via out-of-order HTML streaming on Axum",
+      }),
       loadModel: "open-loop fixed-rate arrivals",
       loadGenerator: `${config.workers} forked Bun worker processes share the arrival schedule and validate every response`,
       latency: "both client-dispatch and scheduled-arrival latency; scheduled latency includes generator lag and server queueing",

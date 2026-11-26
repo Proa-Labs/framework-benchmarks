@@ -488,7 +488,9 @@ jobs:
         with:
           node: true
           rust: framework
-          rust-workspaces: benchmarks/framework-ssr/adapters/proa -> ../../../../target
+          rust-workspaces: |
+            benchmarks/framework-ssr/adapters/proa -> ../../../../target
+            benchmarks/framework-ssr/adapters/leptos -> ../../../../target
       - name: Restore the pinned Exact checkout and compiler
         uses: ./.github/actions/exact-cache
       # proa_bench is the adapter's slow path dependency and needs none of the

@@ -283,7 +283,7 @@ test("full-framework measurements stay separate and reject invalid publication c
   const data = normalize(input);
   assert.deepEqual(
     new Set(data.framework.rows.map((r) => r.id)),
-    new Set(["proa", "exact", "nextjs", "astro", "sveltekit"]),
+    new Set(input.framework.engines.map((engine) => engine.id)),
   );
   for (const workload of input.framework.scenario.workloads || []) {
     const model = createDashboardModel(
@@ -293,7 +293,9 @@ test("full-framework measurements stay separate and reject invalid publication c
     assert.equal(model.state.workload, workload.id);
     assert.equal(
       model.getRows().length,
-      data.framework.pendingWorkloads?.[workload.id] ? 0 : 5,
+      data.framework.pendingWorkloads?.[workload.id]
+        ? 0
+        : input.framework.engines.length,
     );
     for (const engine of input.framework.engines) {
       const row = required(

@@ -1,7 +1,7 @@
 # Suspense streaming HTTP benchmark
 
 This benchmark compares production server applications built with Proa, Marko,
-and React. It measures the application boundary a platform engineer pays for:
+React, and Leptos. It measures the application boundary a platform engineer pays for:
 HTTP parsing and transfer, framework streaming, async-boundary scheduling,
 fallback and replacement serialization, allocation, and server adapter overhead.
 
@@ -14,27 +14,28 @@ fallback and replacement serialization, allocation, and server adapter overhead.
 - Delay tiers of 5, 8, 12, 18, 27, 40, 60, and 90 ms, one per boundary and
   repeated when there are more than eight.
 - The same static marketplace shell, fallback text, ready-panel text, keys, and
-  completion rule in all three applications.
+  completion rule across the applications.
 - Delayed values stay typed and in memory; the measured request path performs
   no JSON serialization, deserialization, or external I/O.
-- Proa uses native `Suspense`; Marko uses native `<await>` with
-  `<@placeholder>`; React uses `<Suspense>`, `use`, and
-  `renderToPipeableStream`.
+- Each framework uses its own streaming APIs. Proa uses `Suspense`. Marko
+  uses `<await>` with `<@placeholder>`. React uses `<Suspense>`, `use`, and
+  `renderToReadableStream`. Leptos uses `Suspense` and `Suspend` with its
+  native out-of-order HTML stream.
 - A response succeeds only when the full body ends and its browser-consumable
   stream payload contains the shell, every fallback, every resolved panel, and
   every product card. Proa’s base64 boundary templates are decoded for this
   check. The cards are the same markup each engine's scoreboard adapter emits,
   which the browser-DOM parity gate accepted.
 
-The wire streams are not byte-identical. Marko, React, and Proa use different
-replacement protocols, and protocol cost is intentionally included. Compression
+Wire bytes differ because the frameworks use different replacement protocols.
+The benchmark includes the cost of those protocols. Compression
 is disabled so CPU is not dominated by a shared compression setting.
 
 ## Concurrency model
 
 Every engine is limited to one unit of concurrency so the comparison is per
-core: Proa runs one Tokio worker thread (`PROA_WORKER_THREADS=1`, reported in
-`/health`), and Marko and React each run one Node process. Proa serves `/`
+core: Proa and Leptos each run one Tokio worker (`/health` reports the count),
+and Marko and React each run one Bun process. Proa serves `/`
 through `RouteResponse::ssr_stream_send`, the compiler-proved `Send` streaming
 path that Axum polls directly; the bounded local-executor path
 (`RouteResponse::ssr_stream`) is exposed at `/local` for engineering
@@ -153,12 +154,12 @@ node benchmarks/streaming/run.mjs \
   --repeats 3 \
   --warmup-requests 24 \
   --workers 12 \
-  --engines proa,marko,react \
+  --engines proa,marko,react,leptos \
   --out benchmarks/streaming/results/latest.json
 ```
 
-The driver compiles the Proa release binary and the optimized Marko template
-before starting any measured process. Marko’s compiler therefore does not
+The driver compiles the Proa and Leptos release binaries and the optimized Marko
+template before starting any measured process. Marko’s compiler therefore does not
 inflate the server memory measurement. JavaScript servers run with
 `NODE_ENV=production`.
 

@@ -104,7 +104,8 @@ mod dioxus_elements {
       output += `#[allow(unused_variables)] fn c${i}(data:&'static Data,request:&str)->Element {rsx!{${markup}}}\n`;
   }
   if (engine === "leptos")
-    output += `pub fn render(data:&'static Data,request:&str)->String{Owner::new().with(||c${definition.entry}(data,request).to_html())}`;
+    output += `pub fn render(data:&'static Data,request:&str)->String{Owner::new().with(||c${definition.entry}(data,request).to_html())}
+pub fn view(data:&'static Data,request:&str)->AnyView{c${definition.entry}(data,request)}`;
   else if (engine === "topcoat")
     output += `pub fn render(cx:&Cx,data:&'static Data,request:&str)->String{futures::executor::block_on(c${definition.entry}(cx,data,request)).unwrap().render(cx)}`;
   else {

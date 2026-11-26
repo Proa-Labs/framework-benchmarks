@@ -234,9 +234,14 @@ export function createChartMarkup(model: DashboardModel) {
   }
   const lineDash = (id: string) =>
     state.view === "streaming"
-      ? ({ proa: "", marko: "7 4", react: "2 4" } as Record<string, string>)[
-          id
-        ] || ""
+      ? (
+          {
+            proa: "",
+            marko: "7 4",
+            react: "2 4",
+            leptos: "7 3 2 3",
+          } as Record<string, string>
+        )[id] || ""
       : "";
   const pointMarker = (
     id: string,
@@ -248,10 +253,12 @@ export function createChartMarkup(model: DashboardModel) {
     const shape =
       state.view === "streaming"
         ? (
-            { proa: "circle", marko: "triangle", react: "square" } as Record<
-              string,
-              string
-            >
+            {
+              proa: "circle",
+              marko: "triangle",
+              react: "square",
+              leptos: "diamond",
+            } as Record<string, string>
           )[id] || "circle"
         : "circle";
     const body =
@@ -259,7 +266,9 @@ export function createChartMarkup(model: DashboardModel) {
         ? `<polygon points="0,${-size * 1.3} ${size * 1.2},${size} ${-size * 1.2},${size}"/>`
         : shape === "square"
           ? `<rect x="${-size}" y="${-size}" width="${size * 2}" height="${size * 2}"/>`
-          : `<circle r="${size}"/>`;
+          : shape === "diamond"
+            ? `<polygon points="0,${-size * 1.25} ${size * 1.25},0 0,${size * 1.25} ${-size * 1.25},0"/>`
+            : `<circle r="${size}"/>`;
     return `<g class="fw-point" data-marker="${shape}" transform="translate(${x} ${y})" ${attributes}>${body}</g>`;
   };
   const lineKey = (id: string) =>
