@@ -2,7 +2,7 @@
   "id": "leptos",
   "scope": "Leptos book and API documentation; official router/server crates named separately.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -423,6 +423,13 @@
       "url": "https://book.leptos.dev/deployment/csr.html",
       "label": "CSR static deployment",
       "reviewedOn": "2026-11-10"
+    },
+    "separateAssetHosting": {
+      "status": "partial",
+      "note": "Publish the cargo-leptos pkg output and pass the asset host as the root of HydrationScripts. This covers the hydration JavaScript, WASM and their preload URLs. Configure stylesheet and other asset URLs separately in the application.",
+      "url": "https://docs.rs/leptos/latest/leptos/hydration/fn.HydrationScripts.html",
+      "label": "Hydration script root",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "native",

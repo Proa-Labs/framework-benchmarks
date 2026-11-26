@@ -2,7 +2,7 @@
   "id": "sveltekit",
   "scope": "Current SvelteKit documentation with Svelte 5. Remote functions and asynchronous Svelte rendering retain their documented experimental qualifications.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -429,6 +429,13 @@
       "note": "The static adapter exports prerendered routes; dynamic endpoints/server actions require another host.",
       "url": "https://svelte.dev/docs/kit/adapter-static",
       "label": "Static adapter"
+    },
+    "separateAssetHosting": {
+      "status": "native",
+      "note": "Set an absolute paths.assets at build time and publish the client output at that location while the application adapter serves SSR. SvelteKit uses the configured location for generated browser files and for static files referenced with the asset helper.",
+      "url": "https://svelte.dev/docs/kit/@sveltejs-kit-vite#paths",
+      "label": "SvelteKit paths.assets",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "official",

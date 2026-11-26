@@ -2,7 +2,7 @@
   "id": "svelte",
   "scope": "Svelte 5 documentation, with SvelteKit functionality shown as an official companion.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -442,6 +442,13 @@
       "note": "adapter-static prerenders pages; dynamic routes and fallback mode require deliberate configuration.",
       "url": "https://svelte.dev/docs/kit/adapter-static",
       "label": "adapter-static"
+    },
+    "separateAssetHosting": {
+      "status": "official",
+      "note": "SvelteKit provides the deployment workflow. Set an absolute paths.assets at build time and publish the client output at that location. Use SvelteKit's asset helper for URLs to files from the static directory.",
+      "url": "https://svelte.dev/docs/kit/@sveltejs-kit-vite#paths",
+      "label": "SvelteKit paths.assets",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "undocumented",

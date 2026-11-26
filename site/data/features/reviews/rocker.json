@@ -2,7 +2,7 @@
   "id": "rocker",
   "scope": "Standalone templating API; adding a host framework can provide separate application features.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -358,6 +358,12 @@
       "status": "scope",
       "note": "This review covers the standalone template API. Application routing, client activation, site generation, and server-function transports belong to the host application or an additional framework.",
       "url": "https://github.com/fizzed/rocker"
+    },
+    "separateAssetHosting": {
+      "status": "scope",
+      "note": "The host application or a separate build tool produces the browser files, configures their URLs, and publishes them to the asset host.",
+      "url": "https://github.com/fizzed/rocker#overview",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "scope",

@@ -2,7 +2,7 @@
   "id": "remix",
   "scope": "Remix 3.1 documentation and package APIs. This is the new Remix component/Fetch architecture, not React-based Remix v2 or React Router framework mode.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -378,6 +378,13 @@
       "status": "undocumented",
       "note": "Not established in the reviewed Remix deployment guide. External integrations or application code may provide this behavior.",
       "url": "https://docs.remix.run/production/"
+    },
+    "separateAssetHosting": {
+      "status": "undocumented",
+      "note": "The Remix 3.1 CLI documents listing and inspecting assets that the application can serve on demand. A separately publishable browser build and matching external asset URLs remain unverified.",
+      "url": "https://docs.remix.run/api/cli/#usage",
+      "label": "Remix 3 CLI",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "undocumented",

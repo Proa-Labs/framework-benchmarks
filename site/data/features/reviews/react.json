@@ -2,7 +2,7 @@
   "id": "react",
   "scope": "React / React DOM documentation. Framework-provided features are not counted as React core.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -400,6 +400,12 @@
       "status": "scope",
       "note": "Publishing generated pages requires a host export/deployment workflow.",
       "url": "https://react.dev/learn/creating-a-react-app"
+    },
+    "separateAssetHosting": {
+      "status": "scope",
+      "note": "React renders the UI. A build tool or application framework produces publishable browser files and configures their URLs and separate hosting.",
+      "url": "https://react.dev/learn/build-a-react-app-from-scratch",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "scope",

@@ -2,7 +2,7 @@
   "id": "astro",
   "scope": "Astro documentation; official UI integrations named where required.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "official",
@@ -417,6 +417,13 @@
       "status": "native",
       "note": "The default build produces static files for static hosting; on-demand features require an adapter.",
       "url": "https://docs.astro.build/en/guides/deploy/"
+    },
+    "separateAssetHosting": {
+      "status": "native",
+      "note": "Set build.assetsPrefix in the build configuration and publish the generated _astro/ directory at the matching path on the asset host. The SSR adapter still serves dynamic routes. URLs for files in public/ are application-owned.",
+      "url": "https://docs.astro.build/en/reference/configuration-reference/#buildassetsprefix",
+      "label": "Astro assets prefix",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "native",

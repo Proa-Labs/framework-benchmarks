@@ -2,7 +2,7 @@
   "id": "proa",
   "scope": "Published Proa documentation and named first-party or external integrations. Individual findings retain their review dates; capabilities are not inferred from benchmark rank.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -434,6 +434,13 @@
       "status": "undocumented",
       "note": "Compiled static article fragments still run inside the Rust request handler. A complete static-site export workflow is not established.",
       "url": "https://proa.so/docs/framework/deployment"
+    },
+    "separateAssetHosting": {
+      "status": "undocumented",
+      "note": "The published deployment guide serves browser assets from the application alongside the release binary. A separate publishing workflow and asset host setting remain unverified in the reviewed sources.",
+      "url": "https://proa.so/docs/framework/deployment",
+      "label": "Server and asset deployment",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "native",

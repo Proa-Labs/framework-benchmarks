@@ -2,7 +2,7 @@
   "id": "exact",
   "scope": "Exact source revision 94b8671 (the revision used by the Framework SSR adapter); pre-1.0 APIs change frequently.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -428,6 +428,13 @@
       "status": "native",
       "note": "The web-root deployment path publishes build-time web output; runtime data services still require their own backend.",
       "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/scripts/deploy.mjs"
+    },
+    "separateAssetHosting": {
+      "status": "undocumented",
+      "note": "The pinned deployment script publishes a versioned web root containing HTML and assets together. Separate asset output and URL mapping for the per-request SSR server are unverified.",
+      "url": "https://github.com/expo/exact/blob/94b8671f70fe2e25b307a40e7fce66dc27c9f802/scripts/deploy.mjs",
+      "label": "Pinned static release script",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "undocumented",

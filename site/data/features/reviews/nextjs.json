@@ -2,7 +2,7 @@
   "id": "nextjs",
   "scope": "Next.js App Router documentation, including its React integration.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -429,6 +429,13 @@
       "status": "native",
       "note": "Static export serves generated files without a server; request-time features and ISR are unavailable.",
       "url": "https://nextjs.org/docs/app/guides/static-exports"
+    },
+    "separateAssetHosting": {
+      "status": "native",
+      "note": "Set assetPrefix in the build configuration and upload .next/static under /_next/static on the asset host. Next.js points its generated JS and CSS at that host. Files in public/ need their own URL configuration.",
+      "url": "https://nextjs.org/docs/app/api-reference/config/next-config-js/assetPrefix",
+      "label": "Next.js asset prefix",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "native",

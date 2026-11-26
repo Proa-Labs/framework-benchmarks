@@ -2,7 +2,7 @@
   "id": "tanstack-start",
   "scope": "TanStack Start v1 React documentation, with TanStack Router. Experimental Server Components are qualified separately; this is not the Solid adapter review.",
   "reviewedOn": "2026-11-10",
-  "updatedOn": "2026-11-13",
+  "updatedOn": "2026-11-22",
   "capabilities": {
     "ssr": {
       "status": "native",
@@ -390,6 +390,13 @@
       "status": "native",
       "note": "The build plugin can crawl/enumerate routes and generate static HTML. Dynamic server functions are unavailable on static-only hosting.",
       "url": "https://tanstack.com/start/latest/docs/framework/react/guide/static-prerendering"
+    },
+    "separateAssetHosting": {
+      "status": "native",
+      "note": "Publish the client build separately and use transformAssets to set the host for manifest-managed SSR links at runtime. Configure Vite with an empty base or use Rsbuild's automatic asset prefix to keep lazy route chunks on the same host.",
+      "url": "https://tanstack.com/start/latest/docs/framework/react/guide/cdn-asset-urls",
+      "label": "TanStack Start CDN asset URLs",
+      "reviewedOn": "2026-11-22"
     },
     "containers": {
       "status": "undocumented",
