@@ -19,11 +19,28 @@ function About() {
         frameworks.run.
       </p>
       <p>
-        That means equivalent workloads, output checks, documented test
-        conditions,{" "}
-        <Link to="/methodology">pinned versions and raw results</Link> you can
-        inspect. Differences and exceptions are disclosed so you can judge what
-        each comparison actually tells you.
+        I was especially curious about{" "}
+        <Link to="/" search={{ section: "performance", view: "streaming" }}>
+          Streaming SSR
+        </Link>
+        . I had trouble finding side-by-side measurements of how quickly the
+        initial HTML arrived and when the full response finished as load
+        increased. Coordinating async work, rendering sections as their data
+        becomes ready, and sending HTML in chunks can put pressure on the
+        server’s CPU when many requests are in flight.
+      </p>
+      <p>
+        To isolate the work each framework does, we use prepared data and keep
+        database queries and remote network round trips out of the measurements.
+        SSR times rendering in process. HTTP E2E and Streaming SSR also include
+        local request handling and response transfer.
+      </p>
+      <p>
+        The goal is to make apples-to-apples comparisons of web frameworks
+        easier. Bold performance claims are hard to evaluate when every project
+        benchmarks a different page, setup or definition of “fast.” We wanted a
+        shared set of benchmarks that lets people check those claims for
+        themselves.
       </p>
       <p>
         Performance is only one part of choosing a framework. Features,
@@ -388,19 +405,19 @@ export function DocumentPage({ page }: { page: "about" | "methodology" }) {
           <h1 id="site-title">{title}</h1>
         </section>
       </div>
-      <main className="document pb-0">
-        {page === "about" ? (
-          <About />
-        ) : page === "methodology" ? (
-          <Methodology />
-        ) : (
-          <p>
-            <Link to="/">Return to the explorer</Link> or inspect the{" "}
-            <a href="/data/results.json">complete dataset</a>.
-          </p>
-        )}
-      </main>
       <div className="mx-auto max-w-[1220px] px-4 min-[561px]:px-[22px] min-[801px]:px-11">
+        <main className="document">
+          {page === "about" ? (
+            <About />
+          ) : page === "methodology" ? (
+            <Methodology />
+          ) : (
+            <p>
+              <Link to="/">Return to the explorer</Link> or inspect the{" "}
+              <a href="/data/results.json">complete dataset</a>.
+            </p>
+          )}
+        </main>
         <Footer />
       </div>
     </>
