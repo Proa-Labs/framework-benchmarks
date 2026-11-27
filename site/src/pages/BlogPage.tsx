@@ -1,6 +1,6 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import { use } from "react";
-import { formatPostDate, posts } from "../blog/posts.ts";
+import { formatPostDate, posts } from "../../blog-tooling/posts.ts";
 import { Footer } from "../components/Footer.tsx";
 import { Header } from "../components/Header.tsx";
 
@@ -51,16 +51,6 @@ export function BlogIndex() {
                 aria-labelledby={`post-${slugs[0]}`}
                 className="group flex h-full flex-col overflow-hidden rounded-lg border border-line bg-surface hover:border-border focus-visible:outline-2 focus-visible:outline-offset-4"
               >
-                {data.cover && (
-                  <img
-                    src={data.cover.src}
-                    alt={data.cover.alt}
-                    width="840"
-                    height="420"
-                    decoding="async"
-                    className="aspect-[2/1] w-full border-b border-line object-cover object-top"
-                  />
-                )}
                 <div className="flex flex-1 flex-col gap-3 p-5 sm:p-7">
                   <PostByline author={data.author} date={data.date} />
                   <h2
@@ -83,7 +73,7 @@ export function BlogIndex() {
 }
 
 export function BlogArticle({ post }: { post: (typeof posts)[number] }) {
-  const { author, body: Content, date, description, title } = post.data;
+  const { author, body: Content, cover, date, description, title } = post.data;
   const { toc } = use(post.data.load());
   const relatedPosts = posts.filter(({ url }) => url !== post.url).slice(0, 2);
 
@@ -152,6 +142,17 @@ export function BlogArticle({ post }: { post: (typeof posts)[number] }) {
         </aside>
         <div className="fw-blog-prose min-w-0 max-w-[66ch] text-base leading-[1.8] text-muted md:col-start-1 md:row-start-1">
           <Content />
+          {cover && (
+            <img
+              src={cover.src}
+              alt={cover.alt}
+              width="840"
+              height="420"
+              loading="lazy"
+              decoding="async"
+              className="mt-8 aspect-[2/1] w-full rounded-md border border-line object-cover object-top"
+            />
+          )}
         </div>
       </div>
     </article>

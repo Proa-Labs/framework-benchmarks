@@ -1,0 +1,16 @@
+{
+  "name": "frameworks-run-blog-tooling",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "fumadocs-core": "16.19.7",
+    "fumadocs-mdx": "15.6.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "vite": "8.3.4",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/mdx": "2.0.14"
+  }
+}

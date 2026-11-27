@@ -19,12 +19,9 @@
     "d3-array": "3.2.4",
     "d3-scale": "4.0.2",
     "d3-shape": "3.2.0",
-    "fumadocs-core": "16.19.7",
-    "fumadocs-mdx": "15.6.4",
     "react": "catalog:site",
     "react-dom": "catalog:site",
-    "tailwindcss": "4.3.5",
-    "zod": "4.6.7"
+    "tailwindcss": "4.3.5"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.69.0",
@@ -32,15 +29,14 @@
     "@types/d3-array": "3.2.2",
     "@types/d3-scale": "4.0.9",
     "@types/d3-shape": "3.2.0",
-    "@types/mdx": "2.0.14",
     "@types/react": "catalog:",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.3.0",
     "axe-core": "4.14.0",
     "playwright": "catalog:",
-    "proa-bench-react": "workspace:*",
     "vite": "catalog:",
-    "wrangler": "4.160.1"
+    "wrangler": "4.160.1",
+    "proa-bench-react": "workspace:*"
   },
   "engines": {
     "bun": ">=1.4.2",

@@ -147,7 +147,7 @@ make seventeen engines render an equivalent page by itself.
 
 ## Validate locally
 
-All JavaScript projects use one Bun workspace and the root `bun.lock`. Dependency
+Benchmark and website runtime packages use one Bun workspace and the root `bun.lock`. Dependency
 versions shared across projects live in the root `catalog`; the site's newer
 React version has its own named catalog. Bun's isolated linker shares a single
 package store while keeping differing framework/peer versions separate. Biome,
@@ -162,13 +162,16 @@ to run the measurement protocols directly. Build, browser, capture and benchmark
 tasks are uncached, so Turbo cannot replay timings from another run or machine.
 Native builds and measurements remain controlled by their suite runners.
 
-Add JavaScript dependencies to the owning workspace's `package.json`, reuse a
+Add workspace dependencies to the owning workspace's `package.json`, reuse a
 `catalog:` pin where appropriate, then run `bun install` from the root. Commit
-only the root lockfile; do not create npm, pnpm or per-workspace lockfiles.
+the root lockfile for workspace changes. The blog content compiler is a
+standalone package in `site/blog-tooling/` with its own Bun lockfile because the
+benchmark captures fingerprint the root lockfile.
 
-The root install covers every JavaScript workspace. Validate with:
+Install the blog content compiler before running website checks:
 
 ```sh
+bun install --cwd site/blog-tooling --frozen-lockfile
 bun run check
 bun run --cwd site test:browser
 ```
