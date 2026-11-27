@@ -33,7 +33,7 @@ test("one frozen lock serves all workspaces and shares matching versions without
     .trim()
     .split("\n")
     .filter((path) => existsSync(join(root, path)));
-  expect(locks).toEqual(["bun.lock"]);
+  expect(locks).toEqual(["bun.lock", "site/blog-tooling/bun.lock"]);
   const baseline = installed(".", "react");
   expect(JSON.parse(readFileSync(baseline, "utf8")).version).toBe("19.2.4");
   for (const workspace of [
@@ -54,6 +54,8 @@ test("one frozen lock serves all workspaces and shares matching versions without
 test("source snapshots retain all manifests needed to reproduce a frozen workspace install", async () => {
   const dependencies = workspaceSources(root);
   expect(dependencies).toContain("site/package.json");
+  expect(dependencies).not.toContain("site/blog-tooling/package.json");
+  expect(dependencies).not.toContain("site/blog-tooling/bun.lock");
   expect(dependencies).toContain(
     "benchmarks/framework-ssr/adapters/next/package.json",
   );
