@@ -107,7 +107,10 @@ jobs:
       fail-fast: false
       matrix:
         device: [mobile, desktop]
-        pages: ["/,/features", "/?section=ecosystem,/about", "/methodology"]
+        pages:
+          - /,/features
+          - /?section=ecosystem,/about
+          - /methodology,/blog,/blog/reading-framework-benchmarks
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:

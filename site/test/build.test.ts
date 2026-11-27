@@ -64,14 +64,22 @@ test("build preserves source bytes, emits provenance and serves a self-contained
     );
     assert.doesNotMatch(await fixtureResponse.text(), /<script[\s>]/i);
     let socialImagePath = "";
+    const articlePaths = [
+      "/blog/reading-framework-benchmarks",
+      "/blog/why-workload-parity-matters",
+    ];
     for (const path of [
       "/",
       "/features",
       "/?section=ecosystem",
       "/about",
       "/methodology",
+      "/blog",
+      ...articlePaths,
     ]) {
-      const document = await (await fetch(new URL(path, server.url))).text();
+      const response = await fetch(new URL(path, server.url));
+      assert.equal(response.status, 200, path);
+      const document = await response.text();
       assert.match(
         document,
         /property="og:image" content="https:\/\/frameworks.run\/assets\/frameworks-og-[\w-]+\.png"/,
@@ -83,6 +91,24 @@ test("build preserves source bytes, emits provenance and serves a self-contained
         /name="twitter:card" content="summary_large_image"/,
       );
       assert.match(document, /name="twitter:image:alt"/);
+      if (path.startsWith("/blog")) {
+        assert.ok(
+          document.includes(
+            `rel="canonical" href="https://frameworks.run${path}"`,
+          ),
+        );
+      }
+      if (path.startsWith("/blog/")) {
+        assert.match(document, /property="og:type" content="article"/);
+        assert.match(
+          document,
+          /property="article:published_time" content="\d{4}-\d{2}-\d{2}"/,
+        );
+        assert.match(
+          document,
+          /<article[^>]*>[\s\S]*On this page[\s\S]*fw-blog-prose/,
+        );
+      }
       socialImagePath = new URL(
         required(document.match(/property="og:image" content="([^"]+)"/)?.[1]),
       ).pathname;
@@ -122,6 +148,7 @@ test("build preserves source bytes, emits provenance and serves a self-contained
     );
     assert.match(index, /href="https:\/\/github\.com\/Proa-Labs"/);
     assert.match(index, /href="\/features"/);
+    assert.match(index, /href="\/blog"/);
     assert.ok(
       index.indexOf("data-initial-theme") <
         index.indexOf("data-theme-bootstrap"),
@@ -165,6 +192,8 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       "/",
       ...versionedAssets,
       "/favicon.svg",
+      "/blog-images/table-workload.webp",
+      "/blog-images/product-grid-workload.webp",
       "/licenses/devicon.txt",
       "/licenses/simple-icons.txt",
       "/logos/sources.json",
@@ -193,6 +222,15 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       assert.ok((await response.arrayBuffer()).byteLength > 0, path);
     }
     assert.equal((await fetch(`${server.url}/not-a-page`)).status, 404);
+    assert.equal((await fetch(`${server.url}/blog/not-a-post`)).status, 404);
+    assert.equal(
+      (await fetch(`${server.url}${articlePaths[0]}/extra`)).status,
+      404,
+    );
+    const sitemap = await (await fetch(`${server.url}/sitemap.xml`)).text();
+    for (const path of ["/blog", ...articlePaths]) {
+      assert.ok(sitemap.includes(`<loc>https://frameworks.run${path}</loc>`));
+    }
     assert.notEqual(
       (await fetch(`${server.url}/%2e%2e%2fpackage.json`)).status,
       200,

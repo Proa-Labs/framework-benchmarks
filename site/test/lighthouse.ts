@@ -16,7 +16,8 @@ const { values } = parseArgs({
     runs: { type: "string", default: "1" },
     pages: {
       type: "string",
-      default: "/,/features,/?section=ecosystem,/about,/methodology",
+      default:
+        "/,/features,/?section=ecosystem,/about,/methodology,/blog,/blog/reading-framework-benchmarks",
     },
     device: { type: "string", default: "both" },
     "save-assets": { type: "boolean", default: false },
@@ -30,7 +31,7 @@ const devices =
 const paths = (values.pages || "/").split(",");
 assert.ok(
   paths.every(
-    (path) => /^\/[a-z/]*$/.test(path) || path === "/?section=ecosystem",
+    (path) => /^\/[a-z0-9/-]*$/.test(path) || path === "/?section=ecosystem",
   ),
 );
 const directory = join(siteRoot, "test-results/lighthouse");

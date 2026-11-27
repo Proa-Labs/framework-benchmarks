@@ -590,6 +590,33 @@ try {
     await page.locator('.fw-sections a[href="/features"]').count(),
     1,
   );
+  await page
+    .locator("header")
+    .getByRole("link", { name: "Blog", exact: true })
+    .click();
+  await page.getByRole("heading", { level: 1, name: "Blog" }).waitFor();
+  assert.equal(
+    await page.locator('header a[href="/blog"]').getAttribute("aria-current"),
+    "page",
+  );
+  const postTitle = "How to read a framework benchmark";
+  await page.getByRole("link", { name: postTitle }).click();
+  await page.getByRole("heading", { level: 1, name: postTitle }).waitFor();
+  const jumpLink = page
+    .getByRole("navigation", { name: "On this page" })
+    .getByRole("link", { name: "Match the workload and load" });
+  await jumpLink.click();
+  assert.equal(new URL(page.url()).hash, "#match-the-workload-and-load");
+  await page
+    .getByRole("navigation", { name: "More posts" })
+    .getByRole("link", { name: "Why workload parity matters" })
+    .click();
+  await page
+    .getByRole("heading", { level: 1, name: "Why workload parity matters" })
+    .waitFor();
+  await page.getByRole("link", { name: "All posts" }).click();
+  await page.getByRole("heading", { level: 1, name: "Blog" }).waitFor();
+  checks.push("blog navigation, article heading links and related posts");
   await navigate(server.url);
   await page.locator('[data-view="streaming"]').click();
   assert.equal(await page.locator(".fw-stream-panel").count(), 2);
@@ -2131,6 +2158,15 @@ try {
   checks.push(
     "header navigation and backend disclosures work without JavaScript",
   );
+  await initial.goto(`${server.url}/blog`);
+  await initial.getByRole("link", { name: postTitle }).click();
+  await initial.getByRole("heading", { level: 1, name: postTitle }).waitFor();
+  await initial
+    .getByRole("navigation", { name: "On this page" })
+    .getByRole("link", { name: "Start with the experiment" })
+    .click();
+  assert.equal(new URL(initial.url()).hash, "#start-with-the-experiment");
+  checks.push("blog posts and their table of contents work without JavaScript");
   await noJS.close();
   checks.push(
     "Cloudflare request-time SSR sends selected benchmark tables, bars, streaming panels and feature filters with JavaScript disabled",
@@ -2181,9 +2217,12 @@ try {
       "/features?display=matrix&group=server&tools=nextjs,astro,exact,proa",
       "/about",
       "/methodology",
+      "/blog",
+      "/blog/reading-framework-benchmarks",
     ]) {
       await page.setViewportSize({ width: 1280, height: 1000 });
-      await navigate(server.url + path);
+      if (path.startsWith("/blog")) await page.goto(server.url + path);
+      else await navigate(server.url + path);
       await page.evaluate((theme) => {
         document.documentElement.dataset.theme = theme;
       }, theme);
@@ -2232,6 +2271,15 @@ try {
       }
     }
   }
+  await page.setViewportSize({ width: 320, height: 740 });
+  for (const path of ["/blog", "/blog/reading-framework-benchmarks"]) {
+    await page.goto(server.url + path);
+    assert.equal(
+      await page.evaluate(() => document.documentElement.scrollWidth),
+      320,
+    );
+  }
+  checks.push("blog index and article fit a 320px viewport");
   await page.setViewportSize({ width: 375, height: 812 });
   await navigate(`${server.url}/features`);
   await page.addScriptTag({ content: axeSource });

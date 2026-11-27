@@ -1,2 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://frameworks.run/</loc></url><url><loc>https://frameworks.run/features</loc></url><url><loc>https://frameworks.run/methodology</loc></url><url><loc>https://frameworks.run/about</loc></url></urlset>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://frameworks.run/</loc></url>
+  <url><loc>https://frameworks.run/features</loc></url>
+  <url><loc>https://frameworks.run/methodology</loc></url>
+  <url><loc>https://frameworks.run/about</loc></url>
+  <url><loc>https://frameworks.run/blog</loc></url>
+  <url><loc>https://frameworks.run/blog/reading-framework-benchmarks</loc></url>
+  <url><loc>https://frameworks.run/blog/why-workload-parity-matters</loc></url>
+</urlset>

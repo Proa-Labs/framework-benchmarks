@@ -1,0 +1,28 @@
+---
+title: How to read a framework benchmark
+description: Choose the experiment that matches your question, then compare the same workload, load, and capture.
+author: Proa Labs
+date: "2026-11-27"
+cover:
+  src: /blog-images/table-workload.webp
+  alt: A table of customer accounts with status and transaction columns
+---
+
+The same page can answer several benchmark questions. How much time does a renderer spend producing HTML? How does a server behave when requests arrive concurrently? How soon does a streamed response deliver useful content? Start with the question you want to answer.
+
+## Start with the experiment
+
+- **SSR** measures synchronous rendering from prepared input to a complete, independently owned HTML output. Think of it as the cost of producing the page before sending the response.
+- **HTTP E2E** measures complete responses over HTTP. Use the framework routes suite for native production page handlers, or the renderer servers suite for shared renderer fixtures.
+- **Streaming SSR** measures when content arrives in a response with asynchronous boundaries. Compare the same load point and distinguish early content from completion.
+- **Cold Start** measures from process spawn to the first complete, validated response.
+
+## Match the workload and load
+
+A component page, a 1,000-row table, and a product grid exercise different mixes of iteration, formatting, and markup. Compare tools inside one workload and capture. For latency under load, compare runs at the same offered request rate. A capacity test answers how much work a server can sustain under the suite’s connection settings.
+
+## Check what the chart summarizes
+
+The canonical SSR headline is the median of five independently measured process medians. For HTTP latency, look at the tail percentiles and their sample counts as well as the typical response. The raw captures record the host, versions, settings, and sample details behind the figures.
+
+Try the [1,000-row table comparison](/?section=performance&view=rendering&workload=table) and check the [measurement boundaries and raw captures](/methodology).

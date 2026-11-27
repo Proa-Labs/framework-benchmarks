@@ -45,6 +45,9 @@ export function Footer({
           >
             Ecosystem
           </Link>
+          <Link to="/blog" search={{}}>
+            Blog
+          </Link>
         </nav>
         <nav
           aria-label="Project resources"

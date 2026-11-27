@@ -1005,6 +1005,42 @@
   .document {
     @apply [max-width:780px] [margin:0_auto] [padding:0_24px_70px] text-muted text-base [line-height:1.9];
   }
+  #frameworks-explorer .fw-blog-prose h2 {
+    @apply mt-8 mb-3 scroll-mt-4 font-serif text-2xl leading-tight text-ink;
+  }
+  #frameworks-explorer .fw-blog-prose :is(h3, h4, h5, h6) {
+    @apply mt-6 mb-2 scroll-mt-4 text-lg font-semibold text-ink;
+  }
+  #frameworks-explorer
+    .fw-blog-prose
+    :is(p, ul, ol, blockquote, pre)
+    + :is(p, ul, ol, blockquote, pre) {
+    @apply mt-4;
+  }
+  .fw-blog-prose :is(ul, ol) {
+    @apply space-y-2 pl-6;
+  }
+  .fw-blog-prose ul {
+    @apply list-disc;
+  }
+  .fw-blog-prose ol {
+    @apply list-decimal;
+  }
+  .fw-blog-prose pre {
+    @apply max-w-full overflow-x-auto rounded-md border border-line bg-surface p-4 text-sm;
+  }
+  .fw-blog-prose :not(pre) > code {
+    @apply rounded bg-surface px-1 text-sm text-ink;
+  }
+  .fw-blog-prose blockquote {
+    @apply border-l-2 border-line pl-4;
+  }
+  .fw-blog-prose strong {
+    @apply font-semibold text-ink;
+  }
+  #frameworks-explorer .fw-blog-prose a {
+    @apply text-ink underline decoration-[var(--fw-border)] hover:decoration-current;
+  }
   #frameworks-explorer.fw-document-shell {
     @apply [min-height:0];
   }
@@ -1636,6 +1672,11 @@
   }
   #frameworks-explorer header > .fw-top-actions {
     @apply [margin-left:0];
+  }
+  @media (max-width: 560px) {
+    #frameworks-explorer header > .fw-sections a {
+      @apply px-1 text-sm;
+    }
   }
   #frameworks-explorer .fw-experiment-layout {
     @apply grid [grid-template-columns:180px_minmax(0,_1fr)] [gap:24px] items-start;

@@ -10,7 +10,7 @@ export function Header({
 }) {
   const navigation = (
     <nav
-      className="fw-sections flex items-center"
+      className="fw-sections flex flex-wrap items-center"
       aria-label="Research section"
     >
       {[
@@ -33,6 +33,9 @@ export function Header({
           {label}
         </Link>
       ))}
+      <Link to="/blog" aria-current={active === "blog" ? "page" : undefined}>
+        Blog
+      </Link>
     </nav>
   );
   return (
