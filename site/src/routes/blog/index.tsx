@@ -5,8 +5,8 @@ import { BlogIndex } from "../../pages/BlogPage.tsx";
 export const Route = createFileRoute("/blog/")({
   head: () =>
     pageMeta(
-      "Blog · Frameworks",
-      "Notes on how we build, validate, and interpret web framework benchmarks.",
+      "State of Web Frameworks 2026 · Blog",
+      "The frameworks.run 2026 report on server performance, streaming, and framework capabilities.",
       "/blog",
     ),
   component: BlogIndex,

@@ -64,10 +64,7 @@ test("build preserves source bytes, emits provenance and serves a self-contained
     );
     assert.doesNotMatch(await fixtureResponse.text(), /<script[\s>]/i);
     let socialImagePath = "";
-    const articlePaths = [
-      "/blog/reading-framework-benchmarks",
-      "/blog/why-workload-parity-matters",
-    ];
+    const reportPath = "/blog/state-of-web-frameworks-2026";
     for (const path of [
       "/",
       "/features",
@@ -75,7 +72,7 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       "/about",
       "/methodology",
       "/blog",
-      ...articlePaths,
+      reportPath,
     ]) {
       const response = await fetch(new URL(path, server.url));
       assert.equal(response.status, 200, path);
@@ -98,7 +95,7 @@ test("build preserves source bytes, emits provenance and serves a self-contained
           ),
         );
       }
-      if (path.startsWith("/blog/")) {
+      if (path === reportPath) {
         assert.match(document, /property="og:type" content="article"/);
         assert.match(
           document,
@@ -192,8 +189,6 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       "/",
       ...versionedAssets,
       "/favicon.svg",
-      "/blog-images/table-workload.webp",
-      "/blog-images/product-grid-workload.webp",
       "/licenses/devicon.txt",
       "/licenses/simple-icons.txt",
       "/logos/sources.json",
@@ -222,13 +217,15 @@ test("build preserves source bytes, emits provenance and serves a self-contained
       assert.ok((await response.arrayBuffer()).byteLength > 0, path);
     }
     assert.equal((await fetch(`${server.url}/not-a-page`)).status, 404);
-    assert.equal((await fetch(`${server.url}/blog/not-a-post`)).status, 404);
-    assert.equal(
-      (await fetch(`${server.url}${articlePaths[0]}/extra`)).status,
-      404,
-    );
+    for (const path of [
+      "/blog/reading-framework-benchmarks",
+      "/blog/why-workload-parity-matters",
+      `${reportPath}/extra`,
+    ]) {
+      assert.equal((await fetch(server.url + path)).status, 404, path);
+    }
     const sitemap = await (await fetch(`${server.url}/sitemap.xml`)).text();
-    for (const path of ["/blog", ...articlePaths]) {
+    for (const path of ["/blog", reportPath]) {
       assert.ok(sitemap.includes(`<loc>https://frameworks.run${path}</loc>`));
     }
     assert.notEqual(

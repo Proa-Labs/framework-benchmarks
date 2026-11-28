@@ -1013,8 +1013,8 @@
   }
   #frameworks-explorer
     .fw-blog-prose
-    :is(p, ul, ol, blockquote, pre)
-    + :is(p, ul, ol, blockquote, pre) {
+    :is(p, ul, ol, blockquote, pre, table)
+    + :is(p, ul, ol, blockquote, pre, table) {
     @apply mt-4;
   }
   .fw-blog-prose :is(ul, ol) {
@@ -1034,6 +1034,18 @@
   }
   .fw-blog-prose blockquote {
     @apply border-l-2 border-line pl-4;
+  }
+  .fw-blog-prose table {
+    @apply w-full border-collapse text-sm tabular-nums;
+  }
+  .fw-blog-prose :is(th, td) {
+    @apply border-b border-line px-2 py-2 align-top first:pl-0 last:pr-0;
+  }
+  .fw-blog-prose th {
+    @apply font-semibold text-ink;
+  }
+  .fw-blog-prose th:first-child {
+    @apply text-left;
   }
   .fw-blog-prose strong {
     @apply font-semibold text-ink;

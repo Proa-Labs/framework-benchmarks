@@ -37,13 +37,13 @@ export function BlogIndex() {
           Blog
         </h1>
         <p className="max-w-md text-base leading-relaxed text-muted sm:text-lg">
-          Notes on how we build, validate, and interpret web framework
-          benchmarks.
+          The frameworks.run 2026 report on server performance, streaming, and
+          framework capabilities.
         </p>
       </div>
       <ul className="m-0 grid list-none gap-5 py-8 pl-0 sm:grid-cols-2 sm:py-10">
         {posts.map(({ slugs, url, data }) => (
-          <li key={url}>
+          <li key={url} className="only:col-span-full">
             <article className="h-full">
               <Link
                 to="/blog/$slug"
@@ -55,7 +55,7 @@ export function BlogIndex() {
                   <PostByline author={data.author} date={data.date} />
                   <h2
                     id={`post-${slugs[0]}`}
-                    className="font-serif text-3xl leading-tight tracking-tight underline-offset-4 group-hover:underline"
+                    className="font-serif text-3xl leading-tight tracking-tight underline-offset-4 group-hover:underline sm:text-4xl"
                   >
                     {data.title}
                   </h2>

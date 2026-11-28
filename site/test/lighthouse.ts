@@ -17,7 +17,7 @@ const { values } = parseArgs({
     pages: {
       type: "string",
       default:
-        "/,/features,/?section=ecosystem,/about,/methodology,/blog,/blog/reading-framework-benchmarks",
+        "/,/features,/?section=ecosystem,/about,/methodology,/blog,/blog/state-of-web-frameworks-2026",
     },
     device: { type: "string", default: "both" },
     "save-assets": { type: "boolean", default: false },
