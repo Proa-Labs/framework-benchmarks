@@ -40,6 +40,9 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           node: ${{ matrix.check == 'site-tests' }}
+      - name: Install blog content dependencies
+        if: matrix.check != 'contracts'
+        run: bun install --cwd site/blog-tooling --frozen-lockfile
       - name: Lint and type-check
         if: matrix.check == 'static'
         run: |
@@ -86,6 +89,8 @@ jobs:
         with:
           chromium: true
           node: true
+      - name: Install blog content dependencies
+        run: bun install --cwd site/blog-tooling --frozen-lockfile
       - name: Finish the Chromium install
         run: .github/scripts/background.sh wait chromium
       - name: Verify browser interactions
@@ -107,7 +112,10 @@ jobs:
       fail-fast: false
       matrix:
         device: [mobile, desktop]
-        pages: ["/,/features", "/?section=ecosystem,/about", "/methodology"]
+        pages:
+          - /,/features
+          - /?section=ecosystem,/about
+          - /methodology,/blog,/blog/state-of-web-frameworks-2026
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -116,6 +124,8 @@ jobs:
         with:
           chromium: true
           node: true
+      - name: Install blog content dependencies
+        run: bun install --cwd site/blog-tooling --frozen-lockfile
       # lighthouse.ts runs its pinned CLI through `npm exec`.
       - name: Restore the pinned Lighthouse CLI
         uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5.1.0

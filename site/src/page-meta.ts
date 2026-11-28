@@ -2,7 +2,12 @@ import socialCard from "./assets/frameworks-og.png?url";
 
 const socialImageUrl = new URL(socialCard, "https://frameworks.run").href;
 
-export function pageMeta(title: string, description: string, path: string) {
+export function pageMeta(
+  title: string,
+  description: string,
+  path: string,
+  type: "website" | "article" = "website",
+) {
   const url = `https://frameworks.run${path}`;
   return {
     meta: [
@@ -10,7 +15,7 @@ export function pageMeta(title: string, description: string, path: string) {
       { name: "description", content: description },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
-      { property: "og:type", content: "website" },
+      { property: "og:type", content: type },
       { property: "og:url", content: url },
       { property: "og:site_name", content: "frameworks.run" },
       { property: "og:locale", content: "en_US" },

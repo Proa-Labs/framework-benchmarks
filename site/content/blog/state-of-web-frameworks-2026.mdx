@@ -1,0 +1,51 @@
+---
+title: State of Web Frameworks 2026
+description: What the 2026 frameworks.run captures show about rendering HTML, serving it under load, streaming it, and comparing framework capabilities.
+author: Proa Labs
+date: "2026-11-27"
+---
+
+How much work does it take to render a page, and what changes when you serve it over HTTP or stream it in pieces? We looked at the November 25, 2026 captures across component pages, product grids, a 1,000-row table, and application-shaped workloads such as a pull request review and a log viewer. The workload and the timing boundary both matter when choosing which results to use.
+
+## Rendering the same HTML
+
+In the canonical 1,000-row table workload, median render time was **0.19 ms for Proa**, **1.50 ms for Marko**, **1.52 ms for Svelte**, **1.64 ms for Vue**, and **10.1 ms for React**. Chromium checked the semantic DOM before timing. Every iteration produced a fresh, independently owned output using the engine’s native representation. Proa’s timer included allocating its paged render buffer and rendering into it. Flattening the buffer, verifying output, and destroying it happened outside the timer. The result isolates synchronous rendering from prepared inputs.
+
+[Explore the table benchmark](/?view=rendering&workload=table) · [Retained rendering capture](https://github.com/Proa-Labs/framework-benchmarks/blob/main/benchmarks/rendering/results/archive/canonical-ssr-v1-2026-11-25T08-06-25-695Z-cd348917.json)
+
+## Framework routes under load
+
+The framework routes suite uses each implementation’s production handler. The measured work includes HTTP routing, rendering, and transferring the complete HTML response over loopback. The six routes in the 1,000-row table workload ran on the same host with identical settings. Capacity uses 64 connections. Equal-load P99 comes from a separate phase at one request per second.
+
+| Framework | Responses/s at capacity | Equal-load P99 |
+| --- | ---: | ---: |
+| Proa | 5,076.9 | 1.846 ms |
+| Leptos | 710.4 | 2.572 ms |
+| Astro | 282.8 | 9.218 ms |
+| SvelteKit | 267.1 | 7.122 ms |
+| Next.js | 20.1 | 78.882 ms |
+| Exact (JS SSR) | 3.2 | 297.474 ms |
+
+Astro sustained slightly more requests per second than SvelteKit in this capacity window, while SvelteKit had the lower P99 at equal load. Read the two columns separately when sizing a service or setting a latency budget.
+
+[Explore framework routes](/?view=framework&workload=table) · [Retained framework routes capture](https://github.com/Proa-Labs/framework-benchmarks/blob/main/benchmarks/framework-ssr/results/archive/framework-ssr-2026-11-25T09-10-16-750Z-e14082f7.json)
+
+## Streaming and startup
+
+In the streaming suite, eight async boundaries resolve a 96-card product grid. At an offered load of 1,000 requests per second, Leptos, Proa, and Marko all completed about 1,000 responses per second. Their median shells arrived in **0.19, 0.20, and 0.50 ms** respectively. Complete-response P99 was **102.6, 92.3, and 110.6 ms**. The completion percentiles include simulated delays and queueing.
+
+The separate cold-start test measured from process spawn to the first complete, validated product-grid response. Across 15 starts per engine, the median was **7.11 ms for Proa**, **9.83 ms for Go’s html/template server**, **34.3 ms for Marko**, **52.0 ms for React**, and **56.5 ms for SvelteKit**. Runtime and module startup are part of that measurement.
+
+[Retained streaming capture](https://github.com/Proa-Labs/framework-benchmarks/blob/main/benchmarks/streaming/results/archive/suspense-load-2026-11-25T08-01-58-158Z-42d902c3.json) · [Retained cold-start capture](https://github.com/Proa-Labs/framework-benchmarks/blob/main/benchmarks/cold-start/results/archive/cold-start-2026-11-25T08-00-31-343Z-2bf58ba0.json)
+
+## Framework capabilities
+
+The November feature review covered 27 tools across 100 capabilities. It records whether a capability is built in, available through an official package, or provided by the community. Each finding links to its evidence and identifies version or scope limits. Use it alongside the performance results for requirements such as routing, streaming, and deployment.
+
+[Browse feature evidence](/features)
+
+## About these results
+
+The figures describe the pinned versions, workloads, and test environments recorded in each capture. Production sizing also depends on your application’s data access, caching, and traffic. Proa Labs maintains frameworks.run and develops Proa, which is included in the comparisons. The methodology links to the raw runs, source snapshots, and output checks for independent review.
+
+[Read the methodology](/methodology) · [About frameworks.run](/about)

@@ -4,13 +4,16 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
+import { blogContent } from "./blog-tooling/vite.ts";
 
 export default defineConfig({
   root: fileURLToPath(new URL(".", import.meta.url)),
   publicDir: ".generated/public",
   build: { manifest: true },
+  resolve: { dedupe: ["react", "react-dom"] },
   plugins: [
     cloudflare({ viteEnvironment: { name: "ssr" } }),
+    blogContent(),
     tailwindcss(),
     tanstackStart(),
     react(),
